@@ -11,6 +11,10 @@
 #include <units/length.h>
 #include <units/time.h>
 #include <units/velocity.h>
+#include <frc/apriltag/AprilTagFieldLayout.h>
+#include <frc/apriltag/AprilTagFields.h>
+#include <frc/geometry/Transform3d.h>
+#include <frc/geometry/Transform2d.h>
 
 #include <numbers>
 
@@ -181,3 +185,15 @@ constexpr double kWristSetD = 0.00062724;
 constexpr double kWristSetIZone = 0.01;
 constexpr double kWristSetFF = 0.000015;
 }  // namespace ArmConstants
+
+// TODO: CREATE ACTUAL ROBOT VALUES FOR THESE
+namespace VisionConstants {
+    static constexpr std::string_view kCameraName{"PhotonVision"};
+    static const frc::Transform3d kRobotToCam{
+        frc::Translation3d{0.5_m, 0.0_m, 0.5_m},
+        frc::Rotation3d{0_rad, 0_rad, 0_rad}
+    };
+    static const frc::AprilTagFieldLayout kTagLayout{frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo)};
+    static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
+    static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
+} // namespace VisionConstants
