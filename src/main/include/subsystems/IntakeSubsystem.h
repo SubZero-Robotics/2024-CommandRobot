@@ -1,11 +1,12 @@
 #pragma once
 
 #include <rev/CANSparkMax.h>
+#include <rev/CANSparkLowLevel.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
 #include "moduledrivers/ConnectorX.h"
 
-#include "constants.h"
+#include "Constants.h"
 #include "ColorConstants.h"
 
 using namespace CANSparkMaxConstants;
@@ -33,5 +34,5 @@ class IntakeSubsystem : public frc2::SubsystemBase {
     // Components (e.g. motor controllers and sensors) should generally be
     // declared private and exposed only through public methods.
     ConnectorX::ConnectorXBoard* m_ledSubsystem;
-    rev::CANSparkMax m_intakeSpinnyBoy{CANSparkMaxConstants::kIntakeSpinnyBoyID, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
+    rev::CANSparkMax m_intakeSpinnyBoy{CANSparkMaxConstants::kIntakeSpinnyBoyID, rev::CANSparkLowLevel::MotorType::kBrushless};
 };

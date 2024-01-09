@@ -4,8 +4,14 @@
 
 #include "subsystems/DriveSubsystem.h"
 
+#include <frc/DriverStation.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/path/PathPlannerPath.h>
+#include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
+#include <pathplanner/lib/util/PIDConstants.h>
+#include <pathplanner/lib/util/ReplanningConfig.h>
 #include <units/angle.h>
 #include <units/angular_velocity.h>
 #include <units/length.h>
@@ -13,6 +19,7 @@
 
 #include "Constants.h"
 #include "frc/DataLogManager.h"
+#include "utils/ShuffleboardLogger.h"
 #include "utils/SwerveUtils.h"
 
 using namespace DriveConstants;
@@ -33,6 +40,34 @@ DriveSubsystem::DriveSubsystem()
                  frc::Pose2d{}} {
   // put a field2d in NT
   frc::SmartDashboard::PutData("Field", &m_field);
+
+  pathplanner::AutoBuilder::configureHolonomic(
+      [this]() { return GetPose(); },
+      [this](frc::Pose2d pose) -> void { ResetOdometry(pose); },
+      [this]() -> frc::ChassisSpeeds { return getSpeed(); },
+      [this](frc::ChassisSpeeds speeds) -> void { Drive(speeds); },
+      pathplanner::HolonomicPathFollowerConfig(
+          pathplanner::PIDConstants(0.5, 0.0,
+                                    0.0),  // Translation PID constants
+          pathplanner::PIDConstants(0.5, 0.0, 0.0),  // Rotation PID constants
+          4.5_mps,                                   // Max module speed, in m/s
+          0.4_m,  // Drive base radius in meters. Distance from robot center to
+                  // furthest module.
+          pathplanner::ReplanningConfig()  // Default path replanning config.
+                                           // See the API for the options here),
+          ),
+      []() {
+        // Boolean supplier that controls when the path will be mirrored for the
+        // red alliance This will flip the path being followed to the red side
+        // of the field. THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+        auto alliance = frc::DriverStation::GetAlliance();
+        if (alliance) {
+          return alliance.value() == frc::DriverStation::Alliance::kRed;
+        }
+        return false;
+      },
+      this);
 }
 
 void DriveSubsystem::Periodic() {
@@ -40,6 +75,16 @@ void DriveSubsystem::Periodic() {
   m_odometry.Update(frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}),
                     {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
                      m_frontRight.GetPosition(), m_rearRight.GetPosition()});
+
+  if (!logCounter++) {
+    shuffleboardLogger.logInfo("Gyro Angle", m_gyro.GetAngle());
+    shuffleboardLogger.logInfo("Rear Left Position",
+                               m_rearLeft.GetPosition().distance.value());
+    shuffleboardLogger.logInfo("Rear Right Position",
+                               m_rearRight.GetPosition().distance.value());
+  }
+
+  logCounter %= 10;
 
   m_field.SetRobotPose(m_odometry.GetPose());
 }
@@ -50,6 +95,10 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
                            bool rateLimit, units::second_t periodSeconds) {
   double xSpeedCommanded;
   double ySpeedCommanded;
+
+  shuffleboardLogger.logInfo("xSpeed", xSpeed.value());
+  shuffleboardLogger.logInfo("ySpeed", ySpeed.value());
+  shuffleboardLogger.logInfo("Rotation", rot.value());
 
   double currentTime = wpi::Now() * 1e-6;
   double elapsedTime = currentTime - m_prevTime;
@@ -72,6 +121,8 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
                                   // is effectively instantaneous
     }
 
+    double currentTime = wpi::Now() * 1e-6;
+    double elapsedTime = currentTime - m_prevTime;
     double angleDif = SwerveUtils::AngleDifference(inputTranslationDir,
                                                    m_currentTranslationDir);
 
@@ -146,6 +197,15 @@ void DriveSubsystem::Drive(frc::ChassisSpeeds speeds) {
       kDriveKinematics.ToSwerveModuleStates(speeds));
 }
 
+frc::ChassisSpeeds DriveSubsystem::getSpeed() {
+  auto fl = m_frontLeft.GetState();
+  auto fr = m_frontRight.GetState();
+  auto rl = m_rearLeft.GetState();
+  auto rr = m_rearRight.GetState();
+
+  return kDriveKinematics.ToChassisSpeeds(fl, fr, rl, rr);
+}
+
 void DriveSubsystem::SetX() {
   m_frontLeft.SetDesiredState(
       frc::SwerveModuleState{0_mps, frc::Rotation2d{45_deg}});
@@ -158,7 +218,7 @@ void DriveSubsystem::SetX() {
 }
 
 void DriveSubsystem::logMotorState(MAXSwerveModule &motor, std::string key) {
-  consoleLogger.logInfo(key, motor.GetState().speed.value());
+  shuffleboardLogger.logInfo(key, motor.GetState().speed.value());
 }
 
 void DriveSubsystem::SetModuleStates(
@@ -187,21 +247,6 @@ void DriveSubsystem::ZeroHeading() { m_gyro.Reset(); }
 double DriveSubsystem::GetTurnRate() { return -m_gyro.GetRate(); }
 
 frc::Pose2d DriveSubsystem::GetPose() { return m_odometry.GetPose(); }
-
-frc::ChassisSpeeds DriveSubsystem::discretize(units::meters_per_second_t vx,
-                                              units::meters_per_second_t vy,
-                                              units::radians_per_second_t omega,
-                                              units::second_t dt) {
-  frc::Pose2d desiredDeltaPose{vx * dt, vy * dt, omega * dt};
-  frc::Twist2d twist = frc::Pose2d{}.Log(desiredDeltaPose);
-  return frc::ChassisSpeeds{twist.dx / dt, twist.dy / dt, twist.dtheta / dt};
-}
-
-frc::ChassisSpeeds DriveSubsystem::discretize(
-    frc::ChassisSpeeds continuousSpeeds, units::second_t dt) {
-  return discretize(continuousSpeeds.vx, continuousSpeeds.vy,
-                    continuousSpeeds.omega, dt);
-}
 
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
   m_odometry.ResetPosition(

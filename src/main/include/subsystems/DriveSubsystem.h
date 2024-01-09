@@ -11,8 +11,8 @@
 #include <frc/kinematics/ChassisSpeeds.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
-#include <frc2/command/SubsystemBase.h>
 #include <frc/smartdashboard/Field2d.h>
+#include <frc2/command/SubsystemBase.h>
 
 #include "Constants.h"
 #include "MAXSwerveModule.h"
@@ -40,7 +40,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
    * @param fieldRelative Whether the provided x and y speeds are relative to
    *                      the field.
    * @param rateLimit     Whether to enable rate limiting for smoother control.
-   * 
+   *
    * @param periodSeconds Time between periodic loops
    */
   void Drive(units::meters_per_second_t xSpeed,
@@ -102,24 +102,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
    */
   void ResetOdometry(frc::Pose2d pose);
 
-  /**
-   * Discretizes a continuous-time chassis speed.
-   * Converted from the 254 season code
-   *
-   * @param vx Forward velocity.
-   * @param vy Sideways velocity.
-   * @param omega Angular velocity.
-   * @param dt The duration of the timestep the speeds should be applied for.
-   */
-  frc::ChassisSpeeds discretize(units::meters_per_second_t vx, units::meters_per_second_t vy, units::radians_per_second_t omega, units::second_t dt);
-
-  /**
-   * Discretizes a continuous-time chassis speed.
-   *
-   * @param continuousSpeeds The continuous speeds.
-   * @param dt The duration of the timestep the speeds should be applied for.
-   */
-  frc::ChassisSpeeds discretize(frc::ChassisSpeeds continuousSpeeds, units::second_t dt);
+  frc::ChassisSpeeds getSpeed();
 
   static void LogSpeeds(wpi::array<frc::SwerveModuleState, 4> desiredStates);
 

@@ -29,7 +29,7 @@ class LEDToggle : public frc2::CommandHelper<frc2::Command, LEDToggle> {
     }
 
     void Execute() override {
-        if (m_leds->compareColor(m_leds->getCurrentColor(ConnectorX::LedPort::P1), kPurpleColor)) {
+        if (m_leds->getCurrentColor(ConnectorX::LedPort::P1) == kPurpleColor) {
             m_leds->setColor(ConnectorX::LedPort::P1, kYellowColor);
         } else {
             m_leds->setColor(ConnectorX::LedPort::P1, kPurpleColor);

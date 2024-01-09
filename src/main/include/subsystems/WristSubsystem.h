@@ -1,17 +1,18 @@
 #pragma once
 
 #include "Constants.h"
-#include "rev/CANSparkMax.h"
+#include "rev/CANSparkBase.h"
+#include "rev/CanSparkMax.h"
 #include "subsystems/BaseSingleAxisSubsystem.h"
+#include "utils/ConsoleLogger.h"
 
 class WristSubsystem
-    : public BaseSingleAxisSubsystem<rev::CANSparkMax,
-                                     rev::SparkMaxAbsoluteEncoder,
-                                     units::degree, units::degree_t> {
+    : public BaseSingleAxisSubsystem<rev::CANSparkBase,
+                                     rev::SparkAbsoluteEncoder> {
    public:
     WristSubsystem()
         : BaseSingleAxisSubsystem(m_config, m_wristMotor, m_encoder, &min,
-                                  nullptr, "WRIST", "\033[92;40;4m") {
+                                  nullptr, "WRIST") {
         _config = m_config;
         _controller = m_config.pid;
         _controller.SetTolerance(10, 10);
@@ -88,10 +89,10 @@ class WristSubsystem
 
    private:
     rev::CANSparkMax m_wristMotor{CANSparkMaxConstants::kWristRotationMotorID,
-                                  rev::CANSparkMax::MotorType::kBrushless};
+                                  rev::CANSparkBase::MotorType::kBrushless};
 
-    rev::SparkMaxAbsoluteEncoder m_encoder = m_wristMotor.GetAbsoluteEncoder(
-        rev::SparkMaxAbsoluteEncoder::Type::kDutyCycle);
+    rev::SparkAbsoluteEncoder m_encoder = m_wristMotor.GetAbsoluteEncoder(
+        rev::SparkAbsoluteEncoder::Type::kDutyCycle);
 
     SingleAxisConfig m_config = {
         .type = BaseSingleAxisSubsystem::AxisType::Rotational,

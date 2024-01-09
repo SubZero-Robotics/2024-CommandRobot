@@ -9,7 +9,7 @@ void IntakeSubsystem::Periodic() {}
 void IntakeSubsystem::SimulationPeriodic() {}
 
 void IntakeSubsystem::Out() {
-    if (m_ledSubsystem->compareColor(m_ledSubsystem->getCurrentColor(ConnectorX::LedPort::P0), kYellowColor)) {
+    if (m_ledSubsystem->getCurrentColor(ConnectorX::LedPort::P1) == kYellowColor) {
         m_intakeSpinnyBoy.Set(ArmConstants::kOuttakeSpeed);
     } else {
         m_intakeSpinnyBoy.Set(-ArmConstants::kOuttakeSpeed);
@@ -17,7 +17,7 @@ void IntakeSubsystem::Out() {
 }
 
 void IntakeSubsystem::In() {
-    if (m_ledSubsystem->compareColor(m_ledSubsystem->getCurrentColor(ConnectorX::LedPort::P0), kPurpleColor)) {
+    if (m_ledSubsystem->getCurrentColor(ConnectorX::LedPort::P1) == kPurpleColor) {
         m_intakeSpinnyBoy.Set(-ArmConstants::kIntakeSpeed);
     } else {
         m_intakeSpinnyBoy.Set(ArmConstants::kIntakeSpeed);

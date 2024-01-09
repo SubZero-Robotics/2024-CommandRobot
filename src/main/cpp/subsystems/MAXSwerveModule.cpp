@@ -14,8 +14,8 @@ using namespace ModuleConstants;
 
 MAXSwerveModule::MAXSwerveModule(const int drivingCANId, const int turningCANId,
                                  const double chassisAngularOffset)
-    : m_drivingSparkMax(drivingCANId, rev::CANSparkMax::MotorType::kBrushless),
-      m_turningSparkMax(turningCANId, rev::CANSparkMax::MotorType::kBrushless) {
+    : m_drivingSparkMax(drivingCANId, rev::CANSparkBase::MotorType::kBrushless),
+      m_turningSparkMax(turningCANId, rev::CANSparkBase::MotorType::kBrushless) {
   // Factory reset, so we get the SPARKS MAX to a known state before configuring
   // them. This is useful in case a SPARK MAX is swapped out.
   m_drivingSparkMax.RestoreFactoryDefaults();

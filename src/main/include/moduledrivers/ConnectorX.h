@@ -2,14 +2,17 @@
 
 #include <frc/I2C.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/util/Color8Bit.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SubsystemBase.h>
-#include <frc/util/Color8Bit.h>
+#include <hal/SimDevice.h>
 
 #include <memory>
 
 #include "Constants.h"
+#include "utils/ShuffleboardLogger.h"
+#include "utils/ConsoleLogger.h"
 
 namespace ConnectorX {
 struct Message {
@@ -61,7 +64,11 @@ enum class CommandType {
   // W
   RadioSend = 12,
   // R
-  RadioGetLatestReceived = 13
+  RadioGetLatestReceived = 13,
+  // R
+  GetColor = 14,
+  // R
+  GetPort = 15
 };
 
 struct CommandOn {};
@@ -127,6 +134,10 @@ struct CommandRadioSend {
 
 struct CommandRadioGetLatestReceived {};
 
+struct CommandGetColor {};
+
+struct CommandGetPort {};
+
 union CommandData {
   CommandOn commandOn;
   CommandOff commandOff;
@@ -142,6 +153,8 @@ union CommandData {
   CommandReadConfig commandReadConfig;
   CommandRadioSend commandRadioSend;
   CommandRadioGetLatestReceived commandRadioGetLatestReceived;
+  CommandGetColor commandGetColor;
+  CommandGetPort commandGetPort;
 };
 
 struct Command {
@@ -169,12 +182,22 @@ struct ResponseReadConfiguration {
   Commands::Configuration config;
 };
 
+struct ResponseReadColor {
+  uint32_t color;
+};
+
+struct ResponseReadPort {
+  uint8_t port;
+};
+
 union ResponseData {
   ResponsePatternDone responsePatternDone;
   ResponseReadAnalog responseReadAnalog;
   ResponseDigitalRead responseDigitalRead;
   ResponseRadioLastReceived responseRadioLastReceived;
   ResponseReadConfiguration responseReadConfiguration;
+  ResponseReadColor responseReadColor;
+  ResponseReadPort responseReadPort;
 };
 
 struct Response {
@@ -296,8 +319,9 @@ class ConnectorXBoard : public frc2::SubsystemBase {
 
   /**
    * @brief Set the color using frc::Color8Bit
-  */
+   */
   void setColor(LedPort port, frc::Color8Bit color) {
+    m_currentColors[(uint8_t)port] = color;
     setColor(port, color.red, color.green, color.blue);
   };
   /**
@@ -307,9 +331,10 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    */
   void setColor(LedPort port, uint32_t color);
 
-  bool compareColor(frc::Color8Bit C1, frc::Color8Bit C2) {
-    return ((C1.red == C2.red) && (C1.blue = C2.blue) && (C1.green == C2.green));
-  }
+  /**
+   * @brief Get the current on-board Color, not the cached one
+  */
+  frc::Color8Bit getCurrentColor(LedPort port);
 
   /**
    * @brief Read if pattern is done running
@@ -339,10 +364,6 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    */
   void sendRadioMessage(Message message);
 
-  inline frc::Color8Bit getCurrentColor(LedPort port) {
-    return m_currentColors[(uint8_t)port];
-  }
-
   /**
    * @brief Read the last received message
    *
@@ -361,6 +382,9 @@ class ConnectorXBoard : public frc2::SubsystemBase {
   LedPort _currentLedPort = LedPort::P0;
   Commands::CommandType _lastCommand;
   PatternType _lastPattern[2];
-  frc::Color8Bit m_currentColors[2] = { {0, 0, 0}, {0, 0, 0}};
+  frc::Color8Bit m_currentColors[2] = {{0, 0, 0}, {0, 0, 0}};
+  hal::SimDevice m_simDevice;
+  hal::SimInt m_simColorR, m_simColorG, m_simColorB;
+  hal::SimBoolean m_simOn;
 };
 }  // namespace ConnectorX
