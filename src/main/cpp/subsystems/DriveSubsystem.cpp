@@ -87,6 +87,8 @@ void DriveSubsystem::Periodic() {
   logCounter %= 10;
 
   m_field.SetRobotPose(m_odometry.GetPose());
+
+  consoleLogger.logInfo("Gryo angle: %f", m_gyro.GetAngle());
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
@@ -99,6 +101,10 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   shuffleboardLogger.logInfo("xSpeed", xSpeed.value());
   shuffleboardLogger.logInfo("ySpeed", ySpeed.value());
   shuffleboardLogger.logInfo("Rotation", rot.value());
+  
+  consoleLogger.logInfo("X speed %f", xSpeed.value());
+  consoleLogger.logInfo("Y speed: %f", ySpeed.value());
+  consoleLogger.logInfo("Rotation: %f", rot.value());
 
   double currentTime = wpi::Now() * 1e-6;
   double elapsedTime = currentTime - m_prevTime;
