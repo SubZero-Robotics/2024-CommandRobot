@@ -80,6 +80,6 @@ void RobotContainer::ConfigureButtonBindings() {
                        frc::XboxController::Button::kX).OnTrue(LEDToggle(&m_leds).ToPtr());
 }
 
-frc2::Command* RobotContainer::GetAutonomousCommand() {
-    return m_chooser.GetSelected();
+frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
+    return pathplanner::PathPlannerAuto("Leave COM").ToPtr();
 }
