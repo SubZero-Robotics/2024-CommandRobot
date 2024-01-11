@@ -88,7 +88,7 @@ void DriveSubsystem::Periodic() {
 
   m_field.SetRobotPose(m_odometry.GetPose());
 
-  consoleLogger.logInfo("Gryo angle: %f", m_gyro.GetAngle());
+  // consoleLogger.logInfo("Gryo angle: %f", m_gyro.GetAngle());
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,

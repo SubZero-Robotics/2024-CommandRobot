@@ -137,7 +137,7 @@ constexpr double kPThetaController = 0.5;
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
-const std::string kExampleAutoName = "Example Auto";
+const std::string kDefaultAutoName = "Leave COM";
 }  // namespace AutoConstants
 
 namespace OIConstants {
