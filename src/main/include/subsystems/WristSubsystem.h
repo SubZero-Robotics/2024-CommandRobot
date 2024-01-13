@@ -2,7 +2,7 @@
 
 #include "Constants.h"
 #include "rev/CANSparkBase.h"
-#include "rev/CanSparkMax.h"
+#include "rev/CANSparkMax.h"
 #include "subsystems/BaseSingleAxisSubsystem.h"
 #include "utils/ConsoleLogger.h"
 
