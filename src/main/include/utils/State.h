@@ -1,10 +1,9 @@
-#ifndef STATE_H
-#define STATE_H
+#pragma once
 
 #include "Constants.h"
 
 enum class RobotState {
-    Intaking,
+    Intaking = 0,
     ScoringSpeaker,
     ScoringAmp,
     Stowing,
@@ -13,9 +12,7 @@ enum class RobotState {
 
 class StateManager {
     public:
-        StateManager() {
-            currentState = RobotState::Idling;
-        };
+        StateManager();
 
         bool startIntaking() {
             return updateState(RobotState::Intaking);
@@ -37,19 +34,12 @@ class StateManager {
             return updateState(RobotState::Idling);
         };
 
-        RobotState getState() {
-            return currentState;
+        inline const RobotState getState() {
+            return m_currentState;
         };
 
     private:
-        RobotState currentState;
+        RobotState m_currentState;
 
-        bool updateState(RobotState newState) {
-            currentState = newState;
-
-            // TODO: check if state change is valid
-            return true;
-        };
+        bool updateState(RobotState newState);
 };
-
-#endif
