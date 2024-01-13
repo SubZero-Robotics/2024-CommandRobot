@@ -210,7 +210,8 @@ enum class PatternType {
   SetAll = 1,
   Blink = 2,
   RGBFade = 3,
-  HackerMode = 4
+  HackerMode = 4,
+  Breathe = 5,
 };
 
 enum class PinMode {
@@ -321,7 +322,6 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    * @brief Set the color using frc::Color8Bit
    */
   void setColor(LedPort port, frc::Color8Bit color) {
-    m_currentColors[(uint8_t)port] = color;
     setColor(port, color.red, color.green, color.blue);
   };
   /**
@@ -371,6 +371,13 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    */
   Message getLatestRadioMessage();
 
+  /**
+   * @brief Get the current port
+   * 
+   * @return LedPort 
+   */
+  LedPort getLedPort();
+
  private:
   Commands::Response sendCommand(Commands::Command command,
                                  bool expectResponse = false);
@@ -382,7 +389,6 @@ class ConnectorXBoard : public frc2::SubsystemBase {
   LedPort _currentLedPort = LedPort::P0;
   Commands::CommandType _lastCommand;
   PatternType _lastPattern[2];
-  frc::Color8Bit m_currentColors[2] = {{0, 0, 0}, {0, 0, 0}};
   hal::SimDevice m_simDevice;
   hal::SimInt m_simColorR, m_simColorG, m_simColorB;
   hal::SimBoolean m_simOn;
