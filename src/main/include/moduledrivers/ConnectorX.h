@@ -210,7 +210,8 @@ enum class PatternType {
   SetAll = 1,
   Blink = 2,
   RGBFade = 3,
-  HackerMode = 4
+  HackerMode = 4,
+  Breathe = 5,
 };
 
 enum class PinMode {
@@ -370,6 +371,13 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    * @return Message
    */
   Message getLatestRadioMessage();
+
+  /**
+   * @brief Get the current port
+   * 
+   * @return LedPort 
+   */
+  LedPort getLedPort();
 
  private:
   Commands::Response sendCommand(Commands::Command command,

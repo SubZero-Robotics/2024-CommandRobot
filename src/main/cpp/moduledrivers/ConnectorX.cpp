@@ -71,6 +71,15 @@ void ConnectorX::ConnectorXBoard::setLedPort(LedPort port) {
   }
 }
 
+LedPort ConnectorX::ConnectorXBoard::getLedPort() {
+  Commands::Command cmd;
+  cmd.commandType = Commands::CommandType::GetPort;
+  cmd.commandData.commandGetPort = {};
+
+  Commands::Response res = sendCommand(cmd, true);
+  return (LedPort)res.responseData.responseReadPort.port;
+}
+
 void ConnectorX::ConnectorXBoard::setOn(LedPort port) {
   if (m_simDevice) {
     m_simOn.Set(true);
