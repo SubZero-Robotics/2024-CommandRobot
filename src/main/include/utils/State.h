@@ -34,7 +34,7 @@ class StateManager {
             return updateState(RobotState::Idling);
         };
 
-        inline const RobotState getState() {
+        inline RobotState getState() const {
             return m_currentState;
         };
 
