@@ -77,10 +77,10 @@ void DriveSubsystem::Periodic() {
                      m_frontRight.GetPosition(), m_rearRight.GetPosition()});
 
   if (!logCounter++) {
-    shuffleboardLogger.logInfo("Gyro Angle", m_gyro.GetAngle());
-    shuffleboardLogger.logInfo("Rear Left Position",
+    ShuffleboardLogger::getInstance().logInfo("Gyro Angle", m_gyro.GetAngle());
+    ShuffleboardLogger::getInstance().logInfo("Rear Left Position",
                                m_rearLeft.GetPosition().distance.value());
-    shuffleboardLogger.logInfo("Rear Right Position",
+    ShuffleboardLogger::getInstance().logInfo("Rear Right Position",
                                m_rearRight.GetPosition().distance.value());
   }
 
@@ -88,7 +88,7 @@ void DriveSubsystem::Periodic() {
 
   m_field.SetRobotPose(m_odometry.GetPose());
 
-  // consoleLogger.logInfo("Gryo angle: %f", m_gyro.GetAngle());
+  // ConsoleLogger::getInstance().logInfo("Gryo angle: %f", m_gyro.GetAngle());
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
@@ -98,13 +98,13 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   double xSpeedCommanded;
   double ySpeedCommanded;
 
-  shuffleboardLogger.logInfo("xSpeed", xSpeed.value());
-  shuffleboardLogger.logInfo("ySpeed", ySpeed.value());
-  shuffleboardLogger.logInfo("Rotation", rot.value());
+  ShuffleboardLogger::getInstance().logInfo("xSpeed", xSpeed.value());
+  ShuffleboardLogger::getInstance().logInfo("ySpeed", ySpeed.value());
+  ShuffleboardLogger::getInstance().logInfo("Rotation", rot.value());
   
-  consoleLogger.logInfo("X speed %f", xSpeed.value());
-  consoleLogger.logInfo("Y speed: %f", ySpeed.value());
-  consoleLogger.logInfo("Rotation: %f", rot.value());
+  ConsoleLogger::getInstance().logInfo("X speed %f", xSpeed.value());
+  ConsoleLogger::getInstance().logInfo("Y speed: %f", ySpeed.value());
+  ConsoleLogger::getInstance().logInfo("Rotation: %f", rot.value());
 
   double currentTime = wpi::Now() * 1e-6;
   double elapsedTime = currentTime - m_prevTime;
@@ -224,7 +224,7 @@ void DriveSubsystem::SetX() {
 }
 
 void DriveSubsystem::logMotorState(MAXSwerveModule &motor, std::string key) {
-  shuffleboardLogger.logInfo(key, motor.GetState().speed.value());
+  ShuffleboardLogger::getInstance().logInfo(key, motor.GetState().speed.value());
 }
 
 void DriveSubsystem::SetModuleStates(
