@@ -74,9 +74,9 @@ class ILogger {
     };
   }
 
-  std::string formatString(const std::string format, ...) {
+  std::string formatString(const std::string format, va_list ap) {
     va_list fmtArgs;
-    va_start(fmtArgs, format);
+    va_copy(fmtArgs, ap);
     char buf[1000];
     vsnprintf(buf, sizeof(buf), format.c_str(), fmtArgs);
     va_end(fmtArgs);
