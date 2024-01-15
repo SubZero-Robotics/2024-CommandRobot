@@ -2,7 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#define TEST_SWERVE_BOT
+// Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
+// #define TEST_SWERVE_BOT
 
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <rev/CANSparkMax.h>
@@ -198,3 +199,13 @@ constexpr double kWristSetD = 0.00062724;
 constexpr double kWristSetIZone = 0.01;
 constexpr double kWristSetFF = 0.000015;
 }  // namespace ArmConstants
+
+namespace RobotConstants {
+#ifdef TEST_SWERVE_BOT
+const std::string kRoborioSerialNumber = "0326F2F2";
+#endif
+
+#ifndef TEST_SWERVE_BOT
+const std::string kRoborioSerialNumber = "032B4B68";
+#endif
+}

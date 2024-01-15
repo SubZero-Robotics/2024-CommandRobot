@@ -6,10 +6,18 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
+#include <frc/RobotController.h>
+#include <wpinet/uv/Error.h>
 #include "frc/DataLogManager.h"
 #include "wpi/DataLog.h"
 
+#include "Constants.h"
+
 void Robot::RobotInit() {
+  if (frc::RobotController::GetSerialNumber() != RobotConstants::kRoborioSerialNumber) {
+    std::cout << "Error: wrong robot\n";
+    throw wpi::uv::Error(-1);
+  }
   frc::DataLogManager::Start();
 }
 

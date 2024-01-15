@@ -7,6 +7,7 @@
 #include <frc/DriverStation.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/RobotController.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
@@ -102,9 +103,11 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   shuffleboardLogger.logInfo("ySpeed", ySpeed.value());
   shuffleboardLogger.logInfo("Rotation", rot.value());
   
-  consoleLogger.logInfo("X speed %f", xSpeed.value());
-  consoleLogger.logInfo("Y speed: %f", ySpeed.value());
-  consoleLogger.logInfo("Rotation: %f", rot.value());
+  // consoleLogger.logInfo("X speed %f", xSpeed.value());
+  // consoleLogger.logInfo("Y speed: %f", ySpeed.value());
+  // consoleLogger.logInfo("Rotation: %f", rot.value());
+  consoleLogger.logInfo("Test", "test");
+  std::cout << "Serial number: " << frc::RobotController::GetSerialNumber() << '\n';
 
   double currentTime = wpi::Now() * 1e-6;
   double elapsedTime = currentTime - m_prevTime;
