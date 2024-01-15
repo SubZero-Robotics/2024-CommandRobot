@@ -58,11 +58,11 @@ uint16_t ConnectorX::ConnectorXBoard::readAnalogPin(AnalogPort port) {
 }
 
 void ConnectorX::ConnectorXBoard::setLedPort(LedPort port) {
-  consoleLogger.logInfo("requested led port", (int)port);
+  ConsoleLogger::getInstance().logInfo("requested led port", (int)port);
 
   if (port != _currentLedPort) {
     _currentLedPort = port;
-    consoleLogger.logInfo("Current LED port", (int)_currentLedPort);
+    ConsoleLogger::getInstance().logInfo("Current LED port", (int)_currentLedPort);
 
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::SetLedPort;
@@ -129,7 +129,7 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
 
     return;
   }
-  consoleLogger.logInfo("colour LED port", (int)port);
+  ConsoleLogger::getInstance().logInfo("colour LED port", (int)port);
 
   setLedPort(port);
 
