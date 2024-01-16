@@ -7,11 +7,11 @@
 #include "utils/ConsoleLogger.h"
 
 class WristSubsystem
-    : public BaseSingleAxisSubsystem<rev::CANSparkBase,
+    : public BaseSingleAxisSubsystem<rev::CANSparkMax,
                                      rev::SparkAbsoluteEncoder> {
    public:
     WristSubsystem()
-        : BaseSingleAxisSubsystem(m_config, m_wristMotor, m_encoder, &min,
+        : BaseSingleAxisSubsystem(m_config, &m_wristMotor, &m_encoder, &min,
                                   nullptr, "WRIST") {
         _config = m_config;
         _controller = m_config.pid;
@@ -49,7 +49,7 @@ class WristSubsystem
             if (_config.type == AxisType::Rotational)
                 RunMotorSpeed(-0.005);
             else
-                _motor.Set(0);
+                _motor->Set(0);
             return;
         }
 

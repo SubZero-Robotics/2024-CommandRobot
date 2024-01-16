@@ -63,7 +63,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
     double defaultMovementSpeed = 0.2;
   };
 
-  BaseSingleAxisSubsystem(SingleAxisConfig &cfg, Motor &motor, Encoder &encoder,
+  BaseSingleAxisSubsystem(SingleAxisConfig &cfg, Motor *motor, Encoder *encoder,
                           frc::DigitalInput *minSwitch,
                           frc::DigitalInput *maxSwitch, std::string prefix,
                           bool log = false)
@@ -105,14 +105,14 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
       if (speed < 0) {
         if (_log)
           ConsoleLogger::getInstance().logVerbose(_prefix, "SETTING SPEED TO: %.2f", speed);
-        _motor.Set(speed);
+        _motor->Set(speed);
         return;
       }
 
       if (_log)
         ConsoleLogger::getInstance().logVerbose(_prefix, "NOT MOVING; AT HOME; speed=%.2f", speed);
 
-      _motor.Set(0);
+      _motor->Set(0);
       return;
     }
 
@@ -122,18 +122,18 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
       if (speed > 0) {
         if (_log)
           ConsoleLogger::getInstance().logVerbose(_prefix, "SETTING SPEED TO: %.2f", speed);
-        _motor.Set(speed);
+        _motor->Set(speed);
         return;
       }
 
       if (_log)
         ConsoleLogger::getInstance().logVerbose(_prefix, "NOT MOVING; AT MAX; speed=%.2f", speed);
-      _motor.Set(0);
+      _motor->Set(0);
       return;
     } else {
       if (_log)
         ConsoleLogger::getInstance().logVerbose(_prefix, "SETTING SPEED TO: %.2f", speed);
-      _motor.Set(speed);
+      _motor->Set(speed);
     }
   }
 
@@ -159,7 +159,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
       if (_config.type == AxisType::Rotational)
         RunMotorSpeed(ArmConstants::kAntiGravityPercentage);  // Make 'er hover!
       else
-        _motor.Set(0);
+        _motor->Set(0);
 
       return;
     }
@@ -296,7 +296,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
       ConsoleLogger::getInstance().logInfo(_prefix, "Movement stopped");
     _isHoming = false;
     _isMovingToPosition = false;
-    _motor.Set(0);
+    _motor->Set(0);
   }
 
   frc2::CommandPtr GetHomeCommand() override {
@@ -320,8 +320,8 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
   static inline bool IsValidPort(int port) { return port >= 0 && port < 10; }
 
  protected:
-  Motor &_motor;
-  Encoder &_enc;
+  Motor *_motor;
+  Encoder *_enc;
   SingleAxisConfig &_config;
   frc::PIDController _controller;
   bool _isHoming = false;
