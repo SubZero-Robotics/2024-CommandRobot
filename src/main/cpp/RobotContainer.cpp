@@ -57,7 +57,7 @@ RobotContainer::RobotContainer() {
       {&m_drive}));
 
     m_chooser.SetDefaultOption("Leave Community", pathplanner::PathPlannerAuto("Leave COM").ToPtr().Unwrap().get());
-    shuffleboardLogger.logVerbose("Auto Modes", &m_chooser);
+    ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
 
 void RobotContainer::ConfigureButtonBindings() {

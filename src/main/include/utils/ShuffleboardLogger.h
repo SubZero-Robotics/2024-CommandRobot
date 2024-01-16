@@ -9,7 +9,11 @@ using namespace Logging;
 
 class ShuffleboardLogger : ILogger {
   public:
-    ShuffleboardLogger();
+    static ShuffleboardLogger& getInstance() {
+      static ShuffleboardLogger instance;
+
+      return instance;
+    }
 
     void logVerbose(std::string key, const std::string format, ...) override;
     void logInfo(std::string key, const std::string format, ...) override;
@@ -48,6 +52,8 @@ class ShuffleboardLogger : ILogger {
     void logFatal(std::string key, wpi::Sendable* val) override;
 
   private:
+    ShuffleboardLogger();
+
     std::string formatToShuffleboardString(LogLevel level, const std::string format, ...) {
       va_list args;
       va_start(args, format);
@@ -58,7 +64,5 @@ class ShuffleboardLogger : ILogger {
       return val;
     }
 };
-
-static ShuffleboardLogger shuffleboardLogger;
 
 #endif
