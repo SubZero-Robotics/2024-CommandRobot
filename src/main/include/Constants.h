@@ -181,3 +181,20 @@ constexpr double kWristSetD = 0.00062724;
 constexpr double kWristSetIZone = 0.01;
 constexpr double kWristSetFF = 0.000015;
 }  // namespace ArmConstants
+
+namespace ClimbConstants {
+    // These are placeholder values, these all will be changed
+    constexpr double kClimberSetP = 1;
+    constexpr double kClimberSetI = 0;
+    constexpr double kClimberSetD = 0;
+
+    constexpr double kMaxArmDistance = 5;
+    constexpr double kInPerRotation = 1;
+
+    constexpr int kClimberLeftLimitSwitchPort = 0;
+    constexpr int kClimberRightLimitSwitchPort = 1;
+
+    constexpr double kClimbStepSize = 1;
+    constexpr double kClimbHomingSpeed = 1;
+    constexpr int kTicksPerMotorRotation = 1;
+}

@@ -1,42 +1,44 @@
 #pragma once
 
+#include <frc/controller/PIDController.h>
 #include "Constants.h"
-#include "rev/CANSparkMax.h"
-#include "subsystems/BaseSingleAxisSubsystem.h"
-#include "utils/ConsoleLogger.h"
+#include <rev/CANSparkMax.h>
+#include <subsystems/BaseSingleAxisSubsystem.h>
+#include <utils/ConsoleLogger.h>
 
-class ExtensionSubsystem
+class ClimbSubsystem
     : public BaseSingleAxisSubsystem<rev::CANSparkBase,
                                      rev::SparkRelativeEncoder> {
    public:
-    ExtensionSubsystem();
+    ClimbSubsystem(int motorID) ;
 
     void ResetEncoder() override;
 
     double GetCurrentPosition() override;
 
    private:
-    rev::CANSparkMax m_extensionMotor{CANSparkMaxConstants::kExtensionMotorID,
+    // Put this inside of the constructor and have motorID as a parameter
+    rev::CANSparkMax m_extensionMotor{motorID,
                                       rev::CANSparkMax::MotorType::kBrushless};
 
     rev::SparkMaxRelativeEncoder m_encoder = m_extensionMotor.GetEncoder(
         rev::SparkMaxRelativeEncoder::Type::kHallSensor,
-        ArmConstants::kTicksPerMotorRotation);
+        ClimbConstants::kTicksPerMotorRotation);
 
     SingleAxisConfig m_config = {
         .type = BaseSingleAxisSubsystem::AxisType::Linear,
-        .pid = frc2::PIDController(ArmConstants::kExtenderSetP,
-                                   ArmConstants::kExtenderSetI,
-                                   ArmConstants::kExtenderSetD),
+        .pid = frc::PIDController(ClimbConstants::kClimberSetP,
+                                   ClimbConstants::kClimberSetI,
+                                   ClimbConstants::kClimberSetD),
         .minDistance = 0,
-        .maxDistance = ArmConstants::kMaxArmDistance,
-        .distancePerRevolution = ArmConstants::kInPerRotation,
-        .stepSize = ArmConstants::kExtenderStepSize,
+        .maxDistance = ClimbConstants::kMaxArmDistance,
+        .distancePerRevolution = ClimbConstants::kInPerRotation,
+        .stepSize = ClimbConstants::kClimbStepSize,
         .motorMultiplier = .5,
         .pidResultMultiplier = -6.0,
-        .minLimitSwitchPort = ArmConstants::kExtenderLimitSwitchPort,
+        .minLimitSwitchPort = ClimbConstants::kClimberLeftLimitSwitchPort,
         .maxLimitSwitchPort = BaseSingleAxisSubsystem::UNUSED_DIO_PORT,
-        .defaultMovementSpeed = ArmConstants::kExtenderHomingSpeed};
+        .defaultMovementSpeed = ClimbConstants::kClimbHomingSpeed};
 
-    frc::DigitalInput min{ArmConstants::kExtenderLimitSwitchPort};
+    frc::DigitalInput min{ClimbConstants::kClimberLeftLimitSwitchPort};
 };
