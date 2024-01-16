@@ -387,6 +387,7 @@ class ConnectorXBoard : public frc2::SubsystemBase {
   std::unique_ptr<frc::I2C> _i2c;
   uint8_t _slaveAddress;
   LedPort _currentLedPort = LedPort::P0;
+  frc::Color8Bit _currentColors[2] = {{0, 0, 0}, {0, 0, 0}};
   Commands::CommandType _lastCommand;
   PatternType _lastPattern[2];
   hal::SimDevice m_simDevice;
