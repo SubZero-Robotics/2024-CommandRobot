@@ -8,12 +8,13 @@
 
 #include "Constants.h"
 #include "ColorConstants.h"
+#include "Utils/State.h"
 
 using namespace CANSparkMaxConstants;
 
 class IntakeSubsystem : public frc2::SubsystemBase {
    public:
-    IntakeSubsystem(ConnectorX::ConnectorXBoard* subsystem);
+    IntakeSubsystem();
 
     /**
      * Will be called periodically whenever the CommandScheduler runs.
@@ -26,13 +27,13 @@ class IntakeSubsystem : public frc2::SubsystemBase {
      */
     void SimulationPeriodic() override;
 
-    void Out();
-    void In();
+    void In(RobotState);
     void Stop();
+    void Out(RobotState);
 
    private:
     // Components (e.g. motor controllers and sensors) should generally be
     // declared private and exposed only through public methods.
-    ConnectorX::ConnectorXBoard* m_ledSubsystem;
     rev::CANSparkMax m_intakeSpinnyBoy{CANSparkMaxConstants::kIntakeSpinnyBoyID, rev::CANSparkLowLevel::MotorType::kBrushless};
+    rev::CANSparkMax m_vectorSpinnyboy{CANSparkMaxConstants::kVectorSpinnyBoyID, rev::CANSparkLowLevel::MotorType::kBrushless};
 };

@@ -27,7 +27,6 @@
 #include "commands/LEDToggleCommand.h"
 #include "commands/RotateWristCommand.h"
 #include "commands/IntakeInCommand.h"
-#include "commands/IntakeOutCommand.h"
 
 using namespace DriveConstants;
 
@@ -72,9 +71,6 @@ void RobotContainer::ConfigureButtonBindings() {
     
     frc2::JoystickButton(&m_operatorController,
                        frc::XboxController::Button::kRightBumper).WhileTrue(IntakeIn(&m_intake).ToPtr());
-
-    frc2::JoystickButton(&m_operatorController,
-                       frc::XboxController::Button::kLeftBumper).WhileTrue(IntakeOut(&m_intake).ToPtr());
 
     frc2::JoystickButton(&m_driverController,
                        frc::XboxController::Button::kX).OnTrue(LEDToggle(&m_leds).ToPtr());

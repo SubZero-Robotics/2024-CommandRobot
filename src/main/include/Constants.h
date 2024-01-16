@@ -151,8 +151,17 @@ constexpr uint8_t kLedAddress = 0x10;
 // Motor IDs
 namespace CANSparkMaxConstants {
 constexpr int kIntakeSpinnyBoyID = 20;
+constexpr int kVectorSpinnyBoyID = 21;
 constexpr int kWristRotationMotorID = 22;
 }  // namespace CANSparkMaxConstants
+
+namespace Intakeconstants {
+constexpr double kIntakeSpeed = 0.33;
+constexpr double kOutakeSpeed = 0;
+// Change these to match actual values
+constexpr double kIntakeVectorspeed = 0;
+constexpr double kOutakeVectorspeed = 0;
+}
 
 namespace ArmConstants {
 // Motor Constants
@@ -164,10 +173,6 @@ constexpr double kAntiGravityPercentage = -0.05;
 constexpr double kRotationHomingSpeed = .15;
 constexpr double kExtenderHomingSpeed = .66;
 constexpr double kWristHomingSpeed = .33;
-
-// Intake Constants
-constexpr double kIntakeSpeed = 0.33;
-constexpr double kOuttakeSpeed = 0.33;
 
 // Wrist Constants
 constexpr int kWristLimitSwitchPort = 0;
