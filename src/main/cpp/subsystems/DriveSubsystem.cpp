@@ -7,6 +7,7 @@
 #include <frc/DriverStation.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/RobotController.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
@@ -102,9 +103,9 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   ShuffleboardLogger::getInstance().logInfo("ySpeed", ySpeed.value());
   ShuffleboardLogger::getInstance().logInfo("Rotation", rot.value());
   
-  ConsoleLogger::getInstance().logInfo("X speed %f", xSpeed.value());
-  ConsoleLogger::getInstance().logInfo("Y speed: %f", ySpeed.value());
-  ConsoleLogger::getInstance().logInfo("Rotation: %f", rot.value());
+  // ConsoleLogger::getInstance().logInfo("X speed %f", xSpeed.value());
+  // ConsoleLogger::getInstance().logInfo("Y speed: %f", ySpeed.value());
+  // ConsoleLogger::getInstance().logInfo("Rotation: %f", rot.value());
 
   double currentTime = wpi::Now() * 1e-6;
   double elapsedTime = currentTime - m_prevTime;
