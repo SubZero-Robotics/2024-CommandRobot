@@ -7,38 +7,19 @@
 #include <utils/ConsoleLogger.h>
 
 class ClimbSubsystem
-    : public BaseSingleAxisSubsystem<rev::CANSparkBase,
+    : public BaseSingleAxisSubsystem<rev::CANSparkMax,
                                      rev::SparkRelativeEncoder> {
    public:
-    ClimbSubsystem(int motorID) ;
+    ClimbSubsystem(SingleAxisConfig &config, rev::CANSparkMax &motor, rev::SparkRelativeEncoder &encoder,
+        frc::DigitalInput *minLimitSwitch, std::string name) :
+        BaseSingleAxisSubsystem(config, motor, encoder, minLimitSwitch, nullptr, name, true)
+        { }
 
-    void ResetEncoder() override;
+    void ResetEncoder() override {
+        _enc.SetPosition(0);
+    }
 
-    double GetCurrentPosition() override;
-
-   private:
-    // Put this inside of the constructor and have motorID as a parameter
-    rev::CANSparkMax m_extensionMotor{motorID,
-                                      rev::CANSparkMax::MotorType::kBrushless};
-
-    rev::SparkMaxRelativeEncoder m_encoder = m_extensionMotor.GetEncoder(
-        rev::SparkMaxRelativeEncoder::Type::kHallSensor,
-        ClimbConstants::kTicksPerMotorRotation);
-
-    SingleAxisConfig m_config = {
-        .type = BaseSingleAxisSubsystem::AxisType::Linear,
-        .pid = frc::PIDController(ClimbConstants::kClimberSetP,
-                                   ClimbConstants::kClimberSetI,
-                                   ClimbConstants::kClimberSetD),
-        .minDistance = 0,
-        .maxDistance = ClimbConstants::kMaxArmDistance,
-        .distancePerRevolution = ClimbConstants::kInPerRotation,
-        .stepSize = ClimbConstants::kClimbStepSize,
-        .motorMultiplier = .5,
-        .pidResultMultiplier = -6.0,
-        .minLimitSwitchPort = ClimbConstants::kClimberLeftLimitSwitchPort,
-        .maxLimitSwitchPort = BaseSingleAxisSubsystem::UNUSED_DIO_PORT,
-        .defaultMovementSpeed = ClimbConstants::kClimbHomingSpeed};
-
-    frc::DigitalInput min{ClimbConstants::kClimberLeftLimitSwitchPort};
+    double GetCurrentPosition() override {
+        return _enc.GetPosition();
+    }
 };

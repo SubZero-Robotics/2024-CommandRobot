@@ -184,6 +184,9 @@ constexpr double kWristSetFF = 0.000015;
 
 namespace ClimbConstants {
     // These are placeholder values, these all will be changed
+    constexpr int kClimberLeftMotorId = 10;
+    constexpr int kClimberRightMotorId = 11;
+
     constexpr double kClimberSetP = 1;
     constexpr double kClimberSetI = 0;
     constexpr double kClimberSetD = 0;
