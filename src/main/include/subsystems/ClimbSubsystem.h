@@ -1,6 +1,7 @@
 #pragma once
 
 #include <frc/controller/PIDController.h>
+#include <memory>
 #include "Constants.h"
 #include <rev/CANSparkMax.h>
 #include <subsystems/BaseSingleAxisSubsystem.h>

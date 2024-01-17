@@ -22,6 +22,7 @@
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
+#include "subsystems/ClimbSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 #include "commands/Funni.h"
 #include "commands/LEDToggleCommand.h"
