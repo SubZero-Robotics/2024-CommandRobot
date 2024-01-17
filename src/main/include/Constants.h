@@ -182,9 +182,3 @@ constexpr double kWristSetD = 0.00062724;
 constexpr double kWristSetIZone = 0.01;
 constexpr double kWristSetFF = 0.000015;
 }  // namespace ArmConstants
-
-namespace ColorConstants {
-    const frc::Color8Bit kRed(0xFF, 0x00, 0x00);
-    const frc::Color8Bit kGreen(0xFF, 0x00, 0x00);
-    const frc::Color8Bit kBlue(0xFF, 0x00, 0x00);
-}
