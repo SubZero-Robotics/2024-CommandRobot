@@ -12,6 +12,11 @@
 
 using namespace CANSparkMaxConstants;
 
+enum class IntakeDirection {
+    AmpSide = 0,
+    SpeakerSide
+};
+
 class IntakeSubsystem : public frc2::SubsystemBase {
    public:
     IntakeSubsystem();
@@ -27,9 +32,9 @@ class IntakeSubsystem : public frc2::SubsystemBase {
      */
     void SimulationPeriodic() override;
 
-    void In(RobotState);
+    void In(IntakeDirection);
     void Stop();
-    void Out(RobotState);
+    void Out();
 
    private:
     // Components (e.g. motor controllers and sensors) should generally be
