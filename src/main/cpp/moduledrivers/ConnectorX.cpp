@@ -7,6 +7,9 @@ ConnectorX::ConnectorXBoard::ConnectorXBoard(uint8_t slaveAddress,
     : _i2c(std::make_unique<frc::I2C>(port, slaveAddress)),
       _slaveAddress(slaveAddress),
       m_simDevice("Connector-X", static_cast<int>(port), slaveAddress) {
+  setColor(LedPort::P0, 0);
+  setOff(LedPort::P0);
+  setColor(LedPort::P1, 0);
   setOff(LedPort::P1);
 
   if (m_simDevice) {
@@ -72,12 +75,7 @@ void ConnectorX::ConnectorXBoard::setLedPort(LedPort port) {
 }
 
 LedPort ConnectorX::ConnectorXBoard::getLedPort() {
-  Commands::Command cmd;
-  cmd.commandType = Commands::CommandType::GetPort;
-  cmd.commandData.commandGetPort = {};
-
-  Commands::Response res = sendCommand(cmd, true);
-  return (LedPort)res.responseData.responseReadPort.port;
+  return _currentLedPort;
 }
 
 void ConnectorX::ConnectorXBoard::setOn(LedPort port) {
@@ -132,6 +130,8 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
   ConsoleLogger::getInstance().logInfo("colour LED port", (int)port);
 
   setLedPort(port);
+
+  _currentColors[(uint8_t)port] = frc::Color8Bit(red, green, blue);
 
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::ChangeColor;
@@ -199,17 +199,7 @@ frc::Color8Bit ConnectorX::ConnectorXBoard::getCurrentColor(LedPort port) {
 
   setLedPort(port);
 
-  Commands::Command cmd;
-  cmd.commandType = Commands::CommandType::GetColor;
-  cmd.commandData.commandGetColor = {};
-
-  Commands::Response res = sendCommand(cmd, true);
-  auto color = res.responseData.responseReadColor.color;
-  return frc::Color8Bit(
-    (color >> 16),
-    (color >> 8) & 0xff,
-    color & 0xff
-  );
+  return _currentColors[(uint8_t)port];
 }
 
 Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
