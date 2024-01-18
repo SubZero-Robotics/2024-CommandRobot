@@ -2,14 +2,14 @@
 
 #include "ClimbSubsystem.h"
 
-class LeftClimbSubsystem : public ClimbSubsystem {
+class RightClimbSubsystem : public ClimbSubsystem {
     public:
-        LeftClimbSubsystem() :
-            ClimbSubsystem(m_config, m_motor, m_encoder, &min, "Left climb subsystem") {
+        RightClimbSubsystem() :
+            ClimbSubsystem(m_config, m_motor, m_encoder, &min, "Right climb subsystem") {
         }
 
     private:
-        rev::CANSparkMax m_motor{ClimbConstants::kClimberLeftMotorId,
+        rev::CANSparkMax m_motor{ClimbConstants::kClimberRightMotorId,
                                  rev::CANSparkMax::MotorType::kBrushless};
 
         rev::SparkRelativeEncoder m_encoder = m_motor.GetEncoder(
@@ -27,9 +27,9 @@ class LeftClimbSubsystem : public ClimbSubsystem {
             .stepSize = ClimbConstants::kClimbStepSize,
             .motorMultiplier = .5,
             .pidResultMultiplier = -6.0,
-            .minLimitSwitchPort = ClimbConstants::kClimberLeftLimitSwitchPort,
+            .minLimitSwitchPort = ClimbConstants::kClimberRightLimitSwitchPort,
             .maxLimitSwitchPort = BaseSingleAxisSubsystem::UNUSED_DIO_PORT,
             .defaultMovementSpeed = ClimbConstants::kClimbHomingSpeed};
 
-        frc::DigitalInput min{ClimbConstants::kClimberLeftLimitSwitchPort};
+        frc::DigitalInput min{ClimbConstants::kClimberRightLimitSwitchPort};
 };

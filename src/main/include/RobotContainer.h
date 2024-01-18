@@ -20,6 +20,8 @@
 #include "moduledrivers/ConnectorX.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/WristSubsystem.h"
+#include "subsystems/LeftClimbSubsystem.h"
+#include "subsystems/RightClimbSubsystem.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -47,7 +49,14 @@ class RobotContainer {
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;
 
-  std::unique_ptr<WristSubsystem> m_wrist;
+#ifdef TEST_SWERVE_BOT
+  // std::unique_ptr<WristSubsystem> m_wrist;
+#endif
+
+#ifndef TEST_SWERVE_BOT
+  LeftClimbSubsystem m_leftClimb;
+  RightClimbSubsystem m_rightClimb;
+#endif
 
   ConnectorX::ConnectorXBoard m_leds{kLedAddress};
   IntakeSubsystem m_intake{&m_leds};
