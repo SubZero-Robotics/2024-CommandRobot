@@ -20,6 +20,7 @@
 #include "Constants.h"
 #include "subsystems/ISingleAxisSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
+#include "utils/ConsoleLogger.h"
 
 template <typename Motor, typename Encoder>
 class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {

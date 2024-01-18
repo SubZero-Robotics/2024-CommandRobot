@@ -200,6 +200,26 @@ constexpr double kWristSetIZone = 0.01;
 constexpr double kWristSetFF = 0.000015;
 }  // namespace ArmConstants
 
+namespace ClimbConstants {
+    // These are placeholder values, these all will be changed
+    constexpr int kClimberLeftMotorId = 10;
+    constexpr int kClimberRightMotorId = 11;
+
+    constexpr double kClimberSetP = 1;
+    constexpr double kClimberSetI = 0;
+    constexpr double kClimberSetD = 0;
+
+    constexpr double kMaxArmDistance = 5;
+    constexpr double kInPerRotation = 1;
+
+    constexpr int kClimberLeftLimitSwitchPort = 0;
+    constexpr int kClimberRightLimitSwitchPort = 1;
+
+    constexpr double kClimbStepSize = 1;
+    constexpr double kClimbHomingSpeed = 1;
+    constexpr int kTicksPerMotorRotation = 1;
+}
+
 namespace RobotConstants {
 #ifdef TEST_SWERVE_BOT
 const std::string kRoborioSerialNumber = "0326F2F2";

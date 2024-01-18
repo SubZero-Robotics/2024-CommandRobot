@@ -16,7 +16,7 @@
 void Robot::RobotInit() {
   if (frc::RobotController::GetSerialNumber() != RobotConstants::kRoborioSerialNumber) {
     std::cout << "Error: wrong robot\n";
-    throw wpi::uv::Error(ESHUTDOWN);
+    throw wpi::uv::Error(108);
   }
   frc::DataLogManager::Start();
 }

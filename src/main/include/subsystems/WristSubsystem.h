@@ -7,7 +7,7 @@
 #include "utils/ConsoleLogger.h"
 
 class WristSubsystem
-    : public BaseSingleAxisSubsystem<rev::CANSparkBase,
+    : public BaseSingleAxisSubsystem<rev::CANSparkMax,
                                      rev::SparkAbsoluteEncoder> {
    public:
     WristSubsystem()
