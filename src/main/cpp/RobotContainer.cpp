@@ -37,7 +37,7 @@ RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
 
 #ifdef TEST_SWERVE_BOT
-  m_wrist = std::make_unique<WristSubsystem>();
+  // m_wrist = std::make_unique<WristSubsystem>();
 #endif
 
   // Configure the button bindings
@@ -70,10 +70,10 @@ void RobotContainer::ConfigureButtonBindings() {
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
 #ifdef TEST_SWERVE_BOT
-    m_wrist->SetDefaultCommand(
-        RotateWrist(m_wrist.get(), [this] {
-            return -m_operatorController.GetRightY();
-        }));
+    // m_wrist->SetDefaultCommand(
+    //     RotateWrist(m_wrist.get(), [this] {
+    //         return -m_operatorController.GetRightY();
+    //     }));
 #endif
     
     frc2::JoystickButton(&m_operatorController,
