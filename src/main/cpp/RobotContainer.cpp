@@ -28,6 +28,7 @@
 #include "commands/RotateWristCommand.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
+#include "commands/ShooterShoot.h"
 
 using namespace DriveConstants;
 
@@ -78,6 +79,9 @@ void RobotContainer::ConfigureButtonBindings() {
 
     frc2::JoystickButton(&m_driverController,
                        frc::XboxController::Button::kX).OnTrue(LEDToggle(&m_leds).ToPtr());
+    
+    frc2::JoystickButton(&m_driverController,
+                        frc::XboxController::Button::kB).WhileTrue(ShooterShoot(&m_shooter).ToPtr());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

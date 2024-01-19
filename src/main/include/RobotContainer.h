@@ -20,6 +20,7 @@
 #include "moduledrivers/ConnectorX.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/WristSubsystem.h"
+#include "subsystems/ShooterSubsystem.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -51,6 +52,7 @@ class RobotContainer {
 
   ConnectorX::ConnectorXBoard m_leds{kLedAddress};
   IntakeSubsystem m_intake{&m_leds};
+  ShooterSubsystem m_shooter;
 
   void ConfigureButtonBindings();
 };
