@@ -24,24 +24,38 @@ class LEDToggle : public frc2::CommandHelper<frc2::Command, LEDToggle> {
      *
      * @param subsystem The subsystem used by this command.
      */
-    explicit LEDToggle(ConnectorX::ConnectorXBoard *leds)
+    explicit LEDToggle(LedSubsystem *leds)
         : m_leds{leds}, isFinished{false} {
     }
 
     void Execute() override {
-        if (m_leds->getCurrentColor(ConnectorX::LedPort::P1) == ColorConstants::kPurple) {
-            m_leds->setColor(ConnectorX::LedPort::P1, ColorConstants::kYellow);
-        } else {
-            m_leds->setColor(ConnectorX::LedPort::P1, ColorConstants::kPurple);
+        switch(currentState) {
+            case 0:
+                m_leds->idlingLED(); 
+                break;
+            case 1:
+                m_leds->intakingLED();
+                break;
+            case 3:
+                m_leds->scoringAmpLED();
+                break;
+            case 4:
+                m_leds->scoringSpeakerLED(); 
+                break;
+            case 5:
+                m_leds->stowingLED(); 
+                break;
         }
-        m_leds->setPattern(ConnectorX::LedPort::P1, ConnectorX::PatternType::SetAll, true);
 
+        currentState++;
+        currentState %= 5;
         isFinished = true;
     }
 
     bool IsFinished() override { return isFinished; }
 
    private:
-    ConnectorX::ConnectorXBoard* m_leds;
+    LedSubsystem* m_leds;
+    uint8_t currentState = 0;
     bool isFinished = false;
 };
