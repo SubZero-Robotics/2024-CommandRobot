@@ -7,14 +7,21 @@ using namespace ConnectorX;
 
 class LedSubsystem {
     public:
-        LedSubsystem() : m_connectorX(ConnectorXBoard(kLedAddress)) {}
+        LedSubsystem() : m_connectorX(ConnectorXBoard(kLedAddress)) {
+            m_connectorX.setLedPort(ConnectorX::LedPort::P1);
+        }
 
-        void intakingLED();
-        void scoringSpeakerLED();
-        void scoringAmpLED();
-        void stowingLED();
-        void idlingLED();
+        void intakingLedColor();
+        void scoringSpeakerLedColor();
+        void scoringAmpLedColor();
+        void stowingLedColor();
+        void idlingLedColor();
+
+        void intakingLedPattern();
+        void scoringSpeakerLedPattern();
+        void scoringAmpLedPattern();
+        void stowingLedPattern();
+        void idlingLedPattern();
         
-    private:
         ConnectorXBoard m_connectorX;
 };

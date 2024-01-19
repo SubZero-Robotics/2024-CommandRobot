@@ -378,11 +378,11 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    */
   LedPort getLedPort();
 
+  void setLedPort(LedPort port);
+
  private:
   Commands::Response sendCommand(Commands::Command command,
                                  bool expectResponse = false);
-
-  void setLedPort(LedPort port);
 
   std::unique_ptr<frc::I2C> _i2c;
   uint8_t _slaveAddress;

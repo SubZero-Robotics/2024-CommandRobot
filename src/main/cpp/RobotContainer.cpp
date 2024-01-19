@@ -26,10 +26,12 @@
 #include "subsystems/ClimbSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 #include "commands/Funni.h"
-#include "commands/LEDToggleCommand.h"
+#include "commands/LEDToggleColorCommand.h"
+#include "commands/LEDTogglePatternCommand.h"
 #include "commands/RotateWristCommand.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
+#include <frc2/command/WaitCommand.h>
 
 using namespace DriveConstants;
 
@@ -76,14 +78,21 @@ void RobotContainer::ConfigureButtonBindings() {
     //     }));
 #endif
     
-    frc2::JoystickButton(&m_operatorController,
-                       frc::XboxController::Button::kRightBumper).WhileTrue(IntakeIn(&m_intake).ToPtr());
+    // frc2::JoystickButton(&m_operatorController,
+    //                    frc::XboxController::Button::kRightBumper).WhileTrue(IntakeIn(&m_intake).ToPtr());
 
-    frc2::JoystickButton(&m_operatorController,
-                       frc::XboxController::Button::kLeftBumper).WhileTrue(IntakeOut(&m_intake).ToPtr());
+    // frc2::JoystickButton(&m_operatorController,
+    //                    frc::XboxController::Button::kLeftBumper).WhileTrue(IntakeOut(&m_intake).ToPtr());
 
     frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kX).OnTrue(LEDToggle(&m_leds).ToPtr());
+                       frc::XboxController::Button::kX).OnTrue(
+                        LEDToggleColor(&m_leds).ToPtr()
+                        .AndThen(
+                            frc2::WaitCommand(0.02_s).ToPtr()
+                        )
+                        .AndThen(
+                            LEDTogglePattern(&m_leds).ToPtr()
+                        ));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

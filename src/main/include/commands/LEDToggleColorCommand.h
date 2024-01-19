@@ -6,8 +6,10 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
+#include <frc/Timer.h>
 
 #include "moduledrivers/ConnectorX.h"
+#include "subsystems/LedSubsystem.h"
 #include "ColorConstants.h"
 
 /**
@@ -17,33 +19,36 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class LEDToggle : public frc2::CommandHelper<frc2::Command, LEDToggle> {
+
+using namespace ConnectorX;
+
+class LEDToggleColor : public frc2::CommandHelper<frc2::Command, LEDToggleColor> {
    public:
     /**
      * Creates a new LEDYellow.
      *
      * @param subsystem The subsystem used by this command.
      */
-    explicit LEDToggle(LedSubsystem *leds)
+    explicit LEDToggleColor(LedSubsystem *leds)
         : m_leds{leds}, isFinished{false} {
     }
 
     void Execute() override {
         switch(currentState) {
             case 0:
-                m_leds->idlingLED(); 
+                m_leds->idlingLedColor();
                 break;
             case 1:
-                m_leds->intakingLED();
+                m_leds->intakingLedColor();
+                break;
+            case 2:
+                m_leds->scoringAmpLedColor();
                 break;
             case 3:
-                m_leds->scoringAmpLED();
+                m_leds->scoringSpeakerLedColor();
                 break;
             case 4:
-                m_leds->scoringSpeakerLED(); 
-                break;
-            case 5:
-                m_leds->stowingLED(); 
+                m_leds->stowingLedColor(); 
                 break;
         }
 
