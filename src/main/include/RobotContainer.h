@@ -17,11 +17,12 @@
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
-#include "moduledrivers/ConnectorX.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/WristSubsystem.h"
 #include "subsystems/LeftClimbSubsystem.h"
 #include "subsystems/RightClimbSubsystem.h"
+#include "subsystems/LedSubsystem.h"
+#include "utils/State.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -39,7 +40,7 @@ class RobotContainer {
  private:
   // The driver's controller
   frc::XboxController m_driverController{OIConstants::kDriverControllerPort};
-  frc::XboxController m_operatorController{OIConstants::kOperatorControllerPort};
+  // frc::XboxController m_operatorController{OIConstants::kOperatorControllerPort};
 
   // The robot's subsystems and commands are defined here...
 
@@ -58,8 +59,9 @@ class RobotContainer {
   RightClimbSubsystem m_rightClimb;
 #endif
 
-  ConnectorX::ConnectorXBoard m_leds{kLedAddress};
-  IntakeSubsystem m_intake{&m_leds};
+  LedSubsystem m_leds;
+  IntakeSubsystem m_intake;
+  StateManager m_stateManager;
 
   void ConfigureButtonBindings();
 };

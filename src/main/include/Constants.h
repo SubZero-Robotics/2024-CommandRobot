@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 // Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
-// #define TEST_SWERVE_BOT
+#define TEST_SWERVE_BOT
 
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <rev/CANSparkMax.h>
@@ -14,6 +14,7 @@
 #include <units/length.h>
 #include <units/time.h>
 #include <units/velocity.h>
+#include <frc/util/Color8Bit.h>
 
 #include <numbers>
 
@@ -164,7 +165,7 @@ constexpr int kOperatorControllerPort = 1;
 constexpr double kDriveDeadband = 0.05;
 }  // namespace OIConstants
 
-constexpr uint8_t kLedAddress = 19;
+constexpr uint8_t kLedAddress = 23;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
