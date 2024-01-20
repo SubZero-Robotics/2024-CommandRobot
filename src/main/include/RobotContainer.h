@@ -22,6 +22,7 @@
 #include "subsystems/LeftClimbSubsystem.h"
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/LedSubsystem.h"
+#include "utils/State.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -60,6 +61,7 @@ class RobotContainer {
 
   LedSubsystem m_leds;
   IntakeSubsystem m_intake;
+  StateManager m_stateManager;
 
   void ConfigureButtonBindings();
 };

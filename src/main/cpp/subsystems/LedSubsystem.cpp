@@ -1,42 +1,67 @@
 #include "subsystems/LedSubsystem.h"
 #include "ColorConstants.h"
 
-void LedSubsystem::intakingLedColor() {
-    m_connectorX.setColor(LedConstants::kIntakeLedPort, ColorConstants::kRed);
+void LedSubsystem::Periodic() {
+
 }
 
-void LedSubsystem::scoringSpeakerLedColor() {
-    m_connectorX.setColor(LedConstants::kSpeakerLedPort, ColorConstants::kGreen);
+void LedSubsystem::SimulationPeriodic() {
+
 }
 
-void LedSubsystem::scoringAmpLedColor() {
-    m_connectorX.setColor(LedConstants::kAmpLedPort, ColorConstants::kBlue);
+frc2::CommandPtr LedSubsystem::ShowFromState(StateGetter stateGetter) {
+    auto state = stateGetter();
+
+    switch (state) {
+        case RobotState::Intaking:
+            return Intaking();
+        case RobotState::ScoringSpeaker:
+            return ScoringSpeaker();
+        case RobotState::ScoringAmp:
+            return ScoringAmp();
+        case RobotState::Stowing:
+            return Stowing();
+        case RobotState::Idling:
+            return Idling();
+        default:
+            return frc2::InstantCommand([] {}).ToPtr();
+    }
 }
 
-void LedSubsystem::stowingLedColor() {
-    m_connectorX.setColor(LedConstants::kStowLedPort, ColorConstants::kPurple);
+frc2::CommandPtr LedSubsystem::Intaking() {
+    return setColorAndPattern(LedConstants::kIntakeLedPort, ColorConstants::kRed, PatternType::Blink);
 }
 
-void LedSubsystem::idlingLedColor() {
-    m_connectorX.setColor(LedConstants::kIdleLedPort, ColorConstants::kYellow);
+frc2::CommandPtr LedSubsystem::ScoringSpeaker() {
+    return setColorAndPattern(LedConstants::kSpeakerLedPort, ColorConstants::kGreen, PatternType::Blink);
 }
 
-void LedSubsystem::intakingLedPattern() {
-    m_connectorX.setPattern(LedConstants::kIntakeLedPort, PatternType::Blink);
+frc2::CommandPtr LedSubsystem::ScoringAmp() {
+    return setColorAndPattern(LedConstants::kAmpLedPort, ColorConstants::kBlue, PatternType::Blink);
 }
 
-void LedSubsystem::scoringSpeakerLedPattern() {
-    m_connectorX.setPattern(LedConstants::kSpeakerLedPort, PatternType::Blink);
+frc2::CommandPtr LedSubsystem::Stowing() {
+    return setColorAndPattern(LedConstants::kStowLedPort, ColorConstants::kPurple, PatternType::Breathe);
 }
 
-void LedSubsystem::scoringAmpLedPattern() {
-    m_connectorX.setPattern(LedConstants::kAmpLedPort, PatternType::Blink);
+frc2::CommandPtr LedSubsystem::Idling() {
+    return setColorAndPattern(LedConstants::kIdleLedPort, ColorConstants::kYellow, PatternType::SetAll, true);
 }
 
-void LedSubsystem::stowingLedPattern() {
-    m_connectorX.setPattern(LedConstants::kStowLedPort, PatternType::Breathe);
-}
-
-void LedSubsystem::idlingLedPattern() {
-    m_connectorX.setPattern(LedConstants::kIdleLedPort, PatternType::SetAll);
+frc2::CommandPtr LedSubsystem::setColorAndPattern(LedPort port, frc::Color8Bit color, PatternType pattern, bool oneShot,
+    int16_t delay) {
+    return frc2::InstantCommand([this, port] { m_connectorX.setLedPort(port); }, {this}).ToPtr()
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        frc2::InstantCommand([this, port, color] { m_connectorX.setColor(port, color); }, {this}).ToPtr()
+    )
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        frc2::InstantCommand([this, port, pattern, oneShot, delay]
+            { m_connectorX.setPattern(port, pattern, oneShot, delay); }, {this}).ToPtr()
+    );
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "Constants.h"
 
 enum class RobotState {
@@ -9,6 +11,8 @@ enum class RobotState {
     Stowing,
     Idling
 };
+
+typedef std::function<RobotState ()> StateGetter;
 
 class StateManager {
     public:

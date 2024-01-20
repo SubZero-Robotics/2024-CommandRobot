@@ -26,8 +26,6 @@
 #include "subsystems/ClimbSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 #include "commands/Funni.h"
-#include "commands/LEDToggleColorCommand.h"
-#include "commands/LEDTogglePatternCommand.h"
 #include "commands/RotateWristCommand.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
@@ -86,13 +84,7 @@ void RobotContainer::ConfigureButtonBindings() {
 
     frc2::JoystickButton(&m_driverController,
                        frc::XboxController::Button::kX).OnTrue(
-                        LEDToggleColor(&m_leds).ToPtr()
-                        .AndThen(
-                            frc2::WaitCommand(0.02_s).ToPtr()
-                        )
-                        .AndThen(
-                            LEDTogglePattern(&m_leds).ToPtr()
-                        ));
+                        m_leds.ShowFromState([this] { return m_stateManager.getState(); }));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
