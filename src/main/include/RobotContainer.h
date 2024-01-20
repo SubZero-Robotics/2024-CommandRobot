@@ -18,7 +18,6 @@
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
-#include "subsystems/WristSubsystem.h"
 #include "subsystems/LeftClimbSubsystem.h"
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/LedSubsystem.h"
@@ -51,16 +50,16 @@ class RobotContainer {
   frc::SendableChooser<frc2::Command*> m_chooser;
 
 #ifdef TEST_SWERVE_BOT
-  // std::unique_ptr<WristSubsystem> m_wrist;
+
 #endif
 
 #ifndef TEST_SWERVE_BOT
   LeftClimbSubsystem m_leftClimb;
   RightClimbSubsystem m_rightClimb;
+  IntakeSubsystem m_intake;
 #endif
 
   LedSubsystem m_leds;
-  IntakeSubsystem m_intake;
   StateManager m_stateManager;
 
   void ConfigureButtonBindings();

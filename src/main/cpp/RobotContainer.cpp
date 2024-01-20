@@ -18,6 +18,7 @@
 #include <units/angle.h>
 #include <units/velocity.h>
 #include <frc/RobotController.h>
+#include <frc2/command/WaitCommand.h>
 
 #include <utility>
 
@@ -26,19 +27,13 @@
 #include "subsystems/ClimbSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 #include "commands/Funni.h"
-#include "commands/RotateWristCommand.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
-#include <frc2/command/WaitCommand.h>
 
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
-
-#ifdef TEST_SWERVE_BOT
-  // m_wrist = std::make_unique<WristSubsystem>();
-#endif
 
   // Configure the button bindings
   ConfigureButtonBindings();
@@ -59,31 +54,30 @@ RobotContainer::RobotContainer() {
       },
       {&m_drive}));
 
+    // This won't work since we're getting the reference of an r-value which goes out of scope at the end of the method
     m_chooser.SetDefaultOption("Leave Community", pathplanner::PathPlannerAuto("Leave COM").ToPtr().Unwrap().get());
     ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
 
 void RobotContainer::ConfigureButtonBindings() {
   frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kRightBumper)
+                      frc::XboxController::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-#ifdef TEST_SWERVE_BOT
-    // m_wrist->SetDefaultCommand(
-    //     RotateWrist(m_wrist.get(), [this] {
-    //         return -m_operatorController.GetRightY();
-    //     }));
+  frc2::JoystickButton(&m_driverController,
+                      frc::XboxController::Button::kX)
+      .OnTrue(m_leds.ShowFromState([this] { return m_stateManager.getState(); }));
+  
+#ifndef TEST_SWERVE_BOT
+  // Intake bindings to shoulder buttons
+  frc2::JoystickButton(&m_driverController,
+                      frc::XboxController::Button::kRightBumper)
+      .WhileTrue(IntakeIn(&m_intake).ToPtr());
+  
+  frc2::JoystickButton(&m_driverController,
+                      frc::XboxController::Button::kLeftBumper)
+      .WhileTrue(IntakeOut(&m_intake).ToPtr());
 #endif
-    
-    // frc2::JoystickButton(&m_operatorController,
-    //                    frc::XboxController::Button::kRightBumper).WhileTrue(IntakeIn(&m_intake).ToPtr());
-
-    // frc2::JoystickButton(&m_operatorController,
-    //                    frc::XboxController::Button::kLeftBumper).WhileTrue(IntakeOut(&m_intake).ToPtr());
-
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kX).OnTrue(
-                        m_leds.ShowFromState([this] { return m_stateManager.getState(); }));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
