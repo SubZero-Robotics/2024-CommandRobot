@@ -11,12 +11,6 @@
 
 using namespace CANSparkMaxConstants;
 
-// TODO: Move this to the shooter subsystem
-enum class IntakeDirection {
-    AmpSide = 0,
-    SpeakerSide
-};
-
 class IntakeSubsystem : public frc2::SubsystemBase {
    public:
     IntakeSubsystem();
@@ -25,8 +19,10 @@ class IntakeSubsystem : public frc2::SubsystemBase {
 
     void SimulationPeriodic() override;
 
-    void In();
     void Stop();
+
+    void In();
+
     void Out();
 
     bool NotePresent();
@@ -35,6 +31,4 @@ class IntakeSubsystem : public frc2::SubsystemBase {
     rev::CANSparkFlex m_intakeSpinnyBoy{CANSparkMaxConstants::kIntakeSpinnyBoiId, rev::CANSparkLowLevel::MotorType::kBrushless};
 
     frc::DigitalInput m_beamBreak{Intakeconstants::kBeamBreakDigitalPort};
-    // This is moving to the shooter subsystem
-    // rev::CANSparkMax m_vectorSpinnyboy{CANSparkMaxConstants::kVectorSpinnyBoiId, rev::CANSparkLowLevel::MotorType::kBrushless};
 };
