@@ -51,8 +51,13 @@ DriveSubsystem::DriveSubsystem()
           pathplanner::PIDConstants(0.5, 0.0,
                                     0.0),  // Translation PID constants
           pathplanner::PIDConstants(0.5, 0.0, 0.0),  // Rotation PID constants
-          4.5_mps,                                   // Max module speed, in m/s
-          0.4_m,  // Drive base radius in meters. Distance from robot center to
+          3.0_mps,                                   // Max module speed, in m/s
+          #ifdef TEST_SWERVE_BOT
+          0.4579874_m,  // Drive base radius in meters. Distance from robot center to
+          #endif
+          #ifndef TEST_SWERVE_BOT
+          0.529844_m,
+          #endif
                   // furthest module.
           pathplanner::ReplanningConfig()  // Default path replanning config.
                                            // See the API for the options here),

@@ -5,6 +5,7 @@
 #include "RobotContainer.h"
 
 #include <frc/IterativeRobotBase.h>
+#include <frc/RobotController.h>
 #include <frc/controller/PIDController.h>
 #include <frc/geometry/Translation2d.h>
 #include <frc/shuffleboard/Shuffleboard.h>
@@ -14,21 +15,21 @@
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/SwerveControllerCommand.h>
+#include <frc2/command/WaitCommand.h>
 #include <frc2/command/button/JoystickButton.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
 #include <units/angle.h>
 #include <units/velocity.h>
-#include <frc/RobotController.h>
-#include <frc2/command/WaitCommand.h>
 
 #include <utility>
 
 #include "Constants.h"
-#include "subsystems/DriveSubsystem.h"
-#include "subsystems/ClimbSubsystem.h"
-#include "utils/ShuffleboardLogger.h"
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
+#include "subsystems/ClimbSubsystem.h"
+#include "subsystems/DriveSubsystem.h"
+#include "utils/ShuffleboardLogger.h"
 
 using namespace DriveConstants;
 
@@ -54,32 +55,47 @@ RobotContainer::RobotContainer() {
       },
       {&m_drive}));
 
-    // This won't work since we're getting the reference of an r-value which goes out of scope at the end of the method
-    m_chooser.SetDefaultOption("Leave Community", pathplanner::PathPlannerAuto("Leave COM").ToPtr().Unwrap().get());
-    ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
+  // This won't work since we're getting the reference of an r-value which goes
+  // out of scope at the end of the method
+  m_chooser.SetDefaultOption(
+      "Leave Community",
+      pathplanner::PathPlannerAuto("Leave COM").ToPtr().Unwrap().get());
+  ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
+
+  pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Stowing());
 }
 
 void RobotContainer::ConfigureButtonBindings() {
   frc2::JoystickButton(&m_driverController,
-                      frc::XboxController::Button::kRightBumper)
+                       frc::XboxController::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-  frc2::JoystickButton(&m_driverController,
-                      frc::XboxController::Button::kX)
-      .OnTrue(m_leds.ShowFromState([this] { return m_stateManager.getState(); }));
-  
+  frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kX)
+      .OnTrue(
+          m_leds.ShowFromState([this] { return m_stateManager.getState(); }));
+
+  frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kY)
+      .OnTrue(pathplanner::AutoBuilder::pathfindToPose(
+                  frc::Pose2d{1.5_m, 5.5_m, 0_rad},
+                  pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq,
+                                               540_deg_per_s, 720_deg_per_s_sq},
+                  0.0_mps,  // Goal end velocity in meters/sec
+                  0.0_m  // Rotation delay distance in meters. This is how far
+                         // the robot should travel before attempting to rotate.
+                  ));
+
 #ifndef TEST_SWERVE_BOT
   // Intake bindings to shoulder buttons
   frc2::JoystickButton(&m_driverController,
-                      frc::XboxController::Button::kRightBumper)
+                       frc::XboxController::Button::kRightBumper)
       .WhileTrue(IntakeIn(&m_intake).ToPtr());
-  
+
   frc2::JoystickButton(&m_driverController,
-                      frc::XboxController::Button::kLeftBumper)
+                       frc::XboxController::Button::kLeftBumper)
       .WhileTrue(IntakeOut(&m_intake).ToPtr());
 #endif
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-    return pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName).ToPtr();
+  return pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName).ToPtr();
 }

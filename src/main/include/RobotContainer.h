@@ -14,6 +14,7 @@
 #include <frc2/command/ParallelRaceGroup.h>
 #include <frc2/command/RunCommand.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/auto/NamedCommands.h>
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
