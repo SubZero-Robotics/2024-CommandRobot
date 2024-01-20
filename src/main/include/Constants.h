@@ -2,6 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
+// #define TEST_SWERVE_BOT
+
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <rev/CANSparkMax.h>
 #include <units/acceleration.h>
@@ -11,6 +14,7 @@
 #include <units/length.h>
 #include <units/time.h>
 #include <units/velocity.h>
+#include <frc/util/Color8Bit.h>
 
 #include <numbers>
 
@@ -36,11 +40,19 @@ constexpr double kMagnitudeSlewRate = 1.8;   // percent per second (1 = 100%)
 constexpr double kRotationalSlewRate = 2.0;  // percent per second (1 = 100%)
 
 // Chassis configuration
+#ifdef TEST_SWERVE_BOT
+constexpr units::meter_t kTrackWidth =
+    0.5588_m;  // Distance between centers of right and left wheels on robot
+constexpr units::meter_t kWheelBase =
+    0.5588_m;  // Distance between centers of front and back wheels on robot
+#endif
+
+#ifndef TEST_SWERVE_BOT
 constexpr units::meter_t kTrackWidth =
     0.67_m;  // Distance between centers of right and left wheels on robot
 constexpr units::meter_t kWheelBase =
     0.67_m;  // Distance between centers of front and back wheels on robot
-
+#endif
 // Angular offsets of the modules relative to the chassis in radians
 constexpr double kFrontLeftChassisAngularOffset = -std::numbers::pi / 2;
 constexpr double kFrontRightChassisAngularOffset = 0;
@@ -69,7 +81,14 @@ constexpr bool kTurningEncoderInverted = true;
 // The MAXSwerve module can be configured with one of three pinion gears: 12T,
 // 13T, or 14T. This changes the drive speed of the module (a pinion gear with
 // more teeth will result in a robot that drives faster).
+
+#ifdef TEST_SWERVE_BOT
+constexpr int kDrivingMotorPinionTeeth = 13;
+#endif
+
+#ifndef TEST_SWERVE_BOT
 constexpr int kDrivingMotorPinionTeeth = 14;
+#endif
 
 // Calculations required for driving motor conversion factors and feed forward
 constexpr double kDrivingMotorFreeSpeedRps =
@@ -146,13 +165,21 @@ constexpr int kOperatorControllerPort = 1;
 constexpr double kDriveDeadband = 0.05;
 }  // namespace OIConstants
 
-constexpr uint8_t kLedAddress = 0x10;
+constexpr uint8_t kLedAddress = 23;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
-constexpr int kIntakeSpinnyBoyID = 20;
-constexpr int kWristRotationMotorID = 22;
+constexpr int kIntakeSpinnyBoiId = 20;
+constexpr int kVectorSpinnyBoiId = 21;
 }  // namespace CANSparkMaxConstants
+
+namespace Intakeconstants {
+// Change these to match actual values
+constexpr double kIntakeSpeed = 0.33;
+constexpr double kOutakeSpeed = -0.1;
+
+constexpr uint8_t kBeamBreakDigitalPort = 2;
+}
 
 namespace ArmConstants {
 // Motor Constants
@@ -164,10 +191,6 @@ constexpr double kAntiGravityPercentage = -0.05;
 constexpr double kRotationHomingSpeed = .15;
 constexpr double kExtenderHomingSpeed = .66;
 constexpr double kWristHomingSpeed = .33;
-
-// Intake Constants
-constexpr double kIntakeSpeed = 0.33;
-constexpr double kOuttakeSpeed = 0.33;
 
 // Wrist Constants
 constexpr int kWristLimitSwitchPort = 0;
@@ -181,3 +204,33 @@ constexpr double kWristSetD = 0.00062724;
 constexpr double kWristSetIZone = 0.01;
 constexpr double kWristSetFF = 0.000015;
 }  // namespace ArmConstants
+
+namespace ClimbConstants {
+    // These are placeholder values, these all will be changed
+    constexpr int kClimberLeftMotorId = 10;
+    constexpr int kClimberRightMotorId = 11;
+
+    constexpr double kClimberSetP = 1;
+    constexpr double kClimberSetI = 0;
+    constexpr double kClimberSetD = 0;
+
+    constexpr double kMaxArmDistance = 5;
+    constexpr double kInPerRotation = 1;
+
+    constexpr int kClimberLeftLimitSwitchPort = 0;
+    constexpr int kClimberRightLimitSwitchPort = 1;
+
+    constexpr double kClimbStepSize = 1;
+    constexpr double kClimbHomingSpeed = 1;
+    constexpr int kTicksPerMotorRotation = 1;
+}
+
+namespace RobotConstants {
+#ifdef TEST_SWERVE_BOT
+const std::string kRoborioSerialNumber = "0326F2F2";
+#endif
+
+#ifndef TEST_SWERVE_BOT
+const std::string kRoborioSerialNumber = "032B4B68";
+#endif
+}

@@ -18,7 +18,22 @@ class IntakeIn : public frc2::CommandHelper<frc2::Command, IntakeIn> {
         AddRequirements(m_intake);
     }
 
-    void Execute() override { m_intake->In(); }
+    void Initialize() override {
+        if (m_intake->NotePresent()) {
+            isFinished = true;
+        }
+
+        isFinished = false;
+    }
+
+    void Execute() override {
+        if (m_intake->NotePresent()) {
+            m_intake->Stop();
+            isFinished = true;
+        }
+
+        m_intake->In();
+    }
 
     bool IsFinished() override { return isFinished; }
 

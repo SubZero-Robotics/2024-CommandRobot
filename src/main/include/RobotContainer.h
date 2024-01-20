@@ -17,10 +17,11 @@
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
-#include "moduledrivers/ConnectorX.h"
 #include "subsystems/IntakeSubsystem.h"
-#include "subsystems/WristSubsystem.h"
-#include "subsystems/ShooterSubsystem.h"
+#include "subsystems/LeftClimbSubsystem.h"
+#include "subsystems/RightClimbSubsystem.h"
+#include "subsystems/LedSubsystem.h"
+#include "utils/State.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -38,7 +39,7 @@ class RobotContainer {
  private:
   // The driver's controller
   frc::XboxController m_driverController{OIConstants::kDriverControllerPort};
-  frc::XboxController m_operatorController{OIConstants::kOperatorControllerPort};
+  // frc::XboxController m_operatorController{OIConstants::kOperatorControllerPort};
 
   // The robot's subsystems and commands are defined here...
 
@@ -48,11 +49,18 @@ class RobotContainer {
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;
 
-  std::unique_ptr<WristSubsystem> m_wrist;
+#ifdef TEST_SWERVE_BOT
 
-  ConnectorX::ConnectorXBoard m_leds{kLedAddress};
-  IntakeSubsystem m_intake{&m_leds};
-  ShooterSubsystem m_shooter;
+#endif
+
+#ifndef TEST_SWERVE_BOT
+  LeftClimbSubsystem m_leftClimb;
+  RightClimbSubsystem m_rightClimb;
+  IntakeSubsystem m_intake;
+#endif
+
+  LedSubsystem m_leds;
+  StateManager m_stateManager;
 
   void ConfigureButtonBindings();
 };
