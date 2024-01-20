@@ -32,9 +32,9 @@ class IntakeSubsystem : public frc2::SubsystemBase {
     bool NotePresent();
 
    private:
-    rev::CANSparkFlex m_intakeSpinnyBoy{CANSparkMaxConstants::kIntakeSpinnyBoyID, rev::CANSparkLowLevel::MotorType::kBrushless};
+    rev::CANSparkFlex m_intakeSpinnyBoy{CANSparkMaxConstants::kIntakeSpinnyBoiId, rev::CANSparkLowLevel::MotorType::kBrushless};
 
     frc::DigitalInput m_beamBreak{Intakeconstants::kBeamBreakDigitalPort};
     // This is moving to the shooter subsystem
-    // rev::CANSparkMax m_vectorSpinnyboy{CANSparkMaxConstants::kVectorSpinnyBoyID, rev::CANSparkLowLevel::MotorType::kBrushless};
+    // rev::CANSparkMax m_vectorSpinnyboy{CANSparkMaxConstants::kVectorSpinnyBoiId, rev::CANSparkLowLevel::MotorType::kBrushless};
 };

@@ -27,7 +27,6 @@
 #include "subsystems/ClimbSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 #include "commands/Funni.h"
-#include "commands/RotateWristCommand.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
 

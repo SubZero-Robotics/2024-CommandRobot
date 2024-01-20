@@ -17,8 +17,7 @@ void IntakeSubsystem::In() {
 }
 
 void IntakeSubsystem::Stop() {
-    // Is this better than Set(0)?
-    m_intakeSpinnyBoy.StopMotor();
+    m_intakeSpinnyBoy.Set(0);
 }
 
 bool IntakeSubsystem::NotePresent() {

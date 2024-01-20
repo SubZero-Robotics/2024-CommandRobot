@@ -169,9 +169,8 @@ constexpr uint8_t kLedAddress = 23;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
-constexpr int kIntakeSpinnyBoyID = 20;
-constexpr int kVectorSpinnyBoyID = 21;
-constexpr int kWristRotationMotorID = 22;
+constexpr int kIntakeSpinnyBoiId = 20;
+constexpr int kVectorSpinnyBoiId = 21;
 }  // namespace CANSparkMaxConstants
 
 namespace Intakeconstants {
