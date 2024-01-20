@@ -171,6 +171,12 @@ constexpr uint8_t kLedAddress = 23;
 namespace CANSparkMaxConstants {
 constexpr int kIntakeSpinnyBoiId = 20;
 constexpr int kVectorSpinnyBoiId = 21;
+constexpr int kAmpLowerSpinnyBoiId = 22;
+constexpr int kAmpUpperSpinnyBoiId = 23;
+constexpr int kSpeakerLowerSpinnyBoiId = 24;
+constexpr int kSpeakerUpperSpinnyBoiId = 25;
+
+constexpr int kTicksPerMotorRotation = 42;
 }  // namespace CANSparkMaxConstants
 
 namespace Intakeconstants {
@@ -179,6 +185,22 @@ constexpr double kIntakeSpeed = 0.33;
 constexpr double kOutakeSpeed = -0.1;
 
 constexpr uint8_t kBeamBreakDigitalPort = 2;
+}
+
+namespace ScoringConstants {
+constexpr double kFreeSpinCurrentThreshold = 4;
+constexpr double kMaxSpinRpm = 5676;
+
+// Positive = clockwise
+constexpr double kVectorSpeed = 0.1;
+
+// These need to be different
+constexpr double kAmpLowerSpeed = 0.5;
+constexpr double kAmpUpperSpeed = 0.6;
+
+// These should match
+constexpr double kSpeakerLowerSpeed = 0.8;
+constexpr double kSpeakerUpperSpeed = 0.8;
 }
 
 namespace ArmConstants {

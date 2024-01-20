@@ -21,6 +21,7 @@
 #include "subsystems/LeftClimbSubsystem.h"
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/LedSubsystem.h"
+#include "subsystems/ScoringSubsystem.h"
 #include "utils/State.h"
 
 /**
@@ -57,6 +58,7 @@ class RobotContainer {
   LeftClimbSubsystem m_leftClimb;
   RightClimbSubsystem m_rightClimb;
   IntakeSubsystem m_intake;
+  ScoringSubsystem m_scoring;
 #endif
 
   LedSubsystem m_leds;
