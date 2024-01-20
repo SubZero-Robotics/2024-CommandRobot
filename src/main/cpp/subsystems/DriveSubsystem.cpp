@@ -37,7 +37,7 @@ DriveSubsystem::DriveSubsystem()
                  frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}),
                  {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
                   m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
-                 frc::Pose2d{}} {
+                 frc::Pose2d{0_m, 0_m, 0_rad}} {
   // put a field2d in NT
   frc::SmartDashboard::PutData("Field", &m_field);
 
@@ -219,6 +219,18 @@ void DriveSubsystem::SetX() {
 
 void DriveSubsystem::logMotorState(MAXSwerveModule &motor, std::string key) {
   shuffleboardLogger.logInfo(key, motor.GetState().speed.value());
+}
+
+void DriveSubsystem::AddVisionMeasurement(const frc::Pose2d& visionMeasurement,
+                                       units::second_t timestamp) {
+  poseEstimator.AddVisionMeasurement(visionMeasurement, timestamp);
+}
+
+void DriveSubsystem::AddVisionMeasurement(const frc::Pose2d& visionMeasurement,
+                                       units::second_t timestamp,
+                                       const Eigen::Vector3d& stdDevs) {
+  wpi::array<double, 3> newStdDevs{stdDevs(0), stdDevs(1), stdDevs(2)};
+  poseEstimator.AddVisionMeasurement(visionMeasurement, timestamp, newStdDevs);
 }
 
 void DriveSubsystem::SetModuleStates(
