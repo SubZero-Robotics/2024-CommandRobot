@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 // Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
-// #define TEST_SWERVE_BOT
+#define TEST_SWERVE_BOT
 
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <rev/CANSparkMax.h>
@@ -156,7 +156,7 @@ constexpr double kPThetaController = 0.5;
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
-const std::string kDefaultAutoName = "Leave COM";
+const std::string kDefaultAutoName = "Leave Wing";
 }  // namespace AutoConstants
 
 namespace OIConstants {
