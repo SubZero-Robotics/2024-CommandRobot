@@ -7,7 +7,7 @@
 #include "utils/ConsoleLogger.h"
 
 class WristSubsystem
-    : public BaseSingleAxisSubsystem<rev::CANSparkBase,
+    : public BaseSingleAxisSubsystem<rev::CANSparkMax,
                                      rev::SparkAbsoluteEncoder> {
    public:
     WristSubsystem()
@@ -22,7 +22,7 @@ class WristSubsystem
     // Wrist has zero offset set in SparkMax
     void ResetEncoder() override {
         if (_log)
-            consoleLogger.logInfo(_prefix, "RESET POSITION");
+            ConsoleLogger::getInstance().logInfo(_prefix, "RESET POSITION");
         // m_encoder.SetZeroOffset(0);
     }
 
@@ -31,10 +31,10 @@ class WristSubsystem
 
         if (position >= 350) position = 0;
 
-        shuffleboardLogger.logInfo("WristPosition", position);
+        ShuffleboardLogger::getInstance().logInfo("WristPosition", position);
 
         if (_log)
-            consoleLogger.logInfo(_prefix, "%.2f / %.2f deg", position, _config.maxDistance);
+            ConsoleLogger::getInstance().logInfo(_prefix, "%.2f / %.2f deg", position, _config.maxDistance);
 
         return position;
     }
@@ -64,7 +64,7 @@ class WristSubsystem
     void UpdateMovement() override {
         if (_isMovingToPosition) {
             if (_log)
-                consoleLogger.logInfo(_prefix, "Target position: %.2f %s",
+                ConsoleLogger::getInstance().logInfo(_prefix, "Target position: %.2f %s",
                     _targetPosition, _config.type == AxisType::Linear ? "in" : "deg");
 
             // TODO: extract multipliers to constants and pass through the
@@ -73,12 +73,12 @@ class WristSubsystem
                 _controller.Calculate(GetCurrentPosition(), _targetPosition);
             auto clampedRes = std::clamp(res, -1.0, 1.0) * 0.66;
             if (_log)
-                consoleLogger.logInfo(_prefix, "Clamped res: %.3f", clampedRes);
+                ConsoleLogger::getInstance().logInfo(_prefix, "Clamped res: %.3f", clampedRes);
 
-            shuffleboardLogger.logInfo(_prefix + " TargetPos", _targetPosition);
+            ShuffleboardLogger::getInstance().logInfo(_prefix + " TargetPos", _targetPosition);
 
             if (_controller.AtSetpoint()) {
-                consoleLogger.logInfo(_prefix, "REACHED GOAL");
+                ConsoleLogger::getInstance().logInfo(_prefix, "REACHED GOAL");
                 StopMovement();
                 return;
             }
