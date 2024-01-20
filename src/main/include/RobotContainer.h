@@ -43,7 +43,7 @@ class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   // The robot's subsystems
-  DriveSubsystem m_drive;
+  DriveSubsystem m_drive{&m_vision};
 
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;
@@ -52,6 +52,8 @@ class RobotContainer {
 
   ConnectorX::ConnectorXBoard m_leds{kLedAddress};
   IntakeSubsystem m_intake{&m_leds};
+
+  Vision m_vision;
 
   void ConfigureButtonBindings();
 };

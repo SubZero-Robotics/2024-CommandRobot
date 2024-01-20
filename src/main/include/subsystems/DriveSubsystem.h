@@ -18,10 +18,11 @@
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 #include "utils/ConsoleLogger.h"
+#include "utils/Vision.h"
 
 class DriveSubsystem : public frc2::SubsystemBase {
  public:
-  DriveSubsystem();
+  DriveSubsystem(Vision *vision);
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -166,4 +167,6 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   // Pose viewing
   frc::Field2d m_field;
+
+  Vision *m_vision;
 };

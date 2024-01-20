@@ -24,7 +24,7 @@
 
 using namespace DriveConstants;
 
-DriveSubsystem::DriveSubsystem()
+DriveSubsystem::DriveSubsystem(Vision *vision)
     : m_frontLeft{kFrontLeftDrivingCanId, kFrontLeftTurningCanId,
                   kFrontLeftChassisAngularOffset},
       m_rearLeft{kRearLeftDrivingCanId, kRearLeftTurningCanId,
@@ -37,7 +37,8 @@ DriveSubsystem::DriveSubsystem()
                  frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}),
                  {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
                   m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
-                 frc::Pose2d{0_m, 0_m, 0_rad}} {
+                 frc::Pose2d{0_m, 0_m, 0_rad}},
+      m_vision{vision} {
   // put a field2d in NT
   frc::SmartDashboard::PutData("Field", &m_field);
 
@@ -87,6 +88,15 @@ void DriveSubsystem::Periodic() {
   logCounter %= 10;
 
   m_field.SetRobotPose(m_odometry.GetPose());
+
+  auto visionEst = m_vision->GetEstimatedGlobalPose();
+  if (visionEst.has_value()) {
+    auto est = visionEst.value();
+    auto estPose = est.estimatedPose.ToPose2d();
+    auto estStdDevs = m_vision->GetEstimationStdDevs(estPose);
+    AddVisionMeasurement(est.estimatedPose.ToPose2d(), est.timestamp,
+                                    estStdDevs);
+  }
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
