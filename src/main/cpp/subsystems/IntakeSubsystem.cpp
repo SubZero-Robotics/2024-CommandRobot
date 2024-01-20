@@ -9,22 +9,18 @@ void IntakeSubsystem::Periodic() {}
 void IntakeSubsystem::SimulationPeriodic() {}
 
 void IntakeSubsystem::Out() {
-    // if (m_ledSubsystem->getCurrentColor(ConnectorX::LedPort::P1) == ColorConstants::kYellow) {
-    //     m_intakeSpinnyBoy.Set(ArmConstants::kOuttakeSpeed);
-    // } else {
-    //     m_intakeSpinnyBoy.Set(-ArmConstants::kOuttakeSpeed);
-    // }
+    m_intakeSpinnyBoy.Set(Intakeconstants::kOutakeSpeed);
 }
 
-void IntakeSubsystem::In(IntakeDirection direction) {
-    // if (m_ledSubsystem->getCurrentColor(ConnectorX::LedPort::P1) == ColorConstants::kPurple) {
-    //     m_intakeSpinnyBoy.Set(-ArmConstants::kIntakeSpeed);
-    // } else {
-    //     m_intakeSpinnyBoy.Set(ArmConstants::kIntakeSpeed);
-    // }
+void IntakeSubsystem::In() {
+    m_intakeSpinnyBoy.Set(Intakeconstants::kIntakeSpeed);
 }
 
 void IntakeSubsystem::Stop() {
-    m_intakeSpinnyBoy.Set(0.0);
-    m_vectorSpinnyboy.Set(0.0);
+    // Is this better than Set(0)?
+    m_intakeSpinnyBoy.StopMotor();
+}
+
+bool IntakeSubsystem::NotePresent() {
+    return m_beamBreak.Get();
 }

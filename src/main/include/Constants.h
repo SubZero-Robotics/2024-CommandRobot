@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 // Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
-#define TEST_SWERVE_BOT
+// #define TEST_SWERVE_BOT
 
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <rev/CANSparkMax.h>
@@ -175,11 +175,11 @@ constexpr int kWristRotationMotorID = 22;
 }  // namespace CANSparkMaxConstants
 
 namespace Intakeconstants {
-constexpr double kIntakeSpeed = 0.33;
-constexpr double kOutakeSpeed = 0;
 // Change these to match actual values
-constexpr double kIntakeVectorspeed = 0;
-constexpr double kOutakeVectorspeed = 0;
+constexpr double kIntakeSpeed = 0.33;
+constexpr double kOutakeSpeed = -0.1;
+
+constexpr uint8_t kBeamBreakDigitalPort = 2;
 }
 
 namespace ArmConstants {
