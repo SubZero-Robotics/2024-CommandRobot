@@ -7,10 +7,11 @@ ConnectorX::ConnectorXBoard::ConnectorXBoard(uint8_t slaveAddress,
     : _i2c(std::make_unique<frc::I2C>(port, slaveAddress)),
       _slaveAddress(slaveAddress),
       m_simDevice("Connector-X", static_cast<int>(port), slaveAddress) {
-  setColor(LedPort::P0, 0);
-  setOff(LedPort::P0);
+  // setColor(LedPort::P0, 0);
+  // setOff(LedPort::P0);
   setColor(LedPort::P1, 0);
-  setOff(LedPort::P1);
+  setPattern(LedPort::P1, PatternType::SetAll, true);
+  // setOff(LedPort::P1);
 
   if (m_simDevice) {
     m_simOn = m_simDevice.CreateBoolean("On", false, false);
@@ -63,7 +64,7 @@ uint16_t ConnectorX::ConnectorXBoard::readAnalogPin(AnalogPort port) {
 void ConnectorX::ConnectorXBoard::setLedPort(LedPort port) {
   ConsoleLogger::getInstance().logInfo("requested led port", (int)port);
 
-  if (port != _currentLedPort) {
+  // if (port != _currentLedPort) {
     _currentLedPort = port;
     ConsoleLogger::getInstance().logInfo("Current LED port", (int)_currentLedPort);
 
@@ -71,7 +72,7 @@ void ConnectorX::ConnectorXBoard::setLedPort(LedPort port) {
     cmd.commandType = Commands::CommandType::SetLedPort;
     cmd.commandData.commandSetLedPort.port = (uint8_t)port;
     sendCommand(cmd);
-  }
+  // }
 }
 
 LedPort ConnectorX::ConnectorXBoard::getLedPort() {
@@ -108,7 +109,7 @@ void ConnectorX::ConnectorXBoard::setOff(LedPort port) {
 
 void ConnectorX::ConnectorXBoard::setPattern(LedPort port, PatternType pattern,
                                              bool oneShot, int16_t delay) {
-  setLedPort(port);
+  // setLedPort(port);
 
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::Pattern;
@@ -129,7 +130,7 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
   }
   ConsoleLogger::getInstance().logInfo("colour LED port", (int)port);
 
-  setLedPort(port);
+  // setLedPort(port);
 
   _currentColors[(uint8_t)port] = frc::Color8Bit(red, green, blue);
 

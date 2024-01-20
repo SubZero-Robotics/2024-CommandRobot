@@ -18,7 +18,8 @@ class IntakeIn : public frc2::CommandHelper<frc2::Command, IntakeIn> {
         AddRequirements(m_intake);
     }
 
-    void Execute() override { m_intake->In(); }
+    // TODO: set this dynamically
+    void Execute() override { m_intake->In(IntakeDirection::SpeakerSide); }
 
     bool IsFinished() override { return isFinished; }
 

@@ -18,6 +18,7 @@
 #include <units/angle.h>
 #include <units/velocity.h>
 #include <frc/RobotController.h>
+#include <frc2/command/WaitCommand.h>
 
 #include <utility>
 
@@ -26,7 +27,6 @@
 #include "subsystems/ClimbSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 #include "commands/Funni.h"
-#include "commands/LEDToggleCommand.h"
 #include "commands/RotateWristCommand.h"
 #include "commands/IntakeInCommand.h"
 
@@ -36,12 +36,11 @@ RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
 
 #ifdef TEST_SWERVE_BOT
-  m_wrist = std::make_unique<WristSubsystem>();
+  // m_wrist = std::make_unique<WristSubsystem>();
 #endif
 
   // Configure the button bindings
   ConfigureButtonBindings();
-
 
   // Set up default drive command
   // The left stick controls translation of the robot.
@@ -69,17 +68,18 @@ void RobotContainer::ConfigureButtonBindings() {
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
 #ifdef TEST_SWERVE_BOT
-    m_wrist->SetDefaultCommand(
-        RotateWrist(m_wrist.get(), [this] {
-            return -m_operatorController.GetRightY();
-        }));
+    // m_wrist->SetDefaultCommand(
+    //     RotateWrist(m_wrist.get(), [this] {
+    //         return -m_operatorController.GetRightY();
+    //     }));
 #endif
     
-    frc2::JoystickButton(&m_operatorController,
-                       frc::XboxController::Button::kRightBumper).WhileTrue(IntakeIn(&m_intake).ToPtr());
+    // frc2::JoystickButton(&m_operatorController,
+    //                    frc::XboxController::Button::kRightBumper).WhileTrue(IntakeIn(&m_intake).ToPtr());
 
     frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kX).OnTrue(LEDToggle(&m_leds).ToPtr());
+                       frc::XboxController::Button::kX).OnTrue(
+                        m_leds.ShowFromState([this] { return m_stateManager.getState(); }));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
