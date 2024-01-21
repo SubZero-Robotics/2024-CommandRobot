@@ -71,8 +71,7 @@ void RobotContainer::ConfigureButtonBindings() {
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
   frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kX)
-      .OnTrue(
-          m_leds.ShowFromState([this] { return m_stateManager.getState(); }));
+      .OnTrue(m_leds.GetDeferredFromState([this] { return m_stateManager.getState(); }).ToPtr());
 
   frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kY)
       .OnTrue(pathplanner::AutoBuilder::pathfindToPose(

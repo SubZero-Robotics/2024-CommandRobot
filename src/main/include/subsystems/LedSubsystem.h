@@ -4,6 +4,7 @@
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/WaitCommand.h>
+#include <frc2/command/DeferredCommand.h>
 
 #include "moduledrivers/ConnectorX.h"
 #include "utils/State.h"
@@ -21,7 +22,8 @@ class LedSubsystem : public frc2::SubsystemBase {
 
         void SimulationPeriodic() override;
 
-        frc2::CommandPtr ShowFromState(StateGetter stateGetter);
+        frc2::DeferredCommand GetDeferredFromState(StateGetter);
+        frc2::CommandPtr ShowFromState(StateGetter);
 
         frc2::CommandPtr Intaking();
         frc2::CommandPtr ScoringSpeaker();
