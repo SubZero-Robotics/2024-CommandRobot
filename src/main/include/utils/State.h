@@ -18,6 +18,9 @@ class StateManager {
     public:
         StateManager();
 
+        void incrementState();
+        bool updateState(RobotState newState);
+
         bool startIntaking() {
             return updateState(RobotState::Intaking);
         };
@@ -44,6 +47,4 @@ class StateManager {
 
     private:
         RobotState m_currentState;
-
-        bool updateState(RobotState newState);
 };

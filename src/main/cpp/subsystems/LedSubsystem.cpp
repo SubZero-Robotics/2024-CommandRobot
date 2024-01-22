@@ -9,6 +9,10 @@ void LedSubsystem::SimulationPeriodic() {
 
 }
 
+frc2::DeferredCommand LedSubsystem::GetDeferredFromState(StateGetter stateGetter) {
+    return frc2::DeferredCommand([this, stateGetter] { return ShowFromState(stateGetter); }, {this});
+}
+
 frc2::CommandPtr LedSubsystem::ShowFromState(StateGetter stateGetter) {
     auto state = stateGetter();
 
