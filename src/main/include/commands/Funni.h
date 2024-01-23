@@ -20,7 +20,7 @@ class GamepieceFunni
     }
 
     void Initialize() override {
-        m_leds->setOn(ConnectorX::LedPort::P1);
+        m_leds->setOn();
         m_leds->setPattern(ConnectorX::LedPort::P1, ConnectorX::PatternType::RGBFade, false, 22);
     }
 
@@ -30,7 +30,7 @@ class GamepieceFunni
     bool IsFinished() override { return isFinished; }
 
     void End(bool interrupted) override {
-        m_leds->setOff(ConnectorX::LedPort::P1);
+        m_leds->setOff();
     }
 
    private:
