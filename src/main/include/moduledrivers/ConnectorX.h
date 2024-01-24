@@ -32,7 +32,6 @@ struct Configuration {
   uint16_t teamNumber;
   // Send messages to 2 other teams
   uint16_t initialTeams[2];
-  uint8_t i2c0Addr;
   LedConfiguration led0;
   LedConfiguration led1;
 };
@@ -68,7 +67,13 @@ enum class CommandType {
   // R
   GetColor = 14,
   // R
-  GetPort = 15
+  GetPort = 15,
+  // W
+  SetPatternZone = 16,
+  // W
+  SetNewZones = 17,
+  // W
+  SyncStates = 18,
 };
 
 struct CommandOn {};
@@ -138,6 +143,27 @@ struct CommandGetColor {};
 
 struct CommandGetPort {};
 
+struct CommandSetPatternZone {
+    uint16_t zoneIndex;
+    // if non-zero, will go from end pixel to start pixel
+    uint8_t reversed;
+};
+
+struct NewZone {
+    uint16_t offset;
+    uint16_t count;
+};
+
+struct CommandSetNewZones {
+    uint8_t zoneCount;
+    NewZone zones[10];
+};
+
+struct CommandSyncZoneStates {
+    uint8_t zoneCount;
+    uint8_t zones[10];
+};
+
 union CommandData {
   CommandOn commandOn;
   CommandOff commandOff;
@@ -155,6 +181,9 @@ union CommandData {
   CommandRadioGetLatestReceived commandRadioGetLatestReceived;
   CommandGetColor commandGetColor;
   CommandGetPort commandGetPort;
+  CommandSetPatternZone commandSetPatternZone;
+  CommandSetNewZones commandSetNewZones;
+  CommandSyncZoneStates commandSyncZoneStates;
 };
 
 struct Command {
@@ -205,6 +234,7 @@ struct Response {
   ResponseData responseData;
 };
 }  // namespace Commands
+
 enum class PatternType {
   None = 0,
   SetAll = 1,
@@ -225,11 +255,38 @@ enum class PinMode {
   OUTPUT_12MA = 7
 };
 
-enum class DigitalPort { D0 = 0, D1 = 1, D2 = 2, D3 = 3, D4 = 4, D5 = 5 };
+enum class DigitalPort { D0 = 0, D1 = 1, D2 = 2 };
 
-enum class AnalogPort { A0 = 0, A1 = 1, A2 = 2 };
+enum class AnalogPort {};
 
 enum class LedPort { P0 = 0, P1 = 1 };
+
+struct CachedZone {
+  uint16_t offset;
+  uint16_t count;
+  bool reversed;
+  frc::Color8Bit color;
+  PatternType pattern;
+
+  CachedZone(Commands::NewZone zone) {
+    offset = zone.offset;
+    count = zone.count;
+    reversed = false;
+    color = frc::Color8Bit(0, 0, 0);
+    pattern = PatternType::None;
+  }
+};
+
+struct CachedPort {
+  bool on;
+  uint8_t currentZoneIndex;
+  std::vector<CachedZone> zones;
+};
+
+struct CachedDevice {
+  uint8_t currentPort;
+  std::vector<CachedPort> ports;
+};
 
 class ConnectorXBoard : public frc2::SubsystemBase {
  public:
@@ -255,8 +312,8 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    * @param port
    * @return PatternType
    */
-  inline PatternType lastPattern(LedPort port) const {
-    return _lastPattern[(uint8_t)port];
+  inline PatternType lastPattern(LedPort port, uint8_t zoneIndex = 0) const {
+    return m_device.ports[(uint8_t)port].zones[zoneIndex].pattern;
   }
 
   /**
@@ -295,13 +352,13 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    * @brief Turn on
    *
    */
-  void setOn(LedPort port);
+  void setOn();
 
   /**
    * @brief Turn off
    *
    */
-  void setOff(LedPort port);
+  void setOff();
 
   /**
    * @brief Send the PATTERN command
@@ -310,31 +367,35 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    * @param oneShot Only run the pattern once
    */
   void setPattern(LedPort port, PatternType pattern, bool oneShot = false,
-                  int16_t delay = -1);
+                  int16_t delay = -1, uint8_t zoneIndex = 0, bool reversed = false);
 
   /**
    * @brief Set the color; must also call a pattern to see it
    *
    */
-  void setColor(LedPort port, uint8_t red, uint8_t green, uint8_t blue);
+  void setColor(LedPort port, uint8_t red, uint8_t green, uint8_t blue, uint8_t zoneIndex = 0);
 
   /**
    * @brief Set the color using frc::Color8Bit
    */
-  void setColor(LedPort port, frc::Color8Bit color) {
-    setColor(port, color.red, color.green, color.blue);
+  void setColor(LedPort port, frc::Color8Bit color, uint8_t zoneIndex = 0) {
+    setColor(port, color.red, color.green, color.blue, zoneIndex);
   };
   /**
    * @brief Set the color; must also call a pattern to see it
    *
    * @param color Color data in the form of 0x00RRGGBB
    */
-  void setColor(LedPort port, uint32_t color);
+  void setColor(LedPort port, uint32_t color, uint8_t zoneIndex = 0) {
+    setColor(port, (color >> 16) & 255, (color >> 8) & 255, color & 255, zoneIndex);
+  }
 
   /**
    * @brief Get the current on-board Color, not the cached one
   */
-  frc::Color8Bit getCurrentColor(LedPort port);
+  frc::Color8Bit getCurrentColor(LedPort port, uint8_t zoneIndex = 0) {
+    return m_device.ports[(uint8_t)port].zones[zoneIndex].color;
+  }
 
   /**
    * @brief Read if pattern is done running
@@ -376,9 +437,33 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    * 
    * @return LedPort 
    */
-  LedPort getLedPort();
+  LedPort getCurrentLedPort() {
+    return (LedPort)m_device.currentPort;
+  }
+
+  CachedPort& getCurrentCachedPort() {
+    return m_device.ports[m_device.currentPort];
+  }
 
   void setLedPort(LedPort port);
+
+  CachedZone& setCurrentZone(LedPort port, uint8_t zoneIndex = 0, bool reversed = false, bool setReversed = false);
+
+  CachedZone& getCurrentZone() {
+    auto& port = getCurrentCachedPort();
+
+    return port.zones[port.currentZoneIndex];
+  }
+
+  /**
+   * Sync up to 10 zones to the same 0 state
+  */
+  void syncZones(LedPort port, const std::vector<uint8_t> &zones);
+
+  /**
+   * Create up to 10 new zones
+  */
+  void createZones(LedPort port, std::vector<Commands::NewZone> &&newZones);
 
  private:
   Commands::Response sendCommand(Commands::Command command,
@@ -387,9 +472,8 @@ class ConnectorXBoard : public frc2::SubsystemBase {
   std::unique_ptr<frc::I2C> _i2c;
   uint8_t _slaveAddress;
   LedPort _currentLedPort = LedPort::P0;
-  frc::Color8Bit _currentColors[2] = {{0, 0, 0}, {0, 0, 0}};
+  CachedDevice m_device;
   Commands::CommandType _lastCommand;
-  PatternType _lastPattern[2];
   hal::SimDevice m_simDevice;
   hal::SimInt m_simColorR, m_simColorG, m_simColorB;
   hal::SimBoolean m_simOn;
