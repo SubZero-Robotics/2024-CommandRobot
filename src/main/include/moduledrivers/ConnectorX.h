@@ -242,6 +242,8 @@ enum class PatternType {
   RGBFade = 3,
   HackerMode = 4,
   Breathe = 5,
+  SineRoll = 6,
+  Chase = 7,
 };
 
 enum class PinMode {
