@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 // Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
-#define TEST_SWERVE_BOT
+// #define TEST_SWERVE_BOT
 
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <rev/CANSparkMax.h>
@@ -236,7 +236,8 @@ namespace ClimbConstants {
     constexpr double kClimberSetI = 0;
     constexpr double kClimberSetD = 0;
 
-    constexpr double kMaxArmDistance = 5;
+    constexpr double kMaxArmDistance = 10;
+    constexpr double kClimbDistance = 5;
     constexpr double kInPerRotation = 1;
 
     constexpr int kClimberLeftLimitSwitchPort = 0;
