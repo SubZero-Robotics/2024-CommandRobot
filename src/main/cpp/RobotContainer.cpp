@@ -29,6 +29,7 @@
 #include "commands/IntakeOutCommand.h"
 #include "commands/ScoreAmpCommand.h"
 #include "commands/ScoreSpeakerCommand.h"
+#include "commands/ExtendClimbCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
@@ -85,6 +86,7 @@ void RobotContainer::ConfigureButtonBindings() {
                          // the robot should travel before attempting to rotate.
                   ));
 
+
 #ifndef TEST_SWERVE_BOT
   // Intake bindings to shoulder buttons
   frc2::JoystickButton(&m_driverController,
@@ -94,6 +96,14 @@ void RobotContainer::ConfigureButtonBindings() {
   frc2::JoystickButton(&m_driverController,
                        frc::XboxController::Button::kLeftBumper)
       .WhileTrue(IntakeOut(&m_intake).ToPtr());
+
+    m_leftClimb.SetDefaultCommand(ExtendClimbCommand(
+        &m_leftClimb, [this] { return m_driverController.GetLeftTriggerAxis(); },
+        [this] { return m_driverController.GetRightTriggerAxis(); }).ToPtr());
+
+    m_rightClimb.SetDefaultCommand(ExtendClimbCommand(
+        &m_rightClimb, [this] { return m_driverController.GetLeftTriggerAxis(); },
+        [this] { return m_driverController.GetRightTriggerAxis(); }).ToPtr());
 #endif
 }
 

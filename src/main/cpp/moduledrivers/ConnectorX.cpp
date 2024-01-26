@@ -7,11 +7,8 @@ ConnectorX::ConnectorXBoard::ConnectorXBoard(uint8_t slaveAddress,
     : _i2c(std::make_unique<frc::I2C>(port, slaveAddress)),
       _slaveAddress(slaveAddress),
       m_simDevice("Connector-X", static_cast<int>(port), slaveAddress) {
-  // setColor(LedPort::P0, 0);
-  // setOff(LedPort::P0);
   setColor(LedPort::P1, 0);
   setPattern(LedPort::P1, PatternType::SetAll, true);
-  // setOff(LedPort::P1);
 
   if (m_simDevice) {
     m_simOn = m_simDevice.CreateBoolean("On", false, false);
@@ -61,66 +58,149 @@ uint16_t ConnectorX::ConnectorXBoard::readAnalogPin(AnalogPort port) {
   return res.responseData.responseReadAnalog.value;
 }
 
+CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port, uint8_t zoneIndex, bool reversed, bool setReversed) {
+  setLedPort(port);
+  auto& currentPort = getCurrentCachedPort();
+  auto& currentZone = getCurrentZone();
+
+  if (zoneIndex > currentPort.zones.size()) {
+    return currentZone;
+  }
+
+  if (currentPort.currentZoneIndex != zoneIndex) {
+    currentPort.currentZoneIndex = zoneIndex;
+    currentZone = getCurrentZone();
+
+    Commands::Command cmd;
+    cmd.commandType = Commands::CommandType::SetPatternZone;
+    cmd.commandData.commandSetPatternZone.zoneIndex = zoneIndex;
+    if (currentZone.reversed != reversed && setReversed) {
+      currentZone.reversed = reversed;
+      cmd.commandData.commandSetPatternZone.reversed = (uint8_t)reversed;
+    }
+
+    sendCommand(cmd);
+  }
+
+  return getCurrentZone();
+}
+
+void ConnectorX::ConnectorXBoard::syncZones(LedPort port, const std::vector<uint8_t> &zones) {
+  setLedPort(port);
+
+  Commands::Command cmd;
+  cmd.commandType = Commands::CommandType::SyncStates;
+  cmd.commandData.commandSyncZoneStates.zoneCount = zones.size();
+
+  for (uint8_t i = 0; i < zones.size(); i++) {
+    cmd.commandData.commandSyncZoneStates.zones[i] = zones[i];
+  }
+
+  sendCommand(cmd);
+}
+
+void ConnectorX::ConnectorXBoard::createZones(LedPort port, std::vector<ConnectorX::Commands::NewZone> &&newZones) {
+  setLedPort(port);
+
+  Commands::Command cmd;
+  cmd.commandType = Commands::CommandType::SetNewZones;
+  cmd.commandData.commandSetNewZones.zoneCount = newZones.size();
+
+  for (uint8_t i = 0; i < newZones.size(); i++) {
+    cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
+  }
+
+  sendCommand(cmd);
+
+  auto& currentPort = getCurrentCachedPort();
+
+  std::vector<CachedZone> zones;
+  zones.reserve(newZones.size());
+
+  for (auto& zone : newZones) {
+    zones.push_back(CachedZone(zone));
+  }
+
+  currentPort.zones = zones;
+}
+
 void ConnectorX::ConnectorXBoard::setLedPort(LedPort port) {
-  ConsoleLogger::getInstance().logInfo("requested led port", (int)port);
-
-  // if (port != _currentLedPort) {
-    _currentLedPort = port;
-    ConsoleLogger::getInstance().logInfo("Current LED port", (int)_currentLedPort);
-
+  if ((uint8_t)port != m_device.currentPort) {
+    m_device.currentPort = (uint8_t)port;
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::SetLedPort;
     cmd.commandData.commandSetLedPort.port = (uint8_t)port;
     sendCommand(cmd);
-  // }
+  }
 }
 
-LedPort ConnectorX::ConnectorXBoard::getLedPort() {
-  return _currentLedPort;
-}
-
-void ConnectorX::ConnectorXBoard::setOn(LedPort port) {
+void ConnectorX::ConnectorXBoard::setOn() {
   if (m_simDevice) {
     m_simOn.Set(true);
     return;
   }
 
-  setLedPort(port);
+  bool shouldSet = false;
 
-  Commands::Command cmd;
-  cmd.commandType = Commands::CommandType::On;
-  cmd.commandData.commandOn = {};
-  sendCommand(cmd);
+  for (auto& port : m_device.ports) {
+    if (!port.on) {
+      shouldSet = true;
+    }
+
+    port.on = true;
+  }
+
+  if (shouldSet) {
+    Commands::Command cmd;
+    cmd.commandType = Commands::CommandType::On;
+    cmd.commandData.commandOn = {};
+    sendCommand(cmd);
+  }
 }
 
-void ConnectorX::ConnectorXBoard::setOff(LedPort port) {
+void ConnectorX::ConnectorXBoard::setOff() {
   if (m_simDevice) {
     m_simOn.Set(false);
     return;
   }
 
-  setLedPort(port);
+  bool shouldSet = false;
 
-  Commands::Command cmd;
-  cmd.commandType = Commands::CommandType::Off;
-  cmd.commandData.commandOff = {};
-  sendCommand(cmd);
+  for (auto& port : m_device.ports) {
+    if (port.on) {
+      shouldSet = true;
+    }
+
+    port.on = false;
+  }
+
+  if (shouldSet) {
+    Commands::Command cmd;
+    cmd.commandType = Commands::CommandType::Off;
+    cmd.commandData.commandOff = {};
+    sendCommand(cmd);
+  }
 }
 
 void ConnectorX::ConnectorXBoard::setPattern(LedPort port, PatternType pattern,
-                                             bool oneShot, int16_t delay) {
-  // setLedPort(port);
+                                             bool oneShot, int16_t delay, uint8_t zoneIndex,
+                                             bool reversed) {
+  auto& zone = setCurrentZone(port, zoneIndex, reversed, true);
 
-  Commands::Command cmd;
-  cmd.commandType = Commands::CommandType::Pattern;
-  cmd.commandData.commandPattern.pattern = (uint8_t)pattern;
-  cmd.commandData.commandPattern.oneShot = (uint8_t)oneShot;
-  cmd.commandData.commandPattern.delay = delay;
-  sendCommand(cmd);
+  if (zone.pattern != pattern) {
+    zone.pattern = pattern;
+    Commands::Command cmd;
+    cmd.commandType = Commands::CommandType::Pattern;
+    cmd.commandData.commandPattern.pattern = (uint8_t)pattern;
+    cmd.commandData.commandPattern.oneShot = (uint8_t)oneShot;
+    cmd.commandData.commandPattern.delay = delay;
+    sendCommand(cmd);
+  }
 }
 
 void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
-                                           uint8_t green, uint8_t blue) {
+                                           uint8_t green, uint8_t blue,
+                                           uint8_t zoneIndex) {
   if (m_simDevice) {
     m_simColorR.Set(red);
     m_simColorG.Set(green);
@@ -128,25 +208,20 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
 
     return;
   }
-  ConsoleLogger::getInstance().logInfo("colour LED port", (int)port);
+  
+  auto& zone = setCurrentZone(port, zoneIndex);
+  auto newColor = frc::Color8Bit(red, green, blue);
 
-  // setLedPort(port);
-
-  _currentColors[(uint8_t)port] = frc::Color8Bit(red, green, blue);
-
-  Commands::Command cmd;
-  cmd.commandType = Commands::CommandType::ChangeColor;
-  cmd.commandData.commandColor.red = red;
-  cmd.commandData.commandColor.green = green;
-  cmd.commandData.commandColor.blue = blue;
+  if (zone.color != newColor) {
+    zone.color = newColor;
+    Commands::Command cmd;
+    cmd.commandType = Commands::CommandType::ChangeColor;
+    cmd.commandData.commandColor.red = red;
+    cmd.commandData.commandColor.green = green;
+    cmd.commandData.commandColor.blue = blue;
 
   sendCommand(cmd);
-}
-
-void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint32_t color) {
-  setLedPort(port);
-
-  setColor(port, (color >> 16) & 255, (color >> 8) & 255, color & 255);
+  }
 }
 
 bool ConnectorX::ConnectorXBoard::getPatternDone(LedPort port) {
@@ -190,17 +265,6 @@ Message ConnectorX::ConnectorXBoard::getLatestRadioMessage() {
 
   Commands::Response res = sendCommand(cmd, true);
   return res.responseData.responseRadioLastReceived.msg;
-}
-
-frc::Color8Bit ConnectorX::ConnectorXBoard::getCurrentColor(LedPort port) {
-  if (m_simDevice) {
-    return frc::Color8Bit(m_simColorR.Get(), m_simColorG.Get(),
-                          m_simColorB.Get());
-  }
-
-  setLedPort(port);
-
-  return _currentColors[(uint8_t)port];
 }
 
 Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
@@ -267,6 +331,19 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
       break;
     case CommandType::GetPort:
       sendLen = 0;
+      break;
+    case CommandType::SetPatternZone:
+      sendLen = sizeof(CommandSetPatternZone);
+      break;
+    case CommandType::SetNewZones:
+      sendLen = sizeof(CommandSetNewZones::zoneCount) +
+        command.commandData.commandSetNewZones.zoneCount *
+        sizeof(NewZone);
+      break;
+    case CommandType::SyncStates:
+      sendLen = sizeof(CommandSyncZoneStates::zoneCount) +
+        command.commandData.commandSyncZoneStates.zoneCount *
+        sizeof(uint8_t);
       break;
   }
 

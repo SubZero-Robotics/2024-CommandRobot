@@ -15,7 +15,8 @@ using namespace ConnectorX;
 class LedSubsystem : public frc2::SubsystemBase {
     public:
         LedSubsystem() : m_connectorX(ConnectorXBoard(kLedAddress)) {
-            m_connectorX.setLedPort(ConnectorX::LedPort::P1);
+            createZones(LedPort::P1, std::move(m_ledZones));
+            m_connectorX.setOn();
         }
 
         void Periodic() override;
@@ -32,8 +33,25 @@ class LedSubsystem : public frc2::SubsystemBase {
         frc2::CommandPtr Idling();
 
     private:
-        frc2::CommandPtr setColorAndPattern(LedPort port, frc::Color8Bit color,
-            PatternType pattern, bool oneShot = false, int16_t delay = -1);
-        
+        enum class LedZone {
+            Back = 0,
+            Right,
+            Front,
+            Left,
+        };
+
+        frc2::CommandPtr setZoneColorPattern(LedZone zone, LedPort port, frc::Color8Bit color,
+            PatternType pattern, bool oneShot = false, int16_t delay = -1, bool reversed = false);
+
+        void createZones(LedPort port, std::vector<Commands::NewZone> &&zones);
+
+        frc2::CommandPtr syncAllZones();
+
         ConnectorXBoard m_connectorX;
+        std::vector<Commands::NewZone> m_ledZones = {
+            { .offset = 0, .count = 25 },
+            { .offset = 25, .count = 25 },
+            { .offset = 50, .count = 25 },
+            { .offset = 75, .count = 25 },
+        };
 };
