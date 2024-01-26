@@ -104,6 +104,10 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::ChassisSpeeds getSpeed();
 
+  AHRS* getGyro() {
+    return &m_gyro;
+  }
+
   static void LogSpeeds(wpi::array<frc::SwerveModuleState, 4> desiredStates);
 
   frc::SwerveDriveKinematics<4> kDriveKinematics{
