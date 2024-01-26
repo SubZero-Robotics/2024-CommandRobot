@@ -16,8 +16,7 @@ class ScoreAmp : public frc2::CommandHelper<frc2::Command, ScoreAmp> {
 
         explicit ScoreAmp(ScoringSubsystem* subsystem, IntakeSubsystem* intk) 
             : m_score{subsystem}, m_intake{intk}, isFinished{false} {
-                AddRequirements(m_intake);
-                AddRequirements(m_score);
+                AddRequirements({m_intake, m_score});
             }
 
         void Initialize() override {
