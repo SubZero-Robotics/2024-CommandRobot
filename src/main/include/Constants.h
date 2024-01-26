@@ -201,6 +201,10 @@ constexpr double kAmpUpperSpeed = 0.6;
 // These should match
 constexpr double kSpeakerLowerSpeed = 0.8;
 constexpr double kSpeakerUpperSpeed = 0.8;
+
+// These should also match
+constexpr double kSubwooferLowerSpeed = 0.8;
+constexpr double kSubwooferUpperSpeed = 0.8;
 }
 
 namespace ArmConstants {

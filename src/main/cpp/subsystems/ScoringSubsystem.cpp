@@ -1,4 +1,5 @@
 #include "subsystems/ScoringSubsystem.h"
+#include "ScoringSubsystem.h"
 
 ScoringSubsystem::ScoringSubsystem() {}
 
@@ -58,10 +59,19 @@ void ScoringSubsystem::SpinSpeaker() {
     m_speakerUpperSpinnyBoi.Set(ScoringConstants::kSpeakerUpperSpeed);
 }
 
+void ScoringSubsystem::SpinSubwoofer() {
+    m_ampLowerSpinnyBoi.Set(ScoringConstants::kSubwooferLowerSpeed);
+    m_ampUpperSpinnyBoi.Set(ScoringConstants::kSubwooferUpperSpeed);
+}
+
 bool ScoringSubsystem::CheckAmpSpeed() {
     return m_ampEncoder.GetVelocity() >= MaxSpeedToRpm(ScoringConstants::kAmpLowerSpeed);
 }
 
 bool ScoringSubsystem::CheckSpeakerSpeed() {
     return m_speakerEncoder.GetVelocity() >= MaxSpeedToRpm(ScoringConstants::kSpeakerLowerSpeed);
+}
+
+bool ScoringSubsystem::CheckSubwooferSpeed() {
+    return m_ampEncoder.GetVelocity() >= MaxSpeedToRpm(ScoringConstants::kSubwooferLowerSpeed);
 }

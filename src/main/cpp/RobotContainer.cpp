@@ -29,7 +29,9 @@
 #include "commands/IntakeOutCommand.h"
 #include "commands/ScoreAmpCommand.h"
 #include "commands/ScoreSpeakerCommand.h"
+#include "commands/ScoreSubwooferCommand.h"
 #include "commands/ExtendClimbCommand.h"
+#include "commands/BalanceCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
@@ -102,7 +104,7 @@ void RobotContainer::ConfigureButtonBindings() {
 
     m_driverController.A().WhileTrue(ScoreAmp(&m_scoring, &m_intake).ToPtr());
 
-    // Y: Score Speaker from close up
+    m_driverController.Y().WhileTrue(ScoreSubwoofer(&m_scoring, &m_intake).ToPtr());
 
     m_driverController.LeftBumper()
         .WhileTrue(ExtendClimbCommand(&m_leftClimb, [this] { return 0; },
@@ -110,7 +112,7 @@ void RobotContainer::ConfigureButtonBindings() {
         .WhileTrue(ExtendClimbCommand(&m_rightClimb, [this] { return 0; },
         [this] { return 1; }).ToPtr());
 
-    // Right Bumper: Automatic Climb balancing
+    m_driverController.RightBumper().WhileTrue(BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());
 #endif
 }
 
