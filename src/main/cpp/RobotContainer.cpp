@@ -88,29 +88,21 @@ void RobotContainer::ConfigureButtonBindings() {
 
 
 #ifndef TEST_SWERVE_BOT
-
-    m_leftClimb.SetDefaultCommand(ExtendClimbCommand(
+    m_driverController.LeftTrigger(0.01).WhileTrue(ExtendClimbCommand(
         &m_leftClimb, [this] { return -m_driverController.GetLeftTriggerAxis(); },
         [this] { return 0; }).ToPtr());
 
-    m_rightClimb.SetDefaultCommand(ExtendClimbCommand(
+    m_driverController.RightTrigger(0.01).WhileTrue(ExtendClimbCommand(
         &m_rightClimb, [this] { return -m_driverController.GetRightTriggerAxis(); },
         [this] { return 0; }).ToPtr());
 
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kB)
-        .WhileTrue(IntakeIn(&m_intake).ToPtr());
+    m_driverController.B().WhileTrue(IntakeIn(&m_intake).ToPtr());
 
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kX)
-        .WhileTrue(ScoreSpeaker(&m_scoring, &m_intake).ToPtr());
+    m_driverController.X().WhileTrue(ScoreSpeaker(&m_scoring, &m_intake).ToPtr());
 
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kA)
-        .WhileTrue(ScoreAmp(&m_scoring, &m_intake).ToPtr());
+    m_driverController.A().WhileTrue(ScoreAmp(&m_scoring, &m_intake).ToPtr());
 
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kY)
+    m_driverController.Y()
         .WhileTrue(ExtendClimbCommand(&m_leftClimb, [this] { return 0; },
         [this] { return 1; }).ToPtr())
         .WhileTrue(ExtendClimbCommand(&m_rightClimb, [this] { return 0; },
