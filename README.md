@@ -3,21 +3,21 @@
     <img src="https://raw.githubusercontent.com/SubZero-Robotics/2024-CommandRobot/feature/docs-readme/robot.png" alt="Robot" width="300">
   </a>
 
-<h3 align="center">2023 Swerve Robot</h3>
+<h3 align="center">2024 Command Robot</h3>
 
   <p align="center">
-    Code for our 2023 offseason robot. Built with the WPILib command-based framework, based on the REV MAXSwerve C++ example.
+    Code for our 2024 season robot. Built with the WPILib command-based framework, based on the REV MAXSwerve C++ example.
     <br />
     <br />
-    <a href="https://github.com/subzero-robotics/2023-swerve-base/issues">Current Issues</a>
+    <a href="https://github.com/subzero-robotics/2024-CommandRobot/issues">Current Issues</a>
     ·
-    <a href="https://www.thebluealliance.com/team/5690/2023">The Blue Alliance</a>
+    <a href="https://www.thebluealliance.com/team/5690/2024">The Blue Alliance</a>
   </p>
 </div>
 
 ## Table of contents
 
-- [Team 5690 SubZero Robotics 2023 Command Robot](#team-5690-subzero-robotics-2023-command-robot)
+- [Team 5690 SubZero Robotics 2024 Command Robot](#team-5690-subzero-robotics-2024-command-robot)
   - [Table of contents](#table-of-contents)
   - [About](#about)
   - [Development Cycle](#development-cycle)
@@ -40,13 +40,13 @@
 
 ## About
 
-For the 2023 offseason, our team purcased MAXSwerve modules and constructed a robot using them that is capable of playing Charged Up.
+This repository is a monorepo containing robot code for team 5690's 2024 robot capable of playing FRC Crescendo. It features a MAXSwerve drivebase, and is based on the MAXSwerve C++ template.
 
 ## Development Cycle
 
 ### Main
 
-Main should **always** contain known, tested, and working code that has been throroughly verified by running it on the robot. Use other development branches to create new features and test them before pulling into `main` via a Pull Request (PR). `main` cannot have code pushed to it directly, meaning a PR is **mandatory**.
+Main should **always** contain known, tested, and working code that has been throroughly verified by running it on the robot. Use other development branches to create new features and test them before pulling into `main` via a Pull Request (PR). `main` cannot have code pushed to it directly, meaning a PR is **mandatory**. Furthermore, to prevent merge conflicts all branches should be based on `main`.
 
 Use the `main` branch for non-competition usage and practice.
 
@@ -64,7 +64,9 @@ Following the WPILib command based structure we have broken our robot up into a 
 | :-------------------------------------------------------------------- | :------------------------------------------------------- |
 | [Drive](src/main/include/subsystems/DriveSubsystem.h)                 | Drives robot                                             |
 | [Intake](src/main/include/subsystems/IntakeSubsystem.h)               | Activates the intake                                     |
-| [Wrist](src/main/include/subsystems/WristSubsystem.h)                 | Rotates the wrist                                        |
+| [Scoring](src/main/include/subsystems/ScoringSubsystem.h)             | Scores Notes                                             |
+| [LED](src/main/include/subsystems/LedSubsystem.h)                     | Wrapper for the ConnectorX moduledriver, reads from State|
+| [Climb](src/main/include/subsystems/ClimbSubsystem.)                  | TODO: Document
 
 On the Season robot another subsystem existed, `LedControllerSubystem` however it has been deprecated in favor of the ConnectorX moduledriver. See: [src/main/src/main/include/moduledrivers/ConnectorX.h](src/main/include/moduledrivers/ConnectorX.h)
 
