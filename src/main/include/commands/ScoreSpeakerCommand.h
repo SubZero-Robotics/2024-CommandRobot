@@ -12,6 +12,7 @@ class ScoreSpeaker : public frc2::CommandHelper<frc2::Command, ScoreSpeaker> {
         enum class ScoreState {
             FlywheelRamp,
             Feeding,
+            Shooting,
         };
 
         explicit ScoreSpeaker(ScoringSubsystem* subsystem, IntakeSubsystem* intk) 
@@ -30,6 +31,7 @@ class ScoreSpeaker : public frc2::CommandHelper<frc2::Command, ScoreSpeaker> {
         }
 
         void Execute() override {
+            // TODO: make not suck
             if (m_state == ScoreState::FlywheelRamp) {
                 if (m_score->GetMotorAtScoringSpeed(ScoringDirection::SpeakerSide)) {
                     m_score->SpinVectorSide(ScoringDirection::SpeakerSide);
@@ -37,6 +39,10 @@ class ScoreSpeaker : public frc2::CommandHelper<frc2::Command, ScoreSpeaker> {
                     m_state = ScoreState::Feeding;
                 }
             } else if (m_state == ScoreState::Feeding) {
+                if (m_score->GetMotorFreeWheel(ScoringDirection::SpeakerSide)) {
+                    m_state = ScoreState::Shooting;
+                }
+            } else if (m_state == ScoreState::Shooting) {
                 if (m_score->GetMotorFreeWheel(ScoringDirection::SpeakerSide)) {
                     isFinished = true;
                 }

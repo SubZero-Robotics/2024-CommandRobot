@@ -12,6 +12,7 @@ class ScoreAmp : public frc2::CommandHelper<frc2::Command, ScoreAmp> {
         enum class ScoreState {
             FlywheelRamp,
             Feeding,
+            Shooting,
         };
 
         explicit ScoreAmp(ScoringSubsystem* subsystem, IntakeSubsystem* intk) 
@@ -30,6 +31,7 @@ class ScoreAmp : public frc2::CommandHelper<frc2::Command, ScoreAmp> {
         }
 
         void Execute() override {
+            // TODO: make not suck
             if (m_state == ScoreState::FlywheelRamp) {
                 if (m_score->GetMotorAtScoringSpeed(ScoringDirection::AmpSide)) {
                     m_score->SpinVectorSide(ScoringDirection::AmpSide);
@@ -37,6 +39,10 @@ class ScoreAmp : public frc2::CommandHelper<frc2::Command, ScoreAmp> {
                     m_state = ScoreState::Feeding;
                 }
             } else if (m_state == ScoreState::Feeding) {
+                if (!m_score->GetMotorFreeWheel(ScoringDirection::AmpSide)) {
+                    m_state = ScoreState::Shooting;
+                }
+            } else if (m_state == ScoreState::Shooting) {
                 if (m_score->GetMotorFreeWheel(ScoringDirection::AmpSide)) {
                     isFinished = true;
                 }
