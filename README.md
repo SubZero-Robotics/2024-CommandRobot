@@ -66,7 +66,7 @@ Following the WPILib command based structure we have broken our robot up into a 
 | [Intake](src/main/include/subsystems/IntakeSubsystem.h)               | Activates the intake                                     |
 | [Scoring](src/main/include/subsystems/ScoringSubsystem.h)             | Scores Notes                                             |
 | [LED](src/main/include/subsystems/LedSubsystem.h)                     | Wrapper for the ConnectorX moduledriver, reads from State|
-| [Climb](src/main/include/subsystems/ClimbSubsystem.)                  | Climbs on the Stage                                      |
+| [Climb](src/main/include/subsystems/ClimbSubsystem.h)                  | Climbs on the Stage                                      |
 
 
 ## CAN IDs
