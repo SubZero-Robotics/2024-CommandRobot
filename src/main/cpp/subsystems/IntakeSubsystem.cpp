@@ -2,22 +2,24 @@
 #include "moduledrivers/ConnectorX.h"
 #include "ColorConstants.h"
 
-IntakeSubsystem::IntakeSubsystem() {}
+IntakeSubsystem::IntakeSubsystem() {
+    m_rightIntakeSpinnyBoy.Follow(m_leftIntakeSpinnyBoy, true);
+}
 
 void IntakeSubsystem::Periodic() {}
 
 void IntakeSubsystem::SimulationPeriodic() {}
 
 void IntakeSubsystem::Out() {
-    m_intakeSpinnyBoy.Set(Intakeconstants::kOutakeSpeed);
+    m_leftIntakeSpinnyBoy.Set(Intakeconstants::kOutakeSpeed);
 }
 
 void IntakeSubsystem::In() {
-    m_intakeSpinnyBoy.Set(Intakeconstants::kIntakeSpeed);
+    m_leftIntakeSpinnyBoy.Set(Intakeconstants::kIntakeSpeed);
 }
 
 void IntakeSubsystem::Stop() {
-    m_intakeSpinnyBoy.Set(0);
+    m_leftIntakeSpinnyBoy.Set(0);
 }
 
 bool IntakeSubsystem::NotePresent() {

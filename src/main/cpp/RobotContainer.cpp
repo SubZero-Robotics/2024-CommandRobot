@@ -29,7 +29,9 @@
 #include "commands/IntakeOutCommand.h"
 #include "commands/ScoreAmpCommand.h"
 #include "commands/ScoreSpeakerCommand.h"
+#include "commands/ScoreSubwooferCommand.h"
 #include "commands/ExtendClimbCommand.h"
+#include "commands/BalanceCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
@@ -88,33 +90,29 @@ void RobotContainer::ConfigureButtonBindings() {
 
 
 #ifndef TEST_SWERVE_BOT
-
-    m_leftClimb.SetDefaultCommand(ExtendClimbCommand(
+    m_driverController.LeftTrigger(OIConstants::kDriveDeadband).WhileTrue(ExtendClimbCommand(
         &m_leftClimb, [this] { return -m_driverController.GetLeftTriggerAxis(); },
         [this] { return 0; }).ToPtr());
 
-    m_rightClimb.SetDefaultCommand(ExtendClimbCommand(
+    m_driverController.RightTrigger(OIConstants::kDriveDeadband).WhileTrue(ExtendClimbCommand(
         &m_rightClimb, [this] { return -m_driverController.GetRightTriggerAxis(); },
         [this] { return 0; }).ToPtr());
 
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kB)
-        .WhileTrue(IntakeIn(&m_intake).ToPtr());
+    m_driverController.B().WhileTrue(IntakeIn(&m_intake).ToPtr());
 
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kX)
-        .WhileTrue(ScoreSpeaker(&m_scoring, &m_intake).ToPtr());
+    m_driverController.X().WhileTrue(ScoreSpeaker(&m_scoring, &m_intake).ToPtr());
 
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kA)
-        .WhileTrue(ScoreAmp(&m_scoring, &m_intake).ToPtr());
+    m_driverController.A().WhileTrue(ScoreAmp(&m_scoring, &m_intake).ToPtr());
 
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kY)
+    m_driverController.Y().WhileTrue(ScoreSubwoofer(&m_scoring, &m_intake).ToPtr());
+
+    m_driverController.LeftBumper()
         .WhileTrue(ExtendClimbCommand(&m_leftClimb, [this] { return 0; },
         [this] { return 1; }).ToPtr())
         .WhileTrue(ExtendClimbCommand(&m_rightClimb, [this] { return 0; },
         [this] { return 1; }).ToPtr());
+
+    m_driverController.RightBumper().WhileTrue(BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());
 #endif
 }
 

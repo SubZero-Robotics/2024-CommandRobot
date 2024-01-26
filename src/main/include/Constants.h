@@ -169,7 +169,8 @@ constexpr uint8_t kLedAddress = 23;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
-constexpr int kIntakeSpinnyBoiId = 20;
+constexpr int kRightIntakeSpinnyBoiId = 19;
+constexpr int kLeftIntakeSpinnyBoiId = 20;
 constexpr int kVectorSpinnyBoiId = 21;
 constexpr int kAmpLowerSpinnyBoiId = 22;
 constexpr int kAmpUpperSpinnyBoiId = 23;
@@ -201,6 +202,10 @@ constexpr double kAmpUpperSpeed = 0.6;
 // These should match
 constexpr double kSpeakerLowerSpeed = 0.8;
 constexpr double kSpeakerUpperSpeed = 0.8;
+
+// These should also match
+constexpr double kSubwooferLowerSpeed = 0.8;
+constexpr double kSubwooferUpperSpeed = 0.8;
 }
 
 namespace ArmConstants {
