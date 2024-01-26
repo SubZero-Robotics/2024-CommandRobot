@@ -27,6 +27,8 @@
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
+#include "commands/ScoreAmpCommand.h"
+#include "commands/ScoreSpeakerCommand.h"
 #include "commands/ExtendClimbCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"

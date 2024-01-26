@@ -21,6 +21,7 @@ class IntakeIn : public frc2::CommandHelper<frc2::Command, IntakeIn> {
     void Initialize() override {
         if (m_intake->NotePresent()) {
             isFinished = true;
+            return;
         }
 
         isFinished = false;
