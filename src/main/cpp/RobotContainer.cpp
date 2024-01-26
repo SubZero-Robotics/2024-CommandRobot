@@ -88,11 +88,11 @@ void RobotContainer::ConfigureButtonBindings() {
 
 
 #ifndef TEST_SWERVE_BOT
-    m_driverController.LeftTrigger(0.01).WhileTrue(ExtendClimbCommand(
+    m_driverController.LeftTrigger(OIConstants::kDriveDeadband).WhileTrue(ExtendClimbCommand(
         &m_leftClimb, [this] { return -m_driverController.GetLeftTriggerAxis(); },
         [this] { return 0; }).ToPtr());
 
-    m_driverController.RightTrigger(0.01).WhileTrue(ExtendClimbCommand(
+    m_driverController.RightTrigger(OIConstants::kDriveDeadband).WhileTrue(ExtendClimbCommand(
         &m_rightClimb, [this] { return -m_driverController.GetRightTriggerAxis(); },
         [this] { return 0; }).ToPtr());
 
@@ -102,11 +102,15 @@ void RobotContainer::ConfigureButtonBindings() {
 
     m_driverController.A().WhileTrue(ScoreAmp(&m_scoring, &m_intake).ToPtr());
 
-    m_driverController.Y()
+    // Y: Score Speaker from close up
+
+    m_driverController.LeftBumper()
         .WhileTrue(ExtendClimbCommand(&m_leftClimb, [this] { return 0; },
         [this] { return 1; }).ToPtr())
         .WhileTrue(ExtendClimbCommand(&m_rightClimb, [this] { return 0; },
         [this] { return 1; }).ToPtr());
+
+    // Right Bumper: Automatic Climb balancing
 #endif
 }
 
