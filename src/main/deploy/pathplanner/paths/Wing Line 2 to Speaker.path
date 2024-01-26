@@ -4,44 +4,28 @@
     {
       "anchor": {
         "x": 5.377158438795249,
-        "y": 6.85152474630649
+        "y": 1.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.1760527286957885,
-        "y": 6.882857938743868
+        "x": 4.259124450045352,
+        "y": 1.5000000000000002
       },
       "isLocked": false,
-      "linkedName": "Wing Line 1"
+      "linkedName": "Wing Line 2"
     },
     {
       "anchor": {
-        "x": 2.786947863972064,
-        "y": 5.9324177681434245
+        "x": 1.2516214345405796,
+        "y": 5.577308253853149
       },
       "prevControl": {
-        "x": 3.5942513443838173,
-        "y": 6.848816313475686
-      },
-      "nextControl": {
-        "x": 2.4005051572444116,
-        "y": 5.493753074020143
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.72428147909731,
-        "y": 4.146425799212922
-      },
-      "prevControl": {
-        "x": 1.7529525135386161,
-        "y": 4.898422417709977
+        "x": 1.6067309488308548,
+        "y": 3.7913162849226465
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Note 3"
+      "linkedName": "Speaker"
     }
   ],
   "rotationTargets": [],
@@ -55,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -33.0,
+    "rotation": 180.0,
     "rotateFast": false
   },
   "reversed": false,

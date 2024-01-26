@@ -8,43 +8,49 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.1760527286957885,
-        "y": 6.882857938743868
+        "x": 4.217830318612291,
+        "y": 6.371082462266705
       },
       "isLocked": false,
       "linkedName": "Wing Line 1"
     },
     {
       "anchor": {
-        "x": 2.786947863972064,
-        "y": 5.9324177681434245
+        "x": 2.191617207661897,
+        "y": 4.282202966441556
       },
       "prevControl": {
-        "x": 3.5942513443838173,
-        "y": 6.848816313475686
+        "x": 2.6825038891808073,
+        "y": 5.065532777375987
       },
       "nextControl": {
-        "x": 2.4005051572444116,
-        "y": 5.493753074020143
+        "x": 1.4463702039097235,
+        "y": 3.0929790242838333
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.72428147909731,
-        "y": 4.146425799212922
+        "x": 1.6798417311847356,
+        "y": 0.5013310789980361
       },
       "prevControl": {
-        "x": 1.7529525135386161,
-        "y": 4.898422417709977
+        "x": 2.358727567327909,
+        "y": 1.577104019347987
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Note 3"
+      "linkedName": "Source 3"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.7,
+      "rotationDegrees": -120.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -55,7 +61,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -33.0,
+    "rotation": -120.0,
     "rotateFast": false
   },
   "reversed": false,
