@@ -236,8 +236,12 @@ namespace ClimbConstants {
     constexpr double kClimberSetI = 0;
     constexpr double kClimberSetD = 0;
 
+    // Maximum arm extension distance
     constexpr double kMaxArmDistance = 10;
-    constexpr double kClimbDistance = 5;
+    // Arm climbing position
+    constexpr double kClimbExtensionPosition = 5;
+    // Arm retracted position
+    constexpr double kClimbRetractPosition = 3;
     constexpr double kInPerRotation = 1;
 
     constexpr int kClimberLeftLimitSwitchPort = 0;
@@ -246,6 +250,10 @@ namespace ClimbConstants {
     constexpr double kClimbStepSize = 1;
     constexpr double kClimbHomingSpeed = 1;
     constexpr int kTicksPerMotorRotation = 1;
+
+    // Distance between left and right arm centers
+    constexpr units::meter_t kClimberOffsetDistance = 4_m;
+
 }
 
 namespace RobotConstants {

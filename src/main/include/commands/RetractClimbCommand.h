@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma once
+
 #include <math.h>
 
 #include <frc2/command/Command.h>
@@ -10,23 +12,15 @@
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 
-class BalanceCommand : public frc2::CommandHelper<frc2::Command, BalanceCommand> {
+class RetractClimbCommand : public frc2::CommandHelper<frc2::Command, RetractClimbCommand> {
     public:
-        BalanceCommand(DriveSubsystem *driveSubsystem, ClimbSubsystem *leftClimb, ClimbSubsystem *rightClimb)
-        : m_drive(driveSubsystem), m_leftClimb(leftClimb), m_rightClimb(rightClimb) {
-            AddRequirements({m_drive, m_leftClimb, m_rightClimb});
-        }
+        RetractClimbCommand(ClimbSubsystem *leftClimb, ClimbSubsystem *rightClimb)
+        : m_leftClimb(leftClimb), m_rightClimb(rightClimb) {}
 
         void Initialize() override {
             isFinished = false;
-            double roll = m_drive->getGyro()->GetRoll() * (M_PI / 180);
-            double climberExtentDistance = sin(roll) * ClimbConstants::kClimberOffsetDistance.value();
-
-            if (climberExtentDistance < 0) {
-                m_rightClimb->MoveRelative(climberExtentDistance);
-            } else {
-                m_leftClimb->MoveRelative(-climberExtentDistance);
-            }
+            m_rightClimb->MoveToPosition(ClimbConstants::kClimbRetractPosition);
+            m_leftClimb->MoveToPosition(ClimbConstants::kClimbRetractPosition);
         }
 
         void Execute() override {
@@ -41,10 +35,9 @@ class BalanceCommand : public frc2::CommandHelper<frc2::Command, BalanceCommand>
             m_leftClimb->StopMovement();
             m_rightClimb->StopMovement();
         }
-
+    
     private:
         bool isFinished;
-        DriveSubsystem *m_drive;
         ClimbSubsystem *m_leftClimb;
         ClimbSubsystem *m_rightClimb;
 };
