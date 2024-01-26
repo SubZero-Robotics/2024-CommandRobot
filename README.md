@@ -66,9 +66,8 @@ Following the WPILib command based structure we have broken our robot up into a 
 | [Intake](src/main/include/subsystems/IntakeSubsystem.h)               | Activates the intake                                     |
 | [Scoring](src/main/include/subsystems/ScoringSubsystem.h)             | Scores Notes                                             |
 | [LED](src/main/include/subsystems/LedSubsystem.h)                     | Wrapper for the ConnectorX moduledriver, reads from State|
-| [Climb](src/main/include/subsystems/ClimbSubsystem.)                  | TODO: Document
+| [Climb](src/main/include/subsystems/ClimbSubsystem.)                  | Climbs on the Stage                                      |
 
-On the Season robot another subsystem existed, `LedControllerSubystem` however it has been deprecated in favor of the ConnectorX moduledriver. See: [src/main/src/main/include/moduledrivers/ConnectorX.h](src/main/include/moduledrivers/ConnectorX.h)
 
 ## CAN IDs
 
@@ -82,8 +81,8 @@ On the Season robot another subsystem existed, `LedControllerSubystem` however i
 |   Rear Right Turn    |   3    |     SparkMax      |
 |   Rear Left Turn     |   5    |     SparkMax      |
 |   Front Left Turn    |   7    |     SparkMax      |
-|   Wrist rotation*    |   22   |     SparkMax      |
-|   Intake spinner     |   20   |     SparkMax      |
+
+:warning: TODO: Designate CAN IDs for subsystems :warning:
 
 \* = Inverted
 
@@ -91,12 +90,10 @@ On the Season robot another subsystem existed, `LedControllerSubystem` however i
 
 |  Device   |             Address              |
 | :-------: | :------------------------------: |
-|  Gateway  |           10.99.93.1             |
-|  Gateway  | 10.99.93.129 (subject to change) |
-|    RIO    |            10.99.93.2            |
+|  Gateway  |           10.56.90.1             |
+|  Gateway  | 10.56.90.129 (subject to change) |
+|    RIO    |            10.56.90.2            |
 |  Laptop   |             Dynamic              |
-
-Note: Because this bot may be on the field with the season bot at the same time, we have decided to use offseason demo number 9993 for adressing the robot.
 
 ## Getting started
 
@@ -113,13 +110,13 @@ Install the following:
 
 1. Install the [GitHub VS Code extension](vscode:extension/GitHub.vscode-pull-request-github)
 2. Go to the GitHub tab and sign in using the account that has access to this repository
-3. Click `Clone Repository` and search for `SubZero-Robotics/2023-swerve-base`
+3. Click `Clone Repository` and search for `SubZero-Robotics/2024-CommandRobot`
 4. Clone it into a known folder that has **no spaces** in its path
 5. Open the repository in VS Code
 
 ### Issues
 
-[GitHub issues](https://github.com/SubZero-Robotics/2023-swerve-base/issues) are how we track which tasks need work along with who should be working on them. Pay attention to the issue number since this is how each one is uniquely identified. To create a new issue, visit the [issues tab in the repository](https://github.com/SubZero-Robotics/2023-swerve-base/issues) and click `New issue`. Give it a descriptive title and enough information in the comment area so that anyone working on the issue knows exactly what needs to be changed/fixed. Additionally, assignees (who is working on it) and labels (what type of issue is this) can be assigned on the right.
+[GitHub issues](https://github.com/SubZero-Robotics/2024-CommandRobot/issues) are how we track which tasks need work along with who should be working on them. Pay attention to the issue number since this is how each one is uniquely identified. To create a new issue, visit the [issues tab in the repository](https://github.com/SubZero-Robotics/2023-swerve-base/issues) and click `New issue`. Give it a descriptive title and enough information in the comment area so that anyone working on the issue knows exactly what needs to be changed/fixed. Additionally, assignees (who is working on it) and labels (what type of issue is this) can be assigned on the right.
 
 ### Branches
 
@@ -147,7 +144,7 @@ Sometimes, you might see a `merge conflict` appear which can happen if more than
 
 ### Pull requests
 
-Now that all of your changes have been made (and *tested!*), it's time to get them merged into the main branch. Either click the `Create Pull Request` button in the `Source Control` tab (inline with the `SOURCE CONTROL` text, fourth one from the left) or go to the [`Pull requests` tab on GitHub](https://github.com/SubZero-Robotics/2023-swerve-base/pulls), click `New pull request`, and set the `compare` branch to your branch. Fill in the template with a good title, a detailed description, a list of changes made, and the issue number before creating it. Assign a reviewer(s) on the right and label the PR accordingly.
+Now that all of your changes have been made (and *tested!*), it's time to get them merged into the main branch. Either click the `Create Pull Request` button in the `Source Control` tab (inline with the `SOURCE CONTROL` text, fourth one from the left) or go to the [`Pull requests` tab on GitHub](https://github.com/SubZero-Robotics/2024-CommandRobot/pulls), click `New pull request`, and set the `compare` branch to your branch. Fill in the template with a good title, a detailed description, a list of changes made, and the issue number before creating it. Assign a reviewer(s) on the right and label the PR accordingly.
 
 The reviewer is responsible for looking over the PR, testing the changes themselves, and adding comments to the code changes if necessary. There are three possible actions a reviewer can take:
 
@@ -159,6 +156,6 @@ The reviewer is responsible for looking over the PR, testing the changes themsel
 
 If you would like to contact the subzero robotics programmers, you can do so at [5690programmers@gmail.com](mailto:5690Programmers@gmail.com)
 
-To contact the team directly, you can find us on [facebook](https://www.facebook.com/Esko-SubZero-Robotics-Team-5690-695407257248414/) or email us at [subzerorobotics@esko.k12.mn.us](mailto:subzerorobotics@esko.k12.mn.us)
+To contact the team directly, you can find us on [facebook](https://www.facebook.com/Esko-SubZero-Robotics-Team-5690-695407257248414/) or email us at [subzerorobotics@goesko.com](mailto:subzerorobotics@goesko.com)
 
-Project Link: [https://github.com/subzero-robotics/2023-commandRobot](https://github.com/subzero-robotics/2023-swerve-base)
+Project Link: [https://github.com/subzero-robotics/2024-CommandRobot](https://github.com/subzero-robotics/2024-CommandRobot)
