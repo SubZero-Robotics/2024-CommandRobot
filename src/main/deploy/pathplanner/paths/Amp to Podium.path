@@ -3,32 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.377158438795249,
-        "y": 1.5
+        "x": 1.846952090845525,
+        "y": 7.7392985320269565
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.2909411009661715,
-        "y": 1.4413268521193536
+        "x": 1.8887296807672502,
+        "y": 6.423304449662335
       },
       "isLocked": false,
-      "linkedName": "Wing Line 2"
-    },
-    {
-      "anchor": {
-        "x": 2.2542835925366513,
-        "y": 2.23510106053291
-      },
-      "prevControl": {
-        "x": 2.5467267219521728,
-        "y": 1.3159940823698442
-      },
-      "nextControl": {
-        "x": 1.9059234518719539,
-        "y": 3.329947216907671
-      },
-      "isLocked": false,
-      "linkedName": null
+      "linkedName": "Amp"
     },
     {
       "anchor": {
@@ -36,15 +20,21 @@
         "y": 4.146425799212922
       },
       "prevControl": {
-        "x": 1.8991740782463762,
-        "y": 3.582428335340132
+        "x": 1.8469520908507473,
+        "y": 5.128199162250742
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Podium"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.75,
+      "rotationDegrees": -33.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
