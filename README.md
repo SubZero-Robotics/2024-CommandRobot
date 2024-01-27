@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://github.com/subzero-robotics/2024-CommandRobot">
-    <img src="https://raw.githubusercontent.com/SubZero-Robotics/2024-CommandRobot/feature/docs-readme/robot.png" alt="Robot" width="300">
+    <img src="https://raw.githubusercontent.com/SubZero-Robotics/2024-CommandRobot/main/robot.png" alt="Robot" width="300">
   </a>
 
 <h3 align="center">2024 Command Robot</h3>
