@@ -27,7 +27,11 @@
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
+#include "commands/ScoreAmpCommand.h"
+#include "commands/ScoreSpeakerCommand.h"
+#include "commands/ScoreSubwooferCommand.h"
 #include "commands/ExtendClimbCommand.h"
+#include "commands/BalanceCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
@@ -71,7 +75,7 @@ void RobotContainer::ConfigureButtonBindings() {
                        frc::XboxController::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-  frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kX)
+  frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kLeftBumper)
       .OnTrue(m_leds.GetDeferredFromState([this] { m_stateManager.incrementState(); return m_stateManager.getState(); }).ToPtr());
 
   frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kY)
@@ -84,24 +88,30 @@ void RobotContainer::ConfigureButtonBindings() {
                          // the robot should travel before attempting to rotate.
                   ));
 
-
 #ifndef TEST_SWERVE_BOT
-  // Intake bindings to shoulder buttons
-  frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kRightBumper)
-      .WhileTrue(IntakeIn(&m_intake).ToPtr());
+    m_driverController.LeftTrigger(OIConstants::kDriveDeadband).WhileTrue(ExtendClimbCommand(
+        &m_leftClimb, [this] { return -m_driverController.GetLeftTriggerAxis(); },
+        [this] { return 0; }).ToPtr());
 
-  frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kLeftBumper)
-      .WhileTrue(IntakeOut(&m_intake).ToPtr());
+    m_driverController.RightTrigger(OIConstants::kDriveDeadband).WhileTrue(ExtendClimbCommand(
+        &m_rightClimb, [this] { return -m_driverController.GetRightTriggerAxis(); },
+        [this] { return 0; }).ToPtr());
 
-    m_leftClimb.SetDefaultCommand(ExtendClimbCommand(
-        &m_leftClimb, [this] { return m_driverController.GetLeftTriggerAxis(); },
-        [this] { return m_driverController.GetRightTriggerAxis(); }).ToPtr());
+    m_driverController.B().WhileTrue(IntakeIn(&m_intake).ToPtr());
 
-    m_rightClimb.SetDefaultCommand(ExtendClimbCommand(
-        &m_rightClimb, [this] { return m_driverController.GetLeftTriggerAxis(); },
-        [this] { return m_driverController.GetRightTriggerAxis(); }).ToPtr());
+    m_driverController.X().WhileTrue(ScoreSpeaker(&m_scoring, &m_intake).ToPtr());
+
+    m_driverController.A().WhileTrue(ScoreAmp(&m_scoring, &m_intake).ToPtr());
+
+    m_driverController.Y().WhileTrue(ScoreSubwoofer(&m_scoring, &m_intake).ToPtr());
+
+    m_driverController.LeftBumper()
+        .WhileTrue(ExtendClimbCommand(&m_leftClimb, [this] { return 0; },
+        [this] { return 1; }).ToPtr())
+        .WhileTrue(ExtendClimbCommand(&m_rightClimb, [this] { return 0; },
+        [this] { return 1; }).ToPtr());
+
+    m_driverController.RightBumper().WhileTrue(BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());
 #endif
 }
 

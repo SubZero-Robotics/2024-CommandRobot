@@ -1,6 +1,8 @@
 #include "subsystems/ScoringSubsystem.h"
 
-ScoringSubsystem::ScoringSubsystem() {}
+ScoringSubsystem::ScoringSubsystem() {
+    m_speakerLowerSpinnyBoi.Follow(m_speakerUpperSpinnyBoi);
+}
 
 void ScoringSubsystem::Periodic() {}
 
@@ -10,12 +12,12 @@ void ScoringSubsystem::Stop() {
     m_vectorSpinnyBoi.Set(0);
     m_ampLowerSpinnyBoi.Set(0);
     m_ampUpperSpinnyBoi.Set(0);
-    m_speakerLowerSpinnyBoi.Set(0);
     m_speakerUpperSpinnyBoi.Set(0);
 }
 
 void ScoringSubsystem::SpinVectorSide(ScoringDirection direction) {
-    if (direction == ScoringDirection::AmpSide) {
+    if (direction == ScoringDirection::AmpSide ||
+        direction == ScoringDirection::Subwoofer) {
         m_vectorSpinnyBoi.Set(ScoringConstants::kVectorSpeed);
         return;
     }
@@ -29,6 +31,11 @@ void ScoringSubsystem::StartScoringRamp(ScoringDirection direction) {
         return;
     }
 
+    if (direction == ScoringDirection::Subwoofer) {
+        SpinSubwoofer();
+        return;
+    }
+
     SpinSpeaker();
 }
 
@@ -37,12 +44,20 @@ bool ScoringSubsystem::GetMotorAtScoringSpeed(ScoringDirection direction) {
         return CheckAmpSpeed();
     }
 
+    if (direction == ScoringDirection::Subwoofer) {
+        return CheckSubwooferSpeed();
+    }
+
     return CheckSpeakerSpeed();
 }
 
 bool ScoringSubsystem::GetMotorFreeWheel(ScoringDirection direction) {
     if (direction == ScoringDirection::AmpSide) {
         return m_ampLowerSpinnyBoi.GetOutputCurrent() < ScoringConstants::kFreeSpinCurrentThreshold;
+    }
+    
+    if (direction == ScoringDirection::Subwoofer) {
+        return m_speakerUpperSpinnyBoi.GetOutputCurrent() < ScoringConstants::kFreeSpinCurrentThreshold;
     }
 
     return m_speakerLowerSpinnyBoi.GetOutputCurrent() < ScoringConstants::kFreeSpinCurrentThreshold;
@@ -54,8 +69,12 @@ void ScoringSubsystem::SpinAmp() {
 }
 
 void ScoringSubsystem::SpinSpeaker() {
-    m_speakerLowerSpinnyBoi.Set(ScoringConstants::kSpeakerLowerSpeed);
     m_speakerUpperSpinnyBoi.Set(ScoringConstants::kSpeakerUpperSpeed);
+}
+
+void ScoringSubsystem::SpinSubwoofer() {
+    m_ampLowerSpinnyBoi.Set(ScoringConstants::kSubwooferLowerSpeed);
+    m_ampUpperSpinnyBoi.Set(ScoringConstants::kSubwooferUpperSpeed);
 }
 
 bool ScoringSubsystem::CheckAmpSpeed() {
@@ -64,4 +83,8 @@ bool ScoringSubsystem::CheckAmpSpeed() {
 
 bool ScoringSubsystem::CheckSpeakerSpeed() {
     return m_speakerEncoder.GetVelocity() >= MaxSpeedToRpm(ScoringConstants::kSpeakerLowerSpeed);
+}
+
+bool ScoringSubsystem::CheckSubwooferSpeed() {
+    return m_ampEncoder.GetVelocity() >= MaxSpeedToRpm(ScoringConstants::kSubwooferLowerSpeed);
 }
