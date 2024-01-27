@@ -23,4 +23,9 @@ class ClimbSubsystem
     double GetCurrentPosition() override {
         return _enc.GetPosition();
     }
+
+    void MoveRelative(double delta) {
+        double newPosition = GetCurrentPosition() + delta;
+        MoveToPosition(newPosition);
+    }
 };

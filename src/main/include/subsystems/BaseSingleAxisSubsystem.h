@@ -83,6 +83,10 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
         std::clamp(_config.defaultMovementSpeed, -1.0, 1.0);
   }
 
+  Motor* getMotor() {
+    return _motor;
+  }
+
   /**
    * @brief Run motor at the specified speed.
    * ! Make sure to use _config.motorMultiplier to invert if needed!

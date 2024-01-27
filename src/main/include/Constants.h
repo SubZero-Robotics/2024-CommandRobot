@@ -156,7 +156,7 @@ constexpr double kPThetaController = 0.5;
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
-const std::string kDefaultAutoName = "Leave COM";
+const std::string kDefaultAutoName = "Leave Wing";
 }  // namespace AutoConstants
 
 namespace OIConstants {
@@ -169,7 +169,8 @@ constexpr uint8_t kLedAddress = 23;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
-constexpr int kIntakeSpinnyBoiId = 20;
+constexpr int kRightIntakeSpinnyBoiId = 19;
+constexpr int kLeftIntakeSpinnyBoiId = 20;
 constexpr int kVectorSpinnyBoiId = 21;
 constexpr int kAmpLowerSpinnyBoiId = 22;
 constexpr int kAmpUpperSpinnyBoiId = 23;
@@ -201,6 +202,10 @@ constexpr double kAmpUpperSpeed = 0.6;
 // These should match
 constexpr double kSpeakerLowerSpeed = 0.8;
 constexpr double kSpeakerUpperSpeed = 0.8;
+
+// These should also match
+constexpr double kSubwooferLowerSpeed = 0.8;
+constexpr double kSubwooferUpperSpeed = 0.8;
 }
 
 namespace ArmConstants {
@@ -236,7 +241,12 @@ namespace ClimbConstants {
     constexpr double kClimberSetI = 0;
     constexpr double kClimberSetD = 0;
 
-    constexpr double kMaxArmDistance = 5;
+    // Maximum arm extension distance
+    constexpr double kMaxArmDistance = 10;
+    // Arm climbing position
+    constexpr double kClimbExtensionPosition = 5;
+    // Arm retracted position
+    constexpr double kClimbRetractPosition = 3;
     constexpr double kInPerRotation = 1;
 
     constexpr int kClimberLeftLimitSwitchPort = 0;
@@ -245,6 +255,10 @@ namespace ClimbConstants {
     constexpr double kClimbStepSize = 1;
     constexpr double kClimbHomingSpeed = 1;
     constexpr int kTicksPerMotorRotation = 1;
+
+    // Distance between left and right arm centers
+    constexpr units::meter_t kClimberOffsetDistance = 4_m;
+
 }
 
 namespace RobotConstants {

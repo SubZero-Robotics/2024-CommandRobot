@@ -9,7 +9,8 @@
 
 enum class ScoringDirection {
     AmpSide = 0,
-    SpeakerSide
+    SpeakerSide,
+    Subwoofer,
 };
 
 using namespace CANSparkMaxConstants;
@@ -45,8 +46,10 @@ class ScoringSubsystem : public frc2::SubsystemBase {
    private:
     void SpinAmp();
     void SpinSpeaker();
+    void SpinSubwoofer();
     bool CheckAmpSpeed();
     bool CheckSpeakerSpeed();
+    bool CheckSubwooferSpeed();
 
     inline double MaxSpeedToRpm(double speedPercentage) {
         return ScoringConstants::kMaxSpinRpm * speedPercentage;
