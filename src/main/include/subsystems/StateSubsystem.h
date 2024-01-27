@@ -45,7 +45,7 @@ typedef std::function<RobotState ()> StateGetter;
 
 class StateSubsystem : public frc2::SubsystemBase {
     public:
-        StateSubsystem(Subsystems_t subsystems);
+        StateSubsystem(Subsystems_t& subsystems);
 
         void incrementState();
         frc2::CommandPtr updateState(RobotState newState);

@@ -13,11 +13,10 @@
 #include "subsystems/DriveSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 
-StateSubsystem::StateSubsystem(Subsystems_t &subsystems) 
+StateSubsystem::StateSubsystem(Subsystems_t& subsystems) 
     : m_currentState(RobotState::Manual), m_subsystems{subsystems} {}
 
 void StateSubsystem::incrementState() {
-    
     uint8_t nextState = ((uint8_t)m_currentState) + 1;
     m_currentState = (RobotState)(nextState % 6);
 }
