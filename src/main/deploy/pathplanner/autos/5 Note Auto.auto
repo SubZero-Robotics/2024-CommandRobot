@@ -50,13 +50,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Speaker to Center Note 1"
+            "pathName": "Speaker to Center Note 2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Center Note 1 to Speaker"
+            "pathName": "Center Note 2 to Speaker"
           }
         }
       ]
