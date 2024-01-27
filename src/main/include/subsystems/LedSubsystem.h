@@ -7,7 +7,7 @@
 #include <frc2/command/DeferredCommand.h>
 
 #include "moduledrivers/ConnectorX.h"
-#include "utils/State.h"
+#include "utils/StateSubsystem.h"
 #include "Constants.h"
 
 using namespace ConnectorX;

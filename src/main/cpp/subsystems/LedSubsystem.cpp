@@ -25,7 +25,7 @@ frc2::CommandPtr LedSubsystem::ShowFromState(StateGetter stateGetter) {
             return ScoringAmp();
         case RobotState::Stowing:
             return Stowing();
-        case RobotState::Idling:
+        case RobotState::Manual:
             return Idling();
         default:
             return frc2::InstantCommand([] {}).ToPtr();
