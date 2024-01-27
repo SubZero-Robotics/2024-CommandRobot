@@ -8,7 +8,6 @@
 #include "Constants.h"
 #include "ColorConstants.h"
 
-#include "Constants.h"
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
