@@ -5,46 +5,36 @@
 #include "Constants.h"
 
 enum class RobotState {
-    Intaking = 0,
-    ScoringSpeaker,
-    ScoringAmp,
-    Stowing,
-    Idling
+  Intaking = 0,
+  ScoringSpeaker,
+  ScoringAmp,
+  Stowing,
+  Idling
 };
 
-typedef std::function<RobotState ()> StateGetter;
+typedef std::function<RobotState()> StateGetter;
 
 class StateManager {
-    public:
-        StateManager();
+ public:
+  StateManager();
 
-        void incrementState();
-        bool updateState(RobotState newState);
+  void incrementState();
+  bool updateState(RobotState newState);
 
-        bool startIntaking() {
-            return updateState(RobotState::Intaking);
-        };
+  bool startIntaking() { return updateState(RobotState::Intaking); };
 
-        bool startScoringSpeaker() {
-            return updateState(RobotState::ScoringSpeaker);
-        };
+  bool startScoringSpeaker() {
+    return updateState(RobotState::ScoringSpeaker);
+  };
 
-        bool startScoringAmp() {
-            return updateState(RobotState::ScoringAmp);
-        };
+  bool startScoringAmp() { return updateState(RobotState::ScoringAmp); };
 
-        bool startStowing() {
-            return updateState(RobotState::Stowing);
-        };
+  bool startStowing() { return updateState(RobotState::Stowing); };
 
-        bool startIdling() {
-            return updateState(RobotState::Idling);
-        };
+  bool startIdling() { return updateState(RobotState::Idling); };
 
-        inline RobotState getState() const {
-            return m_currentState;
-        };
+  inline RobotState getState() const { return m_currentState; };
 
-    private:
-        RobotState m_currentState;
+ private:
+  RobotState m_currentState;
 };

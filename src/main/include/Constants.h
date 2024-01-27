@@ -6,6 +6,7 @@
 // #define TEST_SWERVE_BOT
 
 #include <frc/trajectory/TrapezoidProfile.h>
+#include <frc/util/Color8Bit.h>
 #include <rev/CANSparkMax.h>
 #include <units/acceleration.h>
 #include <units/angular_acceleration.h>
@@ -14,7 +15,6 @@
 #include <units/length.h>
 #include <units/time.h>
 #include <units/velocity.h>
-#include <frc/util/Color8Bit.h>
 
 #include <numbers>
 
@@ -45,9 +45,7 @@ constexpr units::meter_t kTrackWidth =
     0.5588_m;  // Distance between centers of right and left wheels on robot
 constexpr units::meter_t kWheelBase =
     0.5588_m;  // Distance between centers of front and back wheels on robot
-#endif
-
-#ifndef TEST_SWERVE_BOT
+#else
 constexpr units::meter_t kTrackWidth =
     0.67_m;  // Distance between centers of right and left wheels on robot
 constexpr units::meter_t kWheelBase =
@@ -84,9 +82,7 @@ constexpr bool kTurningEncoderInverted = true;
 
 #ifdef TEST_SWERVE_BOT
 constexpr int kDrivingMotorPinionTeeth = 13;
-#endif
-
-#ifndef TEST_SWERVE_BOT
+#else
 constexpr int kDrivingMotorPinionTeeth = 14;
 #endif
 
@@ -186,7 +182,7 @@ constexpr double kIntakeSpeed = 0.33;
 constexpr double kOutakeSpeed = -0.1;
 
 constexpr uint8_t kBeamBreakDigitalPort = 2;
-}
+}  // namespace Intakeconstants
 
 namespace ScoringConstants {
 constexpr double kFreeSpinCurrentThreshold = 4;
@@ -206,7 +202,7 @@ constexpr double kSpeakerUpperSpeed = 0.8;
 // These should also match
 constexpr double kSubwooferLowerSpeed = 0.8;
 constexpr double kSubwooferUpperSpeed = 0.8;
-}
+}  // namespace ScoringConstants
 
 namespace ArmConstants {
 // Motor Constants
@@ -233,40 +229,38 @@ constexpr double kWristSetFF = 0.000015;
 }  // namespace ArmConstants
 
 namespace ClimbConstants {
-    // These are placeholder values, these all will be changed
-    constexpr int kClimberLeftMotorId = 10;
-    constexpr int kClimberRightMotorId = 11;
+// These are placeholder values, these all will be changed
+constexpr int kClimberLeftMotorId = 10;
+constexpr int kClimberRightMotorId = 11;
 
-    constexpr double kClimberSetP = 1;
-    constexpr double kClimberSetI = 0;
-    constexpr double kClimberSetD = 0;
+constexpr double kClimberSetP = 1;
+constexpr double kClimberSetI = 0;
+constexpr double kClimberSetD = 0;
 
-    // Maximum arm extension distance
-    constexpr double kMaxArmDistance = 10;
-    // Arm climbing position
-    constexpr double kClimbExtensionPosition = 5;
-    // Arm retracted position
-    constexpr double kClimbRetractPosition = 3;
-    constexpr double kInPerRotation = 1;
+// Maximum arm extension distance
+constexpr double kMaxArmDistance = 10;
+// Arm climbing position
+constexpr double kClimbExtensionPosition = 5;
+// Arm retracted position
+constexpr double kClimbRetractPosition = 3;
+constexpr double kInPerRotation = 1;
 
-    constexpr int kClimberLeftLimitSwitchPort = 0;
-    constexpr int kClimberRightLimitSwitchPort = 1;
+constexpr int kClimberLeftLimitSwitchPort = 0;
+constexpr int kClimberRightLimitSwitchPort = 1;
 
-    constexpr double kClimbStepSize = 1;
-    constexpr double kClimbHomingSpeed = 1;
-    constexpr int kTicksPerMotorRotation = 1;
+constexpr double kClimbStepSize = 1;
+constexpr double kClimbHomingSpeed = 1;
+constexpr int kTicksPerMotorRotation = 42;
 
-    // Distance between left and right arm centers
-    constexpr units::meter_t kClimberOffsetDistance = 4_m;
+// Distance between left and right arm centers
+constexpr units::meter_t kClimberOffsetDistance = 4_m;
 
-}
+}  // namespace ClimbConstants
 
 namespace RobotConstants {
 #ifdef TEST_SWERVE_BOT
 const std::string kRoborioSerialNumber = "0326F2F2";
-#endif
-
-#ifndef TEST_SWERVE_BOT
+#else
 const std::string kRoborioSerialNumber = "032B4B68";
 #endif
-}
+}  // namespace RobotConstants

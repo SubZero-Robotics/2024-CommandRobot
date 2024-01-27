@@ -11,8 +11,8 @@
 #include <memory>
 
 #include "Constants.h"
-#include "utils/ShuffleboardLogger.h"
 #include "utils/ConsoleLogger.h"
+#include "utils/ShuffleboardLogger.h"
 
 namespace ConnectorX {
 struct Message {
@@ -144,24 +144,24 @@ struct CommandGetColor {};
 struct CommandGetPort {};
 
 struct CommandSetPatternZone {
-    uint16_t zoneIndex;
-    // if non-zero, will go from end pixel to start pixel
-    uint8_t reversed;
+  uint16_t zoneIndex;
+  // if non-zero, will go from end pixel to start pixel
+  uint8_t reversed;
 };
 
 struct NewZone {
-    uint16_t offset;
-    uint16_t count;
+  uint16_t offset;
+  uint16_t count;
 };
 
 struct CommandSetNewZones {
-    uint8_t zoneCount;
-    NewZone zones[10];
+  uint8_t zoneCount;
+  NewZone zones[10];
 };
 
 struct CommandSyncZoneStates {
-    uint8_t zoneCount;
-    uint8_t zones[10];
+  uint8_t zoneCount;
+  uint8_t zones[10];
 };
 
 union CommandData {
@@ -369,13 +369,15 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    * @param oneShot Only run the pattern once
    */
   void setPattern(LedPort port, PatternType pattern, bool oneShot = false,
-                  int16_t delay = -1, uint8_t zoneIndex = 0, bool reversed = false);
+                  int16_t delay = -1, uint8_t zoneIndex = 0,
+                  bool reversed = false);
 
   /**
    * @brief Set the color; must also call a pattern to see it
    *
    */
-  void setColor(LedPort port, uint8_t red, uint8_t green, uint8_t blue, uint8_t zoneIndex = 0);
+  void setColor(LedPort port, uint8_t red, uint8_t green, uint8_t blue,
+                uint8_t zoneIndex = 0);
 
   /**
    * @brief Set the color using frc::Color8Bit
@@ -389,12 +391,13 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    * @param color Color data in the form of 0x00RRGGBB
    */
   void setColor(LedPort port, uint32_t color, uint8_t zoneIndex = 0) {
-    setColor(port, (color >> 16) & 255, (color >> 8) & 255, color & 255, zoneIndex);
+    setColor(port, (color >> 16) & 255, (color >> 8) & 255, color & 255,
+             zoneIndex);
   }
 
   /**
    * @brief Get the current on-board Color, not the cached one
-  */
+   */
   frc::Color8Bit getCurrentColor(LedPort port, uint8_t zoneIndex = 0) {
     return m_device.ports[(uint8_t)port].zones[zoneIndex].color;
   }
@@ -436,12 +439,10 @@ class ConnectorXBoard : public frc2::SubsystemBase {
 
   /**
    * @brief Get the current port
-   * 
-   * @return LedPort 
+   *
+   * @return LedPort
    */
-  LedPort getCurrentLedPort() {
-    return (LedPort)m_device.currentPort;
-  }
+  LedPort getCurrentLedPort() { return (LedPort)m_device.currentPort; }
 
   CachedPort& getCurrentCachedPort() {
     return m_device.ports[m_device.currentPort];
@@ -449,7 +450,8 @@ class ConnectorXBoard : public frc2::SubsystemBase {
 
   void setLedPort(LedPort port);
 
-  CachedZone& setCurrentZone(LedPort port, uint8_t zoneIndex = 0, bool reversed = false, bool setReversed = false);
+  CachedZone& setCurrentZone(LedPort port, uint8_t zoneIndex = 0,
+                             bool reversed = false, bool setReversed = false);
 
   CachedZone& getCurrentZone() {
     auto& port = getCurrentCachedPort();
@@ -459,13 +461,13 @@ class ConnectorXBoard : public frc2::SubsystemBase {
 
   /**
    * Sync up to 10 zones to the same 0 state
-  */
-  void syncZones(LedPort port, const std::vector<uint8_t> &zones);
+   */
+  void syncZones(LedPort port, const std::vector<uint8_t>& zones);
 
   /**
    * Create up to 10 new zones
-  */
-  void createZones(LedPort port, std::vector<Commands::NewZone> &&newZones);
+   */
+  void createZones(LedPort port, std::vector<Commands::NewZone>&& newZones);
 
  private:
   Commands::Response sendCommand(Commands::Command command,
