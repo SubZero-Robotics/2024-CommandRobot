@@ -1,4 +1,4 @@
-#include "2024-CommandRobot/src/main/include/utils/ConsoleLogger.h"
+#include "utils/ConsoleLogger.h"
 
 int main(int argc, char** argv) {
   auto& instance = ConsoleLogger::getInstance();

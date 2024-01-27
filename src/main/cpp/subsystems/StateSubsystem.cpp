@@ -43,29 +43,29 @@ frc2::CommandPtr StateSubsystem::UpdateState(RobotState newState) {
 }
 
 frc2::CommandPtr StateSubsystem::StartIntaking() {
-    
+    return RunOnce([] {});
 }
 
 frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
-
+    return RunOnce([] {});
 }
 
 frc2::CommandPtr StateSubsystem::StartScoringAmp() {
-
+    return RunOnce([] {});
 }
 
 frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
-
+    return RunOnce([] {});
 }
 
 frc2::CommandPtr StateSubsystem::StartLoading() {
-
+    return RunOnce([] {});
 }
 
 frc2::CommandPtr StateSubsystem::StartManual() {
-
+    return RunOnce([] {});
 }
 
 frc2::CommandPtr StateSubsystem::StartClimb() {
-
+    return RunOnce([] {});
 }
