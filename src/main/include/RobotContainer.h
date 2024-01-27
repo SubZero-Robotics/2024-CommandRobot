@@ -23,7 +23,7 @@
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/LedSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
-#include "utils/StateSubsystem.h"
+#include "subsystems/StateSubsystem.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -48,6 +48,8 @@ class RobotContainer {
   // The robot's subsystems
   DriveSubsystem m_drive;
 
+  LedSubsystem m_leds;
+
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;
 
@@ -60,10 +62,18 @@ class RobotContainer {
   RightClimbSubsystem m_rightClimb;
   IntakeSubsystem m_intake;
   ScoringSubsystem m_scoring;
-#endif
 
-  LedSubsystem m_leds;
-  StateManager m_stateManager;
+  Subsystems_t m_subsystems = {
+    .drive = &m_drive,
+    .leftClimb = &m_leftClimb,
+    .rightClimb = &m_rightClimb,
+    .intake = &m_intake,
+    .scoring = &m_scoring,
+    .led = &m_leds
+  };
+
+  StateSubsystem m_state{m_subsystems};
+#endif
 
   void ConfigureButtonBindings();
 };

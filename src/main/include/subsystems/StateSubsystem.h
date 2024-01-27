@@ -22,16 +22,6 @@
 #include "subsystems/LedSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 
-enum class RobotState {
-    Manual = 0,
-    ScoringSpeaker,
-    ScoringAmp,
-    ScoringSubwoofer,
-    Loaded,
-    Intaking,
-    Climb
-};
-
 typedef struct {
     DriveSubsystem *drive;
     ClimbSubsystem *leftClimb;
@@ -41,30 +31,29 @@ typedef struct {
     LedSubsystem *led;
 } Subsystems_t;
 
-typedef std::function<RobotState ()> StateGetter;
-
 class StateSubsystem : public frc2::SubsystemBase {
     public:
         StateSubsystem(Subsystems_t& subsystems);
 
-        void incrementState();
-        frc2::CommandPtr updateState(RobotState newState);
+        void IncrementState();
 
-        frc2::CommandPtr startIntaking();
+        frc2::CommandPtr UpdateState(RobotState newState);
 
-        frc2::CommandPtr startScoringSpeaker();
+        frc2::CommandPtr StartIntaking();
 
-        frc2::CommandPtr startScoringAmp();
+        frc2::CommandPtr StartScoringSpeaker();
+
+        frc2::CommandPtr StartScoringAmp();
     
-        frc2::CommandPtr startScoringSubwoofer();
+        frc2::CommandPtr StartScoringSubwoofer();
 
-        frc2::CommandPtr startLoading();
+        frc2::CommandPtr StartLoading();
 
-        frc2::CommandPtr startManual();
+        frc2::CommandPtr StartManual();
 
-        frc2::CommandPtr startClimb();
+        frc2::CommandPtr StartClimb();
 
-        inline RobotState getState() const {
+        inline RobotState GetState() const {
             return m_currentState;
         };
 

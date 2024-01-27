@@ -6,7 +6,7 @@
 
 #include <frc/geometry/Rotation2d.h>
 #include <frc/kinematics/SwerveModulePosition.h>
-#include <frc/kinematics/SwerveModuleStateSubsystem.h>
+#include <frc/kinematics/SwerveModuleState.h>
 #include <rev/CANSparkBase.h>
 #include <rev/CANSparkMax.h>
 #include <rev/SparkAbsoluteEncoder.h>

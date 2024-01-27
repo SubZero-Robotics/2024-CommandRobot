@@ -9,7 +9,7 @@
 class BaseScoreCommand : public frc2::CommandHelper<frc2::Command, BaseScoreCommand> {
 public:
     explicit BaseScoreCommand(ScoringSubsystem* subsystem, IntakeSubsystem* intk, ScoringDirection direction)
-        : m_score{subsystem}, m_intake{intk}, m_direction{direction}, isFinished{false} {
+        : m_score{subsystem}, m_intake{intk}, isFinished{false}, m_state{ScoreState::FlywheelRamp}, m_direction{direction} {
         AddRequirements({m_intake, m_score});
     }
 

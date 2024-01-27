@@ -23,8 +23,8 @@ frc2::CommandPtr LedSubsystem::ShowFromState(StateGetter stateGetter) {
             return ScoringSpeaker();
         case RobotState::ScoringAmp:
             return ScoringAmp();
-        case RobotState::Stowing:
-            return Stowing();
+        case RobotState::Loaded:
+            return Loaded();
         case RobotState::Manual:
             return Idling();
         default:
@@ -128,7 +128,7 @@ frc2::CommandPtr LedSubsystem::ScoringAmp() {
     );
 }
 
-frc2::CommandPtr LedSubsystem::Stowing() {
+frc2::CommandPtr LedSubsystem::Loaded() {
     return setZoneColorPattern(LedZone::Left, LedConstants::kStowLedPort, ColorConstants::kGreen, PatternType::Blink,
         false, 750, false)
     .AndThen(

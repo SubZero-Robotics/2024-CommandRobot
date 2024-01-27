@@ -16,56 +16,56 @@
 StateSubsystem::StateSubsystem(Subsystems_t& subsystems) 
     : m_currentState(RobotState::Manual), m_subsystems{subsystems} {}
 
-void StateSubsystem::incrementState() {
+void StateSubsystem::IncrementState() {
     uint8_t nextState = ((uint8_t)m_currentState) + 1;
     m_currentState = (RobotState)(nextState % 6);
 }
 
-frc2::CommandPtr StateSubsystem::updateState(RobotState newState) {
+frc2::CommandPtr StateSubsystem::UpdateState(RobotState newState) {
     switch (newState) {
         case RobotState::Manual:
-            return startManual();
+            return StartManual();
         case RobotState::ScoringSpeaker:
-            return startScoringSpeaker();
+            return StartScoringSpeaker();
         case RobotState::ScoringAmp:
-            return startScoringAmp();
+            return StartScoringAmp();
         case RobotState::ScoringSubwoofer:
-            return startScoringSubwoofer();
+            return StartScoringSubwoofer();
         case RobotState::Loaded:
-            return startLoading();
+            return StartLoading();
         case RobotState::Intaking:
-            return startIntaking();
+            return StartIntaking();
         case RobotState::Climb:
-            return startClimb();
+            return StartClimb();
         default:
             return RunOnce([] {});
     }
 }
 
-frc2::CommandPtr StateSubsystem::startIntaking() {
+frc2::CommandPtr StateSubsystem::StartIntaking() {
     
 }
 
-frc2::CommandPtr StateSubsystem::startScoringSpeaker() {
+frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
 
 }
 
-frc2::CommandPtr StateSubsystem::startScoringAmp() {
+frc2::CommandPtr StateSubsystem::StartScoringAmp() {
 
 }
 
-frc2::CommandPtr StateSubsystem::startScoringSubwoofer() {
+frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
 
 }
 
-frc2::CommandPtr StateSubsystem::startLoading() {
+frc2::CommandPtr StateSubsystem::StartLoading() {
 
 }
 
-frc2::CommandPtr StateSubsystem::startManual() {
+frc2::CommandPtr StateSubsystem::StartManual() {
 
 }
 
-frc2::CommandPtr StateSubsystem::startClimb() {
+frc2::CommandPtr StateSubsystem::StartClimb() {
 
 }

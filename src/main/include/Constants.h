@@ -17,6 +17,7 @@
 #include <frc/util/Color8Bit.h>
 
 #include <numbers>
+#include <functional>
 
 #pragma once
 
@@ -270,3 +271,15 @@ const std::string kRoborioSerialNumber = "0326F2F2";
 const std::string kRoborioSerialNumber = "032B4B68";
 #endif
 }
+
+enum class RobotState {
+    Manual = 0,
+    ScoringSpeaker,
+    ScoringAmp,
+    ScoringSubwoofer,
+    Loaded,
+    Intaking,
+    Climb
+};
+
+typedef std::function<RobotState ()> StateGetter;

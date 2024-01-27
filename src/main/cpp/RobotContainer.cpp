@@ -67,7 +67,8 @@ RobotContainer::RobotContainer() {
       pathplanner::PathPlannerAuto("Leave COM").ToPtr().Unwrap().get());
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 
-  pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Stowing());
+    // TODO: replace with a FUNNI animation
+  pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
 }
 
 void RobotContainer::ConfigureButtonBindings() {
@@ -76,7 +77,7 @@ void RobotContainer::ConfigureButtonBindings() {
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
   frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kLeftBumper)
-      .OnTrue(m_leds.GetDeferredFromState([this] { m_stateManager.incrementState(); return m_stateManager.getState(); }).ToPtr());
+      .OnTrue(m_leds.GetDeferredFromState([this] { m_state.IncrementState(); return m_state.GetState(); }).ToPtr());
 
   frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kY)
       .OnTrue(pathplanner::AutoBuilder::pathfindToPose(

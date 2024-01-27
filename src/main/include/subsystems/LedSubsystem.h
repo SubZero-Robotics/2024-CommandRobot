@@ -7,7 +7,6 @@
 #include <frc2/command/DeferredCommand.h>
 
 #include "moduledrivers/ConnectorX.h"
-#include "subsystems/StateSubsystem.h"
 #include "Constants.h"
 
 using namespace ConnectorX;
@@ -29,7 +28,7 @@ class LedSubsystem : public frc2::SubsystemBase {
         frc2::CommandPtr Intaking();
         frc2::CommandPtr ScoringSpeaker();
         frc2::CommandPtr ScoringAmp();
-        frc2::CommandPtr Stowing();
+        frc2::CommandPtr Loaded();
         frc2::CommandPtr Idling();
 
     private:
