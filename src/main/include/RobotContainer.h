@@ -74,7 +74,7 @@ class RobotContainer {
     .led = &m_leds
   };
 
-  StateSubsystem m_state{m_subsystems};
+  StateSubsystem m_state{m_subsystems, m_driverController};
 #endif
 
   void ConfigureButtonBindings();

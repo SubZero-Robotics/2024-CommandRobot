@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <frc2/command/button/CommandXboxController.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandPtr.h>
 #include <rev/CANSparkFlex.h>
@@ -32,7 +33,7 @@ typedef struct {
 
 class StateSubsystem : public frc2::SubsystemBase {
     public:
-        StateSubsystem(Subsystems_t& subsystems);
+        StateSubsystem(Subsystems_t& subsystems, frc2::CommandXboxController&);
 
         void IncrementState();
 
@@ -52,9 +53,12 @@ class StateSubsystem : public frc2::SubsystemBase {
 
         inline RobotState GetState() const {
             return m_currentState;
-        };
+        }
 
     private:
+        bool IsControllerActive();
+
         RobotState m_currentState;
         Subsystems_t &m_subsystems;
+        frc2::CommandXboxController &m_controller;
 };

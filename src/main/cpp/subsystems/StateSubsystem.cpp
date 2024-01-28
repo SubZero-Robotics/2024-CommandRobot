@@ -15,8 +15,8 @@
 #include "subsystems/DriveSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 
-StateSubsystem::StateSubsystem(Subsystems_t& subsystems) 
-    : m_currentState(RobotState::Manual), m_subsystems{subsystems} {}
+StateSubsystem::StateSubsystem(Subsystems_t& subsystems, frc2::CommandXboxController &controller)
+    : m_currentState(RobotState::Manual), m_subsystems{subsystems}, m_controller{controller} {}
 
 void StateSubsystem::IncrementState() {
     uint8_t nextState = ((uint8_t)m_currentState) + 1;
@@ -24,21 +24,27 @@ void StateSubsystem::IncrementState() {
 }
 
 frc2::CommandPtr StateSubsystem::UpdateState(RobotState newState) {
+    // TODO: Perform checks to ensure we can't enter the wrong state
     switch (newState) {
         case RobotState::Manual:
             return StartManual();
         case RobotState::ScoringSpeaker:
-            return StartScoringSpeaker();
+            return StartScoringSpeaker()
+                .Until(std::bind(&StateSubsystem::IsControllerActive, this)).AndThen(StartManual());
         case RobotState::ScoringAmp:
-            return StartScoringAmp();
+            return StartScoringAmp()
+                .Until(std::bind(&StateSubsystem::IsControllerActive, this)).AndThen(StartManual());
         case RobotState::ScoringSubwoofer:
-            return StartScoringSubwoofer();
+            return StartScoringSubwoofer()
+                .Until(std::bind(&StateSubsystem::IsControllerActive, this)).AndThen(StartManual());
         case RobotState::Intaking:
-            return StartIntaking();
+            return StartIntaking()
+                .Until(std::bind(&StateSubsystem::IsControllerActive, this)).AndThen(StartManual());
         case RobotState::Climb:
-            return StartClimb(1);
+            return StartClimb(1)
+                .Until(std::bind(&StateSubsystem::IsControllerActive, this)).AndThen(StartManual());
         default:
-            return RunOnce([] {});
+            return m_subsystems.led->Error();
     }
 }
 
@@ -113,4 +119,20 @@ frc2::CommandPtr StateSubsystem::StartClimb(uint8_t stageLocation) {
     */
 
     return RunOnce([] {});
+}
+
+// Is there an easier way to do this?
+bool StateSubsystem::IsControllerActive() {
+    return  m_controller.GetAButtonPressed() ||
+            m_controller.GetBButtonPressed() ||
+            m_controller.GetYButtonPressed() ||
+            m_controller.GetXButtonPressed() ||
+            m_controller.GetLeftBumperPressed() ||
+            m_controller.GetRightBumperPressed() ||
+            abs(m_controller.GetLeftTriggerAxis()) >= OIConstants::kDriveDeadband ||
+            abs(m_controller.GetRightTriggerAxis()) >= OIConstants::kDriveDeadband ||
+            abs(m_controller.GetLeftX()) >= OIConstants::kDriveDeadband ||
+            abs(m_controller.GetLeftY()) >= OIConstants::kDriveDeadband ||
+            abs(m_controller.GetRightX()) >= OIConstants::kDriveDeadband ||
+            abs(m_controller.GetRightY()) >= OIConstants::kDriveDeadband;
 }

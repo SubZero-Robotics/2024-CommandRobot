@@ -65,28 +65,28 @@ frc2::CommandPtr LedSubsystem::Intaking() {
 }
 
 frc2::CommandPtr LedSubsystem::ScoringSpeaker() {
-    return setZoneColorPattern(LedZone::Left, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::Blink,
-        false, 500, false)
+    return setZoneColorPattern(LedZone::Left, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::SetAll,
+        true, 500, false)
     .AndThen(
         frc2::WaitCommand(0.02_s).ToPtr()
     )
     .AndThen(
-        setZoneColorPattern(LedZone::Right, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::Blink,
-            false, 500, false)
-    )
-    .AndThen(
-        frc2::WaitCommand(0.02_s).ToPtr()
-    )
-    .AndThen(
-        setZoneColorPattern(LedZone::Front, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::Blink,
-            false, 500, false)
+        setZoneColorPattern(LedZone::Right, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::SetAll,
+            true, 500, false)
     )
     .AndThen(
         frc2::WaitCommand(0.02_s).ToPtr()
     )
     .AndThen(
-        setZoneColorPattern(LedZone::Back, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::RGBFade,
-            false, 3, false)
+        setZoneColorPattern(LedZone::Front, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::SetAll,
+            true, 500, false)
+    )
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        setZoneColorPattern(LedZone::Back, LedConstants::kSpeakerLedPort, ColorConstants::kPurple, PatternType::Blink,
+            false, 250, false)
     )
     .AndThen(
         frc2::WaitCommand(0.02_s).ToPtr()
@@ -97,28 +97,28 @@ frc2::CommandPtr LedSubsystem::ScoringSpeaker() {
 }
 
 frc2::CommandPtr LedSubsystem::ScoringAmp() {
-    return setZoneColorPattern(LedZone::Left, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::Blink,
-        false, 500, false)
+    return setZoneColorPattern(LedZone::Left, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::SetAll,
+        true, 500, false)
     .AndThen(
         frc2::WaitCommand(0.02_s).ToPtr()
     )
     .AndThen(
-        setZoneColorPattern(LedZone::Right, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::Blink,
-            false, 500, false)
-    )
-    .AndThen(
-        frc2::WaitCommand(0.02_s).ToPtr()
-    )
-    .AndThen(
-        setZoneColorPattern(LedZone::Front, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::RGBFade,
-            false, 3, false)
+        setZoneColorPattern(LedZone::Right, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::SetAll,
+            true, 500, false)
     )
     .AndThen(
         frc2::WaitCommand(0.02_s).ToPtr()
     )
     .AndThen(
-        setZoneColorPattern(LedZone::Back, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::Blink,
-            false, 500, false)
+        setZoneColorPattern(LedZone::Front, LedConstants::kSpeakerLedPort, ColorConstants::kPurple, PatternType::Blink,
+            false, 250, false)
+    )
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        setZoneColorPattern(LedZone::Back, LedConstants::kSpeakerLedPort, ColorConstants::kYellow, PatternType::SetAll,
+            true, 500, false)
     )
     .AndThen(
         frc2::WaitCommand(0.02_s).ToPtr()
@@ -183,6 +183,38 @@ frc2::CommandPtr LedSubsystem::Idling() {
     .AndThen(
         setZoneColorPattern(LedZone::Back, LedConstants::kIdleLedPort, ColorConstants::kBlue, PatternType::Breathe,
             false, 10, false)
+    )
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        syncAllZones()
+    );
+}
+
+frc2::CommandPtr LedSubsystem::Error() {
+    return setZoneColorPattern(LedZone::Left, LedConstants::kIntakeLedPort, ColorConstants::kRed, PatternType::Blink,
+        false, 400, false)
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        setZoneColorPattern(LedZone::Right, LedConstants::kIntakeLedPort, ColorConstants::kRed, PatternType::Blink,
+            false, 400, true)
+    )
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        setZoneColorPattern(LedZone::Front, LedConstants::kIntakeLedPort, ColorConstants::kRed, PatternType::Blink,
+            false, 400, false)
+    )
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        setZoneColorPattern(LedZone::Back, LedConstants::kIntakeLedPort, ColorConstants::kRed, PatternType::Blink,
+            false, 400, false)
     )
     .AndThen(
         frc2::WaitCommand(0.02_s).ToPtr()
