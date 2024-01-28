@@ -169,21 +169,21 @@ constexpr uint8_t kLedAddress = 23;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
-constexpr int kRightIntakeSpinnyBoiId = 19;
-constexpr int kLeftIntakeSpinnyBoiId = 20;
+constexpr int kFrontIntakeSpinnyBoiId = 25;
+constexpr int kRearIntakeSpinnyBoiId = 24;
 constexpr int kVectorSpinnyBoiId = 21;
-constexpr int kAmpLowerSpinnyBoiId = 22;
-constexpr int kAmpUpperSpinnyBoiId = 23;
-constexpr int kSpeakerLowerSpinnyBoiId = 24;
-constexpr int kSpeakerUpperSpinnyBoiId = 25;
+constexpr int kAmpLowerSpinnyBoiId = 23;
+constexpr int kAmpUpperSpinnyBoiId = 22;
+constexpr int kSpeakerLowerSpinnyBoiId = 30;
+constexpr int kSpeakerUpperSpinnyBoiId = 31;
 
 constexpr int kTicksPerMotorRotation = 42;
 }  // namespace CANSparkMaxConstants
 
 namespace Intakeconstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = 0.33;
-constexpr double kOutakeSpeed = -0.1;
+constexpr double kIntakeSpeed = -0.66;
+constexpr double kOutakeSpeed = 0.4;
 
 constexpr uint8_t kBeamBreakDigitalPort = 2;
 }
@@ -254,7 +254,7 @@ namespace ClimbConstants {
 
     constexpr double kClimbStepSize = 1;
     constexpr double kClimbHomingSpeed = 1;
-    constexpr int kTicksPerMotorRotation = 1;
+    constexpr int kTicksPerMotorRotation = 42;
 
     // Distance between left and right arm centers
     constexpr units::meter_t kClimberOffsetDistance = 4_m;

@@ -3,7 +3,7 @@
 #include "ColorConstants.h"
 
 IntakeSubsystem::IntakeSubsystem() {
-    m_rightIntakeSpinnyBoy.Follow(m_leftIntakeSpinnyBoy, true);
+    m_rearIntakeSpinnyBoy.Follow(m_frontIntakeSpinnyBoy, true);
 }
 
 void IntakeSubsystem::Periodic() {}
@@ -11,17 +11,17 @@ void IntakeSubsystem::Periodic() {}
 void IntakeSubsystem::SimulationPeriodic() {}
 
 void IntakeSubsystem::Out() {
-    m_leftIntakeSpinnyBoy.Set(Intakeconstants::kOutakeSpeed);
+    m_frontIntakeSpinnyBoy.Set(Intakeconstants::kOutakeSpeed);
 }
 
 void IntakeSubsystem::In() {
-    m_leftIntakeSpinnyBoy.Set(Intakeconstants::kIntakeSpeed);
+    m_frontIntakeSpinnyBoy.Set(Intakeconstants::kIntakeSpeed);
 }
 
 void IntakeSubsystem::Stop() {
-    m_leftIntakeSpinnyBoy.Set(0);
+    m_frontIntakeSpinnyBoy.Set(0);
 }
 
 bool IntakeSubsystem::NotePresent() {
-    return m_beamBreak.Get();
+    return !m_beamBreak.Get();
 }

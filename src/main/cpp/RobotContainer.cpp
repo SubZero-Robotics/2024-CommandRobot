@@ -2,8 +2,6 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#define CHARACTERIZATION
-
 #include "RobotContainer.h"
 
 #include <frc/IterativeRobotBase.h>
@@ -46,7 +44,8 @@ RobotContainer::RobotContainer() {
   // Configure the button bindings
 #ifdef CHARACTERIZATION
   ConfigureCharacterizationBindings();
-#elif
+#endif
+#ifndef CHARACTERIZATION
   ConfigureButtonBindings();
 #endif
   // Set up default drive command
@@ -103,7 +102,7 @@ void RobotContainer::ConfigureButtonBindings() {
         &m_rightClimb, [this] { return -m_driverController.GetRightTriggerAxis(); },
         [this] { return 0; }).ToPtr());
 
-    m_driverController.B().WhileTrue(IntakeIn(&m_intake).ToPtr());
+    m_driverController.B().WhileTrue(IntakeOut(&m_intake).ToPtr());
 
     m_driverController.X().WhileTrue(ScoreSpeaker(&m_scoring, &m_intake).ToPtr());
 
@@ -121,10 +120,10 @@ void RobotContainer::ConfigureButtonBindings() {
 #endif
 }
 
-void RobotContainer::ConfigureCharacterizationBindings() {
+void RobotContainer::ConfigureCharacterizationBindings() {{
     m_driverController.Y().WhileTrue(
         m_drive.sys
-    );
+    );}
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
