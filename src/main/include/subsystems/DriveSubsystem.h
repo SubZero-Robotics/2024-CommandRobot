@@ -13,6 +13,8 @@
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/smartdashboard/Field2d.h>
 #include <frc2/command/SubsystemBase.h>
+#include <frc2/command/sysid/SysIdRoutine.h>
+#include <frc/RobotController.h>
 
 #include "Constants.h"
 #include "MAXSwerveModule.h"
@@ -156,4 +158,24 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   // Pose viewing
   frc::Field2d m_field;
+
+  void logMotor(frc::sysid::SysIdRoutineLog* log) {
+        log->Motor("front-left-turn")
+          .voltage(m_frontLeft.getDriveMotor()->Get() *
+          frc::RobotController::GetBatteryVoltage())
+          .position(units::meter_t{})
+          .velocity(units::meters_per_second_t{m_frontLeft.getDriveMotor()
+          ->GetEncoder().GetRate()});
+  }
+
+  frc2::sysid::SysIdRoutine m_sysIdRoutine{
+    frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt,
+                          std::nullopt},
+    frc2::sysid::Mechanism{
+      [this] (units::volt_t driveVoltage) {
+        m_frontLeft.getDriveMotor()->setVoltage(driveVoltage);
+      },
+      logMotor();
+    }
+  };
 };

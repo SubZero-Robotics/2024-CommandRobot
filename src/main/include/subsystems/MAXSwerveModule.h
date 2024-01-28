@@ -50,6 +50,14 @@ class MAXSwerveModule {
    */
   void ResetEncoders();
 
+  inline rev::CANSparkMax *getDriveMotor() {
+    return &m_drivingSparkMax;
+  }
+
+  inline rev::CANSparkMax *getTurnMotor() {
+    return &m_turningSparkMax;
+  }
+
  private:
   rev::CANSparkMax m_drivingSparkMax;
   rev::CANSparkMax m_turningSparkMax;

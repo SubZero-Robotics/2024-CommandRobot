@@ -60,10 +60,13 @@ class RobotContainer {
   RightClimbSubsystem m_rightClimb;
   IntakeSubsystem m_intake;
   ScoringSubsystem m_scoring;
+
 #endif
 
   LedSubsystem m_leds;
   StateManager m_stateManager;
+  
 
   void ConfigureButtonBindings();
+  void ConfigureCharacterizationBindings();
 };

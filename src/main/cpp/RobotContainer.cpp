@@ -2,6 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+#define CHARACTERIZATION
+
 #include "RobotContainer.h"
 
 #include <frc/IterativeRobotBase.h>
@@ -42,8 +44,11 @@ RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
 
   // Configure the button bindings
+#ifdef CHARACTERIZATION
+  ConfigureCharacterizationBindings();
+#elif
   ConfigureButtonBindings();
-
+#endif
   // Set up default drive command
   // The left stick controls translation of the robot.
   // Turning is controlled by the X axis of the right stick.
@@ -87,6 +92,7 @@ void RobotContainer::ConfigureButtonBindings() {
                   0.0_m  // Rotation delay distance in meters. This is how far
                          // the robot should travel before attempting to rotate.
                   ));
+    
 
 #ifndef TEST_SWERVE_BOT
     m_driverController.LeftTrigger(OIConstants::kDriveDeadband).WhileTrue(ExtendClimbCommand(
@@ -113,6 +119,12 @@ void RobotContainer::ConfigureButtonBindings() {
 
     m_driverController.RightBumper().WhileTrue(BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());
 #endif
+}
+
+void RobotContainer::ConfigureCharacterizationBindings() {
+    m_driverController.Y().WhileTrue(
+        m_drive.sys
+    );
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
