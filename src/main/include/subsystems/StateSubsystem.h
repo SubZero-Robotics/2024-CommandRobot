@@ -46,11 +46,9 @@ class StateSubsystem : public frc2::SubsystemBase {
     
         frc2::CommandPtr StartScoringSubwoofer();
 
-        frc2::CommandPtr StartLoading();
-
         frc2::CommandPtr StartManual();
 
-        frc2::CommandPtr StartClimb();
+        frc2::CommandPtr StartClimb(uint8_t stageLocation);
 
         inline RobotState GetState() const {
             return m_currentState;

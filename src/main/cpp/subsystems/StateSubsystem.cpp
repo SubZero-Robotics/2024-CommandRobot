@@ -33,12 +33,10 @@ frc2::CommandPtr StateSubsystem::UpdateState(RobotState newState) {
             return StartScoringAmp();
         case RobotState::ScoringSubwoofer:
             return StartScoringSubwoofer();
-        case RobotState::Loaded:
-            return StartLoading();
         case RobotState::Intaking:
             return StartIntaking();
         case RobotState::Climb:
-            return StartClimb();
+            return StartClimb(1);
         default:
             return RunOnce([] {});
     }
@@ -113,4 +111,6 @@ frc2::CommandPtr StateSubsystem::StartClimb(uint8_t stageLocation) {
        Retract arms
        Balance
     */
+
+    return RunOnce([] {});
 }

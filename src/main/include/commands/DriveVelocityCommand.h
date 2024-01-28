@@ -11,11 +11,20 @@
 
 class DriveVelocity : public frc2::CommandHelper<frc2::Command, DriveVelocity> {
     public:
-        DriveVelocity(units::meter_t scalar, units::degree_t angle, units::meters_per_second_t speed, DriveSubsystem* drive) {}
+        DriveVelocity(units::meter_t scalar, units::degree_t angle,
+            units::meters_per_second_t speed, DriveSubsystem* drive) {
+            
+        }
 
-        void Initialize() override;
+        void Initialize() override {
 
-        void Execute() override;
+        }
 
-        void End(bool interrupted) override;
+        void Execute() override {
+
+        }
+
+        void End(bool interrupted) override {
+            
+        }
 };

@@ -8,6 +8,11 @@
 #include <frc/geometry/Pose2d.h>
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <frc/util/Color8Bit.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/path/PathPlannerPath.h>
+#include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
+#include <pathplanner/lib/util/PIDConstants.h>
+#include <pathplanner/lib/util/ReplanningConfig.h>
 #include <rev/CANSparkMax.h>
 #include <units/acceleration.h>
 #include <units/angular_acceleration.h>
@@ -161,23 +166,21 @@ extern const frc::TrapezoidProfile<units::radians>::Constraints
 
 const std::string kDefaultAutoName = "Leave Wing";
 
-const pathplanner::HolonomicPathFollowerConfig PathConfig =
-    pathplanner::HolonomicPathFollowerConfig(
-        pathplanner::PIDConstants(0.5, 0.0,
-                                  0.0),            // Translation PID constants
-        pathplanner::PIDConstants(0.5, 0.0, 0.0),  // Rotation PID constants
-        3.0_mps,                                   // Max module speed, in m/s
-#ifdef TEST_SWERVE_BOT
-        0.4579874_m,  // Drive base radius in meters. Distance from robot center
-                      // to
-#endif
-#ifndef TEST_SWERVE_BOT
-        0.529844_m,
-#endif
-        // furthest module.
-        pathplanner::ReplanningConfig()  // Default path replanning config.
-                                         // See the API for the options here),
-    );
+const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
+    pathplanner::PIDConstants(0.5, 0.0,
+                            0.0),  // Translation PID constants
+    pathplanner::PIDConstants(0.5, 0.0, 0.0),  // Rotation PID constants
+    3.0_mps,                                   // Max module speed, in m/s
+    #ifdef TEST_SWERVE_BOT
+    0.4579874_m,  // Drive base radius in meters. Distance from robot center to
+    #endif
+    #ifndef TEST_SWERVE_BOT
+    0.529844_m,
+    #endif
+            // furthest module.
+    pathplanner::ReplanningConfig()  // Default path replanning config.
+                                    // See the API for the options here),
+);
 
 namespace Locations {
 

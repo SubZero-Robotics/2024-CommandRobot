@@ -36,7 +36,7 @@ class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::CommandPtr GetAutonomousCommand();
+  frc2::Command* GetAutonomousCommand();
 
  private:
   // The driver's controller
@@ -49,6 +49,8 @@ class RobotContainer {
   DriveSubsystem m_drive;
 
   LedSubsystem m_leds;
+
+  frc2::CommandPtr m_defaultAuto = pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName).ToPtr();
 
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;

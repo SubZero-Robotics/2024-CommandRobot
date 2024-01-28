@@ -62,10 +62,10 @@ RobotContainer::RobotContainer() {
 
   // This won't work since we're getting the reference of an r-value which goes
   // out of scope at the end of the method
-  m_chooser.SetDefaultOption(
-      "Leave Community",
-      pathplanner::PathPlannerAuto("Leave COM").ToPtr().Unwrap().get());
+  m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName, m_defaultAuto.get());
+
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
+  frc::SmartDashboard::PutData(&m_chooser);
 
     // TODO: replace with a FUNNI animation
   pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
@@ -117,6 +117,6 @@ void RobotContainer::ConfigureButtonBindings() {
 #endif
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName).ToPtr();
+frc2::Command* RobotContainer::GetAutonomousCommand() {
+  return m_chooser.GetSelected();
 }
