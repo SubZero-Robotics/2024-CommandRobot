@@ -47,7 +47,7 @@ frc2::CommandPtr StateSubsystem::StartIntaking() {
     .AndThen(
         IntakeIn(m_subsystems.intake).ToPtr()
         .RaceWith(
-            DriveVelocity(0.01_m, 0_deg, 2_mps, m_subsystems.drive).ToPtr().Repeatedly()
+            DriveVelocity(0_deg, 2_mps, m_subsystems.drive).ToPtr().Repeatedly()
         )
         .WithTimeout(5_s)
     );

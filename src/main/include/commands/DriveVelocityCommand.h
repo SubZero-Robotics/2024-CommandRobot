@@ -40,7 +40,7 @@ class DriveVelocity : public frc2::CommandHelper<frc2::Command, DriveVelocity> {
         }
 
     private:
-        DriveSubsystem *m_drive;
         units::degree_t m_angle;
         units::meters_per_second_t m_velocity;
+        DriveSubsystem *m_drive;
 };
