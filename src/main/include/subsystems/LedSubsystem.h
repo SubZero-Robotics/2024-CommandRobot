@@ -25,13 +25,13 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::DeferredCommand GetDeferredFromState(StateGetter);
   frc2::CommandPtr ShowFromState(StateGetter);
 
-        frc2::CommandPtr Intaking();
-        frc2::CommandPtr ScoringSpeaker();
-        frc2::CommandPtr ScoringAmp();
-        frc2::CommandPtr Loaded();
-        frc2::CommandPtr Idling();
-        frc2::CommandPtr Climbing();
-        frc2::CommandPtr Error();
+  frc2::CommandPtr Intaking();
+  frc2::CommandPtr ScoringSpeaker();
+  frc2::CommandPtr ScoringAmp();
+  frc2::CommandPtr Loaded();
+  frc2::CommandPtr Idling();
+  frc2::CommandPtr Climbing();
+  frc2::CommandPtr Error();
 
  private:
   enum class LedZone {
