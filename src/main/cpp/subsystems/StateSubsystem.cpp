@@ -8,11 +8,13 @@
 #include "commands/ScoreSpeakerCommand.h"
 #include "commands/ScoreSubwooferCommand.h"
 #include "commands/ExtendClimbCommand.h"
+#include "commands/RetractClimbCommand.h"
 #include "commands/BalanceCommand.h"
 #include "commands/DriveVelocityCommand.h"
 #include "commands/ExtendAbsoluteCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
+#include "autos/PathFactory.h"
 #include "utils/ShuffleboardLogger.h"
 
 StateSubsystem::StateSubsystem(Subsystems_t& subsystems, frc2::CommandXboxController &controller)
@@ -69,9 +71,11 @@ frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
 
     return m_subsystems.led->ShowFromState([] { return RobotState::ScoringSpeaker; })
     .AndThen(
+        PathFactory::GetPathFromFinalLocation([] { return FinalLocation::Podium; }, m_subsystems.drive)
+    )
+    .AndThen(
         ScoreSpeaker(m_subsystems.scoring, m_subsystems.intake).ToPtr()
     );
-
 }
 
 frc2::CommandPtr StateSubsystem::StartScoringAmp() {
@@ -82,6 +86,9 @@ frc2::CommandPtr StateSubsystem::StartScoringAmp() {
        Shoot with timeout
     */
     return m_subsystems.led->ShowFromState([] { return RobotState::ScoringAmp; })
+    .AndThen(
+        PathFactory::GetPathFromFinalLocation([] { return FinalLocation::Amp; }, m_subsystems.drive)
+    )
     .AndThen(
         ScoreAmp(m_subsystems.scoring, m_subsystems.intake).ToPtr()
     );
@@ -95,6 +102,9 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
        Shoot with timeout
     */
     return m_subsystems.led->ShowFromState([] { return RobotState::ScoringSubwoofer; })
+    .AndThen(
+        PathFactory::GetPathFromFinalLocation([] { return FinalLocation::Subwoofer; }, m_subsystems.drive)
+    )
     .AndThen(
         ScoreAmp(m_subsystems.scoring, m_subsystems.intake).ToPtr()
     );
@@ -118,7 +128,18 @@ frc2::CommandPtr StateSubsystem::StartClimb(uint8_t stageLocation) {
        Balance
     */
 
-    return RunOnce([] {});
+    return m_subsystems.led->Climbing()
+    .AndThen(
+        // TODO: method to get the stage location
+        PathFactory::GetPathFromFinalLocation([] { return FinalLocation::StageLeft; },
+            m_subsystems.drive, ExtendAbsolute(m_subsystems.leftClimb, m_subsystems.rightClimb).ToPtr())
+    )
+    .AndThen(
+        RetractClimbCommand(m_subsystems.leftClimb, m_subsystems.rightClimb).ToPtr()
+    )
+    .AndThen(
+        BalanceCommand(m_subsystems.drive, m_subsystems.leftClimb, m_subsystems.rightClimb).ToPtr()
+    );
 }
 
 // Is there an easier way to do this?

@@ -192,6 +192,38 @@ frc2::CommandPtr LedSubsystem::Idling() {
     );
 }
 
+frc2::CommandPtr LedSubsystem::Climbing() {
+    return setZoneColorPattern(LedZone::Left, LedConstants::kIdleLedPort, ColorConstants::kBlue, PatternType::SineRoll,
+        false, 10, false)
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        setZoneColorPattern(LedZone::Right, LedConstants::kIdleLedPort, ColorConstants::kBlue, PatternType::SineRoll,
+            false, 10, false)
+    )
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        setZoneColorPattern(LedZone::Front, LedConstants::kIdleLedPort, ColorConstants::kYellow, PatternType::SineRoll,
+            false, 10, false)
+    )
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        setZoneColorPattern(LedZone::Back, LedConstants::kIdleLedPort, ColorConstants::kYellow, PatternType::SineRoll,
+            false, 10, false)
+    )
+    .AndThen(
+        frc2::WaitCommand(0.02_s).ToPtr()
+    )
+    .AndThen(
+        syncAllZones()
+    );
+}
+
 frc2::CommandPtr LedSubsystem::Error() {
     return setZoneColorPattern(LedZone::Left, LedConstants::kIntakeLedPort, ColorConstants::kRed, PatternType::Blink,
         false, 400, false)

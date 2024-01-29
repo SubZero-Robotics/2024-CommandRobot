@@ -10,7 +10,7 @@ class OnTheFlyFactory {
 
   // Method to take in a final location
   // and return a approx location Pose2d
-  const frc::Pose2d& GetApproxLocation(FinalLocation location) const {
+  static const frc::Pose2d& GetApproxLocation(FinalLocation location) {
     switch (location) {
         case FinalLocation::Subwoofer:
         case FinalLocation::Amp:
@@ -26,6 +26,9 @@ class OnTheFlyFactory {
         
         case FinalLocation::CenterStage:
             return ApproxCentralLocation;
+        default:
+          // TODO: Make this smarter
+            return ApproxScoringLocation;
     }
   }
 };
