@@ -220,13 +220,12 @@ const std::map<FinalLocation, std::string> PoseToPath{
     // Wing Line 2 = ApproxSource
     {FinalLocation::Subwoofer, "Note 2 to Speaker"},
     {FinalLocation::Amp, "Note 2 to Amp"},
-    // Does not yet exist
     {FinalLocation::Podium, "Note 2 to Podium"},
+    {FinalLocation::StageLeft, "Note 2 to Stage Left"},
     {FinalLocation::Source1, "Wing Line 2 to Source 1"},
     {FinalLocation::Source2, "Wing Line 2 to Source 2"},
     {FinalLocation::Source3, "Wing Line 2 to Source 3"},
     {FinalLocation::CenterStage, "Center Field to Center Stage"},
-    {FinalLocation::StageLeft, "Note 2 to Stage Left"},
     {FinalLocation::StageRight, "Wing Line 2 to Stage Right"}};
 }  // namespace Locations
 }  // namespace AutoConstants
