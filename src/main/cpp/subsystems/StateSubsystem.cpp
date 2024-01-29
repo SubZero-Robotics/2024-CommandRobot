@@ -82,7 +82,8 @@ frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
       ->ShowFromState([] { return RobotState::ScoringSpeaker; })
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Podium; }, m_subsystems.drive))
-      .AndThen(ScoreSpeaker(m_subsystems.scoring, m_subsystems.intake).ToPtr());
+      .AndThen(ScoreSpeaker(m_subsystems.scoring, m_subsystems.intake).ToPtr())
+      .WithTimeout(20_s);
 }
 
 frc2::CommandPtr StateSubsystem::StartScoringAmp() {
@@ -95,7 +96,8 @@ frc2::CommandPtr StateSubsystem::StartScoringAmp() {
   return m_subsystems.led->ShowFromState([] { return RobotState::ScoringAmp; })
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Amp; }, m_subsystems.drive))
-      .AndThen(ScoreAmp(m_subsystems.scoring, m_subsystems.intake).ToPtr());
+      .AndThen(ScoreAmp(m_subsystems.scoring, m_subsystems.intake).ToPtr())
+      .WithTimeout(20_s);
 }
 
 frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
@@ -109,7 +111,8 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
       ->ShowFromState([] { return RobotState::ScoringSubwoofer; })
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Subwoofer; }, m_subsystems.drive))
-      .AndThen(ScoreAmp(m_subsystems.scoring, m_subsystems.intake).ToPtr());
+      .AndThen(ScoreAmp(m_subsystems.scoring, m_subsystems.intake).ToPtr())
+      .WithTimeout(20_s);
 }
 
 frc2::CommandPtr StateSubsystem::StartManual() {
@@ -142,7 +145,8 @@ frc2::CommandPtr StateSubsystem::StartClimb(uint8_t stageLocation) {
               .ToPtr())
       .AndThen(BalanceCommand(m_subsystems.drive, m_subsystems.leftClimb,
                               m_subsystems.rightClimb)
-                   .ToPtr());
+                   .ToPtr())
+      .WithTimeout(20_s);
 }
 
 bool StateSubsystem::IsControllerActive() {
