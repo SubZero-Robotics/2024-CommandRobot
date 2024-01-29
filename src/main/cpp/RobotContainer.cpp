@@ -97,7 +97,6 @@ void RobotContainer::ConfigureButtonBindings() {
                     // the robot should travel before attempting to rotate.
           ));
 
-
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
       .WhileTrue(
