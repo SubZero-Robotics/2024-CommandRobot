@@ -1,4 +1,5 @@
 #include "utils/ConsoleLogger.h"
+
 #include <wpi/json.h>
 
 using namespace Logging;

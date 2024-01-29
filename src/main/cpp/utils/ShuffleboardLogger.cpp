@@ -1,51 +1,60 @@
 #include "utils/ShuffleboardLogger.h"
-#include <wpi/json.h>
+
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <wpi/json.h>
 
 using namespace Logging;
 
-ShuffleboardLogger::ShuffleboardLogger() {
-  
-}
+ShuffleboardLogger::ShuffleboardLogger() {}
 
-void ShuffleboardLogger::logVerbose(std::string key, const std::string format, ...) {
+void ShuffleboardLogger::logVerbose(std::string key, const std::string format,
+                                    ...) {
   if (!shouldLog(LogLevel::VERBOSE)) return;
 
   va_list args;
   va_start(args, format);
-  frc::SmartDashboard::PutString(key, formatToShuffleboardString(LogLevel::VERBOSE, format, args));
+  frc::SmartDashboard::PutString(
+      key, formatToShuffleboardString(LogLevel::VERBOSE, format, args));
   va_end(args);
 }
-void ShuffleboardLogger::logInfo(std::string key, const std::string format, ...) {
+void ShuffleboardLogger::logInfo(std::string key, const std::string format,
+                                 ...) {
   if (!shouldLog(LogLevel::INFO)) return;
 
   va_list args;
   va_start(args, format);
-  frc::SmartDashboard::PutString(key, formatToShuffleboardString(LogLevel::INFO, format, args));
+  frc::SmartDashboard::PutString(
+      key, formatToShuffleboardString(LogLevel::INFO, format, args));
   va_end(args);
 }
-void ShuffleboardLogger::logWarning(std::string key, const std::string format, ...) {
+void ShuffleboardLogger::logWarning(std::string key, const std::string format,
+                                    ...) {
   if (!shouldLog(LogLevel::WARNING)) return;
 
   va_list args;
   va_start(args, format);
-  frc::SmartDashboard::PutString(key, formatToShuffleboardString(LogLevel::WARNING, format, args));
+  frc::SmartDashboard::PutString(
+      key, formatToShuffleboardString(LogLevel::WARNING, format, args));
   va_end(args);
 }
-void ShuffleboardLogger::logError(std::string key, const std::string format, ...) {
+void ShuffleboardLogger::logError(std::string key, const std::string format,
+                                  ...) {
   if (!shouldLog(LogLevel::ERROR)) return;
 
   va_list args;
   va_start(args, format);
-  frc::SmartDashboard::PutString(key, formatToShuffleboardString(LogLevel::ERROR, format, args));
+  frc::SmartDashboard::PutString(
+      key, formatToShuffleboardString(LogLevel::ERROR, format, args));
   va_end(args);
 }
-void ShuffleboardLogger::logFatal(std::string key, const std::string format, ...) {
+void ShuffleboardLogger::logFatal(std::string key, const std::string format,
+                                  ...) {
   if (!shouldLog(LogLevel::FATAL)) return;
 
   va_list args;
   va_start(args, format);
-  frc::SmartDashboard::PutString(key, formatToShuffleboardString(LogLevel::FATAL, format, args));
+  frc::SmartDashboard::PutString(
+      key, formatToShuffleboardString(LogLevel::FATAL, format, args));
   va_end(args);
 }
 

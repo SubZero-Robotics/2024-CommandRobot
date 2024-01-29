@@ -4,21 +4,29 @@
 
 #include "Robot.h"
 
+#include <frc/RobotController.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
-#include <frc/RobotController.h>
 #include <wpinet/uv/Error.h>
-#include "frc/DataLogManager.h"
-#include "wpi/DataLog.h"
 
 #include "Constants.h"
+#include "frc/DataLogManager.h"
+#include "frc/DriverStation.h"
+#include "wpi/DataLog.h"
 
 void Robot::RobotInit() {
-  if (frc::RobotController::GetSerialNumber() != RobotConstants::kRoborioSerialNumber) {
-    std::cout << "Error: wrong robot\n";
-    throw wpi::uv::Error(108);
+  if (RobotBase::IsReal()) {
+    if (frc::RobotController::GetSerialNumber() !=
+        RobotConstants::kRoborioSerialNumber) {
+      std::cout << "Error: wrong robot\n";
+      throw wpi::uv::Error(108);
+    }
   }
   frc::DataLogManager::Start();
+
+  // Logs joystick data without hogging NT bandwidth
+  // *May* tax the rio, should be tested
+  frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
 }
 
 /**
@@ -46,11 +54,10 @@ void Robot::DisabledPeriodic() {}
  */
 void Robot::AutonomousInit() {
   m_autonomousCommand = m_container.GetAutonomousCommand();
-  m_autonomousCommand.Schedule();
 
-  // if (m_autonomousCommand != nullptr) {
-  //   m_autonomousCommand->Schedule();
-  // }
+  if (m_autonomousCommand != nullptr) {
+    m_autonomousCommand->Schedule();
+  }
 }
 
 void Robot::AutonomousPeriodic() {}
@@ -60,12 +67,10 @@ void Robot::TeleopInit() {
   // teleop starts running. If you want the autonomous to
   // continue until interrupted by another command, remove
   // this line or comment it out.
-  // if (m_autonomousCommand != nullptr) {
-  //   m_autonomousCommand->Cancel();
-  //   m_autonomousCommand = nullptr;
-  // }
-
-  m_autonomousCommand.Cancel();
+  if (m_autonomousCommand != nullptr) {
+    m_autonomousCommand->Cancel();
+    m_autonomousCommand = nullptr;
+  }
 }
 
 /**

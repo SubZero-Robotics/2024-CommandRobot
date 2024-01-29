@@ -1,6 +1,7 @@
 #include <subsystems/IntakeSubsystem.h>
-#include "moduledrivers/ConnectorX.h"
+
 #include "ColorConstants.h"
+#include "moduledrivers/ConnectorX.h"
 
 IntakeSubsystem::IntakeSubsystem() {
     m_rearIntakeSpinnyBoy.Follow(m_frontIntakeSpinnyBoy, true);

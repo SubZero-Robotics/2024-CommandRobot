@@ -1,35 +1,35 @@
 #pragma once
 
-#include <rev/CANSparkMax.h>
-#include <rev/CANSparkFlex.h>
-#include <rev/CANSparkLowLevel.h>
+#include <frc/DigitalInput.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
-#include <frc/DigitalInput.h>
+#include <rev/CANSparkFlex.h>
+#include <rev/CANSparkLowLevel.h>
+#include <rev/CANSparkMax.h>
 
 #include "Constants.h"
 
 using namespace CANSparkMaxConstants;
 
 class IntakeSubsystem : public frc2::SubsystemBase {
-   public:
-    IntakeSubsystem();
+ public:
+  IntakeSubsystem();
 
-    void Periodic() override;
+  void Periodic() override;
 
-    void SimulationPeriodic() override;
+  void SimulationPeriodic() override;
 
-    void Stop();
+  void Stop();
 
-    void In();
+  void In();
 
-    void Out();
+  void Out();
 
-    bool NotePresent();
+  bool NotePresent();
 
    private:
     rev::CANSparkFlex m_rearIntakeSpinnyBoy{CANSparkMaxConstants::kRearIntakeSpinnyBoiId, rev::CANSparkLowLevel::MotorType::kBrushless};
     rev::CANSparkFlex m_frontIntakeSpinnyBoy{CANSparkMaxConstants::kFrontIntakeSpinnyBoiId, rev::CANSparkLowLevel::MotorType::kBrushless};
 
-    frc::DigitalInput m_beamBreak{Intakeconstants::kBeamBreakDigitalPort};
+  frc::DigitalInput m_beamBreak{Intakeconstants::kBeamBreakDigitalPort};
 };

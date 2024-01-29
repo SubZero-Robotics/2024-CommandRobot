@@ -5,9 +5,9 @@
 #include "subsystems/DriveSubsystem.h"
 
 #include <frc/DriverStation.h>
+#include <frc/RobotController.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
-#include <frc/RobotController.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
@@ -47,21 +47,7 @@ DriveSubsystem::DriveSubsystem()
       [this](frc::Pose2d pose) -> void { ResetOdometry(pose); },
       [this]() -> frc::ChassisSpeeds { return getSpeed(); },
       [this](frc::ChassisSpeeds speeds) -> void { Drive(speeds); },
-      pathplanner::HolonomicPathFollowerConfig(
-          pathplanner::PIDConstants(0.5, 0.0,
-                                    0.0),  // Translation PID constants
-          pathplanner::PIDConstants(0.5, 0.0, 0.0),  // Rotation PID constants
-          3.0_mps,                                   // Max module speed, in m/s
-          #ifdef TEST_SWERVE_BOT
-          0.4579874_m,  // Drive base radius in meters. Distance from robot center to
-          #endif
-          #ifndef TEST_SWERVE_BOT
-          0.529844_m,
-          #endif
-                  // furthest module.
-          pathplanner::ReplanningConfig()  // Default path replanning config.
-                                           // See the API for the options here),
-          ),
+      AutoConstants::PathConfig,
       []() {
         // Boolean supplier that controls when the path will be mirrored for the
         // red alliance This will flip the path being followed to the red side
@@ -74,6 +60,8 @@ DriveSubsystem::DriveSubsystem()
         return false;
       },
       this);
+
+      m_publisher = nt::NetworkTableInstance::GetDefault().GetStructArrayTopic<frc::SwerveModuleState>("/SwerveStates").Publish();
 }
 
 void DriveSubsystem::Periodic() {
@@ -82,19 +70,9 @@ void DriveSubsystem::Periodic() {
                     {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
                      m_frontRight.GetPosition(), m_rearRight.GetPosition()});
 
-  if (!logCounter++) {
-    ShuffleboardLogger::getInstance().logInfo("Gyro Angle", m_gyro.GetAngle());
-    ShuffleboardLogger::getInstance().logInfo("Rear Left Position",
-                               m_rearLeft.GetPosition().distance.value());
-    ShuffleboardLogger::getInstance().logInfo("Rear Right Position",
-                               m_rearRight.GetPosition().distance.value());
-  }
-
-  logCounter %= 10;
-
   m_field.SetRobotPose(m_odometry.GetPose());
 
-  // ConsoleLogger::getInstance().logInfo("Gryo angle: %f", m_gyro.GetAngle());
+  logDrivebase();
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
@@ -107,10 +85,6 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   ShuffleboardLogger::getInstance().logInfo("xSpeed", xSpeed.value());
   ShuffleboardLogger::getInstance().logInfo("ySpeed", ySpeed.value());
   ShuffleboardLogger::getInstance().logInfo("Rotation", rot.value());
-  
-  // ConsoleLogger::getInstance().logInfo("X speed %f", xSpeed.value());
-  // ConsoleLogger::getInstance().logInfo("Y speed: %f", ySpeed.value());
-  // ConsoleLogger::getInstance().logInfo("Rotation: %f", rot.value());
 
   double currentTime = wpi::Now() * 1e-6;
   double elapsedTime = currentTime - m_prevTime;
@@ -230,7 +204,15 @@ void DriveSubsystem::SetX() {
 }
 
 void DriveSubsystem::logMotorState(MAXSwerveModule &motor, std::string key) {
-  ShuffleboardLogger::getInstance().logInfo(key, motor.GetState().speed.value());
+  ShuffleboardLogger::getInstance().logInfo(key,
+                                            motor.GetState().speed.value());
+}
+
+void DriveSubsystem::logDrivebase() {
+  std::vector states_vec = {m_frontLeft.GetState(), m_frontRight.GetState(), m_rearLeft.GetState(), m_rearRight.GetState()};
+  std::span<frc::SwerveModuleState, 4> states(states_vec.begin(), states_vec.end());
+
+  m_publisher.Set(states);
 }
 
 void DriveSubsystem::SetModuleStates(
