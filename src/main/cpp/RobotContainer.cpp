@@ -64,10 +64,7 @@ RobotContainer::RobotContainer() {
   // out of scope at the end of the method
   m_chooser.SetDefaultOption(
       "Leave Community",
-      pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName)
-          .ToPtr()
-          .Unwrap()
-          .get());
+      m_defaultAuto.get());
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 
     // TODO: replace with a FUNNI animation
