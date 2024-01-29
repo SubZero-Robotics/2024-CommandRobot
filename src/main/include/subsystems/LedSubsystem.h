@@ -8,7 +8,6 @@
 
 #include "Constants.h"
 #include "moduledrivers/ConnectorX.h"
-#include "utils/State.h"
 
 using namespace ConnectorX;
 
@@ -29,8 +28,10 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr Intaking();
   frc2::CommandPtr ScoringSpeaker();
   frc2::CommandPtr ScoringAmp();
-  frc2::CommandPtr Stowing();
+  frc2::CommandPtr Loaded();
   frc2::CommandPtr Idling();
+  frc2::CommandPtr Climbing();
+  frc2::CommandPtr Error();
 
  private:
   enum class LedZone {

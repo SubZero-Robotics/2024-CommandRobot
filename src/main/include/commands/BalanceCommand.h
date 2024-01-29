@@ -9,6 +9,11 @@
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 
+// For sim to work
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 class BalanceCommand
     : public frc2::CommandHelper<frc2::Command, BalanceCommand> {
  public:

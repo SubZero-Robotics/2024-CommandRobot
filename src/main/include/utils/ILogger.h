@@ -6,6 +6,7 @@
 
 #include <cstdarg>
 #include <string>
+#include <fmt/format.h>
 
 #include "UtilConstants.h"
 
@@ -74,11 +75,8 @@ class ILogger {
   }
 
   std::string formatString(const std::string format, va_list ap) {
-    va_list fmtArgs;
-    va_copy(fmtArgs, ap);
     char buf[1000];
-    vsnprintf(buf, sizeof(buf), format.c_str(), fmtArgs);
-    va_end(fmtArgs);
+    vsnprintf(buf, sizeof(buf), format.c_str(), ap);
 
     return std::string(buf);
   }

@@ -69,7 +69,7 @@ class BaseScoreCommand
 
   ScoringSubsystem* m_score;
   IntakeSubsystem* m_intake;
+  ScoringDirection m_direction;
   bool isFinished;
   ScoreState m_state;
-  ScoringDirection m_direction;
 };

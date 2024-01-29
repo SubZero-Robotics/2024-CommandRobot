@@ -54,14 +54,11 @@ class ConsoleLogger : ILogger {
   private:
     ConsoleLogger();
 
-    void log(LogLevel level, std::string key, std::string fmt, ...) {
+    void log(LogLevel level, std::string key, std::string fmt, va_list ap) {
         if (!shouldLog(level)) return;
 
-        va_list args;
-        va_start(args, fmt);
-        std::string val = formatString(fmt, args);
+        std::string val = formatString(fmt, ap);
         std::cout << levelToString(level) << " - " << key << ": " << val << std::endl;
-        va_end(args);
     }
 };
 

@@ -5,8 +5,14 @@
 // Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
 // #define TEST_SWERVE_BOT
 
+#include <frc/geometry/Pose2d.h>
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <frc/util/Color8Bit.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/path/PathPlannerPath.h>
+#include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
+#include <pathplanner/lib/util/PIDConstants.h>
+#include <pathplanner/lib/util/ReplanningConfig.h>
 #include <rev/CANSparkMax.h>
 #include <units/acceleration.h>
 #include <units/angular_acceleration.h>
@@ -16,6 +22,8 @@
 #include <units/time.h>
 #include <units/velocity.h>
 
+#include <functional>
+#include <map>
 #include <numbers>
 
 #pragma once
@@ -153,6 +161,73 @@ extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
 const std::string kDefaultAutoName = "Leave Wing";
+
+const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
+    pathplanner::PIDConstants(0.5, 0.0,
+                            0.0),  // Translation PID constants
+    pathplanner::PIDConstants(0.5, 0.0, 0.0),  // Rotation PID constants
+    3.0_mps,                                   // Max module speed, in m/s
+    #ifdef TEST_SWERVE_BOT
+    0.4579874_m,  // Drive base radius in meters. Distance from robot center to
+    #endif
+    #ifndef TEST_SWERVE_BOT
+    0.529844_m,
+    #endif
+            // furthest module.
+    pathplanner::ReplanningConfig()  // Default path replanning config.
+                                    // See the API for the options here),
+);
+
+namespace Locations {
+
+enum class ApproxLocation { Scoring = 0, Source, Central };
+
+constexpr frc::Pose2d ApproxScoringLocation =
+    frc::Pose2d{2.90_m, 5.58_m, 0_deg};
+constexpr frc::Pose2d ApproxSourceLocation = frc::Pose2d{5.38_m, 1.5_m, 0_deg};
+constexpr frc::Pose2d ApproxCentralLocation = frc::Pose2d{8.3_m, 4.11_m, 0_deg};
+
+enum class FinalLocation {
+  // Shooting in the speaker from close
+  Subwoofer = 0,
+  // Shooting against the amp
+  Amp,
+  // Shooting in the speaker from afar
+  Podium,
+  // Closest to alliance wall
+  Source1,
+  // Center
+  Source2,
+  // Farthest from alliance wall
+  Source3,
+  // Farthest climb location from alliance wall
+  CenterStage,
+  // Climb location on the left as seen from alliance station
+  // Closest to the amp
+  StageLeft,
+  // Climb location on the left as seen from alliance station
+  // Closest to the opposing source
+  StageRight,
+};
+
+const std::map<ApproxLocation, const frc::Pose2d&> OnTheFlyPoses{
+    {ApproxLocation::Scoring, ApproxScoringLocation},
+    {ApproxLocation::Central, ApproxCentralLocation},
+    {ApproxLocation::Source, ApproxSourceLocation}};
+
+const std::map<FinalLocation, std::string> PoseToPath{
+    // Note 2 = ApproxScoringLocation
+    // Wing Line 2 = ApproxSource
+    {FinalLocation::Subwoofer, "Note 2 to Speaker"},
+    {FinalLocation::Amp, "Note 2 to Amp"},
+    {FinalLocation::Podium, "Note 2 to Podium"},
+    {FinalLocation::StageLeft, "Note 2 to Stage Left"},
+    {FinalLocation::Source1, "Wing Line 2 to Source 1"},
+    {FinalLocation::Source2, "Wing Line 2 to Source 2"},
+    {FinalLocation::Source3, "Wing Line 2 to Source 3"},
+    {FinalLocation::CenterStage, "Center Field to Center Stage"},
+    {FinalLocation::StageRight, "Wing Line 2 to Stage Right"}};
+}  // namespace Locations
 }  // namespace AutoConstants
 
 namespace OIConstants {
@@ -264,3 +339,15 @@ const std::string kRoborioSerialNumber = "0326F2F2";
 const std::string kRoborioSerialNumber = "032B4B68";
 #endif
 }  // namespace RobotConstants
+
+enum class RobotState {
+  Manual = 0,
+  ScoringSpeaker,
+  ScoringAmp,
+  ScoringSubwoofer,
+  Loaded,
+  Intaking,
+  Climb
+};
+
+typedef std::function<RobotState()> StateGetter;

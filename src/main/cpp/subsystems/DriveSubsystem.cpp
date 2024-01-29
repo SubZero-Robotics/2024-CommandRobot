@@ -47,21 +47,7 @@ DriveSubsystem::DriveSubsystem()
       [this](frc::Pose2d pose) -> void { ResetOdometry(pose); },
       [this]() -> frc::ChassisSpeeds { return getSpeed(); },
       [this](frc::ChassisSpeeds speeds) -> void { Drive(speeds); },
-      pathplanner::HolonomicPathFollowerConfig(
-          pathplanner::PIDConstants(0.5, 0.0,
-                                    0.0),  // Translation PID constants
-          pathplanner::PIDConstants(0.5, 0.0, 0.0),  // Rotation PID constants
-          3.0_mps,                                   // Max module speed, in m/s
-#ifdef TEST_SWERVE_BOT
-          0.4579874_m,  // Drive base radius in meters. Distance from robot
-                        // center to
-#else
-          0.529844_m,
-#endif
-          // furthest module.
-          pathplanner::ReplanningConfig()  // Default path replanning config.
-                                           // See the API for the options here),
-          ),
+      AutoConstants::PathConfig,
       []() {
         // Boolean supplier that controls when the path will be mirrored for the
         // red alliance This will flip the path being followed to the red side

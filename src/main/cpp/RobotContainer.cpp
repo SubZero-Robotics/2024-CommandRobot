@@ -64,13 +64,11 @@ RobotContainer::RobotContainer() {
   // out of scope at the end of the method
   m_chooser.SetDefaultOption(
       "Leave Community",
-      pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName)
-          .ToPtr()
-          .Unwrap()
-          .get());
+      m_defaultAuto.get());
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 
-  pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Stowing());
+    // TODO: replace with a FUNNI animation
+  pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
 }
 
 void RobotContainer::ConfigureButtonBindings() {
@@ -78,14 +76,8 @@ void RobotContainer::ConfigureButtonBindings() {
                        frc::XboxController::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-  frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kLeftBumper)
-      .OnTrue(m_leds
-                  .GetDeferredFromState([this] {
-                    m_stateManager.incrementState();
-                    return m_stateManager.getState();
-                  })
-                  .ToPtr());
+  frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kLeftBumper)
+      .OnTrue(m_leds.GetDeferredFromState([this] { m_state.IncrementState(); return m_state.GetState(); }).ToPtr());
 
   frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kY)
       .OnTrue(pathplanner::AutoBuilder::pathfindToPose(
@@ -136,6 +128,6 @@ void RobotContainer::ConfigureButtonBindings() {
 #endif
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName).ToPtr();
+frc2::Command* RobotContainer::GetAutonomousCommand() {
+  return m_chooser.GetSelected();
 }
