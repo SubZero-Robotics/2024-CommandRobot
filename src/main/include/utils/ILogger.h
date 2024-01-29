@@ -1,12 +1,11 @@
-#ifndef ILOGGER_H
-#define ILOGGER_H
-
-#include <string>
-#include <cstdarg>
+#pragma once
 
 #include <frc/geometry/Pose2d.h>
-#include <wpi/sendable/Sendable.h>
 #include <wpi/json.h>
+#include <wpi/sendable/Sendable.h>
+
+#include <cstdarg>
+#include <string>
 
 #include "UtilConstants.h"
 
@@ -59,18 +58,18 @@ class ILogger {
  protected:
   std::string levelToString(LogLevel level) const {
     switch (level) {
-        case LogLevel::VERBOSE:
-            return "VERBOSE";
-        case LogLevel::INFO:
-            return "INFO";
-        case LogLevel::WARNING:
-            return "WARNING";
-        case LogLevel::ERROR:
-            return "ERROR";
-        case LogLevel::FATAL:
-            return "FATAL";
-        default:
-          return "INVALID LOG LEVEL";
+      case LogLevel::VERBOSE:
+        return "VERBOSE";
+      case LogLevel::INFO:
+        return "INFO";
+      case LogLevel::WARNING:
+        return "WARNING";
+      case LogLevel::ERROR:
+        return "ERROR";
+      case LogLevel::FATAL:
+        return "FATAL";
+      default:
+        return "INVALID LOG LEVEL";
     };
   }
 
@@ -95,5 +94,3 @@ class ILogger {
     return (int)level >= (int)kMinLogLevel;
   }
 };
-
-#endif

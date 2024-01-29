@@ -58,7 +58,10 @@ uint16_t ConnectorX::ConnectorXBoard::readAnalogPin(AnalogPort port) {
   return res.responseData.responseReadAnalog.value;
 }
 
-CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port, uint8_t zoneIndex, bool reversed, bool setReversed) {
+CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
+                                                        uint8_t zoneIndex,
+                                                        bool reversed,
+                                                        bool setReversed) {
   setLedPort(port);
   auto& currentPort = getCurrentCachedPort();
   auto& currentZone = getCurrentZone();
@@ -85,7 +88,8 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port, uint8_t zo
   return getCurrentZone();
 }
 
-void ConnectorX::ConnectorXBoard::syncZones(LedPort port, const std::vector<uint8_t> &zones) {
+void ConnectorX::ConnectorXBoard::syncZones(LedPort port,
+                                            const std::vector<uint8_t>& zones) {
   setLedPort(port);
 
   Commands::Command cmd;
@@ -99,7 +103,8 @@ void ConnectorX::ConnectorXBoard::syncZones(LedPort port, const std::vector<uint
   sendCommand(cmd);
 }
 
-void ConnectorX::ConnectorXBoard::createZones(LedPort port, std::vector<ConnectorX::Commands::NewZone> &&newZones) {
+void ConnectorX::ConnectorXBoard::createZones(
+    LedPort port, std::vector<ConnectorX::Commands::NewZone>&& newZones) {
   setLedPort(port);
 
   Commands::Command cmd;
@@ -183,8 +188,8 @@ void ConnectorX::ConnectorXBoard::setOff() {
 }
 
 void ConnectorX::ConnectorXBoard::setPattern(LedPort port, PatternType pattern,
-                                             bool oneShot, int16_t delay, uint8_t zoneIndex,
-                                             bool reversed) {
+                                             bool oneShot, int16_t delay,
+                                             uint8_t zoneIndex, bool reversed) {
   auto& zone = setCurrentZone(port, zoneIndex, reversed, true);
 
   if (zone.pattern != pattern) {
@@ -208,7 +213,7 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
 
     return;
   }
-  
+
   auto& zone = setCurrentZone(port, zoneIndex);
   auto newColor = frc::Color8Bit(red, green, blue);
 
@@ -220,7 +225,7 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
     cmd.commandData.commandColor.green = green;
     cmd.commandData.commandColor.blue = blue;
 
-  sendCommand(cmd);
+    sendCommand(cmd);
   }
 }
 
@@ -336,14 +341,14 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
       sendLen = sizeof(CommandSetPatternZone);
       break;
     case CommandType::SetNewZones:
-      sendLen = sizeof(CommandSetNewZones::zoneCount) +
-        command.commandData.commandSetNewZones.zoneCount *
-        sizeof(NewZone);
+      sendLen =
+          sizeof(CommandSetNewZones::zoneCount) +
+          command.commandData.commandSetNewZones.zoneCount * sizeof(NewZone);
       break;
     case CommandType::SyncStates:
-      sendLen = sizeof(CommandSyncZoneStates::zoneCount) +
-        command.commandData.commandSyncZoneStates.zoneCount *
-        sizeof(uint8_t);
+      sendLen =
+          sizeof(CommandSyncZoneStates::zoneCount) +
+          command.commandData.commandSyncZoneStates.zoneCount * sizeof(uint8_t);
       break;
   }
 
@@ -354,7 +359,7 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
     return response;
   }
 
-  _i2c->Transaction(sendBuf, sendLen + 1, (uint8_t *)&response.responseData,
+  _i2c->Transaction(sendBuf, sendLen + 1, (uint8_t*)&response.responseData,
                     recSize);
   return response;
 }
