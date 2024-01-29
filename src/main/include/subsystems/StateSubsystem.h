@@ -21,6 +21,7 @@
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/LedSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
+#include "autos/PathFactory.h"
 
 typedef struct {
     DriveSubsystem *drive;

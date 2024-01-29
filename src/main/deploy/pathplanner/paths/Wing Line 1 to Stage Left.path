@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.377158438795249,
+        "y": 6.85152474630649
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.74005019256858,
+        "y": 6.256194089996322
+      },
+      "isLocked": false,
+      "linkedName": "Wing Line 1"
+    },
+    {
+      "anchor": {
+        "x": 4.071608753904531,
+        "y": 5.180421149646372
+      },
+      "prevControl": {
+        "x": 4.980271334588472,
+        "y": 6.371082462266705
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Stage Left"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -60.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}
