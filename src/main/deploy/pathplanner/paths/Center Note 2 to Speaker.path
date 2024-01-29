@@ -1,0 +1,71 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.009146603534939,
+        "y": 5.817529395873041
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.808040893435476,
+        "y": 6.203972102600694
+      },
+      "isLocked": false,
+      "linkedName": "Center Note 2"
+    },
+    {
+      "anchor": {
+        "x": 4.917604949713716,
+        "y": 6.329304872350202
+      },
+      "prevControl": {
+        "x": 6.002201195711573,
+        "y": 6.396393299937698
+      },
+      "nextControl": {
+        "x": 3.9044983942385194,
+        "y": 6.266638487475449
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.2516214345405796,
+        "y": 5.577308253853149
+      },
+      "prevControl": {
+        "x": 2.4213939522026635,
+        "y": 5.880195780747796
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Speaker"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.65,
+      "rotationDegrees": 180.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

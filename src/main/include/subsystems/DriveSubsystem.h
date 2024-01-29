@@ -13,6 +13,7 @@
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/smartdashboard/Field2d.h>
 #include <frc2/command/SubsystemBase.h>
+#include <networktables/StructArrayTopic.h>
 
 #include "Constants.h"
 #include "MAXSwerveModule.h"
@@ -65,6 +66,11 @@ class DriveSubsystem : public frc2::SubsystemBase {
   void ResetEncoders();
 
   /**
+   * Publishes the swerve drive states to NT in an advantagescope friendly format
+  */
+  void logDrivebase();
+
+  /**
    * Sets the drive MotorControllers to a power from -1 to 1.
    */
   void SetModuleStates(wpi::array<frc::SwerveModuleState, 4> desiredStates);
@@ -104,9 +110,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::ChassisSpeeds getSpeed();
 
-  AHRS* getGyro() {
-    return &m_gyro;
-  }
+  AHRS* getGyro() { return &m_gyro; }
 
   static void LogSpeeds(wpi::array<frc::SwerveModuleState, 4> desiredStates);
 
@@ -124,7 +128,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-    void logMotorState(MAXSwerveModule &motor, std::string key);
+  void logMotorState(MAXSwerveModule& motor, std::string key);
 
   MAXSwerveModule m_frontLeft;
   MAXSwerveModule m_rearLeft;
@@ -153,6 +157,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // Odometry class for tracking robot pose
   // 4 defines the number of modules
   frc::SwerveDriveOdometry<4> m_odometry;
+
+  nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing
   frc::Field2d m_field;

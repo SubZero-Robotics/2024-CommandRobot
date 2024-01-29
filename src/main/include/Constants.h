@@ -53,9 +53,7 @@ constexpr units::meter_t kTrackWidth =
     0.5588_m;  // Distance between centers of right and left wheels on robot
 constexpr units::meter_t kWheelBase =
     0.5588_m;  // Distance between centers of front and back wheels on robot
-#endif
-
-#ifndef TEST_SWERVE_BOT
+#else
 constexpr units::meter_t kTrackWidth =
     0.67_m;  // Distance between centers of right and left wheels on robot
 constexpr units::meter_t kWheelBase =
@@ -92,9 +90,7 @@ constexpr bool kTurningEncoderInverted = true;
 
 #ifdef TEST_SWERVE_BOT
 constexpr int kDrivingMotorPinionTeeth = 13;
-#endif
-
-#ifndef TEST_SWERVE_BOT
+#else
 constexpr int kDrivingMotorPinionTeeth = 14;
 #endif
 
@@ -330,7 +326,7 @@ constexpr int kClimberRightLimitSwitchPort = 1;
 
 constexpr double kClimbStepSize = 1;
 constexpr double kClimbHomingSpeed = 1;
-constexpr int kTicksPerMotorRotation = 1;
+constexpr int kTicksPerMotorRotation = 42;
 
 // Distance between left and right arm centers
 constexpr units::meter_t kClimberOffsetDistance = 4_m;
@@ -340,9 +336,7 @@ constexpr units::meter_t kClimberOffsetDistance = 4_m;
 namespace RobotConstants {
 #ifdef TEST_SWERVE_BOT
 const std::string kRoborioSerialNumber = "0326F2F2";
-#endif
-
-#ifndef TEST_SWERVE_BOT
+#else
 const std::string kRoborioSerialNumber = "032B4B68";
 #endif
 }  // namespace RobotConstants
