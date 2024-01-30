@@ -76,9 +76,6 @@ void RobotContainer::ConfigureButtonBindings() {
                        frc::XboxController::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-  frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kLeftBumper)
-      .OnTrue(m_leds.GetDeferredFromState([this] { m_state.IncrementState(); return m_state.GetState(); }).ToPtr());
-
   frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kY)
       .OnTrue(pathplanner::AutoBuilder::pathfindToPose(
           frc::Pose2d{1.5_m, 5.5_m, 0_rad},
@@ -90,6 +87,9 @@ void RobotContainer::ConfigureButtonBindings() {
           ));
 
 #ifndef TEST_SWERVE_BOT
+    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kLeftBumper)
+      .OnTrue(m_leds.GetDeferredFromState([this] { m_state.IncrementState(); return m_state.GetState(); }).ToPtr());
+
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
       .WhileTrue(
           ExtendClimbCommand(
