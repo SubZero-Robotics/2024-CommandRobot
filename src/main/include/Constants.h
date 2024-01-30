@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 // Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
-// #define TEST_SWERVE_BOT
+#define TEST_SWERVE_BOT
 
 #include <frc/geometry/Pose2d.h>
 #include <frc/trajectory/TrapezoidProfile.h>
@@ -55,9 +55,9 @@ constexpr units::meter_t kWheelBase =
     0.5588_m;  // Distance between centers of front and back wheels on robot
 #else
 constexpr units::meter_t kTrackWidth =
-    0.67_m;  // Distance between centers of right and left wheels on robot
+    0.66_m;  // Distance between centers of right and left wheels on robot
 constexpr units::meter_t kWheelBase =
-    0.67_m;  // Distance between centers of front and back wheels on robot
+    0.66_m;  // Distance between centers of front and back wheels on robot
 #endif
 // Angular offsets of the modules relative to the chassis in radians
 constexpr double kFrontLeftChassisAngularOffset = -std::numbers::pi / 2;
