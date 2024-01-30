@@ -62,12 +62,10 @@ RobotContainer::RobotContainer() {
 
   // This won't work since we're getting the reference of an r-value which goes
   // out of scope at the end of the method
-  m_chooser.SetDefaultOption(
-      "Leave Community",
-      m_defaultAuto.get());
+  m_chooser.SetDefaultOption("Leave Community", m_defaultAuto.get());
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 
-    // TODO: replace with a FUNNI animation
+  // TODO: replace with a FUNNI animation
   pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
 }
 
@@ -87,8 +85,14 @@ void RobotContainer::ConfigureButtonBindings() {
           ));
 
 #ifndef TEST_SWERVE_BOT
-    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kLeftBumper)
-      .OnTrue(m_leds.GetDeferredFromState([this] { m_state.IncrementState(); return m_state.GetState(); }).ToPtr());
+  frc2::JoystickButton(&m_driverController,
+                       frc::XboxController::Button::kLeftBumper)
+      .OnTrue(m_leds
+                  .GetDeferredFromState([this] {
+                    m_state.IncrementState();
+                    return m_state.GetState();
+                  })
+                  .ToPtr());
 
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
       .WhileTrue(
@@ -125,6 +129,14 @@ void RobotContainer::ConfigureButtonBindings() {
 
   m_driverController.RightBumper().WhileTrue(
       BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());
+#endif
+#ifdef TEST_SWERVE_BOT
+  m_driverController.A().OnTrue(m_leds.ScoringAmp().WithTimeout(5_s).AndThen(m_leds.Idling()));
+  m_driverController.B().OnTrue(m_leds.Intaking().WithTimeout(5_s).AndThen(m_leds.Idling()));
+  m_driverController.X().OnTrue(m_leds.ScoringSpeaker().WithTimeout(5_s).AndThen(m_leds.Idling()));
+  m_driverController.Y().OnTrue(m_leds.Loaded().WithTimeout(5_s).AndThen(m_leds.Idling()));
+  m_driverController.LeftBumper().OnTrue(m_leds.Climbing().WithTimeout(5_s).AndThen(m_leds.Idling()));
+  m_driverController.RightBumper().OnTrue(m_leds.Error().WithTimeout(5_s).AndThen(m_leds.Idling()));
 #endif
 }
 
