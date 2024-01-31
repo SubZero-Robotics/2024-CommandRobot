@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0871732328706396,
-        "y": 4.898422417709976
+        "x": 1.7786549197001904,
+        "y": 5.5861757995445815
       },
       "isLocked": false,
       "linkedName": "Speaker"
@@ -20,21 +20,15 @@
         "y": 5.577308253853149
       },
       "prevControl": {
-        "x": 2.0767288353915134,
-        "y": 5.995084153018179
+        "x": 2.369225596455579,
+        "y": 5.555853792628639
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Note 2"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.35,
-      "rotationDegrees": 0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 180.0,
     "rotateFast": false
   },
   "reversed": false,
