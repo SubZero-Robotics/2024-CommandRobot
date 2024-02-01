@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 // Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
-#define TEST_SWERVE_BOT
+// #define TEST_SWERVE_BOT
 
 #include <frc/geometry/Pose2d.h>
 #include <frc/trajectory/TrapezoidProfile.h>
@@ -164,18 +164,18 @@ const std::string kDefaultAutoName = "Leave Wing";
 
 const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
     pathplanner::PIDConstants(0.5, 0.0,
-                            0.0),  // Translation PID constants
+                              0.0),            // Translation PID constants
     pathplanner::PIDConstants(0.5, 0.0, 0.0),  // Rotation PID constants
     3.0_mps,                                   // Max module speed, in m/s
-    #ifdef TEST_SWERVE_BOT
+#ifdef TEST_SWERVE_BOT
     0.4579874_m,  // Drive base radius in meters. Distance from robot center to
-    #endif
-    #ifndef TEST_SWERVE_BOT
+#endif
+#ifndef TEST_SWERVE_BOT
     0.529844_m,
-    #endif
-            // furthest module.
+#endif
+    // furthest module.
     pathplanner::ReplanningConfig()  // Default path replanning config.
-                                    // See the API for the options here),
+                                     // See the API for the options here),
 );
 
 namespace Locations {
@@ -347,7 +347,9 @@ enum class RobotState {
   ScoringSubwoofer,
   Loaded,
   Intaking,
-  Climb
+  ClimbStageLeft,
+  ClimbStageCenter,
+  ClimbStageRight,
 };
 
 typedef std::function<RobotState()> StateGetter;

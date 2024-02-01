@@ -9,12 +9,9 @@ ConnectorX::ConnectorXBoard::ConnectorXBoard(uint8_t slaveAddress,
       m_simDevice("Connector-X", static_cast<int>(port), slaveAddress) {
   // TODO: read config from device to get # of LEDs per port
   m_device.ports = {
-    { .on = false, .currentZoneIndex = 0, .zones = {CachedZone({.offset = 0, .count = 40})}, },
-    { .on = false, .currentZoneIndex = 0, .zones = {CachedZone({.offset = 0, .count = 40})}, },
+    { .on = false, .currentZoneIndex = 0, .zones = {CachedZone({.offset = 0, .count = 60})}, },
+    { .on = false, .currentZoneIndex = 0, .zones = {CachedZone({.offset = 0, .count = 60})}, },
   };
-
-  setColor(LedPort::P1, 0);
-  setPattern(LedPort::P1, PatternType::SetAll, true);
 
   if (m_simDevice) {
     m_simOn = m_simDevice.CreateBoolean("On", false, false);

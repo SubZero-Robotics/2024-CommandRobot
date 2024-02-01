@@ -52,7 +52,8 @@ class RobotContainer {
 
   LedSubsystem m_leds;
 
-  frc2::CommandPtr m_defaultAuto = pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName).ToPtr();
+  frc2::CommandPtr m_defaultAuto =
+      pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName).ToPtr();
 
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;
@@ -67,16 +68,19 @@ class RobotContainer {
   IntakeSubsystem m_intake;
   ScoringSubsystem m_scoring;
 
-  Subsystems_t m_subsystems = {
-    .drive = &m_drive,
-    .leftClimb = &m_leftClimb,
-    .rightClimb = &m_rightClimb,
-    .intake = &m_intake,
-    .scoring = &m_scoring,
-    .led = &m_leds
-  };
+  Subsystems_t m_subsystems = {.drive = &m_drive,
+                               .leftClimb = &m_leftClimb,
+                               .rightClimb = &m_rightClimb,
+                               .intake = &m_intake,
+                               .scoring = &m_scoring,
+                               .led = &m_leds};
 
   StateSubsystem m_state{m_subsystems, m_driverController};
+
+  frc2::CommandXboxController m_operatorController{
+      OIConstants::kOperatorControllerPort};
+
+  void ConfigureAutoBindings();
 #endif
 
   void ConfigureButtonBindings();
