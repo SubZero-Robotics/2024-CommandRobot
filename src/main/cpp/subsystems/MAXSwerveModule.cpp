@@ -91,7 +91,7 @@ MAXSwerveModule::MAXSwerveModule(const int drivingCANId, const int turningCANId,
 }
 
 frc::SwerveModuleState MAXSwerveModule::GetState() const {
-  if(!frc::RobotBase::IsReal()) {
+  if (!frc::RobotBase::IsReal()) {
     return GetSimState();
   }
 
@@ -100,10 +100,35 @@ frc::SwerveModuleState MAXSwerveModule::GetState() const {
                           m_chassisAngularOffset}};
 }
 
+frc::SwerveModuleState MAXSwerveModule::GetSimState() const {
+  return frc::SwerveModuleState{
+      m_simDriveEncoderVelocity,
+      frc::Rotation2d{
+          units::radian_t{m_simCurrentAngle.value() - m_chassisAngularOffset}}};
+}
 frc::SwerveModulePosition MAXSwerveModule::GetPosition() const {
+  if (!frc::RobotBase::IsReal()) {
+    return GetSimPosition();
+  }
+
   return {units::meter_t{m_drivingEncoder.GetPosition()},
           units::radian_t{m_turningAbsoluteEncoder.GetPosition() -
                           m_chassisAngularOffset}};
+}
+
+frc::SwerveModulePosition MAXSwerveModule::GetSimPosition() const {
+  return frc::SwerveModulePosition{
+      m_simDriveEncoderPosition,
+      frc::Rotation2d{
+          units::radian_t{m_simCurrentAngle.value() - m_chassisAngularOffset}}};
+}
+
+frc::Rotation2d MAXSwerveModule::GetRotation() const {
+  if (!frc::RobotBase::IsReal()) {
+    return frc::Rotation2d{m_simCurrentAngle};
+  }
+  return frc::Rotation2d{
+      units::radian_t{m_turningAbsoluteEncoder.GetPosition()}};
 }
 
 void MAXSwerveModule::SetDesiredState(
@@ -116,9 +141,8 @@ void MAXSwerveModule::SetDesiredState(
       frc::Rotation2d(units::radian_t{m_chassisAngularOffset});
 
   // Optimize the reference state to avoid spinning further than 90 degrees.
-  frc::SwerveModuleState optimizedDesiredState{frc::SwerveModuleState::Optimize(
-      correctedDesiredState, frc::Rotation2d(units::radian_t{
-                                 m_turningAbsoluteEncoder.GetPosition()}))};
+  frc::SwerveModuleState optimizedDesiredState{
+      frc::SwerveModuleState::Optimize(correctedDesiredState, GetRotation())};
 
   // Command driving and turning SPARKS MAX towards their respective setpoints.
   m_drivingPIDController.SetReference((double)optimizedDesiredState.speed,
@@ -128,12 +152,19 @@ void MAXSwerveModule::SetDesiredState(
       rev::CANSparkMax::ControlType::kPosition);
 
   m_desiredState = desiredState;
+
+  if (!frc::RobotBase::IsReal()) {
+    simUpdateDrivePosition(optimizedDesiredState);
+    m_simCurrentAngle = optimizedDesiredState.angle.Radians();
+  }
 }
 
-void MAXSwerveModule::simUpdateDrivePosition(const frc::SwerveModuleState& desiredState) {
-  m_simDriveEncoderVelocity = desiredState.speed.value();
+void MAXSwerveModule::simUpdateDrivePosition(
+    const frc::SwerveModuleState& desiredState) {
+  m_simDriveEncoderVelocity = desiredState.speed;
 
-  m_simDriveEncoderPosition += m_simDriveEncoderVelocity / 50;
+  m_simDriveEncoderPosition +=
+      units::meter_t{m_simDriveEncoderVelocity.value() / 50};
 }
 
 void MAXSwerveModule::ResetEncoders() { m_drivingEncoder.SetPosition(0); }
