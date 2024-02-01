@@ -36,9 +36,28 @@ class StateSubsystem : public frc2::SubsystemBase {
  public:
   StateSubsystem(Subsystems_t &subsystems, frc2::CommandXboxController &);
 
+  frc2::CommandPtr SetState(RobotState newState) {
+    return frc2::InstantCommand(
+               [this, newState] {
+                 ConsoleLogger::getInstance().logVerbose(
+                     "StateSubsystem", "Setting new state to %u",
+                     (uint8_t)newState);
+                 m_currentState = newState;
+               },
+               {this})
+        .ToPtr();
+  }
+
   void IncrementState();
 
-  frc2::CommandPtr UpdateState(RobotState newState);
+  frc2::DeferredCommand RunStateDeferred() {
+    return frc2::DeferredCommand([this] { return RunState(); }, {this});
+  }
+
+  /**
+   * Run the FSM using the current state
+   */
+  frc2::CommandPtr RunState();
 
   frc2::CommandPtr StartIntaking();
 
@@ -50,12 +69,25 @@ class StateSubsystem : public frc2::SubsystemBase {
 
   frc2::CommandPtr StartManual();
 
-  frc2::CommandPtr StartClimb(uint8_t stageLocation);
+  frc2::CommandPtr StartClimb();
 
   inline RobotState GetState() const { return m_currentState; }
 
  private:
   bool IsControllerActive();
+
+  inline FinalLocation GetFinalFromState() {
+    switch (m_currentState) {
+      case RobotState::ClimbStageLeft:
+        return FinalLocation::StageLeft;
+      case RobotState::ClimbStageCenter:
+        return FinalLocation::CenterStage;
+      case RobotState::ClimbStageRight:
+        return FinalLocation::StageRight;
+      default:
+        return FinalLocation::Source1;
+    }
+  }
 
   RobotState m_currentState;
   Subsystems_t &m_subsystems;

@@ -103,7 +103,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
 
     bool homeState = ignoreEncoder ? AtLimitSwitchHome() : AtHome();
     if (homeState) {
-      if (_log) ConsoleLogger::getInstance().logInfo(_prefix, "AT HOME");
+      if (_log) ConsoleLogger::getInstance().logInfo(_prefix, "AT HOME %s", "");
       if (speed < 0) {
         if (_log)
           ConsoleLogger::getInstance().logVerbose(
@@ -121,7 +121,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
     }
 
     else if (AtMax()) {
-      if (_log) ConsoleLogger::getInstance().logInfo(_prefix, "AT MAX");
+      if (_log) ConsoleLogger::getInstance().logInfo(_prefix, "AT MAX %s", "");
       if (speed > 0) {
         if (_log)
           ConsoleLogger::getInstance().logVerbose(
@@ -206,7 +206,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
                                                 _targetPosition);
 
       if (_controller.AtSetpoint()) {
-        ConsoleLogger::getInstance().logInfo(_prefix, "REACHED GOAL");
+        ConsoleLogger::getInstance().logInfo(_prefix, "REACHED GOAL %s", "");
         StopMovement();
         return;
       }
@@ -224,7 +224,8 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
       if (AtLimitSwitchHome()) {
         ResetEncoder();
         if (_log)
-          ConsoleLogger::getInstance().logInfo(_prefix, "AT HOME SWITCH");
+          ConsoleLogger::getInstance().logInfo(_prefix, "AT HOME SWITCH %s",
+                                               "");
         return true;
       }
     }
@@ -233,7 +234,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
     if (GetCurrentPosition() <= _config.minDistance ||
         GetCurrentPosition() >= 350.0) {
       if (_log)
-        ConsoleLogger::getInstance().logInfo(_prefix, "AT HOME ENCODER");
+        ConsoleLogger::getInstance().logInfo(_prefix, "AT HOME ENCODER %s", "");
       return true;
     }
 
@@ -244,7 +245,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
     if (_maxLimitSwitch) {
       if (AtLimitSwitchMax()) {
         if (_log)
-          ConsoleLogger::getInstance().logInfo(_prefix, "AT MAX SWITCH");
+          ConsoleLogger::getInstance().logInfo(_prefix, "AT MAX SWITCH %s", "");
         return true;
       }
     }
@@ -252,7 +253,8 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
     // TODO: Constant wrap-around value
     if (GetCurrentPosition() >= _config.maxDistance &&
         GetCurrentPosition() < 350.0) {
-      if (_log) ConsoleLogger::getInstance().logInfo(_prefix, "AT MAX ENCODER");
+      if (_log)
+        ConsoleLogger::getInstance().logInfo(_prefix, "AT MAX ENCODER %s", "");
 
       return true;
     }
@@ -294,7 +296,8 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
 
   void Home() override {
     if (_log)
-      ConsoleLogger::getInstance().logInfo(_prefix, "Set homing to true");
+      ConsoleLogger::getInstance().logInfo(_prefix, "Set homing to true %s",
+                                           "");
     StopMovement();
     _isHoming = true;
   }
@@ -302,7 +305,8 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
   inline bool GetIsMovingToPosition() override { return _isMovingToPosition; }
 
   inline void StopMovement() override {
-    if (_log) ConsoleLogger::getInstance().logInfo(_prefix, "Movement stopped");
+    if (_log)
+      ConsoleLogger::getInstance().logInfo(_prefix, "Movement stopped %s", "");
     _isHoming = false;
     _isMovingToPosition = false;
     _motor.Set(0);
