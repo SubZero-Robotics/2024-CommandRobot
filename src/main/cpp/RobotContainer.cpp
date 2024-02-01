@@ -120,6 +120,8 @@ void RobotContainer::ConfigureButtonBindings() {
 
   m_driverController.RightBumper().WhileTrue(
       BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());
+
+  ConfigureAutoBindings();
 #endif
 #ifdef TEST_SWERVE_BOT
   m_driverController.A().OnTrue(
@@ -135,6 +137,43 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.RightBumper().OnTrue(
       m_leds.Error().WithTimeout(5_s).AndThen(m_leds.Idling()));
 #endif
+}
+
+void RobotContainer::ConfigureAutoBindings() {
+  // Maps to 9 on keyboard
+  m_operatorController.A().OnTrue(
+      m_state.SetState(RobotState::ScoringSpeaker)
+          .AndThen(m_state.RunStateDeferred().ToPtr()));
+
+  // Maps to 8 on keyboard
+  m_operatorController.B().OnTrue(
+      m_state.SetState(RobotState::ScoringSubwoofer)
+          .AndThen(m_state.RunStateDeferred().ToPtr()));
+
+  // Maps to 7 on keyboard
+  m_operatorController.X().OnTrue(
+      m_state.SetState(RobotState::ScoringAmp)
+          .AndThen(m_state.RunStateDeferred().ToPtr()));
+
+  // Maps to 4 on keyboard
+  m_operatorController.Y().OnTrue(
+      m_state.SetState(RobotState::Intaking)
+          .AndThen(m_state.RunStateDeferred().ToPtr()));
+
+  // Maps to 1 on keyboard
+  m_operatorController.LeftBumper().OnTrue(
+      m_state.SetState(RobotState::ClimbStageLeft)
+          .AndThen(m_state.RunStateDeferred().ToPtr()));
+
+  // Maps to 2 on keyboard
+  m_operatorController.RightBumper().OnTrue(
+      m_state.SetState(RobotState::ClimbStageCenter)
+          .AndThen(m_state.RunStateDeferred().ToPtr()));
+
+  // Maps to 3 on keyboard
+  m_operatorController.LeftStick().OnTrue(
+      m_state.SetState(RobotState::ClimbStageRight)
+          .AndThen(m_state.RunStateDeferred().ToPtr()));
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {

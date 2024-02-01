@@ -30,31 +30,40 @@ void StateSubsystem::IncrementState() {
   m_currentState = (RobotState)(nextState % 6);
 }
 
-frc2::CommandPtr StateSubsystem::UpdateState(RobotState newState) {
-  // TODO: Perform checks to ensure we can't enter the wrong state
-  switch (newState) {
+frc2::CommandPtr StateSubsystem::RunState() {
+  ConsoleLogger::getInstance().logVerbose(
+      "StateSubsystem", "Running with state %u", (uint8_t)m_currentState);
+
+  switch (m_currentState) {
     case RobotState::Manual:
       return StartManual();
     case RobotState::ScoringSpeaker:
       return StartScoringSpeaker()
           .Until(std::bind(&StateSubsystem::IsControllerActive, this))
-          .AndThen(StartManual());
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
     case RobotState::ScoringAmp:
       return StartScoringAmp()
           .Until(std::bind(&StateSubsystem::IsControllerActive, this))
-          .AndThen(StartManual());
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
     case RobotState::ScoringSubwoofer:
       return StartScoringSubwoofer()
           .Until(std::bind(&StateSubsystem::IsControllerActive, this))
-          .AndThen(StartManual());
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
     case RobotState::Intaking:
       return StartIntaking()
           .Until(std::bind(&StateSubsystem::IsControllerActive, this))
-          .AndThen(StartManual());
-    case RobotState::Climb:
-      return StartClimb(1)
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
+    case RobotState::ClimbStageLeft:
+    case RobotState::ClimbStageCenter:
+    case RobotState::ClimbStageRight:
+      return StartClimb()
           .Until(std::bind(&StateSubsystem::IsControllerActive, this))
-          .AndThen(StartManual());
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
     default:
       return m_subsystems.led->Error();
   }
@@ -123,7 +132,7 @@ frc2::CommandPtr StateSubsystem::StartManual() {
   return m_subsystems.led->ShowFromState([] { return RobotState::Manual; });
 }
 
-frc2::CommandPtr StateSubsystem::StartClimb(uint8_t stageLocation) {
+frc2::CommandPtr StateSubsystem::StartClimb() {
   /*
      Signal that we about to climb
      Use on the fly PP to go to approx. designated stage location
@@ -133,11 +142,13 @@ frc2::CommandPtr StateSubsystem::StartClimb(uint8_t stageLocation) {
      Balance
   */
 
+  auto location = GetFinalFromState();
+
   return m_subsystems.led->Climbing()
       .AndThen(
           // TODO: method to get the stage location
           PathFactory::GetPathFromFinalLocation(
-              [] { return FinalLocation::StageLeft; }, m_subsystems.drive,
+              [location] { return location; }, m_subsystems.drive,
               ExtendAbsolute(m_subsystems.leftClimb, m_subsystems.rightClimb)
                   .ToPtr()))
       .AndThen(
