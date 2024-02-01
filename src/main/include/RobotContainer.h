@@ -79,9 +79,9 @@ class RobotContainer {
 
   frc2::CommandXboxController m_operatorController{
       OIConstants::kOperatorControllerPort};
+
+  void ConfigureAutoBindings();
 #endif
 
   void ConfigureButtonBindings();
-
-  void ConfigureAutoBindings();
 };

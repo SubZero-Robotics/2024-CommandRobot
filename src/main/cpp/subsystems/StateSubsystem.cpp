@@ -142,13 +142,11 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
      Balance
   */
 
-  auto location = GetFinalFromState();
-
   return m_subsystems.led->Climbing()
       .AndThen(
           // TODO: method to get the stage location
           PathFactory::GetPathFromFinalLocation(
-              [location] { return location; }, m_subsystems.drive,
+              [this] { return GetFinalFromState(); }, m_subsystems.drive,
               ExtendAbsolute(m_subsystems.leftClimb, m_subsystems.rightClimb)
                   .ToPtr()))
       .AndThen(

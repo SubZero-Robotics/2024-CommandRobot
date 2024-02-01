@@ -139,6 +139,7 @@ void RobotContainer::ConfigureButtonBindings() {
 #endif
 }
 
+#ifndef TEST_SWERVE_BOT
 void RobotContainer::ConfigureAutoBindings() {
   // Maps to 9 on keyboard
   m_operatorController.A().OnTrue(
@@ -175,6 +176,7 @@ void RobotContainer::ConfigureAutoBindings() {
       m_state.SetState(RobotState::ClimbStageRight)
           .AndThen(m_state.RunStateDeferred().ToPtr()));
 }
+#endif
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
   return m_chooser.GetSelected();
