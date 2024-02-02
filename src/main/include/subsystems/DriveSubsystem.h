@@ -145,7 +145,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
   AHRS m_gyro{frc::SPI::Port::kMXP};
 
   HAL_SimDeviceHandle m_gyroSimHandle =
-      HALSIM_GetSimDeviceHandle("navX-Sensor[0]");
+      HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
   hal::SimDouble m_gyroSimAngle =
       HALSIM_GetSimValueHandle(m_gyroSimHandle, "Yaw");
 

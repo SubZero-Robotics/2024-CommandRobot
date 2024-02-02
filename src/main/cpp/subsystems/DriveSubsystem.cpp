@@ -72,11 +72,11 @@ void DriveSubsystem::SimulationPeriodic() {
   frc::ChassisSpeeds chassisSpeeds = kDriveKinematics.ToChassisSpeeds(
       m_frontLeft.GetState(), m_frontRight.GetState(), m_rearLeft.GetState(),
       m_rearRight.GetState());
-  m_gyroSimAngle.Set(m_gyroSimAngle.Get() +
-                     (chassisSpeeds.omega.value() * 0.02));
-  m_odometry.Update(frc::Rotation2d(units::radian_t{m_gyroSimAngle.Get()}),
+  m_gyroSimAngle.Set(m_gyro.GetYaw() + (chassisSpeeds.omega.value()));
+  m_odometry.Update(-m_gyro.GetRotation2d(),
                     {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
                      m_frontRight.GetPosition(), m_rearRight.GetPosition()});
+
   m_field.SetRobotPose(m_odometry.GetPose());
 };
 
