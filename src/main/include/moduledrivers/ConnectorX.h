@@ -277,6 +277,15 @@ struct CachedZone {
     color = frc::Color8Bit(0, 0, 0);
     pattern = PatternType::None;
   }
+
+  std::string toString() {
+    return std::string("\tOffset: ") + std::to_string(offset) + "\n" +
+           std::string("\tCount: ") + std::to_string(count) + "\n" +
+           std::string("\tReversed: ") + std::to_string(reversed) + "\n" +
+           std::string("\tColor: ") + std::string(color.HexString().c_str()) +
+           "\n" + std::string("\tPattern: ") + std::to_string((uint8_t)pattern) +
+           "\n";
+  }
 };
 
 struct CachedPort {

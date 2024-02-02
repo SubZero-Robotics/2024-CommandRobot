@@ -172,5 +172,9 @@ bool StateSubsystem::IsControllerActive() {
   for (int i = 0; i < count; i++) {
     active |= m_controller.GetPOV(i) != -1;
   }
-  return active;
+  if (active) {
+    // ConsoleLogger::getInstance().logVerbose("StateSubsystem",
+    //                                         "Controller interrupt! %s", "");
+  }
+  return false;
 }
