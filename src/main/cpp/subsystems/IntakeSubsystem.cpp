@@ -21,4 +21,4 @@ void IntakeSubsystem::In() {
 
 void IntakeSubsystem::Stop() { m_leftIntakeSpinnyBoy.Set(0); }
 
-bool IntakeSubsystem::NotePresent() { return m_beamBreak.Get(); }
+bool IntakeSubsystem::NotePresent() { return !m_beamBreak.Get(); }

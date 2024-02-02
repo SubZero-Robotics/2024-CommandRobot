@@ -240,13 +240,13 @@ constexpr uint8_t kLedAddress = 23;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
-constexpr int kRightIntakeSpinnyBoiId = 19;
+constexpr int kRightIntakeSpinnyBoiId = 23;
 constexpr int kLeftIntakeSpinnyBoiId = 20;
-constexpr int kVectorSpinnyBoiId = 21;
-constexpr int kAmpLowerSpinnyBoiId = 22;
-constexpr int kAmpUpperSpinnyBoiId = 23;
-constexpr int kSpeakerLowerSpinnyBoiId = 24;
-constexpr int kSpeakerUpperSpinnyBoiId = 25;
+constexpr int kVectorSpinnyBoiId = 22;
+constexpr int kAmpLowerSpinnyBoiId = 24;
+constexpr int kAmpUpperSpinnyBoiId = 21;
+constexpr int kSpeakerLowerSpinnyBoiId = 25;
+constexpr int kSpeakerUpperSpinnyBoiId = 19;
 
 constexpr int kTicksPerMotorRotation = 42;
 }  // namespace CANSparkMaxConstants
@@ -254,29 +254,29 @@ constexpr int kTicksPerMotorRotation = 42;
 namespace Intakeconstants {
 // Change these to match actual values
 constexpr double kIntakeSpeed = 0.33;
-constexpr double kOutakeSpeed = -0.1;
+constexpr double kOutakeSpeed = -0.4;
 
 constexpr uint8_t kBeamBreakDigitalPort = 2;
 }  // namespace Intakeconstants
 
 namespace ScoringConstants {
-constexpr double kFreeSpinCurrentThreshold = 4;
+constexpr double kFreeSpinCurrentThreshold = 90;
 constexpr double kMaxSpinRpm = 5676;
 
 // Positive = clockwise
 constexpr double kVectorSpeed = 0.1;
 
 // These need to be different
-constexpr double kAmpLowerSpeed = 0.5;
+constexpr double kAmpLowerSpeed = -0.5;
 constexpr double kAmpUpperSpeed = 0.6;
 
 // These should match
-constexpr double kSpeakerLowerSpeed = 0.8;
-constexpr double kSpeakerUpperSpeed = 0.8;
+constexpr double kSpeakerLowerSpeed = 1;
+constexpr double kSpeakerUpperSpeed = -kSpeakerLowerSpeed;
 
 // These should also match
 constexpr double kSubwooferLowerSpeed = 0.8;
-constexpr double kSubwooferUpperSpeed = 0.8;
+constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 }  // namespace ScoringConstants
 
 namespace ArmConstants {
