@@ -24,6 +24,7 @@
 #include <utility>
 
 #include "Constants.h"
+#include "autos/PathFactory.h"
 #include "commands/BalanceCommand.h"
 #include "commands/ExtendClimbCommand.h"
 #include "commands/Funni.h"
@@ -74,15 +75,20 @@ void RobotContainer::ConfigureButtonBindings() {
                        frc::XboxController::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-  frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kY)
-      .OnTrue(pathplanner::AutoBuilder::pathfindToPose(
-          frc::Pose2d{1.5_m, 5.5_m, 0_rad},
-          pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
-                                       720_deg_per_s_sq},
-          0.0_mps,  // Goal end velocity in meters/sec
-          0.0_m     // Rotation delay distance in meters. This is how far
-                    // the robot should travel before attempting to rotate.
-          ));
+  m_driverController.Y().OnTrue(
+      PathFactory::GetPathFromFinalLocation(
+          [] { return FinalLocation::Podium; }, &m_drive)
+          .WithTimeout(15_s));
+
+  m_driverController.X().OnTrue(
+      PathFactory::GetPathFromFinalLocation(
+          [] { return FinalLocation::Subwoofer; }, &m_drive)
+          .WithTimeout(15_s));
+
+  m_driverController.B().OnTrue(
+      PathFactory::GetPathFromFinalLocation(
+          [] { return FinalLocation::StageLeft; }, &m_drive)
+          .WithTimeout(15_s));
 
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
@@ -126,12 +132,12 @@ void RobotContainer::ConfigureButtonBindings() {
 #ifdef TEST_SWERVE_BOT
   m_driverController.A().OnTrue(
       m_leds.ScoringAmp().WithTimeout(5_s).AndThen(m_leds.Idling()));
-  m_driverController.B().OnTrue(
-      m_leds.Intaking().WithTimeout(5_s).AndThen(m_leds.Idling()));
-  m_driverController.X().OnTrue(
-      m_leds.ScoringSpeaker().WithTimeout(5_s).AndThen(m_leds.Idling()));
-  m_driverController.Y().OnTrue(
-      m_leds.Loaded().WithTimeout(5_s).AndThen(m_leds.Idling()));
+//   m_driverController.B().OnTrue(
+//       m_leds.Intaking().WithTimeout(5_s).AndThen(m_leds.Idling()));
+  //   m_driverController.X().OnTrue(
+  //       m_leds.ScoringSpeaker().WithTimeout(5_s).AndThen(m_leds.Idling()));
+  // m_driverController.Y().OnTrue(
+  //     m_leds.Loaded().WithTimeout(5_s).AndThen(m_leds.Idling()));
   m_driverController.LeftBumper().OnTrue(
       m_leds.Climbing().WithTimeout(5_s).AndThen(m_leds.Idling()));
   m_driverController.RightBumper().OnTrue(

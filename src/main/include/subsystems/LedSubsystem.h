@@ -14,6 +14,8 @@ using namespace ConnectorX;
 class LedSubsystem : public frc2::SubsystemBase {
  public:
   LedSubsystem() : m_connectorX(ConnectorXBoard(kLedAddress)) {
+    ConsoleLogger::getInstance().logInfo("Led Sussystem", "Setting zones %s",
+                                         "");
     createZones(LedPort::P1, std::move(m_ledZones));
     m_connectorX.setOn();
   }
@@ -53,9 +55,9 @@ class LedSubsystem : public frc2::SubsystemBase {
 
   ConnectorXBoard m_connectorX;
   std::vector<Commands::NewZone> m_ledZones = {
-      {.offset = 0, .count = 25},
-      {.offset = 25, .count = 25},
-      {.offset = 50, .count = 25},
-      {.offset = 75, .count = 25},
+      {.offset = 0, .count = 15},
+      {.offset = 15, .count = 15},
+      {.offset = 30, .count = 15},
+      {.offset = 45, .count = 15},
   };
 };

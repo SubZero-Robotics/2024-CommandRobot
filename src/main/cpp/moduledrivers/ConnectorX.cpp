@@ -117,7 +117,7 @@ void ConnectorX::ConnectorXBoard::createZones(
   for (uint8_t i = 0; i < newZones.size(); i++) {
     cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
   }
-
+  ConsoleLogger::getInstance().logInfo("ConnectorX", "creating %u new zones", newZones.size());
   sendCommand(cmd);
 
   auto& currentPort = getCurrentCachedPort();

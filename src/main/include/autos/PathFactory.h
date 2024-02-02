@@ -35,6 +35,8 @@ class PathFactory {
  private:
   static frc2::CommandPtr GetApproxCommand(FinalLocation location) {
     auto& approxPose = OnTheFlyFactory::GetApproxLocation(location);
+    frc::Pose2d approxPose2 = approxPose;
+    ConsoleLogger::getInstance().logInfo("approx factory", approxPose2);
     return pathplanner::AutoBuilder::pathfindToPose(
         approxPose,
         pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
@@ -48,6 +50,8 @@ class PathFactory {
   static frc2::CommandPtr GetFinalApproachCommand(FinalLocation location,
                                                   DriveSubsystem* drive) {
     auto path = PathPlannerPath::fromPathFile(PoseToPath.at(location));
+    auto curPose = drive->GetPose();
+    ConsoleLogger::getInstance().logInfo("path factory", curPose);
 
     return FollowPathHolonomic(
                path, [drive]() { return drive->GetPose(); },
