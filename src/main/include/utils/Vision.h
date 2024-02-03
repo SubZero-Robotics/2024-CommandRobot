@@ -11,6 +11,8 @@
 
 #include "Constants.h"
 
+using namespace VisionConstants;
+
 class Vision {
     public:
         Vision() {
@@ -34,7 +36,7 @@ class Vision {
         }
 
         Eigen::Matrix<double, 3, 1> GetEstimationStdDevs(frc::Pose2d estimatedPose) {
-            Eigen::Matrix<double, 3, 1> estStdDevs = VisionConstants::kSingleTagStdDevs;
+            Eigen::Matrix<double, 3, 1> estStdDevs = kSingleTagStdDevs;
             auto targets = GetLatestResult().GetTargets();
             int numTags = 0;
             units::meter_t avgDist = 0_m;
@@ -50,7 +52,7 @@ class Vision {
             }
             avgDist /= numTags;
             if (numTags > 1) {
-                estStdDevs = VisionConstants::kMultiTagStdDevs;
+                estStdDevs = kMultiTagStdDevs;
             }
             if (numTags == 1 && avgDist > 4_m) {
                 estStdDevs = (Eigen::MatrixXd(3, 1) << std::numeric_limits<double>::max(),
@@ -64,9 +66,9 @@ class Vision {
         }
     private:
         photonlib::PhotonPoseEstimator photonEstimator{
-            VisionConstants::kTagLayout,
-            photonlib::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
-            photonlib::PhotonCamera{VisionConstants::kCameraName}, VisionConstants::kRobotToCam
+            kTagLayout,
+            kPoseStrategy,
+            photonlib::PhotonCamera{kCameraName}, kRobotToCam
         };
         std::shared_ptr<photonlib::PhotonCamera> camera{photonEstimator.GetCamera()};
         units::second_t lastEstTimestamp{0_s};

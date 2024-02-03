@@ -15,6 +15,7 @@
 #include <frc/apriltag/AprilTagFields.h>
 #include <frc/geometry/Transform3d.h>
 #include <frc/geometry/Transform2d.h>
+#include <photonlib/PhotonPoseEstimator.h>
 
 #include <numbers>
 
@@ -193,6 +194,7 @@ namespace VisionConstants {
         frc::Translation3d{0.5_m, 0.0_m, 0.5_m},
         frc::Rotation3d{0_rad, 0_rad, 0_rad}
     };
+    constexpr photonlib::PoseStrategy kPoseStrategy = photonlib::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
     static const frc::AprilTagFieldLayout kTagLayout{frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo)};
     static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
     static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
