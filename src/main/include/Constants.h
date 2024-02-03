@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 // Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
-#define TEST_SWERVE_BOT
+// #define TEST_SWERVE_BOT
 
 #include <frc/geometry/Pose2d.h>
 #include <frc/trajectory/TrapezoidProfile.h>
