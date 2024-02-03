@@ -26,7 +26,7 @@
 
 using namespace DriveConstants;
 
-DriveSubsystem::DriveSubsystem()
+DriveSubsystem::DriveSubsystem(Vision *vision)
     : m_frontLeft{kFrontLeftDrivingCanId, kFrontLeftTurningCanId,
                   kFrontLeftChassisAngularOffset},
       m_rearLeft{kRearLeftDrivingCanId, kRearLeftTurningCanId,
@@ -39,7 +39,8 @@ DriveSubsystem::DriveSubsystem()
                  frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}),
                  {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
                   m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
-                 frc::Pose2d{}} {
+                 frc::Pose2d{0_m, 0_m, 0_rad}},
+      m_vision{vision} {
   // put a field2d in NT
   frc::SmartDashboard::PutData("Field", &m_field);
 
@@ -92,6 +93,16 @@ void DriveSubsystem::Periodic() {
     m_field.SetRobotPose(m_odometry.GetPose());
   };
 
+  m_field.SetRobotPose(m_odometry.GetPose());
+
+  auto visionEst = m_vision->GetEstimatedGlobalPose();
+  if (visionEst.has_value()) {
+    auto est = visionEst.value();
+    auto estPose = est.estimatedPose.ToPose2d();
+    auto estStdDevs = m_vision->GetEstimationStdDevs(estPose);
+    AddVisionMeasurement(est.estimatedPose.ToPose2d(), est.timestamp,
+                                    estStdDevs);
+  }
   logDrivebase();
 }
 
@@ -235,6 +246,18 @@ void DriveSubsystem::logDrivebase() {
                                               states_vec.end());
 
   m_publisher.Set(states);
+}
+
+void DriveSubsystem::AddVisionMeasurement(const frc::Pose2d& visionMeasurement,
+                                       units::second_t timestamp) {
+  poseEstimator.AddVisionMeasurement(visionMeasurement, timestamp);
+}
+
+void DriveSubsystem::AddVisionMeasurement(const frc::Pose2d& visionMeasurement,
+                                       units::second_t timestamp,
+                                       const Eigen::Vector3d& stdDevs) {
+  wpi::array<double, 3> newStdDevs{stdDevs(0), stdDevs(1), stdDevs(2)};
+  poseEstimator.AddVisionMeasurement(visionMeasurement, timestamp, newStdDevs);
 }
 
 void DriveSubsystem::SetModuleStates(

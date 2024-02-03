@@ -19,6 +19,8 @@
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
+#include "subsystems/WristSubsystem.h"
+#include "utils/Vision.h"
 #include "subsystems/LedSubsystem.h"
 #include "subsystems/LeftClimbSubsystem.h"
 #include "subsystems/RightClimbSubsystem.h"
@@ -48,7 +50,7 @@ class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   // The robot's subsystems
-  DriveSubsystem m_drive;
+  DriveSubsystem m_drive{&m_vision};
 
   LedSubsystem m_leds;
 
@@ -82,6 +84,8 @@ class RobotContainer {
 
   void ConfigureAutoBindings();
 #endif
+
+  Vision m_vision;
 
   void ConfigureButtonBindings();
 };
