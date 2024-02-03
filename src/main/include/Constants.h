@@ -253,7 +253,7 @@ constexpr int kTicksPerMotorRotation = 42;
 
 namespace Intakeconstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = 0.8;
+constexpr double kIntakeSpeed = 0.7;
 constexpr double kOutakeSpeed = -0.4;
 
 constexpr uint8_t kBeamBreakDigitalPort = 2;
@@ -261,7 +261,8 @@ constexpr uint8_t kBeamBreakDigitalPort = 2;
 
 namespace ScoringConstants {
 constexpr double kFreeSpinCurrentThreshold = 90;
-constexpr double kMaxSpinRpm = 5676;
+// constexpr double kMaxSpinRpm = 5676;
+constexpr double kMaxSpinRpm = 6784;
 
 // Positive = clockwise
 constexpr double kVectorSpeed = 0.1;
@@ -276,8 +277,8 @@ constexpr double kSpeakerLowerSpeed = 1;
 constexpr double kSpeakerUpperSpeed = -kSpeakerLowerSpeed;
 
 // These should also match
-constexpr double kSubwooferLowerSpeed = 0.8;
-constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
+constexpr double kSubwooferLowerSpeed = -1;
+constexpr double kSubwooferUpperSpeed = -kSubwooferLowerSpeed;
 }  // namespace ScoringConstants
 
 namespace ArmConstants {

@@ -87,7 +87,7 @@ bool ScoringSubsystem::CheckAmpSpeed() {
 
 bool ScoringSubsystem::CheckSpeakerSpeed() {
   return abs(m_speakerEncoder.GetVelocity()) >=
-         MaxSpeedToRpm(ScoringConstants::kSpeakerLowerSpeed);
+         MaxSpeedToRpm(ScoringConstants::kSpeakerUpperSpeed);
 }
 
 bool ScoringSubsystem::CheckSubwooferSpeed() {
