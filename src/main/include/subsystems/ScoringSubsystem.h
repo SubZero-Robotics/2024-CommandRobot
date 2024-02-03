@@ -55,26 +55,26 @@ class ScoringSubsystem : public frc2::SubsystemBase {
     return ScoringConstants::kMaxSpinRpm * speedPercentage;
   }
 
-  rev::CANSparkFlex m_vectorSpinnyBoi{
+  rev::CANSparkMax m_vectorSpinnyBoi{
       CANSparkMaxConstants::kVectorSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
-  rev::CANSparkMax m_ampLowerSpinnyBoi{
+  rev::CANSparkFlex m_ampLowerSpinnyBoi{
       CANSparkMaxConstants::kAmpLowerSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::SparkRelativeEncoder m_ampEncoder = m_ampLowerSpinnyBoi.GetEncoder(
       rev::SparkRelativeEncoder::Type::kHallSensor,
       CANSparkMaxConstants::kTicksPerMotorRotation);
-  rev::CANSparkMax m_ampUpperSpinnyBoi{
+  rev::CANSparkFlex m_ampUpperSpinnyBoi{
       CANSparkMaxConstants::kAmpUpperSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
-  rev::CANSparkMax m_speakerLowerSpinnyBoi{
+  rev::CANSparkFlex m_speakerLowerSpinnyBoi{
       CANSparkMaxConstants::kSpeakerLowerSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::SparkRelativeEncoder m_speakerEncoder =
       m_speakerLowerSpinnyBoi.GetEncoder(
           rev::SparkRelativeEncoder::Type::kHallSensor,
           CANSparkMaxConstants::kTicksPerMotorRotation);
-  rev::CANSparkMax m_speakerUpperSpinnyBoi{
+  rev::CANSparkFlex m_speakerUpperSpinnyBoi{
       CANSparkMaxConstants::kSpeakerUpperSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
 };

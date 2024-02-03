@@ -253,7 +253,7 @@ constexpr int kTicksPerMotorRotation = 42;
 
 namespace Intakeconstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = 0.33;
+constexpr double kIntakeSpeed = 0.8;
 constexpr double kOutakeSpeed = -0.4;
 
 constexpr uint8_t kBeamBreakDigitalPort = 2;
@@ -267,8 +267,9 @@ constexpr double kMaxSpinRpm = 5676;
 constexpr double kVectorSpeed = 0.1;
 
 // These need to be different
-constexpr double kAmpLowerSpeed = -0.5;
-constexpr double kAmpUpperSpeed = 0.6;
+constexpr double kAmpLowerSpeed = (-0.4) * 0.66; //.21
+constexpr double kAmpUpperSpeed = (0.27) * 0.66
+; //.27
 
 // These should match
 constexpr double kSpeakerLowerSpeed = 1;
