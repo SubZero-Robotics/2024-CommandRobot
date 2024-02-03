@@ -17,26 +17,27 @@
 
 ## Table of contents
 
-- [Team 5690 SubZero Robotics 2024 Command Robot](#team-5690-subzero-robotics-2024-command-robot)
-  - [Table of contents](#table-of-contents)
-  - [About](#about)
-  - [Development Cycle](#development-cycle)
-    - [Main](#main)
-    - [Competition](#competition)
-  - [Subsystems](#subsystems)
-  - [CAN IDs](#can-ids)
-  - [Network Map](#network-map)
-  - [Getting started](#getting-started)
-    - [Prerequisites](#prerequisites)
-  - [Making changes](#making-changes)
-    - [Cloning the repo](#cloning-the-repo)
-    - [Issues](#issues)
-    - [Branches](#branches)
-    - [Adding commits](#adding-commits)
-    - [Pushing commits](#pushing-commits)
-    - [Pulling branches](#pulling-branches)
-    - [Pull requests](#pull-requests)
-  - [Contact](#contact)
+- [Table of contents](#table-of-contents)
+- [About](#about)
+- [Development Cycle](#development-cycle)
+  - [Main](#main)
+  - [Competition](#competition)
+- [Subsystems](#subsystems)
+- [CAN IDs](#can-ids)
+- [Network Map](#network-map)
+- [State](#state)
+- [Commands](#commands)
+- [Getting started](#getting-started)
+  - [Prerequisites](#prerequisites)
+- [Making changes](#making-changes)
+  - [Cloning the repo](#cloning-the-repo)
+  - [Issues](#issues)
+  - [Branches](#branches)
+  - [Adding commits](#adding-commits)
+  - [Pushing commits](#pushing-commits)
+  - [Pulling branches](#pulling-branches)
+  - [Pull requests](#pull-requests)
+- [Contact](#contact)
 
 ## About
 
@@ -60,27 +61,33 @@ Before a competition, create a new branch based on `main` and lock it via a GitH
 
 Following the WPILib command based structure we have broken our robot up into a number of subsystems. They are listed below:
 
-| Subsystem                                                             | Purpose                                                  |
-| :-------------------------------------------------------------------- | :------------------------------------------------------- |
-| [Drive](src/main/include/subsystems/DriveSubsystem.h)                 | Drives robot                                             |
-| [Intake](src/main/include/subsystems/IntakeSubsystem.h)               | Activates the intake                                     |
-| [Scoring](src/main/include/subsystems/ScoringSubsystem.h)             | Scores Notes                                             |
-| [LED](src/main/include/subsystems/LedSubsystem.h)                     | Wrapper for the ConnectorX moduledriver, reads from State|
-| [Climb](src/main/include/subsystems/ClimbSubsystem.h)                  | Climbs on the Stage                                      |
-
+| Subsystem                                                 | Purpose                                                   |
+| :-------------------------------------------------------- | :-------------------------------------------------------- |
+| [Drive](src/main/include/subsystems/DriveSubsystem.h)     | Drives robot                                              |
+| [Intake](src/main/include/subsystems/IntakeSubsystem.h)   | Activates the intake                                      |
+| [Scoring](src/main/include/subsystems/ScoringSubsystem.h) | Scores Notes                                              |
+| [LED](src/main/include/subsystems/LedSubsystem.h)         | Wrapper for the ConnectorX moduledriver, reads from State |
+| [Climb](src/main/include/subsystems/ClimbSubsystem.h)     | Climbs on the Stage                                       |
 
 ## CAN IDs
 
-|     Purpose/Name     | CAN ID | Motor/Driver Type |
-| :------------------: | :----: | :---------------: |
-|   Front Right Drive  |   2    |     SparkMax      |
-|   Rear Right Drive   |   4    |     SparkMax      |
-|   Rear Left Drive    |   6    |     SparkMax      |
-|   Front Left Drive   |   8    |     SparkMax      |
-|   Front Right Turn   |   1    |     SparkMax      |
-|   Rear Right Turn    |   3    |     SparkMax      |
-|   Rear Left Turn     |   5    |     SparkMax      |
-|   Front Left Turn    |   7    |     SparkMax      |
+|         Purpose/Name          | CAN ID | Motor/Driver Type |
+| :---------------------------: | :----: | :---------------: |
+|       Front Right Drive       |   2    |     SparkMax      |
+|       Rear Right Drive        |   4    |     SparkMax      |
+|        Rear Left Drive        |   6    |     SparkMax      |
+|       Front Left Drive        |   8    |     SparkMax      |
+|       Front Right Turn        |   1    |     SparkMax      |
+|        Rear Right Turn        |   3    |     SparkMax      |
+|        Rear Left Turn         |   5    |     SparkMax      |
+|        Front Left Turn        |   7    |     SparkMax      |
+|         Rear (right)          |   23   |     SparkMax      |
+|         Front (left)          |   20   |     SparkMax      |
+|            Vector             |   22   |     SparkMax      |
+|           Amp Lower           |   24   |     SparkFlex     |
+|           Amp Upper           |   21   |     SparkFlex     |
+| Speaker Lower (follows Upper) |   25   |     SparkFlex     |
+|         Speaker Upper         |   19   |     SparkFlex     |
 
 :warning: TODO: Designate CAN IDs for subsystems :warning:
 
@@ -88,12 +95,37 @@ Following the WPILib command based structure we have broken our robot up into a 
 
 ## Network Map
 
-|  Device   |             Address              |
-| :-------: | :------------------------------: |
-|  Gateway  |           10.56.90.1             |
-|  Gateway  | 10.56.90.129 (subject to change) |
-|    RIO    |            10.56.90.2            |
-|  Laptop   |             Dynamic              |
+| Device  |             Address              |
+| :-----: | :------------------------------: |
+| Gateway |            10.56.90.1            |
+| Gateway | 10.56.90.129 (subject to change) |
+|   RIO   |            10.56.90.2            |
+| Laptop  |             Dynamic              |
+
+## State
+
+We have 9 states that each return a `CommandPtr` when bound via the `RunStateDeferred` factory method to a controller input. This allows a secondary operator to perform sweeping, fully-autonomous functions such as scoring, intaking, and more. Each state also has a check to ensure one action cannot lead to another if there's a conflict. Furthermore, the robot's LEDs will indicate the current state with changing colors and patterns.
+
+| Name                         | Purpose                                                |
+| :--------------------------- | :----------------------------------------------------- |
+| Manual                       | Do nothing                                             |
+| ScoringSpeaker               | Run to the podium location and score into the speaker  |
+| ScoringAmp                   | Run to the amp and score                               |
+| ScoringSubwoofer             | Run to the speaker location and score into the speaker |
+| Loaded                       | Note is loaded into the magazine                       |
+| Intaking                     | Drive forward while intaking until note is present     |
+| ClimbStage Left/Right/Center | Go to the stage location, climb, then balance          |
+
+Notes:
+
+- Every automatic action can be interrupted by any input on the first operator's controller
+- Every automatic action has a timeout
+- When moving to a location, on-the-fly pathplanner runs first for the approximate location from anywhere before a premade path is executed for a more accurate alignment with the target pose
+- Every automatic action completes by moving back into the Manual state
+
+## Commands
+
+State actions are composed of underlying commands that are also called by the first operator's gamepad. Some of these might be intaking, run scoring subsystem, or drive.
 
 ## Getting started
 
