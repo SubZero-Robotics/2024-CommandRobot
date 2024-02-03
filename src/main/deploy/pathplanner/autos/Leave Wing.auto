@@ -8,11 +8,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Example Path"
+            "pathName": "Leave Wing"
           }
         }
       ]
     }
   },
-  "folder": null
+  "folder": null,
+  "choreoAuto": false
 }

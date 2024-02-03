@@ -1,38 +1,39 @@
 #pragma once
 
-#include <rev/CANSparkMax.h>
-#include <rev/CANSparkLowLevel.h>
+#include <frc/DigitalInput.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
-#include "moduledrivers/ConnectorX.h"
+#include <rev/CANSparkFlex.h>
+#include <rev/CANSparkLowLevel.h>
+#include <rev/CANSparkMax.h>
 
 #include "Constants.h"
-#include "ColorConstants.h"
 
 using namespace CANSparkMaxConstants;
 
 class IntakeSubsystem : public frc2::SubsystemBase {
-   public:
-    IntakeSubsystem(ConnectorX::ConnectorXBoard* subsystem);
+ public:
+  IntakeSubsystem();
 
-    /**
-     * Will be called periodically whenever the CommandScheduler runs.
-     */
-    void Periodic() override;
+  void Periodic() override;
 
-    /**
-     * Will be called periodically whenever the CommandScheduler runs during
-     * simulation.
-     */
-    void SimulationPeriodic() override;
+  void SimulationPeriodic() override;
 
-    void Out();
-    void In();
-    void Stop();
+  void Stop();
 
-   private:
-    // Components (e.g. motor controllers and sensors) should generally be
-    // declared private and exposed only through public methods.
-    ConnectorX::ConnectorXBoard* m_ledSubsystem;
-    rev::CANSparkMax m_intakeSpinnyBoy{CANSparkMaxConstants::kIntakeSpinnyBoyID, rev::CANSparkLowLevel::MotorType::kBrushless};
+  void In();
+
+  void Out();
+
+  bool NotePresent();
+
+ private:
+  rev::CANSparkFlex m_rightIntakeSpinnyBoy{
+      CANSparkMaxConstants::kLeftIntakeSpinnyBoiId,
+      rev::CANSparkLowLevel::MotorType::kBrushless};
+  rev::CANSparkFlex m_leftIntakeSpinnyBoy{
+      CANSparkMaxConstants::kRightIntakeSpinnyBoiId,
+      rev::CANSparkLowLevel::MotorType::kBrushless};
+
+  frc::DigitalInput m_beamBreak{Intakeconstants::kBeamBreakDigitalPort};
 };

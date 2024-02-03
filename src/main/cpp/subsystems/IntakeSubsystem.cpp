@@ -1,27 +1,24 @@
 #include <subsystems/IntakeSubsystem.h>
+
+#include "ColorConstants.h"
 #include "moduledrivers/ConnectorX.h"
 
-IntakeSubsystem::IntakeSubsystem(ConnectorX::ConnectorXBoard* subsystem)
-    : m_ledSubsystem(subsystem) {}
+IntakeSubsystem::IntakeSubsystem() {
+  m_rightIntakeSpinnyBoy.Follow(m_leftIntakeSpinnyBoy, true);
+}
 
 void IntakeSubsystem::Periodic() {}
 
 void IntakeSubsystem::SimulationPeriodic() {}
 
 void IntakeSubsystem::Out() {
-    if (m_ledSubsystem->getCurrentColor(ConnectorX::LedPort::P1) == kYellowColor) {
-        m_intakeSpinnyBoy.Set(ArmConstants::kOuttakeSpeed);
-    } else {
-        m_intakeSpinnyBoy.Set(-ArmConstants::kOuttakeSpeed);
-    }
+  m_leftIntakeSpinnyBoy.Set(Intakeconstants::kOutakeSpeed);
 }
 
 void IntakeSubsystem::In() {
-    if (m_ledSubsystem->getCurrentColor(ConnectorX::LedPort::P1) == kPurpleColor) {
-        m_intakeSpinnyBoy.Set(-ArmConstants::kIntakeSpeed);
-    } else {
-        m_intakeSpinnyBoy.Set(ArmConstants::kIntakeSpeed);
-    }
+  m_leftIntakeSpinnyBoy.Set(Intakeconstants::kIntakeSpeed);
 }
 
-void IntakeSubsystem::Stop() { m_intakeSpinnyBoy.Set(0.0); }
+void IntakeSubsystem::Stop() { m_leftIntakeSpinnyBoy.Set(0); }
+
+bool IntakeSubsystem::NotePresent() { return m_beamBreak.Get(); }

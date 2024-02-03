@@ -2,7 +2,17 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
+// #define TEST_SWERVE_BOT
+
+#include <frc/geometry/Pose2d.h>
 #include <frc/trajectory/TrapezoidProfile.h>
+#include <frc/util/Color8Bit.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/path/PathPlannerPath.h>
+#include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
+#include <pathplanner/lib/util/PIDConstants.h>
+#include <pathplanner/lib/util/ReplanningConfig.h>
 #include <rev/CANSparkMax.h>
 #include <units/acceleration.h>
 #include <units/angular_acceleration.h>
@@ -17,6 +27,8 @@
 #include <frc/geometry/Transform2d.h>
 #include <photonlib/PhotonPoseEstimator.h>
 
+#include <functional>
+#include <map>
 #include <numbers>
 
 #pragma once
@@ -41,11 +53,17 @@ constexpr double kMagnitudeSlewRate = 1.8;   // percent per second (1 = 100%)
 constexpr double kRotationalSlewRate = 2.0;  // percent per second (1 = 100%)
 
 // Chassis configuration
+#ifdef TEST_SWERVE_BOT
 constexpr units::meter_t kTrackWidth =
     0.5588_m;  // Distance between centers of right and left wheels on robot
 constexpr units::meter_t kWheelBase =
     0.5588_m;  // Distance between centers of front and back wheels on robot
-
+#else
+constexpr units::meter_t kTrackWidth =
+    0.66_m;  // Distance between centers of right and left wheels on robot
+constexpr units::meter_t kWheelBase =
+    0.66_m;  // Distance between centers of front and back wheels on robot
+#endif
 // Angular offsets of the modules relative to the chassis in radians
 constexpr double kFrontLeftChassisAngularOffset = -std::numbers::pi / 2;
 constexpr double kFrontRightChassisAngularOffset = 0;
@@ -64,6 +82,7 @@ constexpr int kFrontLeftTurningCanId = 7;
 constexpr int kRearLeftTurningCanId = 5;
 
 constexpr units::second_t kLoopTime = 0.022_s;
+constexpr double kLoopsPerSecond = 1_s / kLoopTime;
 }  // namespace DriveConstants
 
 namespace ModuleConstants {
@@ -74,7 +93,12 @@ constexpr bool kTurningEncoderInverted = true;
 // The MAXSwerve module can be configured with one of three pinion gears: 12T,
 // 13T, or 14T. This changes the drive speed of the module (a pinion gear with
 // more teeth will result in a robot that drives faster).
+
+#ifdef TEST_SWERVE_BOT
 constexpr int kDrivingMotorPinionTeeth = 13;
+#else
+constexpr int kDrivingMotorPinionTeeth = 14;
+#endif
 
 // Calculations required for driving motor conversion factors and feed forward
 constexpr double kDrivingMotorFreeSpeedRps =
@@ -142,7 +166,74 @@ constexpr double kPThetaController = 0.5;
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
-const std::string kExampleAutoName = "Example Auto";
+const std::string kDefaultAutoName = "Leave Wing";
+
+const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
+    pathplanner::PIDConstants(0.5, 0.0,
+                              0.0),            // Translation PID constants
+    pathplanner::PIDConstants(0.5, 0.0, 0.0),  // Rotation PID constants
+    3.0_mps,                                   // Max module speed, in m/s
+#ifdef TEST_SWERVE_BOT
+    0.4579874_m,  // Drive base radius in meters. Distance from robot center to
+#endif
+#ifndef TEST_SWERVE_BOT
+    0.529844_m,
+#endif
+    // furthest module.
+    pathplanner::ReplanningConfig()  // Default path replanning config.
+                                     // See the API for the options here),
+);
+
+namespace Locations {
+
+enum class ApproxLocation { Scoring = 0, Source, Central };
+
+constexpr frc::Pose2d ApproxScoringLocation =
+    frc::Pose2d{2.90_m, 5.58_m, 0_deg};
+constexpr frc::Pose2d ApproxSourceLocation = frc::Pose2d{5.38_m, 1.5_m, 0_deg};
+constexpr frc::Pose2d ApproxCentralLocation = frc::Pose2d{8.3_m, 4.11_m, 0_deg};
+
+enum class FinalLocation {
+  // Shooting in the speaker from close
+  Subwoofer = 0,
+  // Shooting against the amp
+  Amp,
+  // Shooting in the speaker from afar
+  Podium,
+  // Closest to alliance wall
+  Source1,
+  // Center
+  Source2,
+  // Farthest from alliance wall
+  Source3,
+  // Farthest climb location from alliance wall
+  CenterStage,
+  // Climb location on the left as seen from alliance station
+  // Closest to the amp
+  StageLeft,
+  // Climb location on the left as seen from alliance station
+  // Closest to the opposing source
+  StageRight,
+};
+
+const std::map<ApproxLocation, const frc::Pose2d&> OnTheFlyPoses{
+    {ApproxLocation::Scoring, ApproxScoringLocation},
+    {ApproxLocation::Central, ApproxCentralLocation},
+    {ApproxLocation::Source, ApproxSourceLocation}};
+
+const std::map<FinalLocation, std::string> PoseToPath{
+    // Note 2 = ApproxScoringLocation
+    // Wing Line 2 = ApproxSource
+    {FinalLocation::Subwoofer, "Note 2 to Speaker"},
+    {FinalLocation::Amp, "Note 2 to Amp"},
+    {FinalLocation::Podium, "Note 2 to Podium"},
+    {FinalLocation::StageLeft, "Note 2 to Stage Left"},
+    {FinalLocation::Source1, "Wing Line 2 to Source 1"},
+    {FinalLocation::Source2, "Wing Line 2 to Source 2"},
+    {FinalLocation::Source3, "Wing Line 2 to Source 3"},
+    {FinalLocation::CenterStage, "Center Field to Center Stage"},
+    {FinalLocation::StageRight, "Wing Line 2 to Stage Right"}};
+}  // namespace Locations
 }  // namespace AutoConstants
 
 namespace OIConstants {
@@ -151,13 +242,48 @@ constexpr int kOperatorControllerPort = 1;
 constexpr double kDriveDeadband = 0.05;
 }  // namespace OIConstants
 
-constexpr uint8_t kLedAddress = 0x10;
+constexpr uint8_t kLedAddress = 23;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
-constexpr int kIntakeSpinnyBoyID = 20;
-constexpr int kWristRotationMotorID = 22;
+constexpr int kRightIntakeSpinnyBoiId = 19;
+constexpr int kLeftIntakeSpinnyBoiId = 20;
+constexpr int kVectorSpinnyBoiId = 21;
+constexpr int kAmpLowerSpinnyBoiId = 22;
+constexpr int kAmpUpperSpinnyBoiId = 23;
+constexpr int kSpeakerLowerSpinnyBoiId = 24;
+constexpr int kSpeakerUpperSpinnyBoiId = 25;
+
+constexpr int kTicksPerMotorRotation = 42;
 }  // namespace CANSparkMaxConstants
+
+namespace Intakeconstants {
+// Change these to match actual values
+constexpr double kIntakeSpeed = 0.33;
+constexpr double kOutakeSpeed = -0.1;
+
+constexpr uint8_t kBeamBreakDigitalPort = 2;
+}  // namespace Intakeconstants
+
+namespace ScoringConstants {
+constexpr double kFreeSpinCurrentThreshold = 4;
+constexpr double kMaxSpinRpm = 5676;
+
+// Positive = clockwise
+constexpr double kVectorSpeed = 0.1;
+
+// These need to be different
+constexpr double kAmpLowerSpeed = 0.5;
+constexpr double kAmpUpperSpeed = 0.6;
+
+// These should match
+constexpr double kSpeakerLowerSpeed = 0.8;
+constexpr double kSpeakerUpperSpeed = 0.8;
+
+// These should also match
+constexpr double kSubwooferLowerSpeed = 0.8;
+constexpr double kSubwooferUpperSpeed = 0.8;
+}  // namespace ScoringConstants
 
 namespace ArmConstants {
 // Motor Constants
@@ -169,10 +295,6 @@ constexpr double kAntiGravityPercentage = -0.05;
 constexpr double kRotationHomingSpeed = .15;
 constexpr double kExtenderHomingSpeed = .66;
 constexpr double kWristHomingSpeed = .33;
-
-// Intake Constants
-constexpr double kIntakeSpeed = 0.33;
-constexpr double kOuttakeSpeed = 0.33;
 
 // Wrist Constants
 constexpr int kWristLimitSwitchPort = 0;
@@ -199,3 +321,54 @@ namespace VisionConstants {
     static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
     static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
 } // namespace VisionConstants
+
+namespace ClimbConstants {
+// These are placeholder values, these all will be changed
+constexpr int kClimberLeftMotorId = 10;
+constexpr int kClimberRightMotorId = 11;
+
+constexpr double kClimberSetP = 1;
+constexpr double kClimberSetI = 0;
+constexpr double kClimberSetD = 0;
+
+// Maximum arm extension distance
+constexpr double kMaxArmDistance = 10;
+// Arm climbing position
+constexpr double kClimbExtensionPosition = 5;
+// Arm retracted position
+constexpr double kClimbRetractPosition = 3;
+constexpr double kInPerRotation = 1;
+
+constexpr int kClimberLeftLimitSwitchPort = 0;
+constexpr int kClimberRightLimitSwitchPort = 1;
+
+constexpr double kClimbStepSize = 1;
+constexpr double kClimbHomingSpeed = 1;
+constexpr int kTicksPerMotorRotation = 42;
+
+// Distance between left and right arm centers
+constexpr units::meter_t kClimberOffsetDistance = 4_m;
+
+}  // namespace ClimbConstants
+
+namespace RobotConstants {
+#ifdef TEST_SWERVE_BOT
+const std::string kRoborioSerialNumber = "0326F2F2";
+#else
+const std::string kRoborioSerialNumber = "032B4B68";
+#endif
+}  // namespace RobotConstants
+
+enum class RobotState {
+  Manual = 0,
+  ScoringSpeaker,
+  ScoringAmp,
+  ScoringSubwoofer,
+  Loaded,
+  Intaking,
+  ClimbStageLeft,
+  ClimbStageCenter,
+  ClimbStageRight,
+};
+
+typedef std::function<RobotState()> StateGetter;

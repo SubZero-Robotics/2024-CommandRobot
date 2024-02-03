@@ -9,7 +9,11 @@ using namespace Logging;
 
 class ConsoleLogger : ILogger {
  public:
-  ConsoleLogger();
+  static ConsoleLogger& getInstance() {
+    static ConsoleLogger instance;
+
+    return instance;
+  }
 
   void logVerbose(std::string key, const std::string format, ...) override;
   void logInfo(std::string key, const std::string format, ...) override;
@@ -48,18 +52,14 @@ class ConsoleLogger : ILogger {
   void logFatal(std::string key, wpi::Sendable* val) override;
 
   private:
+    ConsoleLogger();
 
-  void log(LogLevel level, std::string key, std::string fmt, ...) {
-    if (!shouldLog(level)) return;
+    void log(LogLevel level, std::string key, std::string fmt, va_list ap) {
+        if (!shouldLog(level)) return;
 
-    va_list args;
-    va_start(args, fmt);
-    std::string val = formatString(fmt, args);
-    std::cout << levelToString(level) << " - " << key << ": " << val << std::endl;
-    va_end(args);
-  }
+        std::string val = formatString(fmt, ap);
+        std::cout << levelToString(level) << " - " << key << ": " << val << std::endl;
+    }
 };
-
-static ConsoleLogger consoleLogger;
 
 #endif

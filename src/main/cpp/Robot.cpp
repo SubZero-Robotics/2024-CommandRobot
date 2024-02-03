@@ -4,13 +4,29 @@
 
 #include "Robot.h"
 
+#include <frc/RobotController.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
+#include <wpinet/uv/Error.h>
+
+#include "Constants.h"
 #include "frc/DataLogManager.h"
+#include "frc/DriverStation.h"
 #include "wpi/DataLog.h"
 
 void Robot::RobotInit() {
+  if (RobotBase::IsReal()) {
+    if (frc::RobotController::GetSerialNumber() !=
+        RobotConstants::kRoborioSerialNumber) {
+      std::cout << "Error: wrong robot\n";
+      throw wpi::uv::Error(108);
+    }
+  }
   frc::DataLogManager::Start();
+
+  // Logs joystick data without hogging NT bandwidth
+  // *May* tax the rio, should be tested
+  frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
 }
 
 /**

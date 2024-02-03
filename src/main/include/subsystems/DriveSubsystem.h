@@ -14,6 +14,9 @@
 #include <frc/smartdashboard/Field2d.h>
 #include <frc2/command/SubsystemBase.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
+#include <hal/SimDevice.h>
+#include <hal/simulation/SimDeviceData.h>
+#include <networktables/StructArrayTopic.h>
 
 #include "Constants.h"
 #include "MAXSwerveModule.h"
@@ -28,6 +31,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
+  void SimulationPeriodic() override;
 
   // Subsystem methods go here.
 
@@ -65,6 +69,12 @@ class DriveSubsystem : public frc2::SubsystemBase {
    * Resets the drive encoders to currently read a position of 0.
    */
   void ResetEncoders();
+
+  /**
+   * Publishes the swerve drive states to NT in an advantagescope friendly
+   * format
+   */
+  void logDrivebase();
 
   /**
    * Sets the drive MotorControllers to a power from -1 to 1.
@@ -106,6 +116,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::ChassisSpeeds getSpeed();
 
+  AHRS* getGyro() { return &m_gyro; }
+
   static void LogSpeeds(wpi::array<frc::SwerveModuleState, 4> desiredStates);
 
    void AddVisionMeasurement(const frc::Pose2d& visionMeasurement,
@@ -128,7 +140,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-    void logMotorState(MAXSwerveModule &motor, std::string key);
+  void logMotorState(MAXSwerveModule& motor, std::string key);
 
   MAXSwerveModule m_frontLeft;
   MAXSwerveModule m_rearLeft;
@@ -139,6 +151,11 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   // The gyro sensor
   AHRS m_gyro{frc::SPI::Port::kMXP};
+
+  HAL_SimDeviceHandle m_gyroSimHandle =
+      HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
+  hal::SimDouble m_gyroSimAngle =
+      HALSIM_GetSimValueHandle(m_gyroSimHandle, "Yaw");
 
   // time last loop took, "deltatime"
   units::second_t driveLoopTime = 0.022_s;
@@ -164,6 +181,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
    {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(), m_frontRight.GetPosition(), m_rearRight.GetPosition()},
                          frc::Pose2d{0_m, 0_m, 0_rad}
   };
+  nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing
   frc::Field2d m_field;

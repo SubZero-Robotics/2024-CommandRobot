@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <frc/XboxController.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -13,14 +12,20 @@
 #include <frc2/command/PIDCommand.h>
 #include <frc2/command/ParallelRaceGroup.h>
 #include <frc2/command/RunCommand.h>
+#include <frc2/command/button/CommandXboxController.h>
+#include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
-#include "moduledrivers/ConnectorX.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/WristSubsystem.h"
 #include "utils/Vision.h"
+#include "subsystems/LedSubsystem.h"
+#include "subsystems/LeftClimbSubsystem.h"
+#include "subsystems/RightClimbSubsystem.h"
+#include "subsystems/ScoringSubsystem.h"
+#include "subsystems/StateSubsystem.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -37,21 +42,48 @@ class RobotContainer {
 
  private:
   // The driver's controller
-  frc::XboxController m_driverController{OIConstants::kDriverControllerPort};
-  frc::XboxController m_operatorController{OIConstants::kOperatorControllerPort};
+  frc2::CommandXboxController m_driverController{
+      OIConstants::kDriverControllerPort};
+  // frc::XboxController
+  // m_operatorController{OIConstants::kOperatorControllerPort};
 
   // The robot's subsystems and commands are defined here...
 
   // The robot's subsystems
   DriveSubsystem m_drive{&m_vision};
 
+  LedSubsystem m_leds;
+
+  frc2::CommandPtr m_defaultAuto =
+      pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName).ToPtr();
+
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;
 
-  std::unique_ptr<WristSubsystem> m_wrist;
+#ifdef TEST_SWERVE_BOT
 
-  ConnectorX::ConnectorXBoard m_leds{kLedAddress};
-  IntakeSubsystem m_intake{&m_leds};
+#endif
+
+#ifndef TEST_SWERVE_BOT
+  LeftClimbSubsystem m_leftClimb;
+  RightClimbSubsystem m_rightClimb;
+  IntakeSubsystem m_intake;
+  ScoringSubsystem m_scoring;
+
+  Subsystems_t m_subsystems = {.drive = &m_drive,
+                               .leftClimb = &m_leftClimb,
+                               .rightClimb = &m_rightClimb,
+                               .intake = &m_intake,
+                               .scoring = &m_scoring,
+                               .led = &m_leds};
+
+  StateSubsystem m_state{m_subsystems, m_driverController};
+
+  frc2::CommandXboxController m_operatorController{
+      OIConstants::kOperatorControllerPort};
+
+  void ConfigureAutoBindings();
+#endif
 
   Vision m_vision;
 

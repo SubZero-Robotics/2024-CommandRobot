@@ -1,5 +1,4 @@
-#ifndef I_SINGLE_AXIS_SUBSYSTEM_H
-#define I_SINGLE_AXIS_SUBSYSTEM_H
+#pragma once
 
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
@@ -7,7 +6,7 @@
 #include <memory>
 
 class ISingleAxisSubsystem : public frc2::SubsystemBase {
-public:
+ public:
   // Need controller input
   virtual void RunMotorSpeed(double speed, bool ignoreEncoder) = 0;
   virtual void RunMotorSpeedDefault(bool invertDirection) = 0;
@@ -27,5 +26,3 @@ public:
   virtual void JoystickMoveStep(double rotation) = 0;
   virtual double IncrementTargetPosition(double steps) = 0;
 };
-
-#endif

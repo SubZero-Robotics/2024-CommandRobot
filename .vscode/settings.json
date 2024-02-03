@@ -1,6 +1,8 @@
 {
   "java.configuration.updateBuildConfiguration": "disabled",
   "java.import.gradle.enabled": false,
+  "editor.formatOnSave": true,
+  "C_Cpp.clang_format_style": "file",
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
