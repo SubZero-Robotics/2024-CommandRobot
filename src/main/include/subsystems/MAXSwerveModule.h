@@ -31,6 +31,8 @@ class MAXSwerveModule {
    */
   frc::SwerveModuleState GetState() const;
 
+  frc::SwerveModuleState GetSimState() const;
+
   /**
    * Returns the current position of the module.
    *
@@ -38,12 +40,20 @@ class MAXSwerveModule {
    */
   frc::SwerveModulePosition GetPosition() const;
 
+  frc::SwerveModulePosition GetSimPosition() const;
+
+  frc::Rotation2d GetRotation() const;
+
   /**
    * Sets the desired state for the module.
    *
    * @param desiredState Desired state with speed and angle.
    */
   void SetDesiredState(const frc::SwerveModuleState& state);
+
+  frc::SwerveModuleState GetDesiredState() { return m_desiredState; }
+
+  void simUpdateDrivePosition(const frc::SwerveModuleState& state);
 
   /**
    * Zeroes all the SwerveModule encoders.
@@ -68,4 +78,10 @@ class MAXSwerveModule {
   double m_chassisAngularOffset = 0;
   frc::SwerveModuleState m_desiredState{units::meters_per_second_t{0.0},
                                         frc::Rotation2d()};
+
+  // Values for simulation
+  units::meter_t m_simDriveEncoderPosition;
+  units::meters_per_second_t m_simDriveEncoderVelocity;
+
+  units::radian_t m_simCurrentAngle;
 };

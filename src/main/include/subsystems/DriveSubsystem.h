@@ -13,6 +13,8 @@
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/smartdashboard/Field2d.h>
 #include <frc2/command/SubsystemBase.h>
+#include <hal/SimDevice.h>
+#include <hal/simulation/SimDeviceData.h>
 #include <networktables/StructArrayTopic.h>
 
 #include "Constants.h"
@@ -27,6 +29,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
+  void SimulationPeriodic() override;
 
   // Subsystem methods go here.
 
@@ -66,8 +69,9 @@ class DriveSubsystem : public frc2::SubsystemBase {
   void ResetEncoders();
 
   /**
-   * Publishes the swerve drive states to NT in an advantagescope friendly format
-  */
+   * Publishes the swerve drive states to NT in an advantagescope friendly
+   * format
+   */
   void logDrivebase();
 
   /**
@@ -139,6 +143,11 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   // The gyro sensor
   AHRS m_gyro{frc::SPI::Port::kMXP};
+
+  HAL_SimDeviceHandle m_gyroSimHandle =
+      HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
+  hal::SimDouble m_gyroSimAngle =
+      HALSIM_GetSimValueHandle(m_gyroSimHandle, "Yaw");
 
   // time last loop took, "deltatime"
   units::second_t driveLoopTime = 0.022_s;

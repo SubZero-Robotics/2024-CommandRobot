@@ -5,6 +5,7 @@
 #include "subsystems/DriveSubsystem.h"
 
 #include <frc/DriverStation.h>
+#include <frc/RobotBase.h>
 #include <frc/RobotController.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
@@ -61,16 +62,35 @@ DriveSubsystem::DriveSubsystem()
       },
       this);
 
-      m_publisher = nt::NetworkTableInstance::GetDefault().GetStructArrayTopic<frc::SwerveModuleState>("/SwerveStates").Publish();
+  m_publisher =
+      nt::NetworkTableInstance::GetDefault()
+          .GetStructArrayTopic<frc::SwerveModuleState>("/SwerveStates")
+          .Publish();
 }
 
-void DriveSubsystem::Periodic() {
-  // Implementation of subsystem periodic method goes here.
-  m_odometry.Update(frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}),
+void DriveSubsystem::SimulationPeriodic() {
+  frc::ChassisSpeeds chassisSpeeds = kDriveKinematics.ToChassisSpeeds(
+      m_frontLeft.GetState(), m_frontRight.GetState(), m_rearLeft.GetState(),
+      m_rearRight.GetState());
+  m_gyroSimAngle.Set(m_gyro.GetYaw() +
+                     (chassisSpeeds.omega.convert<units::deg_per_s>().value() *
+                      DriveConstants::kLoopTime.value()));
+  m_odometry.Update(-m_gyro.GetRotation2d(),
                     {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
                      m_frontRight.GetPosition(), m_rearRight.GetPosition()});
 
   m_field.SetRobotPose(m_odometry.GetPose());
+};
+
+void DriveSubsystem::Periodic() {
+  // Implementation of subsystem periodic method goes here.
+  if (frc::RobotBase::IsReal()) {
+    m_odometry.Update(frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}),
+                      {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
+                       m_frontRight.GetPosition(), m_rearRight.GetPosition()});
+
+    m_field.SetRobotPose(m_odometry.GetPose());
+  };
 
   logDrivebase();
 }
@@ -209,8 +229,10 @@ void DriveSubsystem::logMotorState(MAXSwerveModule &motor, std::string key) {
 }
 
 void DriveSubsystem::logDrivebase() {
-  std::vector states_vec = {m_frontLeft.GetState(), m_frontRight.GetState(), m_rearLeft.GetState(), m_rearRight.GetState()};
-  std::span<frc::SwerveModuleState, 4> states(states_vec.begin(), states_vec.end());
+  std::vector states_vec = {m_frontLeft.GetState(), m_frontRight.GetState(),
+                            m_rearLeft.GetState(), m_rearRight.GetState()};
+  std::span<frc::SwerveModuleState, 4> states(states_vec.begin(),
+                                              states_vec.end());
 
   m_publisher.Set(states);
 }

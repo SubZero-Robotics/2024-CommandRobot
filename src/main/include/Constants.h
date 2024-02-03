@@ -77,6 +77,7 @@ constexpr int kFrontLeftTurningCanId = 7;
 constexpr int kRearLeftTurningCanId = 5;
 
 constexpr units::second_t kLoopTime = 0.022_s;
+constexpr double kLoopsPerSecond = 1_s / kLoopTime;
 }  // namespace DriveConstants
 
 namespace ModuleConstants {
