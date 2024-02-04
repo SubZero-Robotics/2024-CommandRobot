@@ -34,6 +34,7 @@
 #include "commands/ScoreSubwooferCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
+#include "utils/CommandUtils.h"
 #include "utils/ShuffleboardLogger.h"
 
 using namespace DriveConstants;
@@ -101,7 +102,8 @@ void RobotContainer::ConfigureButtonBindings() {
               [this] { return 0; })
               .ToPtr());
 
-  m_driverController.B().WhileTrue(IntakeIn(&m_intake).ToPtr());
+  m_driverController.B().WhileTrue(IntakeIn(&m_intake).ToPtr().AndThen(
+      ControllerCommands::Rumble(&m_driverController, [] { return 1_s; })));
 
   m_driverController.X().WhileTrue(ScoreSpeaker(&m_scoring, &m_intake).ToPtr());
 

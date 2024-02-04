@@ -2,6 +2,7 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
+#include <frc2/command/button/CommandXboxController.h>
 
 #include "subsystems/IntakeSubsystem.h"
 

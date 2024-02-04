@@ -16,6 +16,7 @@
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
+#include "utils/CommandUtils.h"
 
 using namespace AutoConstants::Locations;
 
@@ -76,6 +77,8 @@ frc2::CommandPtr StateSubsystem::StartIntaking() {
                    .RaceWith(DriveVelocity(0_deg, 2_mps, m_subsystems.drive)
                                  .ToPtr()
                                  .Repeatedly())
+                   // TODO: Put this in the "Loaded" state also have the intensity vary based on if a note was successfully intooketh or not
+                   .AndThen(ControllerCommands::Rumble(&m_controller, [] {return 1_s;}))
                    .WithTimeout(5_s));
 }
 
