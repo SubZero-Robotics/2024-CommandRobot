@@ -123,15 +123,15 @@ void ConnectorX::ConnectorXBoard::createZones(
     LedPort port, std::vector<ConnectorX::Commands::NewZone>&& newZones) {
   setLedPort(port);
 
-  Commands::Command cmd;
-  cmd.commandType = Commands::CommandType::SetNewZones;
-  cmd.commandData.commandSetNewZones.zoneCount = newZones.size();
+  // Commands::Command cmd;
+  // cmd.commandType = Commands::CommandType::SetNewZones;
+  // cmd.commandData.commandSetNewZones.zoneCount = newZones.size();
 
-  for (uint8_t i = 0; i < newZones.size(); i++) {
-    cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
-  }
+  // for (uint8_t i = 0; i < newZones.size(); i++) {
+  //   cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
+  // }
 
-  sendCommand(cmd);
+  // sendCommand(cmd);
 
   auto& currentPort = getCurrentCachedPort();
 
