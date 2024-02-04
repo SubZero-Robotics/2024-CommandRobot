@@ -5,7 +5,11 @@
 // Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
 // #define TEST_SWERVE_BOT
 
+#include <frc/apriltag/AprilTagFieldLayout.h>
+#include <frc/apriltag/AprilTagFields.h>
 #include <frc/geometry/Pose2d.h>
+#include <frc/geometry/Transform2d.h>
+#include <frc/geometry/Transform3d.h>
 #include <frc/trajectory/TrapezoidProfile.h>
 #include <frc/util/Color8Bit.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
@@ -13,6 +17,7 @@
 #include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
 #include <pathplanner/lib/util/PIDConstants.h>
 #include <pathplanner/lib/util/ReplanningConfig.h>
+#include <photonlib/PhotonPoseEstimator.h>
 #include <rev/CANSparkMax.h>
 #include <units/acceleration.h>
 #include <units/angular_acceleration.h>
@@ -21,11 +26,6 @@
 #include <units/length.h>
 #include <units/time.h>
 #include <units/velocity.h>
-#include <frc/apriltag/AprilTagFieldLayout.h>
-#include <frc/apriltag/AprilTagFields.h>
-#include <frc/geometry/Transform3d.h>
-#include <frc/geometry/Transform2d.h>
-#include <photonlib/PhotonPoseEstimator.h>
 
 #include <functional>
 #include <map>
@@ -240,6 +240,7 @@ namespace OIConstants {
 constexpr int kDriverControllerPort = 0;
 constexpr int kOperatorControllerPort = 1;
 constexpr double kDriveDeadband = 0.5;
+constexpr double kVibrationIntensity = 1;
 }  // namespace OIConstants
 
 constexpr uint8_t kLedAddress = 23;
@@ -313,16 +314,17 @@ constexpr double kWristSetFF = 0.000015;
 
 // TODO: CREATE ACTUAL ROBOT VALUES FOR THESE
 namespace VisionConstants {
-    static constexpr std::string_view kCameraName{"PhotonVision"};
-    static const frc::Transform3d kRobotToCam{
-        frc::Translation3d{0.5_m, 0.0_m, 0.5_m},
-        frc::Rotation3d{0_rad, 0_rad, 0_rad}
-    };
-    constexpr photonlib::PoseStrategy kPoseStrategy = photonlib::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
-    static const frc::AprilTagFieldLayout kTagLayout{frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo)};
-    static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
-    static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
-} // namespace VisionConstants
+static constexpr std::string_view kCameraName{"PhotonVision"};
+static const frc::Transform3d kRobotToCam{
+    frc::Translation3d{0.5_m, 0.0_m, 0.5_m},
+    frc::Rotation3d{0_rad, 0_rad, 0_rad}};
+constexpr photonlib::PoseStrategy kPoseStrategy =
+    photonlib::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
+static const frc::AprilTagFieldLayout kTagLayout{
+    frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo)};
+static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
+static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
+}  // namespace VisionConstants
 
 namespace ClimbConstants {
 // These are placeholder values, these all will be changed
