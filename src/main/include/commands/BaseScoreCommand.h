@@ -34,16 +34,19 @@ class BaseScoreCommand
         if (m_score->GetMotorAtScoringSpeed(m_direction)) {
           m_score->SpinVectorSide(m_direction);
           m_intake->In();
+          ConsoleLogger::getInstance().logVerbose("Score State", "Changing state to %s", "Feeding");
           m_state = ScoreState::Feeding;
         }
         break;
       case ScoreState::Feeding:
         if (!m_score->GetMotorFreeWheel(m_direction)) {
+          ConsoleLogger::getInstance().logVerbose("Score State", "Changing state to %s", "Shooting");
           m_state = ScoreState::Shooting;
         }
         break;
       case ScoreState::Shooting:
         if (m_score->GetMotorFreeWheel(m_direction)) {
+          ConsoleLogger::getInstance().logVerbose("Score State", "Changing state to %s", "Finished");
           isFinished = true;
         }
         break;

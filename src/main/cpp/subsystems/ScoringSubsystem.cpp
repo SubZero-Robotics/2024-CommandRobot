@@ -1,7 +1,7 @@
 #include "subsystems/ScoringSubsystem.h"
 
 ScoringSubsystem::ScoringSubsystem() {
-  m_speakerLowerSpinnyBoi.Follow(m_speakerUpperSpinnyBoi);
+  m_speakerLowerSpinnyBoi.Follow(m_speakerUpperSpinnyBoi, true);
 }
 
 void ScoringSubsystem::Periodic() {}
@@ -86,8 +86,8 @@ bool ScoringSubsystem::CheckAmpSpeed() {
 }
 
 bool ScoringSubsystem::CheckSpeakerSpeed() {
-  return m_speakerEncoder.GetVelocity() >=
-         MaxSpeedToRpm(ScoringConstants::kSpeakerLowerSpeed);
+  return abs(m_speakerEncoder.GetVelocity()) >=
+         MaxSpeedToRpm(ScoringConstants::kSpeakerUpperSpeed);
 }
 
 bool ScoringSubsystem::CheckSubwooferSpeed() {

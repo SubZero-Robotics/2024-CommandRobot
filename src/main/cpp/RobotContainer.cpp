@@ -74,15 +74,15 @@ void RobotContainer::ConfigureButtonBindings() {
                        frc::XboxController::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-  frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kY)
-      .OnTrue(pathplanner::AutoBuilder::pathfindToPose(
-          frc::Pose2d{1.5_m, 5.5_m, 0_rad},
-          pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
-                                       720_deg_per_s_sq},
-          0.0_mps,  // Goal end velocity in meters/sec
-          0.0_m     // Rotation delay distance in meters. This is how far
-                    // the robot should travel before attempting to rotate.
-          ));
+//   frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kY)
+//       .OnTrue(pathplanner::AutoBuilder::pathfindToPose(
+//           frc::Pose2d{1.5_m, 5.5_m, 0_rad},
+//           pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
+//                                        720_deg_per_s_sq},
+//           0.0_mps,  // Goal end velocity in meters/sec
+//           0.0_m     // Rotation delay distance in meters. This is how far
+//                     // the robot should travel before attempting to rotate.
+//           ));
 
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
