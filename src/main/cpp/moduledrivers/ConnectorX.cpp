@@ -9,8 +9,16 @@ ConnectorX::ConnectorXBoard::ConnectorXBoard(uint8_t slaveAddress,
       m_simDevice("Connector-X", static_cast<int>(port), slaveAddress) {
   // TODO: read config from device to get # of LEDs per port
   m_device.ports = {
-    { .on = false, .currentZoneIndex = 0, .zones = {CachedZone({.offset = 0, .count = 60})}, },
-    { .on = false, .currentZoneIndex = 0, .zones = {CachedZone({.offset = 0, .count = 60})}, },
+      {
+          .on = false,
+          .currentZoneIndex = 0,
+          .zones = {CachedZone({.offset = 0, .count = 60})},
+      },
+      {
+          .on = false,
+          .currentZoneIndex = 0,
+          .zones = {CachedZone({.offset = 0, .count = 60})},
+      },
   };
 
   if (m_simDevice) {
@@ -74,8 +82,13 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
   }
 
   if (currentPort.currentZoneIndex != zoneIndex) {
+    ConsoleLogger::getInstance().logVerbose(
+        "ConnectorX", "Setting new zone index to %u", zoneIndex);
     currentPort.currentZoneIndex = zoneIndex;
     currentZone = getCurrentZone();
+
+    ConsoleLogger::getInstance().logVerbose("ConnectorX", "Got zone %s",
+                                            currentZone.toString().c_str());
 
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::SetPatternZone;
@@ -110,15 +123,15 @@ void ConnectorX::ConnectorXBoard::createZones(
     LedPort port, std::vector<ConnectorX::Commands::NewZone>&& newZones) {
   setLedPort(port);
 
-  Commands::Command cmd;
-  cmd.commandType = Commands::CommandType::SetNewZones;
-  cmd.commandData.commandSetNewZones.zoneCount = newZones.size();
+  // Commands::Command cmd;
+  // cmd.commandType = Commands::CommandType::SetNewZones;
+  // cmd.commandData.commandSetNewZones.zoneCount = newZones.size();
 
-  for (uint8_t i = 0; i < newZones.size(); i++) {
-    cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
-  }
+  // for (uint8_t i = 0; i < newZones.size(); i++) {
+  //   cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
+  // }
 
-  sendCommand(cmd);
+  // sendCommand(cmd);
 
   auto& currentPort = getCurrentCachedPort();
 
@@ -130,10 +143,19 @@ void ConnectorX::ConnectorXBoard::createZones(
   }
 
   currentPort.zones = zones;
+
+  ConsoleLogger::getInstance().logVerbose("ConnectorX", "Created zones: %s",
+                                          "");
+  for (auto& zone : currentPort.zones) {
+    ConsoleLogger::getInstance().logVerbose("ConnectorX", "Zone: %s",
+                                            zone.toString().c_str());
+  }
 }
 
 void ConnectorX::ConnectorXBoard::setLedPort(LedPort port) {
   if ((uint8_t)port != m_device.currentPort) {
+    ConsoleLogger::getInstance().logVerbose(
+        "ConnectorX", "Setting new LED port to %u", (uint8_t)port);
     m_device.currentPort = (uint8_t)port;
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::SetLedPort;
@@ -145,7 +167,6 @@ void ConnectorX::ConnectorXBoard::setLedPort(LedPort port) {
 void ConnectorX::ConnectorXBoard::setOn() {
   if (m_simDevice) {
     m_simOn.Set(true);
-    return;
   }
 
   bool shouldSet = false;
@@ -159,6 +180,8 @@ void ConnectorX::ConnectorXBoard::setOn() {
   }
 
   if (shouldSet) {
+    ConsoleLogger::getInstance().logVerbose("ConnectorX", "Setting to on %s",
+                                            "");
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::On;
     cmd.commandData.commandOn = {};
@@ -169,7 +192,6 @@ void ConnectorX::ConnectorXBoard::setOn() {
 void ConnectorX::ConnectorXBoard::setOff() {
   if (m_simDevice) {
     m_simOn.Set(false);
-    return;
   }
 
   bool shouldSet = false;
@@ -183,6 +205,8 @@ void ConnectorX::ConnectorXBoard::setOff() {
   }
 
   if (shouldSet) {
+    ConsoleLogger::getInstance().logVerbose("ConnectorX", "Setting to off %s",
+                                            "");
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::Off;
     cmd.commandData.commandOff = {};
@@ -196,6 +220,8 @@ void ConnectorX::ConnectorXBoard::setPattern(LedPort port, PatternType pattern,
   auto& zone = setCurrentZone(port, zoneIndex, reversed, true);
 
   if (zone.pattern != pattern) {
+    ConsoleLogger::getInstance().logVerbose(
+        "ConnectorX", "Setting new pattern to %u", (uint8_t)pattern);
     zone.pattern = pattern;
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::Pattern;
@@ -213,14 +239,18 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
     m_simColorR.Set(red);
     m_simColorG.Set(green);
     m_simColorB.Set(blue);
-
-    return;
   }
 
   auto& zone = setCurrentZone(port, zoneIndex);
   auto newColor = frc::Color8Bit(red, green, blue);
 
+  ConsoleLogger::getInstance().logVerbose(
+      "ConnectorX", "Zone %u cur color=%s | new color=%s", zoneIndex,
+      zone.color.HexString().c_str(), newColor.HexString().c_str());
+
   if (zone.color != newColor) {
+    ConsoleLogger::getInstance().logVerbose(
+        "ConnectorX", "Setting new color to %s", newColor.HexString().c_str());
     zone.color = newColor;
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::ChangeColor;
@@ -356,6 +386,14 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
   }
 
   memcpy(sendBuf + 1, &command.commandData, sendLen);
+
+  std::ostringstream stream;
+  for (uint8_t i = 0; i < sendLen + 1; i++) {
+    stream << std::to_string(sendBuf[i]) << " ";
+  }
+  std::string result = stream.str();
+  ConsoleLogger::getInstance().logVerbose("ConnectorX", "Sending data: %s",
+                                          result.c_str());
 
   if (recSize == 0) {
     _i2c->WriteBulk(sendBuf, sendLen + 1);

@@ -239,7 +239,7 @@ const std::map<FinalLocation, std::string> PoseToPath{
 namespace OIConstants {
 constexpr int kDriverControllerPort = 0;
 constexpr int kOperatorControllerPort = 1;
-constexpr double kDriveDeadband = 0.05;
+constexpr double kDriveDeadband = 0.5;
 }  // namespace OIConstants
 
 constexpr uint8_t kLedAddress = 23;
