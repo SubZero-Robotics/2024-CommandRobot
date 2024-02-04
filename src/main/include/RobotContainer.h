@@ -19,7 +19,6 @@
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
-#include "subsystems/WristSubsystem.h"
 #include "utils/Vision.h"
 #include "subsystems/LedSubsystem.h"
 #include "subsystems/LeftClimbSubsystem.h"
