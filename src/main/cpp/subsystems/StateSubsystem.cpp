@@ -10,13 +10,10 @@
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
 #include "commands/RetractClimbCommand.h"
-#include "commands/ScoreAmpCommand.h"
-#include "commands/ScoreSpeakerCommand.h"
-#include "commands/ScoreSubwooferCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
-#include "utils/ShuffleboardLogger.h"
 #include "utils/CommandUtils.h"
+#include "utils/ShuffleboardLogger.h"
 
 using namespace AutoConstants::Locations;
 
@@ -72,14 +69,17 @@ frc2::CommandPtr StateSubsystem::RunState() {
 
 frc2::CommandPtr StateSubsystem::StartIntaking() {
   return m_subsystems.led->ShowFromState([] { return RobotState::Intaking; })
-      .AndThen(IntakeIn(m_subsystems.intake)
-                   .ToPtr()
-                   .RaceWith(DriveVelocity(0_deg, 2_mps, m_subsystems.drive)
-                                 .ToPtr()
-                                 .Repeatedly())
-                   // TODO: Put this in the "Loaded" state also have the intensity vary based on if a note was successfully intooketh or not
-                   .AndThen(ControllerCommands::Rumble(&m_controller, [] {return 1_s;}))
-                   .WithTimeout(5_s));
+      .AndThen(
+          IntakeIn(m_subsystems.intake)
+              .ToPtr()
+              .RaceWith(DriveVelocity(0_deg, 2_mps, m_subsystems.drive)
+                            .ToPtr()
+                            .Repeatedly())
+              // TODO: Put this in the "Loaded" state also have the intensity
+              // vary based on if a note was successfully intooketh or not
+              .AndThen(
+                  ControllerCommands::Rumble(&m_controller, [] { return 1_s; }))
+              .WithTimeout(5_s));
 }
 
 frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
@@ -94,7 +94,9 @@ frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
       ->ShowFromState([] { return RobotState::ScoringSpeaker; })
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Podium; }, m_subsystems.drive))
-      .AndThen(ScoreSpeaker(m_subsystems.scoring, m_subsystems.intake).ToPtr())
+      .AndThen(
+          ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
+                                 m_subsystems.scoring, m_subsystems.intake))
       .WithTimeout(20_s);
 }
 
@@ -108,7 +110,9 @@ frc2::CommandPtr StateSubsystem::StartScoringAmp() {
   return m_subsystems.led->ShowFromState([] { return RobotState::ScoringAmp; })
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Amp; }, m_subsystems.drive))
-      .AndThen(ScoreAmp(m_subsystems.scoring, m_subsystems.intake).ToPtr())
+      .AndThen(ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
+                                      m_subsystems.scoring,
+                                      m_subsystems.intake))
       .WithTimeout(20_s);
 }
 
@@ -123,7 +127,8 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
       ->ShowFromState([] { return RobotState::ScoringSubwoofer; })
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Subwoofer; }, m_subsystems.drive))
-      .AndThen(ScoreAmp(m_subsystems.scoring, m_subsystems.intake).ToPtr())
+      .AndThen(ScoringCommands::Score(
+      [] { return ScoringDirection::Subwoofer; }, m_subsystems.scoring, m_subsystems.intake))
       .WithTimeout(20_s);
 }
 
