@@ -17,7 +17,9 @@
 #include "commands/IntakeOutCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
+#include "subsystems/IntakeSubsystem.h"
 #include "subsystems/LedSubsystem.h"
+#include "subsystems/ScoringSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 
 typedef struct {
