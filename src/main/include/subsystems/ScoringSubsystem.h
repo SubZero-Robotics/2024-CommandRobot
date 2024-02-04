@@ -77,4 +77,8 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   rev::CANSparkFlex m_speakerUpperSpinnyBoi{
       CANSparkMaxConstants::kSpeakerUpperSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
+
+  rev::SparkPIDController m_speakerPidController = m_speakerUpperSpinnyBoi.GetPIDController();
+  rev::SparkPIDController m_ampUpperPidController = m_ampUpperSpinnyBoi.GetPIDController();
+  rev::SparkPIDController m_ampLowerPidController = m_ampLowerSpinnyBoi.GetPIDController();
 };

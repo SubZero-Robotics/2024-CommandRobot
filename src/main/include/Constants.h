@@ -275,14 +275,17 @@ constexpr double kMaxSpinRpm = 6784;
 constexpr double kVectorSpeed = 0.1;
 
 // These need to be different
+// TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kAmpLowerSpeed = (-0.4) * 0.66;  //.21
 constexpr double kAmpUpperSpeed = (0.27) * 0.66;  //.27
 
 // These should match
+// TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kSpeakerLowerSpeed = 1;
 constexpr double kSpeakerUpperSpeed = -kSpeakerLowerSpeed;
 
 // These should also match
+// TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kSubwooferLowerSpeed = -1;
 constexpr double kSubwooferUpperSpeed = -kSubwooferLowerSpeed;
 
@@ -293,6 +296,33 @@ enum class ScoreState {
 };
 
 constexpr units::second_t kFlywheelRampDelay = 0.75_s;
+
+namespace SpeakerPID {
+constexpr double kP = 1;
+constexpr double kI = 0;
+constexpr double kD = 0;
+constexpr double kIZone = 0;
+constexpr double kFF = 0;
+
+} // namespace SpeakerPID
+
+namespace AmpUpperPID {
+constexpr double kP = 1;
+constexpr double kI = 0;
+constexpr double kD = 0;
+constexpr double kIZone = 0;
+constexpr double kFF = 0;
+
+} // namespace SpeakerPID
+
+namespace AmpLowerPID {
+constexpr double kP = 1;
+constexpr double kI = 0;
+constexpr double kD = 0;
+constexpr double kIZone = 0;
+constexpr double kFF = 0;
+
+} // namespace SpeakerPID
 }  // namespace ScoringConstants
 
 namespace ArmConstants {
