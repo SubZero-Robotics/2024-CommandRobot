@@ -15,12 +15,11 @@
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
-#include "commands/ScoreAmpCommand.h"
-#include "commands/ScoreSpeakerCommand.h"
-#include "commands/ScoreSubwooferCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
+#include "subsystems/IntakeSubsystem.h"
 #include "subsystems/LedSubsystem.h"
+#include "subsystems/ScoringSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 
 typedef struct {
@@ -34,7 +33,8 @@ typedef struct {
 
 class StateSubsystem : public frc2::SubsystemBase {
  public:
-  StateSubsystem(Subsystems_t &subsystems, frc2::CommandXboxController &);
+  StateSubsystem(Subsystems_t &subsystems, frc2::CommandXboxController &driver,
+                 frc2::CommandXboxController &op);
 
   frc2::CommandPtr SetState(RobotState newState) {
     return frc2::InstantCommand(
@@ -91,5 +91,6 @@ class StateSubsystem : public frc2::SubsystemBase {
 
   RobotState m_currentState;
   Subsystems_t &m_subsystems;
-  frc2::CommandXboxController &m_controller;
+  frc2::CommandXboxController &m_driverController;
+  frc2::CommandXboxController &m_operatorController;
 };
