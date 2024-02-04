@@ -19,12 +19,12 @@
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
-#include "utils/Vision.h"
 #include "subsystems/LedSubsystem.h"
 #include "subsystems/LeftClimbSubsystem.h"
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 #include "subsystems/StateSubsystem.h"
+#include "utils/Vision.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -76,10 +76,11 @@ class RobotContainer {
                                .scoring = &m_scoring,
                                .led = &m_leds};
 
-  StateSubsystem m_state{m_subsystems, m_driverController};
-
   frc2::CommandXboxController m_operatorController{
       OIConstants::kOperatorControllerPort};
+
+  StateSubsystem m_state{m_subsystems, m_driverController,
+                         m_operatorController};
 
   void ConfigureAutoBindings();
 #endif

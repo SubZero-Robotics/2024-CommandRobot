@@ -18,10 +18,12 @@
 using namespace AutoConstants::Locations;
 
 StateSubsystem::StateSubsystem(Subsystems_t& subsystems,
-                               frc2::CommandXboxController& controller)
+                               frc2::CommandXboxController& driver,
+                               frc2::CommandXboxController& op)
     : m_currentState(RobotState::Manual),
       m_subsystems{subsystems},
-      m_controller{controller} {}
+      m_driverController{driver},
+      m_operatorController{op} {}
 
 void StateSubsystem::IncrementState() {
   uint8_t nextState = ((uint8_t)m_currentState) + 1;
@@ -77,8 +79,8 @@ frc2::CommandPtr StateSubsystem::StartIntaking() {
                             .Repeatedly())
               // TODO: Put this in the "Loaded" state also have the intensity
               // vary based on if a note was successfully intooketh or not
-              .AndThen(
-                  ControllerCommands::Rumble(&m_controller, [] { return 1_s; }))
+              .AndThen(ControllerCommands::Rumble(&m_driverController,
+                                                  [] { return 1_s; }))
               .WithTimeout(5_s));
 }
 
@@ -127,8 +129,9 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
       ->ShowFromState([] { return RobotState::ScoringSubwoofer; })
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Subwoofer; }, m_subsystems.drive))
-      .AndThen(ScoringCommands::Score(
-      [] { return ScoringDirection::Subwoofer; }, m_subsystems.scoring, m_subsystems.intake))
+      .AndThen(
+          ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
+                                 m_subsystems.scoring, m_subsystems.intake))
       .WithTimeout(20_s);
 }
 
@@ -168,21 +171,24 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
 
 bool StateSubsystem::IsControllerActive() {
   bool active = false;
-  int count = m_controller.GetButtonCount();
+  int count = m_driverController.GetButtonCount();
   for (int i = 1; i <= count; i++) {
-    active |= m_controller.GetRawButton(i);
+    active |= m_driverController.GetRawButton(i);
   }
-  count = m_controller.GetAxisCount();
+  count = m_driverController.GetAxisCount();
   for (int i = 0; i < count; i++) {
-    active |= abs(m_controller.GetRawAxis(i)) >= OIConstants::kDriveDeadband;
+    active |=
+        abs(m_driverController.GetRawAxis(i)) >= OIConstants::kDriveDeadband;
   }
-  count = m_controller.GetPOVCount();
+  count = m_driverController.GetPOVCount();
   for (int i = 0; i < count; i++) {
-    active |= m_controller.GetPOV(i) != -1;
+    active |= m_driverController.GetPOV(i) != -1;
   }
+  // Check the operator's "stop" button
+  active |= m_operatorController.LeftStick().Get();
   if (active) {
-    // ConsoleLogger::getInstance().logVerbose("StateSubsystem",
-    //                                         "Controller interrupt! %s", "");
+    ConsoleLogger::getInstance().logVerbose("StateSubsystem",
+                                            "Controller interrupt! %s", "");
   }
   return false;
 }
