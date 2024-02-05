@@ -5,6 +5,7 @@
 #pragma once
 
 #include <AHRS.h>
+#include <frc/estimator/SwerveDrivePoseEstimator.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Rotation2d.h>
@@ -13,7 +14,6 @@
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/smartdashboard/Field2d.h>
 #include <frc2/command/SubsystemBase.h>
-#include <frc/estimator/SwerveDrivePoseEstimator.h>
 #include <hal/SimDevice.h>
 #include <hal/simulation/SimDeviceData.h>
 #include <networktables/StructArrayTopic.h>
@@ -25,7 +25,7 @@
 
 class DriveSubsystem : public frc2::SubsystemBase {
  public:
-  DriveSubsystem(Vision *vision);
+  DriveSubsystem(Vision* vision);
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -120,7 +120,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   static void LogSpeeds(wpi::array<frc::SwerveModuleState, 4> desiredStates);
 
-   void AddVisionMeasurement(const frc::Pose2d& visionMeasurement,
+  void AddVisionMeasurement(const frc::Pose2d& visionMeasurement,
                             units::second_t timestamp);
   void AddVisionMeasurement(const frc::Pose2d& visionMeasurement,
                             units::second_t timestamp,
@@ -173,18 +173,17 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   // Odometry class for tracking robot pose
   // 4 defines the number of modules
-  frc::SwerveDriveOdometry<4> m_odometry;
 
   frc::SwerveDrivePoseEstimator<4> poseEstimator{
-    kDriveKinematics,
-    m_gyro.GetRotation2d(),
-   {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(), m_frontRight.GetPosition(), m_rearRight.GetPosition()},
-                         frc::Pose2d{0_m, 0_m, 0_rad}
-  };
+      kDriveKinematics,
+      m_gyro.GetRotation2d(),
+      {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
+       m_frontRight.GetPosition(), m_rearRight.GetPosition()},
+      frc::Pose2d{0_m, 0_m, 0_rad}};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing
   frc::Field2d m_field;
 
-  Vision *m_vision;
+  Vision* m_vision;
 };

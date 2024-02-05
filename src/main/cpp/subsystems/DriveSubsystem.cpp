@@ -35,11 +35,6 @@ DriveSubsystem::DriveSubsystem(Vision *vision)
                    kFrontRightChassisAngularOffset},
       m_rearRight{kRearRightDrivingCanId, kRearRightTurningCanId,
                   kRearRightChassisAngularOffset},
-      m_odometry{kDriveKinematics,
-                 frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}),
-                 {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
-                  m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
-                 frc::Pose2d{0_m, 0_m, 0_rad}},
       m_vision{vision} {
   // put a field2d in NT
   frc::SmartDashboard::PutData("Field", &m_field);
@@ -76,24 +71,24 @@ void DriveSubsystem::SimulationPeriodic() {
   m_gyroSimAngle.Set(m_gyro.GetYaw() +
                      (chassisSpeeds.omega.convert<units::deg_per_s>().value() *
                       DriveConstants::kLoopTime.value()));
-  m_odometry.Update(-m_gyro.GetRotation2d(),
+  poseEstimator.Update(-m_gyro.GetRotation2d(),
                     {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
                      m_frontRight.GetPosition(), m_rearRight.GetPosition()});
 
-  m_field.SetRobotPose(m_odometry.GetPose());
+  m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
 };
 
 void DriveSubsystem::Periodic() {
   // Implementation of subsystem periodic method goes here.
   if (frc::RobotBase::IsReal()) {
-    m_odometry.Update(frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}),
+    poseEstimator.Update(frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}),
                       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
                        m_frontRight.GetPosition(), m_rearRight.GetPosition()});
 
-    m_field.SetRobotPose(m_odometry.GetPose());
+    m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
   };
 
-  m_field.SetRobotPose(m_odometry.GetPose());
+  m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
 
   auto visionEst = m_vision->GetEstimatedGlobalPose();
   if (visionEst.has_value()) {
@@ -285,10 +280,10 @@ void DriveSubsystem::ZeroHeading() { m_gyro.Reset(); }
 
 double DriveSubsystem::GetTurnRate() { return -m_gyro.GetRate(); }
 
-frc::Pose2d DriveSubsystem::GetPose() { return m_odometry.GetPose(); }
+frc::Pose2d DriveSubsystem::GetPose() { return poseEstimator.GetEstimatedPosition(); }
 
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
-  m_odometry.ResetPosition(
+  poseEstimator.ResetPosition(
       GetHeading(),
       {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
        m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
