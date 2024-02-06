@@ -185,7 +185,7 @@ bool StateSubsystem::IsControllerActive() {
     active |= m_driverController.GetPOV(i) != -1;
   }
   // Check the operator's "stop" button
-  active |= m_operatorController.LeftStick().Get();
+  active |= m_operatorController.RightStick().Get();
   if (active) {
     ConsoleLogger::getInstance().logVerbose("StateSubsystem",
                                             "Controller interrupt! %s", "");
