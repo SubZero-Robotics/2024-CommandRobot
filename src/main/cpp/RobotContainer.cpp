@@ -147,39 +147,67 @@ void RobotContainer::ConfigureButtonBindings() {
 #ifndef TEST_SWERVE_BOT
 void RobotContainer::ConfigureAutoBindings() {
   // Maps to 9 on keyboard
-  m_operatorController.A().OnTrue(
-      m_state.SetState(RobotState::ScoringSpeaker)
-          .AndThen(m_state.RunStateDeferred().ToPtr()));
+  m_operatorController.A().OnTrue(frc2::InstantCommand([this] {
+                                    if (!m_state.m_active) {
+                                      m_state.m_currentState =
+                                          RobotState::ScoringSpeaker;
+                                      m_state.SetDesiredState();
+                                    }
+                                  }).ToPtr());
 
   // Maps to 8 on keyboard
-  m_operatorController.B().OnTrue(
-      m_state.SetState(RobotState::ScoringSubwoofer)
-          .AndThen(m_state.RunStateDeferred().ToPtr()));
+  m_operatorController.B().OnTrue(frc2::InstantCommand([this] {
+                                    if (!m_state.m_active) {
+                                      m_state.m_currentState =
+                                          RobotState::ScoringSubwoofer;
+                                      m_state.SetDesiredState();
+                                    }
+                                  }).ToPtr());
 
   // Maps to 7 on keyboard
-  m_operatorController.X().OnTrue(
-      m_state.SetState(RobotState::ScoringAmp)
-          .AndThen(m_state.RunStateDeferred().ToPtr()));
+  m_operatorController.X().OnTrue(frc2::InstantCommand([this] {
+                                    if (!m_state.m_active) {
+                                      m_state.m_currentState =
+                                          RobotState::ScoringAmp;
+                                      m_state.SetDesiredState();
+                                    }
+                                  }).ToPtr());
 
   // Maps to 4 on keyboard
-  m_operatorController.Y().OnTrue(
-      m_state.SetState(RobotState::Intaking)
-          .AndThen(m_state.RunStateDeferred().ToPtr()));
+  m_operatorController.Y().OnTrue(frc2::InstantCommand([this] {
+                                    if (!m_state.m_active) {
+                                      m_state.m_currentState =
+                                          RobotState::Intaking;
+                                      m_state.SetDesiredState();
+                                    }
+                                  }).ToPtr());
 
   // Maps to 1 on keyboard
-  m_operatorController.LeftBumper().OnTrue(
-  m_state.SetState(RobotState::ClimbStageLeft)
-  .AndThen(m_state.RunStateDeferred().ToPtr()));
+  m_operatorController.LeftBumper().OnTrue(frc2::InstantCommand([this] {
+                                             if (!m_state.m_active) {
+                                               m_state.m_currentState =
+                                                   RobotState::ClimbStageLeft;
+                                               m_state.SetDesiredState();
+                                             }
+                                           }).ToPtr());
 
   // Maps to 2 on keyboard
   m_operatorController.RightBumper().OnTrue(
-  m_state.SetState(RobotState::ClimbStageCenter)
-  .AndThen(m_state.RunStateDeferred().ToPtr()));
+      frc2::InstantCommand([this] {
+        if (!m_state.m_active) {
+          m_state.m_currentState = RobotState::ClimbStageCenter;
+          m_state.SetDesiredState();
+        }
+      }).ToPtr());
 
   // Maps to 3 on keyboard
-  m_operatorController.LeftStick().OnTrue(
-  m_state.SetState(RobotState::ClimbStageRight)
-  .AndThen(m_state.RunStateDeferred().ToPtr()));
+  m_operatorController.LeftStick().OnTrue(frc2::InstantCommand([this] {
+                                            if (!m_state.m_active) {
+                                              m_state.m_currentState =
+                                                  RobotState::ClimbStageRight;
+                                              m_state.SetDesiredState();
+                                            }
+                                          }).ToPtr());
 }
 #endif
 

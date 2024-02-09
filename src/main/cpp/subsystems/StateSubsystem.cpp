@@ -136,11 +136,14 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
 }
 
 frc2::CommandPtr StateSubsystem::StartManual() {
-  /*
+  /*p
      Signal that we are in manual
      (Call after automated commands or after manual intervention from driver 1)
   */
-  return m_subsystems.led->ShowFromState([] { return RobotState::Manual; });
+  return m_subsystems.led->ShowFromState([this] {
+    m_active = false;
+    return RobotState::Manual;
+  });
 }
 
 frc2::CommandPtr StateSubsystem::StartClimb() {
@@ -190,5 +193,5 @@ bool StateSubsystem::IsControllerActive() {
     ConsoleLogger::getInstance().logVerbose("StateSubsystem",
                                             "Controller interrupt! %s", "");
   }
-  return false;
+  return active;
 }
