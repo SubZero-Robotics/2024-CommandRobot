@@ -260,8 +260,8 @@ constexpr int kTicksPerMotorRotation = 42;
 
 namespace Intakeconstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = 0.7;
-constexpr double kOutakeSpeed = -0.4;
+constexpr double kIntakeSpeed = -0.6;
+constexpr double kOutakeSpeed = 0.5;
 
 constexpr uint8_t kBeamBreakDigitalPort = 2;
 }  // namespace Intakeconstants
@@ -276,17 +276,17 @@ constexpr double kVectorSpeed = 0.1;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kAmpLowerSpeed = (-0.4) * 0.66;  //.21
-constexpr double kAmpUpperSpeed = (0.27) * 0.66;  //.27
+constexpr double kAmpLowerSpeed = (0.4) * 0.66;  //.21
+constexpr double kAmpUpperSpeed = (-0.27) * 0.66;  //.27
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSpeakerLowerSpeed = 1;
+constexpr double kSpeakerLowerSpeed = -1;
 constexpr double kSpeakerUpperSpeed = -kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = -1;
+constexpr double kSubwooferLowerSpeed = 1;
 constexpr double kSubwooferUpperSpeed = -kSubwooferLowerSpeed;
 
 enum class ScoreState {

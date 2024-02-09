@@ -5,23 +5,23 @@ using namespace ScoringConstants;
 ScoringSubsystem::ScoringSubsystem() {
   m_speakerLowerSpinnyBoi.Follow(m_speakerUpperSpinnyBoi, true);
 
-  m_speakerPidController.SetP(SpeakerPID::kP);
-  m_speakerPidController.SetI(SpeakerPID::kI);
-  m_speakerPidController.SetD(SpeakerPID::kD);
-  m_speakerPidController.SetIZone(SpeakerPID::kIZone);
-  m_speakerPidController.SetFF(SpeakerPID::kFF);
+  // m_speakerPidController.SetP(SpeakerPID::kP);
+  // m_speakerPidController.SetI(SpeakerPID::kI);
+  // m_speakerPidController.SetD(SpeakerPID::kD);
+  // m_speakerPidController.SetIZone(SpeakerPID::kIZone);
+  // m_speakerPidController.SetFF(SpeakerPID::kFF);
 
-  m_ampUpperPidController.SetP(AmpUpperPID::kP);
-  m_ampUpperPidController.SetI(AmpUpperPID::kI);
-  m_ampUpperPidController.SetD(AmpUpperPID::kD);
-  m_ampUpperPidController.SetIZone(AmpUpperPID::kIZone);
-  m_ampUpperPidController.SetFF(AmpUpperPID::kFF);
+  // m_ampUpperPidController.SetP(AmpUpperPID::kP);
+  // m_ampUpperPidController.SetI(AmpUpperPID::kI);
+  // m_ampUpperPidController.SetD(AmpUpperPID::kD);
+  // m_ampUpperPidController.SetIZone(AmpUpperPID::kIZone);
+  // m_ampUpperPidController.SetFF(AmpUpperPID::kFF);
 
-  m_ampLowerPidController.SetP(AmpLowerPID::kP);
-  m_ampLowerPidController.SetI(AmpLowerPID::kI);
-  m_ampLowerPidController.SetD(AmpLowerPID::kD);
-  m_ampLowerPidController.SetIZone(AmpLowerPID::kIZone);
-  m_ampLowerPidController.SetFF(AmpLowerPID::kFF);
+  // m_ampLowerPidController.SetP(AmpLowerPID::kP);
+  // m_ampLowerPidController.SetI(AmpLowerPID::kI);
+  // m_ampLowerPidController.SetD(AmpLowerPID::kD);
+  // m_ampLowerPidController.SetIZone(AmpLowerPID::kIZone);
+  // m_ampLowerPidController.SetFF(AmpLowerPID::kFF);
 }
 
 void ScoringSubsystem::Periodic() {}
@@ -38,11 +38,11 @@ void ScoringSubsystem::Stop() {
 void ScoringSubsystem::SpinVectorSide(ScoringDirection direction) {
   if (direction == ScoringDirection::AmpSide ||
       direction == ScoringDirection::Subwoofer) {
-    m_vectorSpinnyBoi.Set(ScoringConstants::kVectorSpeed);
+    m_vectorSpinnyBoi.Set(kVectorSpeed);
     return;
   }
 
-  m_vectorSpinnyBoi.Set(-ScoringConstants::kVectorSpeed);
+  m_vectorSpinnyBoi.Set(-kVectorSpeed);
 }
 
 void ScoringSubsystem::StartScoringRamp(ScoringDirection direction) {
@@ -74,54 +74,60 @@ bool ScoringSubsystem::GetMotorAtScoringSpeed(ScoringDirection direction) {
 bool ScoringSubsystem::GetMotorFreeWheel(ScoringDirection direction) {
   if (direction == ScoringDirection::AmpSide) {
     return m_ampLowerSpinnyBoi.GetOutputCurrent() <
-           ScoringConstants::kFreeSpinCurrentThreshold;
+           kFreeSpinCurrentThreshold;
   }
 
   if (direction == ScoringDirection::Subwoofer) {
     return m_speakerUpperSpinnyBoi.GetOutputCurrent() <
-           ScoringConstants::kFreeSpinCurrentThreshold;
+           kFreeSpinCurrentThreshold;
   }
 
   return m_speakerLowerSpinnyBoi.GetOutputCurrent() <
-         ScoringConstants::kFreeSpinCurrentThreshold;
+         kFreeSpinCurrentThreshold;
 }
 
 void ScoringSubsystem::SpinAmp() {
-  m_ampLowerPidController.SetReference(
-      ScoringConstants::kAmpLowerSpeed,
-      rev::CANSparkMax::ControlType::kVelocity);
-  m_ampUpperPidController.SetReference(
-      ScoringConstants::kAmpUpperSpeed,
-      rev::CANSparkMax::ControlType::kVelocity);
+  // m_ampLowerPidController.SetReference(
+  //     kAmpLowerSpeed,
+  //     rev::CANSparkMax::ControlType::kVelocity);
+  // m_ampUpperPidController.SetReference(
+  //     kAmpUpperSpeed,
+  //     rev::CANSparkMax::ControlType::kVelocity);
+  m_ampLowerSpinnyBoi.Set(kAmpLowerSpeed);
+  m_ampUpperSpinnyBoi.Set(kAmpUpperSpeed);
 }
 
 void ScoringSubsystem::SpinSpeaker() {
-  m_speakerPidController.SetReference(ScoringConstants::kSpeakerUpperSpeed,
-                                      rev::CANSparkMax::ControlType::kVelocity);
+  // m_speakerPidController.SetReference(kSpeakerUpperSpeed,
+  //                                     rev::CANSparkMax::ControlType::kVelocity);
+  m_speakerUpperSpinnyBoi.Set(kSpeakerUpperSpeed);
 }
 
 void ScoringSubsystem::SpinSubwoofer() {
-  m_ampLowerPidController.SetReference(
-      ScoringConstants::kSubwooferLowerSpeed,
-      rev::CANSparkMax::ControlType::kVelocity);
-  m_ampUpperPidController.SetReference(
-      ScoringConstants::kSubwooferUpperSpeed,
-      rev::CANSparkMax::ControlType::kVelocity);
+  // m_ampLowerPidController.SetReference(
+  //     kSubwooferLowerSpeed,
+  //     rev::CANSparkMax::ControlType::kVelocity);
+  // m_ampUpperPidController.SetReference(
+  //     kSubwooferUpperSpeed,
+  //     rev::CANSparkMax::ControlType::kVelocity);
+  m_ampLowerSpinnyBoi.Set(kSubwooferLowerSpeed);
+  m_ampUpperSpinnyBoi.Set(kSubwooferUpperSpeed);
 }
 
 bool ScoringSubsystem::CheckAmpSpeed() {
   // TODO: Check range rather than exact equals
-  return m_ampEncoder.GetVelocity() >= ScoringConstants::kAmpLowerSpeed;
+  return abs(m_ampEncoder.GetVelocity()) >=
+         abs(MaxSpeedToRpm(kAmpLowerSpeed));
 }
 
 bool ScoringSubsystem::CheckSpeakerSpeed() {
   // TODO: Check range rather than exact equals
   return abs(m_speakerEncoder.GetVelocity()) >=
-         abs(ScoringConstants::kSpeakerUpperSpeed);
+         abs(MaxSpeedToRpm(kSpeakerUpperSpeed));
 }
 
 bool ScoringSubsystem::CheckSubwooferSpeed() {
   // TODO: Check range rather than exact equals
   return abs(m_ampEncoder.GetVelocity()) >=
-         abs(ScoringConstants::kSubwooferLowerSpeed);
+         abs(MaxSpeedToRpm(kSubwooferLowerSpeed));
 }

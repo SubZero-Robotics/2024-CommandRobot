@@ -4,7 +4,7 @@
 #include "moduledrivers/ConnectorX.h"
 
 IntakeSubsystem::IntakeSubsystem() {
-  m_rightIntakeSpinnyBoy.Follow(m_leftIntakeSpinnyBoy, true);
+  m_rightIntakeSpinnyBoy.Follow(m_leftIntakeSpinnyBoy, false);
 }
 
 void IntakeSubsystem::Periodic() {}

@@ -103,8 +103,11 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.B().WhileTrue(IntakeIn(&m_intake).ToPtr().AndThen(
       ControllerCommands::Rumble(&m_driverController, [] { return 1_s; })));
 
-  m_driverController.X().WhileTrue(ScoringCommands::Score(
-      [] { return ScoringDirection::SpeakerSide; }, &m_scoring, &m_intake));
+  //   m_driverController.X().WhileTrue(ScoringCommands::Score(
+  //       [] { return ScoringDirection::SpeakerSide; }, &m_scoring,
+  //       &m_intake));
+
+  m_driverController.X().WhileTrue(IntakeOut(&m_intake).ToPtr());
 
   m_driverController.A().WhileTrue(ScoringCommands::Score(
       [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake));
@@ -165,18 +168,18 @@ void RobotContainer::ConfigureAutoBindings() {
 
   // Maps to 1 on keyboard
   m_operatorController.LeftBumper().OnTrue(
-      m_state.SetState(RobotState::ClimbStageLeft)
-          .AndThen(m_state.RunStateDeferred().ToPtr()));
+  m_state.SetState(RobotState::ClimbStageLeft)
+  .AndThen(m_state.RunStateDeferred().ToPtr()));
 
   // Maps to 2 on keyboard
   m_operatorController.RightBumper().OnTrue(
-      m_state.SetState(RobotState::ClimbStageCenter)
-          .AndThen(m_state.RunStateDeferred().ToPtr()));
+  m_state.SetState(RobotState::ClimbStageCenter)
+  .AndThen(m_state.RunStateDeferred().ToPtr()));
 
   // Maps to 3 on keyboard
   m_operatorController.LeftStick().OnTrue(
-      m_state.SetState(RobotState::ClimbStageRight)
-          .AndThen(m_state.RunStateDeferred().ToPtr()));
+  m_state.SetState(RobotState::ClimbStageRight)
+  .AndThen(m_state.RunStateDeferred().ToPtr()));
 }
 #endif
 
