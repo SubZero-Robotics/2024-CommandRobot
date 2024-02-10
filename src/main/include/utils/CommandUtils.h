@@ -35,11 +35,21 @@ using namespace ScoringConstants;
 static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                               ScoringSubsystem* scoring,
                               IntakeSubsystem* intake) {
-  return FlywheelRamp(intake, scoring, direction())
-      .ToPtr()
-      .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
-      .AndThen(Feed(intake, scoring, direction()).ToPtr())
-      .AndThen(Shoot(intake, scoring, direction()).ToPtr());
+  return (FlywheelRamp(intake, scoring, direction)
+              .ToPtr()
+              .AndThen(frc2::InstantCommand([] {
+                         ConsoleLogger::getInstance().logVerbose("Next",
+                                                                 "next %s", "");
+                       }).ToPtr())
+              .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
+              .AndThen(Feed(intake, scoring, direction).ToPtr())
+              .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
+              .AndThen(Shoot(intake, scoring, direction).ToPtr()))
+      .WithTimeout(5_s)
+      .FinallyDo([intake, scoring] {
+        intake->Stop();
+        scoring->Stop();
+      });
 }
 
 }  // namespace ScoringCommands

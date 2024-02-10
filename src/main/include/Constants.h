@@ -276,13 +276,13 @@ constexpr double kVectorSpeed = 0.1;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kAmpLowerSpeed = (0.4) * 0.66;  //.21
-constexpr double kAmpUpperSpeed = (-0.27) * 0.66;  //.27
+constexpr double kAmpLowerSpeed = 0.254;   //.264
+constexpr double kAmpUpperSpeed = -0.168;  //.278
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSpeakerLowerSpeed = -1;
-constexpr double kSpeakerUpperSpeed = -kSpeakerLowerSpeed;
+constexpr double kSpeakerLowerSpeed = 1;
+constexpr double kSpeakerUpperSpeed = -0.75;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
@@ -304,7 +304,7 @@ constexpr double kD = 0;
 constexpr double kIZone = 0;
 constexpr double kFF = 0;
 
-} // namespace SpeakerPID
+}  // namespace SpeakerPID
 
 namespace AmpUpperPID {
 constexpr double kP = 1;
@@ -313,7 +313,7 @@ constexpr double kD = 0;
 constexpr double kIZone = 0;
 constexpr double kFF = 0;
 
-} // namespace SpeakerPID
+}  // namespace AmpUpperPID
 
 namespace AmpLowerPID {
 constexpr double kP = 1;
@@ -322,7 +322,7 @@ constexpr double kD = 0;
 constexpr double kIZone = 0;
 constexpr double kFF = 0;
 
-} // namespace SpeakerPID
+}  // namespace AmpLowerPID
 }  // namespace ScoringConstants
 
 namespace ArmConstants {

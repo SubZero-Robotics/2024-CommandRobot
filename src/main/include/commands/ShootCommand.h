@@ -10,11 +10,13 @@
 class Shoot : public frc2::CommandHelper<frc2::Command, Shoot> {
  public:
   explicit Shoot(IntakeSubsystem* intake, ScoringSubsystem* scoring,
-                    ScoringDirection direction)
+                    std::function<ScoringDirection()> direction)
       : isFinished{false},
         m_intake{intake},
         m_scoring{scoring},
-        m_direction{direction} {}
+        m_direction{direction} {
+          AddRequirements({m_intake, m_scoring});
+        }
 
   void Initialize() override {
     ConsoleLogger::getInstance().logVerbose("Score State", "Start state: %s",
@@ -23,7 +25,8 @@ class Shoot : public frc2::CommandHelper<frc2::Command, Shoot> {
   }
 
   void Execute() override {
-    isFinished = m_scoring->GetMotorFreeWheel(m_direction);
+    isFinished = true;
+    //isFinished = m_scoring->GetMotorFreeWheel(m_direction());
   }
 
   bool IsFinished() override { return isFinished; }
@@ -39,5 +42,5 @@ class Shoot : public frc2::CommandHelper<frc2::Command, Shoot> {
   bool isFinished = false;
   IntakeSubsystem* m_intake;
   ScoringSubsystem* m_scoring;
-  ScoringDirection m_direction;
+  std::function<ScoringDirection()> m_direction;
 };

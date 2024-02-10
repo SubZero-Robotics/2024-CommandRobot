@@ -100,8 +100,7 @@ void RobotContainer::ConfigureButtonBindings() {
               [this] { return 0; })
               .ToPtr());
 
-  m_driverController.B().WhileTrue(IntakeIn(&m_intake).ToPtr().AndThen(
-      ControllerCommands::Rumble(&m_driverController, [] { return 1_s; })));
+  m_driverController.B().WhileTrue(IntakeIn(&m_intake).ToPtr());
 
   //   m_driverController.X().WhileTrue(ScoringCommands::Score(
   //       [] { return ScoringDirection::SpeakerSide; }, &m_scoring,
@@ -109,11 +108,29 @@ void RobotContainer::ConfigureButtonBindings() {
 
   m_driverController.X().WhileTrue(IntakeOut(&m_intake).ToPtr());
 
-  m_driverController.A().WhileTrue(ScoringCommands::Score(
-      [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake));
+  m_driverController.A().OnTrue(
+      // FlywheelRamp(&m_intake, &m_scoring, [] { return
+      // ScoringDirection::AmpSide; })
+      //   .ToPtr()
+      //   .AndThen(frc2::InstantCommand([] {
+      //   ConsoleLogger::getInstance().logVerbose("Next", "next %s", "");
+      //   }).ToPtr())
+      //   .AndThen(frc2::WaitCommand(ScoringConstants::kFlywheelRampDelay).ToPtr())
+      //   .AndThen(Feed(&m_intake, &m_scoring, [] { return
+      //   ScoringDirection::AmpSide; }).ToPtr())
+      //   .AndThen(frc2::WaitCommand(ScoringConstants::kFlywheelRampDelay).ToPtr())
+      //   .AndThen(frc2::InstantCommand([] {
+      //   ConsoleLogger::getInstance().logVerbose("Next", "next %s", "");
+      //   }).ToPtr()) .AndThen(frc2::InstantCommand([this] { m_intake.Stop();
+      //   m_scoring.Stop();}).ToPtr()));
+      ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
+                             &m_scoring, &m_intake));
 
-  m_driverController.Y().WhileTrue(ScoringCommands::Score(
-      [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake));
+  //.AndThen(Shoot(&m_intake, &m_scoring, [] { return ScoringDirection::AmpSide;
+  //}).ToPtr()));
+
+  m_driverController.Y().OnTrue(ScoringCommands::Score(
+      [] { return ScoringDirection::SpeakerSide; }, &m_scoring, &m_intake));
 
   m_driverController.LeftBumper()
       .WhileTrue(ExtendClimbCommand(

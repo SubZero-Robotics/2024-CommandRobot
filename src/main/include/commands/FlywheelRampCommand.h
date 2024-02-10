@@ -10,21 +10,24 @@
 class FlywheelRamp : public frc2::CommandHelper<frc2::Command, FlywheelRamp> {
  public:
   explicit FlywheelRamp(IntakeSubsystem* intake, ScoringSubsystem* scoring,
-                        ScoringDirection direction)
+                        std::function<ScoringDirection()> direction)
       : isFinished{false},
         m_intake{intake},
         m_scoring{scoring},
-        m_direction{direction} {}
+        m_direction{direction} {
+          AddRequirements({m_intake, m_scoring});
+        }
 
   void Initialize() override {
     ConsoleLogger::getInstance().logVerbose("Score State", "Start state: %s",
                                             "Ramping");
-    m_scoring->StartScoringRamp(m_direction);
+    m_scoring->StartScoringRamp(m_direction());
     isFinished = false;
   }
 
   void Execute() override {
-    isFinished = m_scoring->GetMotorAtScoringSpeed(m_direction);
+    // isFinished = m_scoring->GetMotorAtScoringSpeed(m_direction());
+    isFinished = true;
   }
 
   bool IsFinished() override { return isFinished; }
@@ -38,5 +41,5 @@ class FlywheelRamp : public frc2::CommandHelper<frc2::Command, FlywheelRamp> {
   bool isFinished = false;
   IntakeSubsystem* m_intake;
   ScoringSubsystem* m_scoring;
-  ScoringDirection m_direction;
+  std::function<ScoringDirection()> m_direction;
 };
