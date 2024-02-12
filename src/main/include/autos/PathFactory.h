@@ -17,24 +17,22 @@ class PathFactory {
   static frc2::CommandPtr GetPathFromFinalLocation(
       std::function<FinalLocation()> locationGetter, DriveSubsystem* drive,
       frc2::CommandPtr&& prepCommand) {
-    auto location = locationGetter();
-
-    return GetApproxCommand(location)
+    return GetApproxCommand(locationGetter())
         .AndThen(std::move(prepCommand))
-        .AndThen(GetFinalApproachCommand(location, drive));
+        .AndThen(GetFinalApproachCommand(locationGetter(), drive));
   };
 
   static frc2::CommandPtr GetPathFromFinalLocation(
       std::function<FinalLocation()> locationGetter, DriveSubsystem* drive) {
-    auto location = locationGetter();
-
-    return GetApproxCommand(location).AndThen(
-        GetFinalApproachCommand(location, drive));
+    return GetApproxCommand(locationGetter())
+        .AndThen(GetFinalApproachCommand(locationGetter(), drive));
   }
 
  private:
   static frc2::CommandPtr GetApproxCommand(FinalLocation location) {
     auto& approxPose = OnTheFlyFactory::GetApproxLocation(location);
+    const auto betterapprox = approxPose;
+    ConsoleLogger::getInstance().logInfo("PATH facrtory", &betterapprox);
     return pathplanner::AutoBuilder::pathfindToPose(
         approxPose,
         pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,

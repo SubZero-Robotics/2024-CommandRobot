@@ -184,9 +184,9 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
 
   auto states = kDriveKinematics.ToSwerveModuleStates(
       fieldRelative
-          ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+          ? frc::ChassisSpeeds::Discretize(frc::ChassisSpeeds::FromFieldRelativeSpeeds(
                 xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}))
+                frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()})), 22_ms)
           : frc::ChassisSpeeds{xSpeedDelivered, ySpeedDelivered, rotDelivered});
 
   kDriveKinematics.DesaturateWheelSpeeds(&states, DriveConstants::kMaxSpeed);

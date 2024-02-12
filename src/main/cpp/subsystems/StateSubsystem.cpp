@@ -160,9 +160,10 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
       .AndThen(
           // TODO: method to get the stage location
           PathFactory::GetPathFromFinalLocation(
-              [this] { return GetFinalFromState(); }, m_subsystems.drive,
-              ExtendAbsolute(m_subsystems.leftClimb, m_subsystems.rightClimb)
-                  .ToPtr()))
+              [this] { return GetFinalFromState(); }, m_subsystems.drive
+              //ExtendAbsolute(m_subsystems.leftClimb, m_subsystems.rightClimb)
+                 // .ToPtr()))
+          ))
       .AndThen(
           RetractClimbCommand(m_subsystems.leftClimb, m_subsystems.rightClimb)
               .ToPtr())

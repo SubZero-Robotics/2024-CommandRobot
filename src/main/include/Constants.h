@@ -45,7 +45,7 @@
 namespace DriveConstants {
 // Driving Parameters - Note that these are not the maximum capable speeds of
 // the robot, rather the allowed maximum speeds
-constexpr units::meters_per_second_t kMaxSpeed = 2.4_mps;
+constexpr units::meters_per_second_t kMaxSpeed = 3.9_mps;
 constexpr units::radians_per_second_t kMaxAngularSpeed{2 * std::numbers::pi};
 
 constexpr double kDirectionSlewRate = 1.2;   // radians per second
@@ -260,7 +260,7 @@ constexpr int kTicksPerMotorRotation = 42;
 
 namespace Intakeconstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = -0.6;
+constexpr double kIntakeSpeed = -0.5;
 constexpr double kOutakeSpeed = 0.5;
 
 constexpr uint8_t kBeamBreakDigitalPort = 2;
@@ -286,7 +286,7 @@ constexpr double kSpeakerUpperSpeed = -0.75;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = 1;
+constexpr double kSubwooferLowerSpeed = 1 * 0.95;
 constexpr double kSubwooferUpperSpeed = -kSubwooferLowerSpeed;
 
 enum class ScoreState {
@@ -353,8 +353,8 @@ constexpr double kWristSetFF = 0.000015;
 namespace VisionConstants {
 static constexpr std::string_view kCameraName{"PhotonVision"};
 static const frc::Transform3d kRobotToCam{
-    frc::Translation3d{0.5_m, 0.0_m, 0.5_m},
-    frc::Rotation3d{0_rad, 0_rad, 0_rad}};
+    frc::Translation3d{0.132_m, -0.013_m, 0.607_m},
+    frc::Rotation3d{0_rad, 0.654_rad, 0_rad}};
 constexpr photonlib::PoseStrategy kPoseStrategy =
     photonlib::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
 static const frc::AprilTagFieldLayout kTagLayout{

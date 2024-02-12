@@ -61,10 +61,17 @@ RobotContainer::RobotContainer() {
   // This won't work since we're getting the reference of an r-value which goes
   // out of scope at the end of the method
   m_chooser.SetDefaultOption("Leave Community", m_defaultAuto.get());
+  m_chooser.AddOption("3 in Amp", m_3inAmp.get());
+  m_chooser.AddOption("2 Note Auto", m_2noteAuto.get());
+  m_chooser.AddOption("4 Note Auto", m_4noteAuto.get());
+  m_chooser.AddOption("Kepler", m_kepler.get());
+  m_chooser.AddOption("Kepler2", m_kepler2.get());
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 
   // TODO: replace with a FUNNI animation
   pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
+  pathplanner::NamedCommands::registerCommand("Shoot Speaker", ScoringCommands::Score(
+      [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake));
 }
 
 void RobotContainer::ConfigureButtonBindings() {
@@ -130,7 +137,7 @@ void RobotContainer::ConfigureButtonBindings() {
   //}).ToPtr()));
 
   m_driverController.Y().OnTrue(ScoringCommands::Score(
-      [] { return ScoringDirection::SpeakerSide; }, &m_scoring, &m_intake));
+      [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake));
 
   m_driverController.LeftBumper()
       .WhileTrue(ExtendClimbCommand(
