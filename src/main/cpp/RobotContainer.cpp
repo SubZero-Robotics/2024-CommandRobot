@@ -32,6 +32,7 @@
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "utils/CommandUtils.h"
+#include "utils/InputUtils.h"
 #include "utils/ShuffleboardLogger.h"
 
 using namespace DriveConstants;
@@ -47,11 +48,12 @@ RobotContainer::RobotContainer() {
   // Turning is controlled by the X axis of the right stick.
   m_drive.SetDefaultCommand(frc2::RunCommand(
       [this] {
+        InputUtils::DeadzoneAxes axes = InputUtils::CalculateCircularDeadzone(
+            m_driverController.GetLeftX(), m_driverController.GetLeftY(),
+            OIConstants::kDriveDeadband);
         m_drive.Drive(
-            -units::meters_per_second_t{frc::ApplyDeadband(
-                m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
-            -units::meters_per_second_t{frc::ApplyDeadband(
-                m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
+            -units::meters_per_second_t{axes.y},
+            -units::meters_per_second_t{axes.x},
             -units::radians_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
             true, false, kLoopTime);
@@ -70,8 +72,10 @@ RobotContainer::RobotContainer() {
 
   // TODO: replace with a FUNNI animation
   pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
-  pathplanner::NamedCommands::registerCommand("Shoot Speaker", ScoringCommands::Score(
-      [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake));
+  pathplanner::NamedCommands::registerCommand(
+      "Shoot Speaker",
+      ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
+                             &m_scoring, &m_intake));
 }
 
 void RobotContainer::ConfigureButtonBindings() {
