@@ -8,6 +8,7 @@
 #include <rev/CANSparkMax.h>
 
 #include "Constants.h"
+#include "subsystems/ScoringSubsystem.h"
 
 using namespace CANSparkMaxConstants;
 
@@ -21,9 +22,11 @@ class IntakeSubsystem : public frc2::SubsystemBase {
 
   void Stop();
 
-  void In();
+  void In(double intakeSpeed = Intakeconstants::kIntakeSpeed);
 
   void Out();
+
+  void Feed(ScoringDirection direction);
 
   bool NotePresent();
 

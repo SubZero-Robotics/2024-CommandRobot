@@ -261,6 +261,10 @@ constexpr int kTicksPerMotorRotation = 42;
 namespace Intakeconstants {
 // Change these to match actual values
 constexpr double kIntakeSpeed = -0.5;
+constexpr double kFeedAmpSpeed = -0.5;
+constexpr double kFeedSpeakerSpeed = -1;
+constexpr double kFeedSubwooferSpeed = -1;
+
 constexpr double kOutakeSpeed = 0.5;
 
 constexpr uint8_t kBeamBreakDigitalPort = 2;

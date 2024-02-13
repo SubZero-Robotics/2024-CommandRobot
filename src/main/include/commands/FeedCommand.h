@@ -10,19 +10,19 @@
 class Feed : public frc2::CommandHelper<frc2::Command, Feed> {
  public:
   explicit Feed(IntakeSubsystem* intake, ScoringSubsystem* scoring,
-                   std::function<ScoringDirection()> direction)
+                std::function<ScoringDirection()> direction)
       : isFinished{false},
         m_intake{intake},
         m_scoring{scoring},
         m_direction{direction} {
-          AddRequirements({m_intake, m_scoring});
-        }
+    AddRequirements({m_intake, m_scoring});
+  }
 
   void Initialize() override {
     ConsoleLogger::getInstance().logVerbose("Score State", "Start state: %s",
                                             "Feed");
     m_scoring->SpinVectorSide(m_direction());
-    m_intake->In();
+    m_intake->Feed(m_direction());
     isFinished = false;
   }
 
