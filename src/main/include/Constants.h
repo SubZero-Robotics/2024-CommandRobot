@@ -258,7 +258,7 @@ constexpr int kSpeakerUpperSpinnyBoiId = 19;
 constexpr int kTicksPerMotorRotation = 42;
 }  // namespace CANSparkMaxConstants
 
-namespace Intakeconstants {
+namespace IntakingConstants {
 // Change these to match actual values
 constexpr double kIntakeSpeed = -0.5;
 constexpr double kFeedAmpSpeed = -0.5;
@@ -267,8 +267,12 @@ constexpr double kFeedSubwooferSpeed = -1;
 
 constexpr double kOutakeSpeed = 0.5;
 
-constexpr uint8_t kBeamBreakDigitalPort = 2;
-}  // namespace Intakeconstants
+constexpr double kSecondaryIntakeOutSpeed = 0.2;
+
+constexpr uint8_t kUpperBeamBreakDigitalPort = 2;
+constexpr uint8_t kLowerBeamBreakDigitalPort = 1;
+
+}  // namespace IntakingConstants
 
 namespace ScoringConstants {
 constexpr double kFreeSpinCurrentThreshold = 90;

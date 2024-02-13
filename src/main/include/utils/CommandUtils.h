@@ -7,6 +7,8 @@
 #include "Constants.h"
 #include "commands/FeedCommand.h"
 #include "commands/FlywheelRampCommand.h"
+#include "commands/IntakeInInitialCommand.h"
+#include "commands/IntakeInSecondaryCommand.h"
 #include "commands/ShootCommand.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
@@ -53,3 +55,22 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
 }
 
 }  // namespace ScoringCommands
+
+namespace IntakingCommands {
+using namespace IntakingConstants;
+
+static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem) {
+  return (frc2::InstantCommand([] {
+            ConsoleLogger::getInstance().logVerbose("Intake Subsystem",
+                                                    "Intake start %s", "");
+          })
+              .ToPtr()
+              .AndThen(IntakeInInitial(intakeSubsystem).ToPtr())
+              .AndThen(IntakeInSecondary(intakeSubsystem).ToPtr()))
+              // TODO: Run IntakeInSecondary for a bit longer after the note is detected so that it lands in the right spot
+      .WithTimeout(5_s)
+      .FinallyDo([intakeSubsystem] { intakeSubsystem->Stop(); });
+}
+
+//TODO: Make a method to shuffle the note down and then feed it to the shooter
+}  // namespace IntakingCommands

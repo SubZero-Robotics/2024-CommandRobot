@@ -8,10 +8,10 @@ void IntakeSubsystem::Periodic() {}
 
 void IntakeSubsystem::SimulationPeriodic() {}
 
-void IntakeSubsystem::Out() {
+void IntakeSubsystem::Out(double outakeSpeed) {
   ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Outaking %s",
                                           "");
-  m_leftIntakeSpinnyBoy.Set(Intakeconstants::kOutakeSpeed);
+  m_leftIntakeSpinnyBoy.Set(outakeSpeed);
 }
 
 void IntakeSubsystem::In(double intakeSpeed) {
@@ -29,15 +29,21 @@ void IntakeSubsystem::Stop() {
 void IntakeSubsystem::Feed(ScoringDirection direction) {
   switch (direction) {
     case ScoringDirection::AmpSide: {
-      In(Intakeconstants::kFeedAmpSpeed);
+      In(IntakingConstants::kFeedAmpSpeed);
     }
     case ScoringDirection::SpeakerSide: {
-      In(Intakeconstants::kFeedSpeakerSpeed);
+      In(IntakingConstants::kFeedSpeakerSpeed);
     }
     case ScoringDirection::Subwoofer: {
-      In(Intakeconstants::kFeedSubwooferSpeed);
+      In(IntakingConstants::kFeedSubwooferSpeed);
     }
   }
 }
 
-bool IntakeSubsystem::NotePresent() { return !m_beamBreak.Get(); }
+bool IntakeSubsystem::NotePresentLower() { return !m_lowerBeamBreak.Get(); }
+
+bool IntakeSubsystem::NotePresentUpper() { return !m_upperBeamBreak.Get(); }
+
+bool IntakeSubsystem::NotePresent() {
+  return NotePresentUpper() || NotePresentLower();
+}

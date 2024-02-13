@@ -22,13 +22,15 @@ class IntakeSubsystem : public frc2::SubsystemBase {
 
   void Stop();
 
-  void In(double intakeSpeed = Intakeconstants::kIntakeSpeed);
+  void In(double intakeSpeed = IntakingConstants::kIntakeSpeed);
 
-  void Out();
+  void Out(double outakeSpeed = IntakingConstants::kOutakeSpeed);
 
   void Feed(ScoringDirection direction);
 
   bool NotePresent();
+  bool NotePresentUpper();
+  bool NotePresentLower();
 
  private:
   rev::CANSparkMax m_rightIntakeSpinnyBoy{
@@ -38,5 +40,8 @@ class IntakeSubsystem : public frc2::SubsystemBase {
       CANSparkMaxConstants::kRightIntakeSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
 
-  frc::DigitalInput m_beamBreak{Intakeconstants::kBeamBreakDigitalPort};
+  frc::DigitalInput m_upperBeamBreak{
+      IntakingConstants::kUpperBeamBreakDigitalPort};
+  frc::DigitalInput m_lowerBeamBreak{
+      IntakingConstants::kLowerBeamBreakDigitalPort};
 };

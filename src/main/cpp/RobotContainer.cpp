@@ -111,6 +111,7 @@ void RobotContainer::ConfigureButtonBindings() {
               [this] { return 0; })
               .ToPtr());
 
+  // TODO: Bind to the better intake
   m_driverController.B().WhileTrue(IntakeIn(&m_intake).ToPtr());
 
   //   m_driverController.X().WhileTrue(ScoringCommands::Score(
