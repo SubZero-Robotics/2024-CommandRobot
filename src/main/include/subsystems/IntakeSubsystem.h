@@ -6,6 +6,7 @@
 #include <rev/CANSparkFlex.h>
 #include <rev/CANSparkLowLevel.h>
 #include <rev/CANSparkMax.h>
+#include <rev/SparkPIDController.h>
 
 #include "Constants.h"
 #include "subsystems/ScoringSubsystem.h"
@@ -44,4 +45,7 @@ class IntakeSubsystem : public frc2::SubsystemBase {
       IntakingConstants::kUpperBeamBreakDigitalPort};
   frc::DigitalInput m_lowerBeamBreak{
       IntakingConstants::kLowerBeamBreakDigitalPort};
+
+  rev::SparkPIDController m_rightIntakeSpinnyBoyPID = m_rightIntakeSpinnyBoy.GetPIDController();
+  rev::SparkPIDController m_leftIntakeSpinnyBoyPID = m_leftIntakeSpinnyBoy.GetPIDController();
 };
