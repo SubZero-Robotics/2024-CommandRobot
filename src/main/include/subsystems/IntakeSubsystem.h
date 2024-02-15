@@ -34,10 +34,10 @@ class IntakeSubsystem : public frc2::SubsystemBase {
 
  private:
   rev::CANSparkMax m_rightIntakeSpinnyBoy{
-      CANSparkMaxConstants::kLeftIntakeSpinnyBoiId,
+      CANSparkMaxConstants::kRightIntakeSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::CANSparkMax m_leftIntakeSpinnyBoy{
-      CANSparkMaxConstants::kRightIntakeSpinnyBoiId,
+      CANSparkMaxConstants::kLeftIntakeSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
 
   frc::DigitalInput m_upperBeamBreak{

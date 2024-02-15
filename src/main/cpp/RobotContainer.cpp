@@ -96,23 +96,20 @@ void RobotContainer::ConfigureButtonBindings() {
 
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
-      .WhileTrue(
-          ExtendClimbCommand(
-              &m_leftClimb,
-              [this] { return -m_driverController.GetLeftTriggerAxis(); },
-              [this] { return 0; })
-              .ToPtr());
+      .WhileTrue(ExtendClimbCommand(
+                     &m_leftClimb, [this] { return m_driverController.GetLeftTriggerAxis(); },
+                     [this] { return 0; })
+                     .ToPtr());
 
   m_driverController.RightTrigger(OIConstants::kDriveDeadband)
       .WhileTrue(
           ExtendClimbCommand(
-              &m_rightClimb,
-              [this] { return -m_driverController.GetRightTriggerAxis(); },
+              &m_rightClimb, [this] { return m_driverController.GetRightTriggerAxis(); },
               [this] { return 0; })
               .ToPtr());
 
   // TODO: Bind to the better intake
-  m_driverController.B().WhileTrue(IntakeIn(&m_intake).ToPtr());
+  m_driverController.B().WhileTrue(IntakingCommands::Intake(&m_intake));
 
   //   m_driverController.X().WhileTrue(ScoringCommands::Score(
   //       [] { return ScoringDirection::SpeakerSide; }, &m_scoring,
@@ -146,11 +143,12 @@ void RobotContainer::ConfigureButtonBindings() {
 
   m_driverController.LeftBumper()
       .WhileTrue(ExtendClimbCommand(
-                     &m_leftClimb, [this] { return 0; }, [this] { return 1; })
+                     &m_leftClimb, [this] { return 0; }, [this] { return 0.2; })
                      .ToPtr())
-      .WhileTrue(ExtendClimbCommand(
-                     &m_rightClimb, [this] { return 0; }, [this] { return 1; })
-                     .ToPtr());
+      .WhileTrue(
+          ExtendClimbCommand(
+              &m_rightClimb, [this] { return 0; }, [this] { return 0.2; })
+              .ToPtr());
 
   m_driverController.RightBumper().WhileTrue(
       BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());

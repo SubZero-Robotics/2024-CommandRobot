@@ -47,6 +47,7 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
               .AndThen(Feed(intake, scoring, direction).ToPtr())
               .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
               .AndThen(Shoot(intake, scoring, direction).ToPtr()))
+      .Unless([intake] { return !intake->NotePresent(); })
       .WithTimeout(5_s)
       .FinallyDo([intake, scoring] {
         intake->Stop();
@@ -66,11 +67,20 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem) {
           })
               .ToPtr()
               .AndThen(IntakeInInitial(intakeSubsystem).ToPtr())
-              .AndThen(IntakeInSecondary(intakeSubsystem).ToPtr()))
-              // TODO: Run IntakeInSecondary for a bit longer after the note is detected so that it lands in the right spot
+              .AndThen(frc2::WaitCommand(0.2_s).ToPtr())
+              .AndThen(IntakeInSecondary(intakeSubsystem).ToPtr())
+              .AndThen(frc2::InstantCommand([] {
+                         ConsoleLogger::getInstance().logVerbose(
+                             "Intake Subsystem", "Intake finished itself%s",
+                             "");
+                       }).ToPtr()))
+
+      // TODO: Run IntakeInSecondary for a bit longer after the note is detected
+      // so that it lands in the right spot
+      .Unless([intakeSubsystem] { return intakeSubsystem->NotePresent(); })
       .WithTimeout(5_s)
       .FinallyDo([intakeSubsystem] { intakeSubsystem->Stop(); });
 }
 
-//TODO: Make a method to shuffle the note down and then feed it to the shooter
+// TODO: Make a method to shuffle the note down and then feed it to the shooter
 }  // namespace IntakingCommands

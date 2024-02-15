@@ -267,10 +267,10 @@ constexpr double kFeedSubwooferSpeed = -1;
 
 constexpr double kOutakeSpeed = 0.5;
 
-constexpr double kSecondaryIntakeOutSpeed = 0.2;
+constexpr double kSecondaryIntakeOutSpeed = 0.05;
 
 constexpr uint8_t kUpperBeamBreakDigitalPort = 2;
-constexpr uint8_t kLowerBeamBreakDigitalPort = 1;
+constexpr uint8_t kLowerBeamBreakDigitalPort = 3;
 
 }  // namespace IntakingConstants
 
@@ -381,15 +381,12 @@ constexpr double kClimberSetI = 0;
 constexpr double kClimberSetD = 0;
 
 // Maximum arm extension distance
-constexpr double kMaxArmDistance = 10;
+constexpr double kMaxArmDistance = 1000;
 // Arm climbing position
 constexpr double kClimbExtensionPosition = 5;
 // Arm retracted position
 constexpr double kClimbRetractPosition = 3;
-constexpr double kInPerRotation = 1;
-
-constexpr int kClimberLeftLimitSwitchPort = 0;
-constexpr int kClimberRightLimitSwitchPort = 1;
+constexpr double kInPerRotation = 0.1;
 
 constexpr double kClimbStepSize = 1;
 constexpr double kClimbHomingSpeed = 1;
