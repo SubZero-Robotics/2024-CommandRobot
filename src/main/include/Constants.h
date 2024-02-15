@@ -244,6 +244,7 @@ constexpr double kVibrationIntensity = 1;
 }  // namespace OIConstants
 
 constexpr uint8_t kLedAddress = 23;
+constexpr units::second_t kConnectorXDelay = 0.05_s;
 
 // Motor IDs
 namespace CANSparkMaxConstants {

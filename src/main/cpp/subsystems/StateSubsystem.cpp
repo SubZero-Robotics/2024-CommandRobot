@@ -78,8 +78,8 @@ frc2::CommandPtr StateSubsystem::StartIntaking() {
                             .Repeatedly())
               // TODO: Put this in the "Loaded" state also have the intensity
               // vary based on if a note was successfully intooketh or not
-              .AndThen(ControllerCommands::Rumble(&m_driverController,
-                                                  [] { return 1_s; }))
+              // .AndThen(ControllerCommands::Rumble(&m_driverController,
+              //                                     [] { return 1_s; }))
               .WithTimeout(5_s));
 }
 

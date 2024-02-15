@@ -31,8 +31,8 @@ class PathFactory {
  private:
   static frc2::CommandPtr GetApproxCommand(FinalLocation location) {
     auto& approxPose = OnTheFlyFactory::GetApproxLocation(location);
-    const auto betterapprox = approxPose;
-    ConsoleLogger::getInstance().logInfo("PATH facrtory", &betterapprox);
+    frc::Pose2d betterapprox = approxPose;
+    ConsoleLogger::getInstance().logInfo("PATH factory", betterapprox);
     return pathplanner::AutoBuilder::pathfindToPose(
         approxPose,
         pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
