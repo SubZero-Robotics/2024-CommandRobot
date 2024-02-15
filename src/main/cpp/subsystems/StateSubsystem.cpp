@@ -76,6 +76,12 @@ frc2::CommandPtr StateSubsystem::StartIntaking() {
               .RaceWith(DriveVelocity(0_deg, 2_mps, m_subsystems.drive)
                             .ToPtr()
                             .Repeatedly())
+              .FinallyDo([this] {
+                auto chassisSpeeds = frc::ChassisSpeeds::Discretize(
+                    0_mps, 0_mps, AutoConstants::kMaxAngularSpeed,
+                    DriveConstants::kLoopTime);
+                m_subsystems.drive->Drive(chassisSpeeds);
+              })
               // TODO: Put this in the "Loaded" state also have the intensity
               // vary based on if a note was successfully intooketh or not
               // .AndThen(ControllerCommands::Rumble(&m_driverController,
