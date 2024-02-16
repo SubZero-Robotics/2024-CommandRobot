@@ -246,3 +246,5 @@ void RobotContainer::ConfigureAutoBindings() {
 frc2::Command* RobotContainer::GetAutonomousCommand() {
   return m_chooser.GetSelected();
 }
+
+void RobotContainer::ClearCurrentStateCommand() { m_state.m_active = false; }
