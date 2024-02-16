@@ -17,7 +17,7 @@
 #include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
 #include <pathplanner/lib/util/PIDConstants.h>
 #include <pathplanner/lib/util/ReplanningConfig.h>
-#include <photonlib/PhotonPoseEstimator.h>
+#include <photon/PhotonPoseEstimator.h>
 #include <rev/CANSparkMax.h>
 #include <units/acceleration.h>
 #include <units/angular_acceleration.h>
@@ -244,7 +244,7 @@ constexpr double kVibrationIntensity = 1;
 }  // namespace OIConstants
 
 constexpr uint8_t kLedAddress = 23;
-constexpr units::second_t kConnectorXDelay = 0.05_s;
+constexpr units::second_t kConnectorXDelay = 0.1_s;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
@@ -261,7 +261,7 @@ constexpr int kTicksPerMotorRotation = 42;
 
 namespace IntakingConstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = -0.5;
+constexpr double kIntakeSpeed = -0.8;
 constexpr double kFeedAmpSpeed = -0.5;
 constexpr double kFeedSpeakerSpeed = -1;
 constexpr double kFeedSubwooferSpeed = -1;
@@ -364,8 +364,8 @@ static constexpr std::string_view kCameraName{"PhotonVision"};
 static const frc::Transform3d kRobotToCam{
     frc::Translation3d{0.132_m, -0.013_m, 0.607_m},
     frc::Rotation3d{0_rad, 0.654_rad, 0_rad}};
-constexpr photonlib::PoseStrategy kPoseStrategy =
-    photonlib::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
+constexpr photon::PoseStrategy kPoseStrategy =
+    photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
 static const frc::AprilTagFieldLayout kTagLayout{
     frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo)};
 static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
@@ -392,6 +392,8 @@ constexpr double kInPerRotation = 0.1;
 constexpr double kClimbStepSize = 1;
 constexpr double kClimbHomingSpeed = 1;
 constexpr int kTicksPerMotorRotation = 42;
+
+constexpr double kCLimberExtendSpeed = 0.6;
 
 // Distance between left and right arm centers
 constexpr units::meter_t kClimberOffsetDistance = 4_m;

@@ -158,7 +158,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
       HALSIM_GetSimValueHandle(m_gyroSimHandle, "Yaw");
 
   // time last loop took, "deltatime"
-  units::second_t driveLoopTime = 0.022_s;
+  units::second_t driveLoopTime = DriveConstants::kLoopTime;
 
   // Slew rate filter variables for controlling lateral acceleration
   double m_currentRotation = 0.0;

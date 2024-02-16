@@ -60,6 +60,13 @@ RobotContainer::RobotContainer() {
       },
       {&m_drive}));
 
+  pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
+  pathplanner::NamedCommands::registerCommand(
+      "Shoot Speaker",
+      ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
+                             &m_scoring, &m_intake));
+  pathplanner::NamedCommands::registerCommand("Intake", IntakingCommands::Intake(&m_intake));
+
   // This won't work since we're getting the reference of an r-value which goes
   // out of scope at the end of the method
   m_chooser.SetDefaultOption("Leave Community", m_defaultAuto.get());
@@ -69,13 +76,6 @@ RobotContainer::RobotContainer() {
   m_chooser.AddOption("Kepler", m_kepler.get());
   m_chooser.AddOption("Kepler2", m_kepler2.get());
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
-
-  // TODO: replace with a FUNNI animation
-  pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
-  pathplanner::NamedCommands::registerCommand(
-      "Shoot Speaker",
-      ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
-                             &m_scoring, &m_intake));
 }
 
 void RobotContainer::ConfigureButtonBindings() {
@@ -115,43 +115,26 @@ void RobotContainer::ConfigureButtonBindings() {
   //       [] { return ScoringDirection::SpeakerSide; }, &m_scoring,
   //       &m_intake));
 
-  m_driverController.X().WhileTrue(IntakeOut(&m_intake).ToPtr());
-
-  m_driverController.A().OnTrue(
-      // FlywheelRamp(&m_intake, &m_scoring, [] { return
-      // ScoringDirection::AmpSide; })
-      //   .ToPtr()
-      //   .AndThen(frc2::InstantCommand([] {
-      //   ConsoleLogger::getInstance().logVerbose("Next", "next %s", "");
-      //   }).ToPtr())
-      //   .AndThen(frc2::WaitCommand(ScoringConstants::kFlywheelRampDelay).ToPtr())
-      //   .AndThen(Feed(&m_intake, &m_scoring, [] { return
-      //   ScoringDirection::AmpSide; }).ToPtr())
-      //   .AndThen(frc2::WaitCommand(ScoringConstants::kFlywheelRampDelay).ToPtr())
-      //   .AndThen(frc2::InstantCommand([] {
-      //   ConsoleLogger::getInstance().logVerbose("Next", "next %s", "");
-      //   }).ToPtr()) .AndThen(frc2::InstantCommand([this] { m_intake.Stop();
-      //   m_scoring.Stop();}).ToPtr()));
-      ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
+  m_driverController.X().WhileTrue(ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
                              &m_scoring, &m_intake));
 
-  //.AndThen(Shoot(&m_intake, &m_scoring, [] { return ScoringDirection::AmpSide;
-  //}).ToPtr()));
+  m_driverController.A().OnTrue(
+      ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
+                             &m_scoring, &m_intake));
 
   m_driverController.Y().OnTrue(ScoringCommands::Score(
       [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake));
 
   m_driverController.LeftBumper()
       .WhileTrue(ExtendClimbCommand(
-                     &m_leftClimb, [this] { return 0; }, [this] { return 0.2; })
+                     &m_leftClimb, [this] { return 0; }, [this] { return ClimbConstants::kCLimberExtendSpeed; })
                      .ToPtr())
       .WhileTrue(
           ExtendClimbCommand(
-              &m_rightClimb, [this] { return 0; }, [this] { return 0.2; })
+              &m_rightClimb, [this] { return 0; }, [this] { return ClimbConstants::kCLimberExtendSpeed; })
               .ToPtr());
 
-  m_driverController.RightBumper().WhileTrue(
-      BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());
+  m_driverController.RightBumper().WhileTrue(IntakeOut(&m_intake).ToPtr());
 
   ConfigureAutoBindings();
 #endif
@@ -235,6 +218,11 @@ void RobotContainer::ConfigureAutoBindings() {
                                               m_state.SetDesiredState();
                                             }
                                           }).ToPtr());
+
+  m_operatorController.Button(19).OnTrue(
+      BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());
+
+  m_operatorController.Button(20).OnTrue(frc2::InstantCommand([this] {m_drive.ZeroHeading();}).ToPtr());
 }
 #endif
 

@@ -76,6 +76,10 @@ frc2::CommandPtr StateSubsystem::StartIntaking() {
               .RaceWith(DriveVelocity(0_deg, 2_mps, m_subsystems.drive)
                             .ToPtr()
                             .Repeatedly())
+              .Until([this] {
+                return m_subsystems.intake->NotePresentUpper() &&
+                       m_subsystems.intake->NotePresentLower();
+              })
               .FinallyDo([this] {
                 auto chassisSpeeds = frc::ChassisSpeeds::Discretize(
                     0_mps, 0_mps, AutoConstants::kMaxAngularSpeed,
