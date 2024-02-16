@@ -65,7 +65,8 @@ RobotContainer::RobotContainer() {
       "Shoot Speaker",
       ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
                              &m_scoring, &m_intake));
-  pathplanner::NamedCommands::registerCommand("Intake", IntakingCommands::Intake(&m_intake));
+  pathplanner::NamedCommands::registerCommand(
+      "Intake", IntakingCommands::Intake(&m_intake));
 
   // This won't work since we're getting the reference of an r-value which goes
   // out of scope at the end of the method
@@ -97,14 +98,16 @@ void RobotContainer::ConfigureButtonBindings() {
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
       .WhileTrue(ExtendClimbCommand(
-                     &m_leftClimb, [this] { return m_driverController.GetLeftTriggerAxis(); },
+                     &m_leftClimb,
+                     [this] { return m_driverController.GetLeftTriggerAxis(); },
                      [this] { return 0; })
                      .ToPtr());
 
   m_driverController.RightTrigger(OIConstants::kDriveDeadband)
       .WhileTrue(
           ExtendClimbCommand(
-              &m_rightClimb, [this] { return m_driverController.GetRightTriggerAxis(); },
+              &m_rightClimb,
+              [this] { return m_driverController.GetRightTriggerAxis(); },
               [this] { return 0; })
               .ToPtr());
 
@@ -115,24 +118,24 @@ void RobotContainer::ConfigureButtonBindings() {
   //       [] { return ScoringDirection::SpeakerSide; }, &m_scoring,
   //       &m_intake));
 
-  m_driverController.X().WhileTrue(ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
-                             &m_scoring, &m_intake));
+  m_driverController.X().WhileTrue(ScoringCommands::Score(
+      [] { return ScoringDirection::SpeakerSide; }, &m_scoring, &m_intake));
 
-  m_driverController.A().OnTrue(
-      ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
-                             &m_scoring, &m_intake));
+  m_driverController.A().OnTrue(ScoringCommands::Score(
+      [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake));
 
   m_driverController.Y().OnTrue(ScoringCommands::Score(
       [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake));
 
   m_driverController.LeftBumper()
       .WhileTrue(ExtendClimbCommand(
-                     &m_leftClimb, [this] { return 0; }, [this] { return ClimbConstants::kCLimberExtendSpeed; })
+                     &m_leftClimb, [this] { return 0; },
+                     [this] { return ClimbConstants::kCLimberExtendSpeed; })
                      .ToPtr())
-      .WhileTrue(
-          ExtendClimbCommand(
-              &m_rightClimb, [this] { return 0; }, [this] { return ClimbConstants::kCLimberExtendSpeed; })
-              .ToPtr());
+      .WhileTrue(ExtendClimbCommand(
+                     &m_rightClimb, [this] { return 0; },
+                     [this] { return ClimbConstants::kCLimberExtendSpeed; })
+                     .ToPtr());
 
   m_driverController.RightBumper().WhileTrue(IntakeOut(&m_intake).ToPtr());
 
@@ -222,10 +225,13 @@ void RobotContainer::ConfigureAutoBindings() {
   m_operatorController.Button(19).OnTrue(
       BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());
 
-  m_operatorController.Button(20).OnTrue(frc2::InstantCommand([this] {m_drive.ZeroHeading();}).ToPtr());
+  m_operatorController.Button(20).OnTrue(
+      frc2::InstantCommand([this] { m_drive.ZeroHeading(); }).ToPtr());
 }
 #endif
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
   return m_chooser.GetSelected();
 }
+
+void RobotContainer::ClearCurrentStateCommand() { m_state.m_active = false; }
