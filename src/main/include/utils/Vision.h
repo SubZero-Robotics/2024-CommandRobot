@@ -12,6 +12,21 @@
 
 using namespace VisionConstants;
 
+struct CameraResults {
+  photon::PhotonPipelineResult camera;
+  photon::PhotonPipelineResult camera2;
+
+  std::span<photon::PhotonTrackedTarget> GetTargets() {
+    auto targets1 = camera.GetTargets();
+    auto targets2 = camera2.GetTargets();
+    std::vector<photon::PhotonTrackedTarget> result;
+    result.reserve(targets1.size() + targets2.size());
+    result.insert(result.end(), targets1.begin(), targets1.end());
+    result.insert(result.end(), targets2.begin(), targets2.end());
+    return std::span<photon::PhotonTrackedTarget>(result);
+  }
+};
+
 class Vision {
  public:
   Vision() {
@@ -19,19 +34,23 @@ class Vision {
         photon::PoseStrategy::LOWEST_AMBIGUITY);
   }
 
-  photon::PhotonPipelineResult GetLatestResult() {
-    return camera->GetLatestResult();
+  CameraResults GetLatestResult() {
+    return {camera->GetLatestResult(), camera2->GetLatestResult()};
   }
 
   std::optional<photon::EstimatedRobotPose> GetEstimatedGlobalPose() {
     auto visionEst = photonEstimator.Update();
-    units::second_t latestTimestamp = camera->GetLatestResult().GetTimestamp();
+    auto visionEst2 = photonEstimator2.Update();
+    auto camera1ts = camera->GetLatestResult().GetTimestamp();
+    auto camera2ts = camera2->GetLatestResult().GetTimestamp();
+    units::second_t latestTimestamp = std::max(camera1ts, camera2ts);
     bool newResult =
         units::math::abs(latestTimestamp - lastEstTimestamp) > 1e-5_s;
     if (newResult) {
       lastEstTimestamp = latestTimestamp;
     }
-    return visionEst;
+
+    return camera1ts > camera2ts ? visionEst : visionEst2;
   }
 
   Eigen::Matrix<double, 3, 1> GetEstimationStdDevs(frc::Pose2d estimatedPose) {
@@ -67,9 +86,14 @@ class Vision {
   }
 
  private:
-  photon::PhotonPoseEstimator photonEstimator{kTagLayout, kPoseStrategy,
-                                              photon::PhotonCamera{kCameraName},
-                                              kRobotToCam};
+  photon::PhotonPoseEstimator photonEstimator{
+      kTagLayout, kPoseStrategy, photon::PhotonCamera{kFrontCamera},
+      kRobotToCam};
+  photon::PhotonPoseEstimator photonEstimator2{
+      kTagLayout, kPoseStrategy, photon::PhotonCamera{kRearCamera},
+      kRobotToCam2};
   std::shared_ptr<photon::PhotonCamera> camera{photonEstimator.GetCamera()};
+  std::shared_ptr<photon::PhotonCamera> camera2{photonEstimator2.GetCamera()};
+
   units::second_t lastEstTimestamp{0_s};
 };

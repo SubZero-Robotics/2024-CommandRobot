@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc/DriverStation.h>
 #include <frc2/command/CommandPtr.h>
 #include <pathplanner/lib/commands/FollowPathHolonomic.h>
 
@@ -29,6 +30,33 @@ class PathFactory {
   }
 
  private:
+  static bool ShouldFlip(FinalLocation location) {
+    auto alliance = frc::DriverStation::GetAlliance();
+    if (!alliance) {
+      return false;
+    }
+    auto side = alliance.value();
+
+    if (side == frc::DriverStation::kBlue) {
+      if (location == FinalLocation::Source1 ||
+          location == FinalLocation::Source2 ||
+          location == FinalLocation::Source3) {
+        return true;
+      }
+      return false;
+    }
+    if (side == frc::DriverStation::kRed) {
+      if (location == FinalLocation::Source1 ||
+          location == FinalLocation::Source2 ||
+          location == FinalLocation::Source3) {
+        return false;
+      }
+      return true;
+    }
+    ConsoleLogger::getInstance().logError("PPF", "Invalid Alliance%s", "");
+    return false;
+  }
+
   static frc2::CommandPtr GetApproxCommand(FinalLocation location) {
     auto& approxPose = OnTheFlyFactory::GetApproxLocation(location);
     frc::Pose2d betterapprox = approxPose;
@@ -54,10 +82,10 @@ class PathFactory {
                  drive->Drive(speeds);
                },
                AutoConstants::PathConfig,
-               []() {
+               [location]() {
                  // todo, flip if is source
                  // reverse that if on red alliance
-                 return false;
+                 return PathFactory::ShouldFlip(location);
                },
                {drive})
         .ToPtr();

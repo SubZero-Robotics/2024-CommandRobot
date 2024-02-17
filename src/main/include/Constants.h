@@ -360,10 +360,14 @@ constexpr double kWristSetFF = 0.000015;
 
 // TODO: CREATE ACTUAL ROBOT VALUES FOR THESE
 namespace VisionConstants {
-static constexpr std::string_view kCameraName{"PhotonVision"};
+static constexpr std::string_view kFrontCamera{"PhotonVision"};
+static constexpr std::string_view kRearCamera{"PhotonVision2"};
 static const frc::Transform3d kRobotToCam{
     frc::Translation3d{0.132_m, -0.013_m, 0.607_m},
     frc::Rotation3d{0_rad, 0.654_rad, 0_rad}};
+static const frc::Transform3d kRobotToCam2{
+    frc::Translation3d{0.583_in, 2.651_in, 23.252_in},
+    frc::Rotation3d{0_deg, 65.15_deg, 0_deg}};
 constexpr photon::PoseStrategy kPoseStrategy =
     photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
 static const frc::AprilTagFieldLayout kTagLayout{
