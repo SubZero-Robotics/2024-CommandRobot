@@ -43,9 +43,10 @@ RobotContainer::RobotContainer() {
   // Configure the button bindings
   ConfigureButtonBindings();
 
-  // Set up default drive command
-  // The left stick controls translation of the robot.
-  // Turning is controlled by the X axis of the right stick.
+// Set up default drive command
+// The left stick controls translation of the robot.
+// Turning is controlled by the X axis of the right stick.
+
   m_drive.SetDefaultCommand(frc2::RunCommand(
       [this] {
         InputUtils::DeadzoneAxes axes = InputUtils::CalculateCircularDeadzone(
@@ -59,7 +60,7 @@ RobotContainer::RobotContainer() {
             true, false, kLoopTime);
       },
       {&m_drive}));
-
+#ifndef TEST_SWERVE_BOT
   pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
   pathplanner::NamedCommands::registerCommand(
       "Shoot Speaker",
@@ -67,6 +68,7 @@ RobotContainer::RobotContainer() {
                              &m_scoring, &m_intake));
   pathplanner::NamedCommands::registerCommand(
       "Intake", IntakingCommands::Intake(&m_intake));
+#endif
 
   // This won't work since we're getting the reference of an r-value which goes
   // out of scope at the end of the method
@@ -82,7 +84,12 @@ RobotContainer::RobotContainer() {
 void RobotContainer::ConfigureButtonBindings() {
   frc2::JoystickButton(&m_driverController,
                        frc::XboxController::Button::kRightBumper)
-      .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
+      .WhileTrue(new frc2::RunCommand(
+          [this] {
+            m_drive.SetX();
+            ConsoleLogger::getInstance().logVerbose("Drive", "SetX %s", "");
+          },
+          {&m_drive}));
 
   //   frc2::JoystickButton(&m_driverController,
   //   frc::XboxController::Button::kY)
@@ -143,7 +150,13 @@ void RobotContainer::ConfigureButtonBindings() {
 #endif
 #ifdef TEST_SWERVE_BOT
   m_driverController.A().OnTrue(
-      m_leds.ScoringAmp().WithTimeout(5_s).AndThen(m_leds.Idling()));
+      m_leds.ScoringAmp()
+          .WithTimeout(5_s)
+          .AndThen(m_leds.Idling())
+          .AndThen(frc2::InstantCommand([] {
+                     ConsoleLogger::getInstance().logVerbose("'A' Button",
+                                                             "Pressed");
+                   }).ToPtr()));
   m_driverController.B().OnTrue(
       m_leds.Intaking().WithTimeout(5_s).AndThen(m_leds.Idling()));
   m_driverController.X().OnTrue(
