@@ -101,6 +101,8 @@ Following the WPILib command based structure we have broken our robot up into a 
 | Gateway | 10.56.90.129 (subject to change) |
 |   RIO   |            10.56.90.2            |
 | Laptop  |             Dynamic              |
+|   LL3   |            10.56.90.11           |
+|   LL2+  |            10.56.90.12           |
 
 ## State
 
