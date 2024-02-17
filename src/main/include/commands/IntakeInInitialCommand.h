@@ -31,7 +31,6 @@ class IntakeInInitial
 
   void Execute() override {
     if (m_intake->NotePresentUpper() && !m_intake->NotePresentLower()) {
-      m_intake->Stop();
       isFinished = true;
     }
 
@@ -40,7 +39,7 @@ class IntakeInInitial
 
   bool IsFinished() override { return isFinished; }
 
-  void End(bool interrupted) { m_intake->Stop(); }
+  void End(bool interrupted) {}
 
  private:
   IntakeSubsystem* m_intake;

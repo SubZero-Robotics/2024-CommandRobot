@@ -20,7 +20,7 @@ class IntakeIn : public frc2::CommandHelper<frc2::Command, IntakeIn> {
   }
 
   void Initialize() override {
-    if (m_intake->NotePresent()) {
+    if (m_intake->NotePresentUpper()) {
       isFinished = true;
       return;
     }
@@ -29,7 +29,7 @@ class IntakeIn : public frc2::CommandHelper<frc2::Command, IntakeIn> {
   }
 
   void Execute() override {
-    if (m_intake->NotePresent()) {
+    if (m_intake->NotePresentUpper()) {
       m_intake->Stop();
       isFinished = true;
     }

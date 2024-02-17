@@ -16,15 +16,15 @@ void IntakeSubsystem::Out(double outakeSpeed) {
 }
 
 void IntakeSubsystem::In(double intakeSpeed) {
-  // ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Intaking %s",
-  // "");
+  ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Intaking %s",
+                                          "");
   m_leftIntakeSpinnyBoy.Set(intakeSpeed);
   m_rightIntakeSpinnyBoy.Set(intakeSpeed);
 }
 
 void IntakeSubsystem::Stop() {
-  // ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Stopping %s",
-  // "");
+  ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Stopping %s",
+                                          "");
   m_leftIntakeSpinnyBoy.Set(0);
   m_rightIntakeSpinnyBoy.Set(0);
 }
@@ -33,12 +33,15 @@ void IntakeSubsystem::Feed(ScoringDirection direction) {
   switch (direction) {
     case ScoringDirection::AmpSide: {
       In(IntakingConstants::kFeedAmpSpeed);
+      break;
     }
     case ScoringDirection::SpeakerSide: {
       In(IntakingConstants::kFeedSpeakerSpeed);
+      break;
     }
     case ScoringDirection::Subwoofer: {
       In(IntakingConstants::kFeedSubwooferSpeed);
+      break;
     }
   }
 }

@@ -10,7 +10,7 @@ class ISingleAxisSubsystem : public frc2::SubsystemBase {
   // Need controller input
   virtual void RunMotorSpeed(double speed, bool ignoreEncoder) = 0;
   virtual void RunMotorSpeedDefault(bool invertDirection) = 0;
-  virtual void RunMotorExternal(double speed) = 0;
+  virtual void RunMotorExternal(double speed, bool ignoreEncoder = false) = 0;
   virtual void UpdateMovement() = 0;
   virtual void ResetEncoder() = 0;
   virtual double GetCurrentPosition() = 0;

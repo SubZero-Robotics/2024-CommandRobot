@@ -72,15 +72,24 @@ frc2::CommandPtr StateSubsystem::RunState() {
 frc2::CommandPtr StateSubsystem::StartIntaking() {
   return m_subsystems.led->ShowFromState([] { return RobotState::Intaking; })
       .AndThen(
-          IntakeIn(m_subsystems.intake)
-              .ToPtr()
+          IntakingCommands::Intake(m_subsystems.intake)
               .RaceWith(DriveVelocity(0_deg, 2_mps, m_subsystems.drive)
                             .ToPtr()
                             .Repeatedly())
+              .Until([this] {
+                return m_subsystems.intake->NotePresentUpper() &&
+                       m_subsystems.intake->NotePresentLower();
+              })
+              .FinallyDo([this] {
+                auto chassisSpeeds = frc::ChassisSpeeds::Discretize(
+                    0_mps, 0_mps, AutoConstants::kMaxAngularSpeed,
+                    DriveConstants::kLoopTime);
+                m_subsystems.drive->Drive(chassisSpeeds);
+              })
               // TODO: Put this in the "Loaded" state also have the intensity
               // vary based on if a note was successfully intooketh or not
-              .AndThen(ControllerCommands::Rumble(&m_driverController,
-                                                  [] { return 1_s; }))
+              // .AndThen(ControllerCommands::Rumble(&m_driverController,
+              //                                     [] { return 1_s; }))
               .WithTimeout(5_s));
 }
 
