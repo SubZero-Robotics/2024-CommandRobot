@@ -81,6 +81,8 @@ class StateSubsystem : public frc2::SubsystemBase {
 
   frc2::CommandPtr StartClimb();
 
+  frc2::CommandPtr StartSource();
+
   inline RobotState GetState() const { return m_currentState; }
 
   frc2::CommandPtr m_cmd = frc2::InstantCommand([] {}).ToPtr();
@@ -98,6 +100,12 @@ class StateSubsystem : public frc2::SubsystemBase {
         return FinalLocation::CenterStage;
       case RobotState::ClimbStageRight:
         return FinalLocation::StageRight;
+      case RobotState::SourceLeft:
+        return FinalLocation::Source1;
+      case RobotState::SourceCenter:
+        return FinalLocation::Source2;
+      case RobotState::SourceRight:
+        return FinalLocation::Source3;
       default:
         return FinalLocation::Source1;
     }

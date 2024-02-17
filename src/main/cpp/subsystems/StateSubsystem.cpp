@@ -64,8 +64,19 @@ frc2::CommandPtr StateSubsystem::RunState() {
           .Until(std::bind(&StateSubsystem::IsControllerActive, this))
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
+    case RobotState::SourceLeft:
+    case RobotState::SourceCenter:
+    case RobotState::SourceRight:
+      return StartSource()
+          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
     default:
-      return m_subsystems.led->Error();
+      return m_subsystems.led->Error()
+          .AndThen(frc2::WaitCommand(1_s).ToPtr())
+          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
   }
 }
 
@@ -179,6 +190,19 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
       .AndThen(BalanceCommand(m_subsystems.drive, m_subsystems.leftClimb,
                               m_subsystems.rightClimb)
                    .ToPtr())
+      .WithTimeout(20_s);
+}
+
+frc2::CommandPtr StateSubsystem::StartSource() {
+  /*
+     Signal that we about to go to the source
+     Use on the fly PP to go to approx. location
+     Use pre-made PP path to orient robot and drive forward
+  */
+
+  return m_subsystems.led->Intaking()
+      .AndThen(PathFactory::GetPathFromFinalLocation(
+          [this] { return GetFinalFromState(); }, m_subsystems.drive))
       .WithTimeout(20_s);
 }
 

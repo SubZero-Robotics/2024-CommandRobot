@@ -43,9 +43,9 @@ RobotContainer::RobotContainer() {
   // Configure the button bindings
   ConfigureButtonBindings();
 
-// Set up default drive command
-// The left stick controls translation of the robot.
-// Turning is controlled by the X axis of the right stick.
+  // Set up default drive command
+  // The left stick controls translation of the robot.
+  // Turning is controlled by the X axis of the right stick.
 
   m_drive.SetDefaultCommand(frc2::RunCommand(
       [this] {
@@ -234,6 +234,38 @@ void RobotContainer::ConfigureAutoBindings() {
                                               m_state.SetDesiredState();
                                             }
                                           }).ToPtr());
+
+  m_operatorController.Button(15).OnTrue(frc2::InstantCommand([this] {
+                                           if (!m_state.m_active) {
+                                             m_state.m_currentState =
+                                                 RobotState::SourceLeft;
+                                             m_state.SetDesiredState();
+                                           }
+                                         }).ToPtr());
+
+  m_operatorController.Button(16).OnTrue(frc2::InstantCommand([this] {
+                                           if (!m_state.m_active) {
+                                             m_state.m_currentState =
+                                                 RobotState::SourceCenter;
+                                             m_state.SetDesiredState();
+                                           }
+                                         }).ToPtr());
+
+  m_operatorController.Button(17).OnTrue(frc2::InstantCommand([this] {
+                                           if (!m_state.m_active) {
+                                             m_state.m_currentState =
+                                                 RobotState::SourceRight;
+                                             m_state.SetDesiredState();
+                                           }
+                                         }).ToPtr());
+
+  m_operatorController.Button(18).OnTrue(frc2::InstantCommand([this] {
+                                           if (!m_state.m_active) {
+                                             m_state.m_currentState =
+                                                 RobotState::Funni;
+                                             m_state.SetDesiredState();
+                                           }
+                                         }).ToPtr());
 
   m_operatorController.Button(19).OnTrue(
       BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());

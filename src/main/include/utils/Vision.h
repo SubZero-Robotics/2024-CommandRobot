@@ -55,8 +55,8 @@ class Vision {
       lastEstTimestamp = latestTimestamp;
     }
 
-    ConsoleLogger::getInstance().logVerbose("Vision", "Camera 1 ambiguiutey %f", camera1am);
-    ConsoleLogger::getInstance().logVerbose("Vision", "Camera 2 ambiguiutey %f", camera2am);
+    // ConsoleLogger::getInstance().logVerbose("Vision", "Camera 1 ambiguiutey %f", camera1am);
+    // ConsoleLogger::getInstance().logVerbose("Vision", "Camera 2 ambiguiutey %f", camera2am);
     return camera1am > camera2am ? visionEst2 : visionEst;
   }
 
