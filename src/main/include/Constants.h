@@ -169,9 +169,9 @@ extern const frc::TrapezoidProfile<units::radians>::Constraints
 const std::string kDefaultAutoName = "Leave Wing";
 
 const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
-    pathplanner::PIDConstants(0.5, 0.0,
+    pathplanner::PIDConstants(0.9, 0.0,
                               0.0),            // Translation PID constants
-    pathplanner::PIDConstants(0.5, 0.0, 0.0),  // Rotation PID constants
+    pathplanner::PIDConstants(0.8, 0.0, 0.0),  // Rotation PID constants
     3.0_mps,                                   // Max module speed, in m/s
 #ifdef TEST_SWERVE_BOT
     0.4579874_m,  // Drive base radius in meters. Distance from robot center to
