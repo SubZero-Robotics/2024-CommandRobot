@@ -261,7 +261,7 @@ constexpr int kTicksPerMotorRotation = 42;
 
 namespace IntakingConstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = -0.8;
+constexpr double kIntakeSpeed = -0.7;
 constexpr double kFeedAmpSpeed = -0.5;
 constexpr double kFeedSpeakerSpeed = -1;
 constexpr double kFeedSubwooferSpeed = -1;
@@ -367,7 +367,7 @@ static const frc::Transform3d kRobotToCam{
     frc::Rotation3d{0_rad, 0.654_rad, 0_rad}};
 static const frc::Transform3d kRobotToCam2{
     frc::Translation3d{0.583_in, 2.651_in, 23.252_in},
-    frc::Rotation3d{0_deg, 65.15_deg, 180_deg}};
+    frc::Rotation3d{0_deg, (180_deg - 24.925_deg), 0_deg}};
 constexpr photon::PoseStrategy kPoseStrategy =
     photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
 static const frc::AprilTagFieldLayout kTagLayout{
@@ -397,7 +397,7 @@ constexpr double kClimbStepSize = 1;
 constexpr double kClimbHomingSpeed = 1;
 constexpr int kTicksPerMotorRotation = 42;
 
-constexpr double kCLimberExtendSpeed = 0.6;
+constexpr double kCLimberExtendSpeed = 1;
 
 // Distance between left and right arm centers
 constexpr units::meter_t kClimberOffsetDistance = 4_m;

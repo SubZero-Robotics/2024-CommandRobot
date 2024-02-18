@@ -43,9 +43,9 @@ RobotContainer::RobotContainer() {
   // Configure the button bindings
   ConfigureButtonBindings();
 
-// Set up default drive command
-// The left stick controls translation of the robot.
-// Turning is controlled by the X axis of the right stick.
+  // Set up default drive command
+  // The left stick controls translation of the robot.
+  // Turning is controlled by the X axis of the right stick.
 
   m_drive.SetDefaultCommand(frc2::RunCommand(
       [this] {
@@ -82,8 +82,7 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureButtonBindings() {
-  frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kRightBumper)
+  frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kStart)
       .WhileTrue(new frc2::RunCommand(
           [this] {
             m_drive.SetX();

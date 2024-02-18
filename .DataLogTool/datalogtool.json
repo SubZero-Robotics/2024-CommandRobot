@@ -1,5 +1,9 @@
 {
   "download": {
-    "serverTeam": "10.99.93.2"
+    "localDir": "C:\\Users\\SubZero\\Documents\\robot_logs\\pre-week-0-logs\\Week 0",
+    "serverTeam": "10.56.90.2"
+  },
+  "output": {
+    "outputFolder": "C:\\Users\\SubZero\\Documents\\robot_logs\\pre-week-0-logs"
   }
 }
