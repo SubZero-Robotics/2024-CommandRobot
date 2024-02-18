@@ -422,6 +422,10 @@ enum class RobotState {
   ClimbStageLeft,
   ClimbStageCenter,
   ClimbStageRight,
+  SourceLeft,
+  SourceCenter,
+  SourceRight,
+  Funni,
 };
 
 typedef std::function<RobotState()> StateGetter;

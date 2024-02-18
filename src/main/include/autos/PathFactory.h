@@ -61,6 +61,17 @@ class PathFactory {
     auto& approxPose = OnTheFlyFactory::GetApproxLocation(location);
     frc::Pose2d betterapprox = approxPose;
     ConsoleLogger::getInstance().logInfo("PATH factory", betterapprox);
+    if (ShouldFlip(location)) {
+      return pathplanner::AutoBuilder::pathfindToPoseFlipped(
+          approxPose,
+          pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
+                                       720_deg_per_s_sq},
+          0.0_mps,  // Goal end velocity in meters/sec
+          0.0_m     // Rotation delay distance in meters. This is how far
+                    // the robot should travel before attempting to rotate.
+      );
+    }
+
     return pathplanner::AutoBuilder::pathfindToPose(
         approxPose,
         pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
@@ -85,7 +96,7 @@ class PathFactory {
                [location]() {
                  // todo, flip if is source
                  // reverse that if on red alliance
-                 return PathFactory::ShouldFlip(location);
+                 return ShouldFlip(location);
                },
                {drive})
         .ToPtr();
