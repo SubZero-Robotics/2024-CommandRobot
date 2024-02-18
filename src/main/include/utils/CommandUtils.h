@@ -37,6 +37,8 @@ using namespace ScoringConstants;
 static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                               ScoringSubsystem* scoring,
                               IntakeSubsystem* intake) {
+  // TODO: Shuffle the note down first and then feed it to the shooter via Feed
+  // after ramping is done
   return (FlywheelRamp(intake, scoring, direction)
               .ToPtr()
               .AndThen(frc2::InstantCommand([] {
@@ -82,5 +84,78 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem) {
       .FinallyDo([intakeSubsystem] { intakeSubsystem->Stop(); });
 }
 
-// TODO: Make a method to shuffle the note down and then feed it to the shooter
 }  // namespace IntakingCommands
+
+namespace FunniCommands {
+static frc2::CommandPtr FeedUntilNotPresent(IntakeSubsystem* intake,
+                                            ScoringSubsystem* scoring,
+                                            ScoringDirection direction) {
+  return frc2::InstantCommand([] {
+           ConsoleLogger::getInstance().logVerbose("Gamepiece Funni",
+                                                   "Feeding to top%s", "");
+         })
+      .ToPtr()
+      .AndThen(Feed(intake, scoring, [direction] { return direction; }).ToPtr())
+      .Until([intake] { return !intake->NotePresentUpper(); })
+      .FinallyDo([intake, scoring] {
+        intake->Stop();
+        scoring->Stop();
+      });
+}
+static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
+                                            ScoringSubsystem* scoring,
+                                            ScoringDirection direction) {
+  return frc2::InstantCommand([] {
+           ConsoleLogger::getInstance().logVerbose("Gamepiece Funni",
+                                                   "Outtaking down%s", "");
+         })
+      .ToPtr()
+      .AndThen(frc2::InstantCommand([intake, scoring, direction] {
+                 intake->Out(0.2);
+                 scoring->SpinVectorSide(direction);
+               }).ToPtr())
+      .Until([intake] { return intake->NotePresentLower(); })
+      .FinallyDo([intake, scoring] {
+        intake->Stop();
+        scoring->Stop();
+      });
+}
+
+/*
+Rainbow color
+
+Cycle through:
+- Feed to Amp side until top note not present
+- Outtake until bottom note present
+- Feed to Speaker side until top note not present
+- Outtake until bottom note present
+Unless note not present to begin with
+Timeout of 20 seconds
+Finally stop all motors
+*/
+
+static frc2::CommandPtr Funni(IntakeSubsystem* intake,
+                              ScoringSubsystem* scoring, LedSubsystem* leds) {
+  return (frc2::InstantCommand([] {
+            ConsoleLogger::getInstance().logVerbose("Gamepiece Funni",
+                                                    "Started%s", "");
+          })
+              .ToPtr()
+              .AndThen(leds->Funni())
+              .AndThen(FeedUntilNotPresent(intake, scoring,
+                                           ScoringDirection::AmpSide))
+              .AndThen(OuttakeUntilPresent(intake, scoring,
+                                           ScoringDirection::SpeakerSide))
+              .AndThen(FeedUntilNotPresent(intake, scoring,
+                                           ScoringDirection::SpeakerSide))
+              .AndThen(OuttakeUntilPresent(intake, scoring,
+                                           ScoringDirection::AmpSide)))
+      .Repeatedly()
+      .Unless([intake] { return !intake->NotePresent(); })
+      .WithTimeout(20_s)
+      .FinallyDo([intake, scoring] {
+        intake->Stop();
+        scoring->Stop();
+      });
+}
+}  // namespace FunniCommands

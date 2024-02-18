@@ -83,6 +83,8 @@ class StateSubsystem : public frc2::SubsystemBase {
 
   frc2::CommandPtr StartSource();
 
+  frc2::CommandPtr StartFunni();
+
   inline RobotState GetState() const { return m_currentState; }
 
   frc2::CommandPtr m_cmd = frc2::InstantCommand([] {}).ToPtr();

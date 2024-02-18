@@ -71,6 +71,11 @@ frc2::CommandPtr StateSubsystem::RunState() {
           .Until(std::bind(&StateSubsystem::IsControllerActive, this))
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
+    case RobotState::Funni:
+      return StartFunni()
+          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
     default:
       return m_subsystems.led->Error()
           .AndThen(frc2::WaitCommand(1_s).ToPtr())
@@ -204,6 +209,11 @@ frc2::CommandPtr StateSubsystem::StartSource() {
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [this] { return GetFinalFromState(); }, m_subsystems.drive))
       .WithTimeout(20_s);
+}
+
+frc2::CommandPtr StateSubsystem::StartFunni() {
+  return FunniCommands::Funni(m_subsystems.intake, m_subsystems.scoring,
+                              m_subsystems.led);
 }
 
 bool StateSubsystem::IsControllerActive() {

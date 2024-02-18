@@ -32,6 +32,7 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr Loaded();
   frc2::CommandPtr Idling();
   frc2::CommandPtr Climbing();
+  frc2::CommandPtr Funni();
   frc2::CommandPtr Error();
 
  private:
