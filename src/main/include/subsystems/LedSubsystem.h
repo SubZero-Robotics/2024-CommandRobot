@@ -35,6 +35,9 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr Funni();
   frc2::CommandPtr Error();
 
+  void IdlingAsync();
+  void ErrorAsync();
+
  private:
   enum class LedZone {
     Back = 0,

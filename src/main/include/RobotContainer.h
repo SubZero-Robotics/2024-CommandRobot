@@ -40,6 +40,7 @@ class RobotContainer {
   frc2::Command* GetAutonomousCommand();
 
   void ClearCurrentStateCommand();
+  void StartIdling();
 
  private:
   // The driver's controller

@@ -90,60 +90,54 @@ void RobotContainer::ConfigureButtonBindings() {
           },
           {&m_drive}));
 
-  //   frc2::JoystickButton(&m_driverController,
-  //   frc::XboxController::Button::kY)
-  //       .OnTrue(pathplanner::AutoBuilder::pathfindToPose(
-  //           frc::Pose2d{1.5_m, 5.5_m, 0_rad},
-  //           pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
-  //                                        720_deg_per_s_sq},
-  //           0.0_mps,  // Goal end velocity in meters/sec
-  //           0.0_m     // Rotation delay distance in meters. This is how far
-  //                     // the robot should travel before attempting to rotate.
-  //           ));
-
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
-      .WhileTrue(ExtendClimbCommand(
-                     &m_leftClimb,
-                     [this] { return m_driverController.GetLeftTriggerAxis(); },
-                     [this] { return 0; })
-                     .ToPtr());
+      .WhileTrue(m_leds.Climbing().AndThen(
+          ExtendClimbCommand(
+              &m_leftClimb,
+              [this] { return m_driverController.GetLeftTriggerAxis(); },
+              [this] { return 0; })
+              .ToPtr()));
 
   m_driverController.RightTrigger(OIConstants::kDriveDeadband)
-      .WhileTrue(
+      .WhileTrue(m_leds.Climbing().AndThen(
           ExtendClimbCommand(
               &m_rightClimb,
               [this] { return m_driverController.GetRightTriggerAxis(); },
               [this] { return 0; })
-              .ToPtr());
+              .ToPtr()));
 
-  // TODO: Bind to the better intake
-  m_driverController.B().WhileTrue(IntakingCommands::Intake(&m_intake));
+  m_driverController.B().WhileTrue(
+      m_leds.Intaking()
+          .AndThen(IntakingCommands::Intake(&m_intake))
+          .AndThen(m_leds.Loaded()));
 
-  //   m_driverController.X().WhileTrue(ScoringCommands::Score(
-  //       [] { return ScoringDirection::SpeakerSide; }, &m_scoring,
-  //       &m_intake));
+  m_driverController.X().WhileTrue(m_leds.ScoringSpeaker().AndThen(
+      ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
+                             &m_scoring, &m_intake)));
 
-  m_driverController.X().WhileTrue(ScoringCommands::Score(
-      [] { return ScoringDirection::SpeakerSide; }, &m_scoring, &m_intake));
+  m_driverController.A().WhileTrue(
+      m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
+          [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake)));
 
-  m_driverController.A().OnTrue(ScoringCommands::Score(
-      [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake));
-
-  m_driverController.Y().OnTrue(ScoringCommands::Score(
-      [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake));
+  m_driverController.Y().WhileTrue(
+      m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
+          [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake)));
 
   m_driverController.LeftBumper()
-      .WhileTrue(ExtendClimbCommand(
-                     &m_leftClimb, [this] { return 0; },
-                     [this] { return ClimbConstants::kCLimberExtendSpeed; })
-                     .ToPtr())
-      .WhileTrue(ExtendClimbCommand(
-                     &m_rightClimb, [this] { return 0; },
-                     [this] { return ClimbConstants::kCLimberExtendSpeed; })
-                     .ToPtr());
+      .WhileTrue(m_leds.Climbing().AndThen(
+          ExtendClimbCommand(
+              &m_leftClimb, [this] { return 0; },
+              [this] { return ClimbConstants::kCLimberExtendSpeed; })
+              .ToPtr()))
+      .WhileTrue(m_leds.Climbing().AndThen(
+          ExtendClimbCommand(
+              &m_rightClimb, [this] { return 0; },
+              [this] { return ClimbConstants::kCLimberExtendSpeed; })
+              .ToPtr()));
 
-  m_driverController.RightBumper().WhileTrue(IntakeOut(&m_intake).ToPtr());
+  m_driverController.RightBumper().WhileTrue(
+      m_leds.Intaking().AndThen(IntakeOut(&m_intake).ToPtr()));
 
   ConfigureAutoBindings();
 #endif
@@ -278,4 +272,12 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
   return m_chooser.GetSelected();
 }
 
-void RobotContainer::ClearCurrentStateCommand() { m_state.m_active = false; }
+void RobotContainer::ClearCurrentStateCommand() {
+  m_state.m_active = false;
+  m_leds.ErrorAsync();
+}
+
+void RobotContainer::StartIdling() {
+  m_state.m_active = false;
+  m_leds.IdlingAsync();
+}

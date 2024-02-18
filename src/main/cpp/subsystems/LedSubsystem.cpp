@@ -170,35 +170,35 @@ frc2::CommandPtr LedSubsystem::Loaded() {
 }
 
 frc2::CommandPtr LedSubsystem::Idling() {
-  return frc2::InstantCommand([this] {
-           m_notifier.Stop();
-           m_notifier.SetCallback([this] {
-             ConsoleLogger::getInstance().logInfo(
-                 "LedSubsystem", "Setting LEDs to %s", "Idling");
-             setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
-                                      ColorConstants::kBlue,
-                                      PatternType::Breathe, false, 10, false);
-             delaySeconds(kConnectorXDelay);
-             setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
-                                      ColorConstants::kBlue,
-                                      PatternType::Breathe, false, 10, false);
-             delaySeconds(kConnectorXDelay);
-             setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
-                                      ColorConstants::kBlue,
-                                      PatternType::Breathe, false, 10, false);
-             delaySeconds(kConnectorXDelay);
-             setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
-                                      ColorConstants::kBlue,
-                                      PatternType::Breathe, false, 10, false);
-             delaySeconds(kConnectorXDelay);
-             m_connectorX.syncZones(
-                 LedConstants::kIntakeLedPort,
-                 {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
-                  (uint8_t)LedZone::Front, (uint8_t)LedZone::Back});
-           });
-           m_notifier.StartSingle(0_s);
-         })
-      .ToPtr();
+  return frc2::InstantCommand([this] { IdlingAsync(); }).ToPtr();
+}
+
+void LedSubsystem::IdlingAsync() {
+  m_notifier.Stop();
+  m_notifier.SetCallback([this] {
+    ConsoleLogger::getInstance().logInfo("LedSubsystem", "Setting LEDs to %s",
+                                         "Idling");
+    setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
+                             ColorConstants::kBlue, PatternType::Breathe, false,
+                             10, false);
+    delaySeconds(kConnectorXDelay);
+    setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
+                             ColorConstants::kBlue, PatternType::Breathe, false,
+                             10, false);
+    delaySeconds(kConnectorXDelay);
+    setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
+                             ColorConstants::kBlue, PatternType::Breathe, false,
+                             10, false);
+    delaySeconds(kConnectorXDelay);
+    setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
+                             ColorConstants::kBlue, PatternType::Breathe, false,
+                             10, false);
+    delaySeconds(kConnectorXDelay);
+    m_connectorX.syncZones(LedConstants::kIntakeLedPort,
+                           {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
+                            (uint8_t)LedZone::Front, (uint8_t)LedZone::Back});
+  });
+  m_notifier.StartSingle(0_s);
 }
 
 frc2::CommandPtr LedSubsystem::Climbing() {
@@ -208,22 +208,20 @@ frc2::CommandPtr LedSubsystem::Climbing() {
              ConsoleLogger::getInstance().logInfo(
                  "LedSubsystem", "Setting LEDs to %s", "Climbing");
              setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
-                                      ColorConstants::kBlue,
-                                      PatternType::SineRoll, false, 10, false);
+                                      ColorConstants::kGreen,
+                                      PatternType::Chase, false, 50, false);
              delaySeconds(kConnectorXDelay);
-             setZoneColorPatternAsync(LedZone::Right,
-                                      LedConstants::kIdleLedPort,
-                                      ColorConstants::kBlue,
-                                      PatternType::SineRoll, false, 10, false);
+             setZoneColorPatternAsync(
+                 LedZone::Right, LedConstants::kIdleLedPort,
+                 ColorConstants::kGreen, PatternType::Chase, false, 50, false);
              delaySeconds(kConnectorXDelay);
-             setZoneColorPatternAsync(LedZone::Front,
-                                      LedConstants::kIdleLedPort,
-                                      ColorConstants::kYellow,
-                                      PatternType::SineRoll, false, 10, false);
+             setZoneColorPatternAsync(
+                 LedZone::Front, LedConstants::kIdleLedPort,
+                 ColorConstants::kGreen, PatternType::Chase, false, 50, false);
              delaySeconds(kConnectorXDelay);
              setZoneColorPatternAsync(LedZone::Back, LedConstants::kIdleLedPort,
-                                      ColorConstants::kYellow,
-                                      PatternType::SineRoll, false, 10, false);
+                                      ColorConstants::kGreen,
+                                      PatternType::Chase, false, 50, false);
              delaySeconds(kConnectorXDelay);
              m_connectorX.syncZones(
                  LedConstants::kIntakeLedPort,
@@ -271,35 +269,35 @@ frc2::CommandPtr LedSubsystem::Funni() {
 }
 
 frc2::CommandPtr LedSubsystem::Error() {
-  return frc2::InstantCommand([this] {
-           m_notifier.Stop();
-           m_notifier.SetCallback([this] {
-             ConsoleLogger::getInstance().logInfo(
-                 "LedSubsystem", "Setting LEDs to %s", "Error");
-             setZoneColorPatternAsync(
-                 LedZone::Left, LedConstants::kIntakeLedPort,
-                 ColorConstants::kRed, PatternType::Blink, false, 400, false);
-             delaySeconds(kConnectorXDelay);
-             setZoneColorPatternAsync(
-                 LedZone::Right, LedConstants::kIntakeLedPort,
-                 ColorConstants::kRed, PatternType::Blink, false, 400, true);
-             delaySeconds(kConnectorXDelay);
-             setZoneColorPatternAsync(
-                 LedZone::Front, LedConstants::kIntakeLedPort,
-                 ColorConstants::kRed, PatternType::Blink, false, 400, false);
-             delaySeconds(kConnectorXDelay);
-             setZoneColorPatternAsync(
-                 LedZone::Back, LedConstants::kIntakeLedPort,
-                 ColorConstants::kRed, PatternType::Blink, false, 400, false);
-             delaySeconds(kConnectorXDelay);
-             m_connectorX.syncZones(
-                 LedConstants::kIntakeLedPort,
-                 {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
-                  (uint8_t)LedZone::Front, (uint8_t)LedZone::Back});
-           });
-           m_notifier.StartSingle(0_s);
-         })
-      .ToPtr();
+  return frc2::InstantCommand([this] { ErrorAsync(); }).ToPtr();
+}
+
+void LedSubsystem::ErrorAsync() {
+  m_notifier.Stop();
+  m_notifier.SetCallback([this] {
+    ConsoleLogger::getInstance().logInfo("LedSubsystem", "Setting LEDs to %s",
+                                         "Error");
+    setZoneColorPatternAsync(LedZone::Left, LedConstants::kIntakeLedPort,
+                             ColorConstants::kRed, PatternType::Blink, false,
+                             400, false);
+    delaySeconds(kConnectorXDelay);
+    setZoneColorPatternAsync(LedZone::Right, LedConstants::kIntakeLedPort,
+                             ColorConstants::kRed, PatternType::Blink, false,
+                             400, true);
+    delaySeconds(kConnectorXDelay);
+    setZoneColorPatternAsync(LedZone::Front, LedConstants::kIntakeLedPort,
+                             ColorConstants::kRed, PatternType::Blink, false,
+                             400, false);
+    delaySeconds(kConnectorXDelay);
+    setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
+                             ColorConstants::kRed, PatternType::Blink, false,
+                             400, false);
+    delaySeconds(kConnectorXDelay);
+    m_connectorX.syncZones(LedConstants::kIntakeLedPort,
+                           {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
+                            (uint8_t)LedZone::Front, (uint8_t)LedZone::Back});
+  });
+  m_notifier.StartSingle(0_s);
 }
 
 frc2::CommandPtr LedSubsystem::setZoneColorPattern(LedZone zone, LedPort port,
