@@ -211,6 +211,9 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
         return;
       }
 
+      ShuffleboardLogger::getInstance().logVerbose(_prefix, "amperage %f", _motor.GetOutputCurrent(), "");
+      ConsoleLogger::getInstance().logVerbose(_prefix, "amperage %f", _motor.GetOutputCurrent(), "");
+
       RunMotorSpeed(clampedRes);
     }
   }
