@@ -82,13 +82,12 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureButtonBindings() {
-  m_driverController.Start()
-      .WhileTrue(new frc2::RunCommand(
-          [this] {
-            m_drive.SetX();
-            // ConsoleLogger::getInstance().logVerbose("Drive", "SetX %s", "");
-          },
-          {&m_drive}));
+  m_driverController.Start().WhileTrue(new frc2::RunCommand(
+      [this] {
+        m_drive.SetX();
+        // ConsoleLogger::getInstance().logVerbose("Drive", "SetX %s", "");
+      },
+      {&m_drive}));
 
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
@@ -137,7 +136,7 @@ void RobotContainer::ConfigureButtonBindings() {
               .ToPtr()));
 
   m_driverController.RightBumper().WhileTrue(
-      m_leds.Intaking().AndThen(IntakeOut(&m_intake).ToPtr()));
+      m_leds.Intaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
 
   ConfigureAutoBindings();
 #endif

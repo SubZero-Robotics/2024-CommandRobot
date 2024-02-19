@@ -298,6 +298,8 @@ constexpr double kSpeakerUpperSpeed = -0.75;
 constexpr double kSubwooferLowerSpeed = 0.95;
 constexpr double kSubwooferUpperSpeed = -kSubwooferLowerSpeed;
 
+constexpr double kScoringOutakeSpeed = -0.2;
+
 enum class ScoreState {
   FlywheelRamp,
   Feeding,
