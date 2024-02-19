@@ -43,7 +43,7 @@ class ScoringSubsystem : public frc2::SubsystemBase {
    */
   bool GetMotorFreeWheel(ScoringDirection);
 
-  void SpinOuttake();
+  void SpinOutake();
 
  private:
   void SpinAmp();

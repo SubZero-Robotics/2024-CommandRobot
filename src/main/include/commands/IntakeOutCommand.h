@@ -20,7 +20,7 @@ class IntakeOut : public frc2::CommandHelper<frc2::Command, IntakeOut> {
 
   void Execute() override {
     m_intake->Out();
-    m_scoring->SpinOuttake();
+    m_scoring->SpinOutake();
   }
 
   bool IsFinished() override { return isFinished; }
