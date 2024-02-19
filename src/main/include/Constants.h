@@ -295,7 +295,7 @@ constexpr double kSpeakerUpperSpeed = -0.75;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = 1 * 0.95;
+constexpr double kSubwooferLowerSpeed = 0.95;
 constexpr double kSubwooferUpperSpeed = -kSubwooferLowerSpeed;
 
 enum class ScoreState {
@@ -386,7 +386,7 @@ constexpr double kClimberSetI = 0;
 constexpr double kClimberSetD = 0;
 
 // Maximum arm extension distance
-constexpr double kMaxArmDistance = 1000;
+constexpr double kMaxArmDistance = 20;
 // Arm climbing position
 constexpr double kClimbExtensionPosition = 5;
 // Arm retracted position

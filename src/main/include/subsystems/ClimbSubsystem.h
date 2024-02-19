@@ -22,7 +22,7 @@ class ClimbSubsystem
 
   double GetCurrentPosition() override {
     auto curPosition = _enc.GetPosition() * _config.distancePerRevolution;
-    // ConsoleLogger::getInstance().logVerbose("Clinb Sbubby", "cur position
+    // ConsoleLogger::getInstance().logVerbose("Climbing Subsystem", "current position
     // %f", curPosition);
     return curPosition;
   }

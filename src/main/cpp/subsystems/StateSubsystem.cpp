@@ -161,7 +161,7 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
 }
 
 frc2::CommandPtr StateSubsystem::StartManual() {
-  /*p
+  /*
      Signal that we are in manual
      (Call after automated commands or after manual intervention from driver 1)
   */

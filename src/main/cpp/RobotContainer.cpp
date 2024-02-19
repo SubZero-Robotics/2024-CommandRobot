@@ -82,11 +82,11 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureButtonBindings() {
-  frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kStart)
+  m_driverController.Start()
       .WhileTrue(new frc2::RunCommand(
           [this] {
             m_drive.SetX();
-            ConsoleLogger::getInstance().logVerbose("Drive", "SetX %s", "");
+            // ConsoleLogger::getInstance().logVerbose("Drive", "SetX %s", "");
           },
           {&m_drive}));
 
