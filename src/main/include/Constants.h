@@ -17,7 +17,7 @@
 #include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
 #include <pathplanner/lib/util/PIDConstants.h>
 #include <pathplanner/lib/util/ReplanningConfig.h>
-#include <photonlib/PhotonPoseEstimator.h>
+#include <photon/PhotonPoseEstimator.h>
 #include <rev/CANSparkMax.h>
 #include <units/acceleration.h>
 #include <units/angular_acceleration.h>
@@ -45,7 +45,7 @@
 namespace DriveConstants {
 // Driving Parameters - Note that these are not the maximum capable speeds of
 // the robot, rather the allowed maximum speeds
-constexpr units::meters_per_second_t kMaxSpeed = 2.4_mps;
+constexpr units::meters_per_second_t kMaxSpeed = 3.9_mps;
 constexpr units::radians_per_second_t kMaxAngularSpeed{2 * std::numbers::pi};
 
 constexpr double kDirectionSlewRate = 1.2;   // radians per second
@@ -169,9 +169,9 @@ extern const frc::TrapezoidProfile<units::radians>::Constraints
 const std::string kDefaultAutoName = "Leave Wing";
 
 const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
-    pathplanner::PIDConstants(0.5, 0.0,
+    pathplanner::PIDConstants(0.9, 0.0,
                               0.0),            // Translation PID constants
-    pathplanner::PIDConstants(0.5, 0.0, 0.0),  // Rotation PID constants
+    pathplanner::PIDConstants(0.8, 0.0, 0.0),  // Rotation PID constants
     3.0_mps,                                   // Max module speed, in m/s
 #ifdef TEST_SWERVE_BOT
     0.4579874_m,  // Drive base radius in meters. Distance from robot center to
@@ -239,11 +239,12 @@ const std::map<FinalLocation, std::string> PoseToPath{
 namespace OIConstants {
 constexpr int kDriverControllerPort = 0;
 constexpr int kOperatorControllerPort = 1;
-constexpr double kDriveDeadband = 0.5;
+constexpr double kDriveDeadband = 0.05;
 constexpr double kVibrationIntensity = 1;
 }  // namespace OIConstants
 
 constexpr uint8_t kLedAddress = 23;
+constexpr units::second_t kConnectorXDelay = 0.1_s;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
@@ -258,13 +259,21 @@ constexpr int kSpeakerUpperSpinnyBoiId = 19;
 constexpr int kTicksPerMotorRotation = 42;
 }  // namespace CANSparkMaxConstants
 
-namespace Intakeconstants {
+namespace IntakingConstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = 0.7;
-constexpr double kOutakeSpeed = -0.4;
+constexpr double kIntakeSpeed = -0.7;
+constexpr double kFeedAmpSpeed = -0.5;
+constexpr double kFeedSpeakerSpeed = -1;
+constexpr double kFeedSubwooferSpeed = -1;
 
-constexpr uint8_t kBeamBreakDigitalPort = 2;
-}  // namespace Intakeconstants
+constexpr double kOutakeSpeed = 0.5;
+
+constexpr double kSecondaryIntakeOutSpeed = 0.05;
+
+constexpr uint8_t kUpperBeamBreakDigitalPort = 2;
+constexpr uint8_t kLowerBeamBreakDigitalPort = 3;
+
+}  // namespace IntakingConstants
 
 namespace ScoringConstants {
 constexpr double kFreeSpinCurrentThreshold = 90;
@@ -276,17 +285,17 @@ constexpr double kVectorSpeed = 0.1;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kAmpLowerSpeed = (-0.4) * 0.66;  //.21
-constexpr double kAmpUpperSpeed = (0.27) * 0.66;  //.27
+constexpr double kAmpLowerSpeed = 0.254;   //.264
+constexpr double kAmpUpperSpeed = -0.168;  //.278
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kSpeakerLowerSpeed = 1;
-constexpr double kSpeakerUpperSpeed = -kSpeakerLowerSpeed;
+constexpr double kSpeakerUpperSpeed = -0.75;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = -1;
+constexpr double kSubwooferLowerSpeed = 0.95;
 constexpr double kSubwooferUpperSpeed = -kSubwooferLowerSpeed;
 
 enum class ScoreState {
@@ -304,7 +313,7 @@ constexpr double kD = 0;
 constexpr double kIZone = 0;
 constexpr double kFF = 0;
 
-} // namespace SpeakerPID
+}  // namespace SpeakerPID
 
 namespace AmpUpperPID {
 constexpr double kP = 1;
@@ -313,7 +322,7 @@ constexpr double kD = 0;
 constexpr double kIZone = 0;
 constexpr double kFF = 0;
 
-} // namespace SpeakerPID
+}  // namespace AmpUpperPID
 
 namespace AmpLowerPID {
 constexpr double kP = 1;
@@ -322,7 +331,7 @@ constexpr double kD = 0;
 constexpr double kIZone = 0;
 constexpr double kFF = 0;
 
-} // namespace SpeakerPID
+}  // namespace AmpLowerPID
 }  // namespace ScoringConstants
 
 namespace ArmConstants {
@@ -351,12 +360,16 @@ constexpr double kWristSetFF = 0.000015;
 
 // TODO: CREATE ACTUAL ROBOT VALUES FOR THESE
 namespace VisionConstants {
-static constexpr std::string_view kCameraName{"PhotonVision"};
+static constexpr std::string_view kFrontCamera{"PhotonVision"};
+static constexpr std::string_view kRearCamera{"Photonvision2"};
 static const frc::Transform3d kRobotToCam{
-    frc::Translation3d{0.5_m, 0.0_m, 0.5_m},
-    frc::Rotation3d{0_rad, 0_rad, 0_rad}};
-constexpr photonlib::PoseStrategy kPoseStrategy =
-    photonlib::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
+    frc::Translation3d{0.132_m, -0.013_m, 0.607_m},
+    frc::Rotation3d{0_rad, 0.654_rad, 0_rad}};
+static const frc::Transform3d kRobotToCam2{
+    frc::Translation3d{0.583_in, 2.651_in, 23.252_in},
+    frc::Rotation3d{0_deg, (180_deg - 24.925_deg), 0_deg}};
+constexpr photon::PoseStrategy kPoseStrategy =
+    photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
 static const frc::AprilTagFieldLayout kTagLayout{
     frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo)};
 static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
@@ -373,19 +386,18 @@ constexpr double kClimberSetI = 0;
 constexpr double kClimberSetD = 0;
 
 // Maximum arm extension distance
-constexpr double kMaxArmDistance = 10;
+constexpr double kMaxArmDistance = 20;
 // Arm climbing position
 constexpr double kClimbExtensionPosition = 5;
 // Arm retracted position
 constexpr double kClimbRetractPosition = 3;
-constexpr double kInPerRotation = 1;
-
-constexpr int kClimberLeftLimitSwitchPort = 0;
-constexpr int kClimberRightLimitSwitchPort = 1;
+constexpr double kInPerRotation = 0.1;
 
 constexpr double kClimbStepSize = 1;
 constexpr double kClimbHomingSpeed = 1;
 constexpr int kTicksPerMotorRotation = 42;
+
+constexpr double kCLimberExtendSpeed = 1;
 
 // Distance between left and right arm centers
 constexpr units::meter_t kClimberOffsetDistance = 4_m;
@@ -410,6 +422,10 @@ enum class RobotState {
   ClimbStageLeft,
   ClimbStageCenter,
   ClimbStageRight,
+  SourceLeft,
+  SourceCenter,
+  SourceRight,
+  Funni,
 };
 
 typedef std::function<RobotState()> StateGetter;

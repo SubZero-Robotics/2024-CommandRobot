@@ -3,45 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.377158438795249,
-        "y": 6.85152474630649
+        "x": 2.0,
+        "y": 7.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.029831163988028,
-        "y": 6.820191553869114
-      },
-      "isLocked": false,
-      "linkedName": "Wing Line 1"
-    },
-    {
-      "anchor": {
-        "x": 1.8991740782463762,
-        "y": 3.9688710420677835
-      },
-      "prevControl": {
-        "x": 1.796798845102513,
-        "y": 5.379374254272118
-      },
-      "nextControl": {
-        "x": 1.993173655558508,
-        "y": 2.6737657546561917
+        "x": 2.8287254538887425,
+        "y": 7.791520519427235
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.377158438795249,
-        "y": 1.5
+        "x": 4.990715732067772,
+        "y": 6.705303181598158
       },
       "prevControl": {
-        "x": 3.8418320093637646,
-        "y": 1.650214801701869
+        "x": 4.999105265602482,
+        "y": 7.596404027347004
+      },
+      "nextControl": {
+        "x": 4.980271334588822,
+        "y": 5.595943359824505
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.0,
+        "y": 5.8
+      },
+      "prevControl": {
+        "x": 2.943613826159125,
+        "y": 5.225558138648083
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Wing Line 2"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -55,7 +55,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 0.0,
     "rotateFast": false
   },
   "reversed": false,

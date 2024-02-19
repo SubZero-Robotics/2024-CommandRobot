@@ -39,6 +39,9 @@ class RobotContainer {
 
   frc2::Command* GetAutonomousCommand();
 
+  void ClearCurrentStateCommand();
+  void StartIdling();
+
  private:
   // The driver's controller
   frc2::CommandXboxController m_driverController{
@@ -55,6 +58,15 @@ class RobotContainer {
 
   frc2::CommandPtr m_defaultAuto =
       pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName).ToPtr();
+  frc2::CommandPtr m_3inAmp = pathplanner::PathPlannerAuto("3 in Amp").ToPtr();
+  frc2::CommandPtr m_2noteAuto =
+      pathplanner::PathPlannerAuto("2 Note Auto").ToPtr();
+  frc2::CommandPtr m_4noteAuto =
+      pathplanner::PathPlannerAuto("4 Note Auto").ToPtr();
+  frc2::CommandPtr m_kepler =
+      pathplanner::PathPlannerAuto("Kepler Auto").ToPtr();
+  frc2::CommandPtr m_kepler2 =
+      pathplanner::PathPlannerAuto("Kepler 2 Auto").ToPtr();
 
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;

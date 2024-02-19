@@ -2,6 +2,7 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandPtr.h>
+#include <frc2/command/CommandScheduler.h>
 #include <frc2/command/button/CommandXboxController.h>
 #include <rev/CANSparkFlex.h>
 
@@ -54,6 +55,15 @@ class StateSubsystem : public frc2::SubsystemBase {
     return frc2::DeferredCommand([this] { return RunState(); }, {this});
   }
 
+  void SetDesiredState() {
+    ConsoleLogger::getInstance().logInfo(
+        "StateSubsystem", "Running with state %u", (uint8_t)m_currentState);
+    frc2::CommandScheduler::GetInstance().Cancel(m_cmd);
+    m_cmd = RunState();
+    frc2::CommandScheduler::GetInstance().Schedule(m_cmd);
+    m_active = true;
+  }
+
   /**
    * Run the FSM using the current state
    */
@@ -71,7 +81,15 @@ class StateSubsystem : public frc2::SubsystemBase {
 
   frc2::CommandPtr StartClimb();
 
+  frc2::CommandPtr StartSource();
+
+  frc2::CommandPtr StartFunni();
+
   inline RobotState GetState() const { return m_currentState; }
+
+  frc2::CommandPtr m_cmd = frc2::InstantCommand([] {}).ToPtr();
+  bool m_active = false;
+  RobotState m_currentState;
 
  private:
   bool IsControllerActive();
@@ -84,12 +102,17 @@ class StateSubsystem : public frc2::SubsystemBase {
         return FinalLocation::CenterStage;
       case RobotState::ClimbStageRight:
         return FinalLocation::StageRight;
+      case RobotState::SourceLeft:
+        return FinalLocation::Source1;
+      case RobotState::SourceCenter:
+        return FinalLocation::Source2;
+      case RobotState::SourceRight:
+        return FinalLocation::Source3;
       default:
         return FinalLocation::Source1;
     }
   }
 
-  RobotState m_currentState;
   Subsystems_t &m_subsystems;
   frc2::CommandXboxController &m_driverController;
   frc2::CommandXboxController &m_operatorController;

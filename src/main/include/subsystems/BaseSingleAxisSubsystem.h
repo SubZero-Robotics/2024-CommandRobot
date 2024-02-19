@@ -154,7 +154,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
    *
    * @param speed Percentage speed
    */
-  void RunMotorExternal(double speed) override {
+  void RunMotorExternal(double speed, bool ignoreEncoder = false) override {
     // TODO: constant
     if (abs(speed) <= 0.05) {
       if (_isMovingToPosition)
@@ -175,7 +175,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
       StopMovement();
     }
 
-    RunMotorSpeed(speed);
+    RunMotorSpeed(speed, ignoreEncoder);
   }
 
   void JoystickMoveStep(double rotation) override {
@@ -210,6 +210,9 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
         StopMovement();
         return;
       }
+
+      ShuffleboardLogger::getInstance().logVerbose(_prefix, "amperage %f", _motor.GetOutputCurrent(), "");
+      ConsoleLogger::getInstance().logVerbose(_prefix, "amperage %f", _motor.GetOutputCurrent(), "");
 
       RunMotorSpeed(clampedRes);
     }

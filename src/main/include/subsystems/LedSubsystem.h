@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc/Notifier.h>
 #include <frc/util/Color8Bit.h>
 #include <frc2/command/DeferredCommand.h>
 #include <frc2/command/InstantCommand.h>
@@ -31,7 +32,11 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr Loaded();
   frc2::CommandPtr Idling();
   frc2::CommandPtr Climbing();
+  frc2::CommandPtr Funni();
   frc2::CommandPtr Error();
+
+  void IdlingAsync();
+  void ErrorAsync();
 
  private:
   enum class LedZone {
@@ -47,6 +52,13 @@ class LedSubsystem : public frc2::SubsystemBase {
                                        bool oneShot = false, int16_t delay = -1,
                                        bool reversed = false);
 
+  void setZoneColorPatternAsync(LedZone zone, LedPort port,
+                                frc::Color8Bit color, PatternType pattern,
+                                bool oneShot = false, int16_t delay = -1,
+                                bool reversed = false);
+
+  void delaySeconds(units::second_t delaySeconds);
+
   void createZones(LedPort port, std::vector<Commands::NewZone> &&zones);
 
   frc2::CommandPtr syncAllZones();
@@ -58,4 +70,6 @@ class LedSubsystem : public frc2::SubsystemBase {
       {.offset = 50, .count = 25},
       {.offset = 75, .count = 25},
   };
+
+  frc::Notifier m_notifier{98, [] {}};
 };

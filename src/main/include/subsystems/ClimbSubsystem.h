@@ -3,25 +3,29 @@
 #include <frc/controller/PIDController.h>
 #include <rev/CANSparkMax.h>
 #include <subsystems/BaseSingleAxisSubsystem.h>
-#include <utils/ConsoleLogger.h>
 
 #include <memory>
 
 #include "Constants.h"
+#include "utils/ConsoleLogger.h"
 
 class ClimbSubsystem
     : public BaseSingleAxisSubsystem<rev::CANSparkMax,
                                      rev::SparkRelativeEncoder> {
  public:
   ClimbSubsystem(SingleAxisConfig &config, rev::CANSparkMax &motor,
-                 rev::SparkRelativeEncoder &encoder,
-                 frc::DigitalInput *minLimitSwitch, std::string name)
-      : BaseSingleAxisSubsystem(config, motor, encoder, minLimitSwitch, nullptr,
-                                name, true) {}
+                 rev::SparkRelativeEncoder &encoder, std::string name)
+      : BaseSingleAxisSubsystem(config, motor, encoder, nullptr, nullptr, name,
+                                true) {}
 
   void ResetEncoder() override { _enc.SetPosition(0); }
 
-  double GetCurrentPosition() override { return _enc.GetPosition(); }
+  double GetCurrentPosition() override {
+    auto curPosition = _enc.GetPosition() * _config.distancePerRevolution;
+    // ConsoleLogger::getInstance().logVerbose("Climbing Subsystem", "current position
+    // %f", curPosition);
+    return curPosition;
+  }
 
   void MoveRelative(double delta) {
     double newPosition = GetCurrentPosition() + delta;

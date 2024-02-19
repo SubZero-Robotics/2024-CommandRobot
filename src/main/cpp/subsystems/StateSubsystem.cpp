@@ -64,23 +64,48 @@ frc2::CommandPtr StateSubsystem::RunState() {
           .Until(std::bind(&StateSubsystem::IsControllerActive, this))
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
+    case RobotState::SourceLeft:
+    case RobotState::SourceCenter:
+    case RobotState::SourceRight:
+      return StartSource()
+          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
+    case RobotState::Funni:
+      return StartFunni()
+          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
     default:
-      return m_subsystems.led->Error();
+      return m_subsystems.led->Error()
+          .AndThen(frc2::WaitCommand(1_s).ToPtr())
+          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
   }
 }
 
 frc2::CommandPtr StateSubsystem::StartIntaking() {
   return m_subsystems.led->ShowFromState([] { return RobotState::Intaking; })
       .AndThen(
-          IntakeIn(m_subsystems.intake)
-              .ToPtr()
+          IntakingCommands::Intake(m_subsystems.intake)
               .RaceWith(DriveVelocity(0_deg, 2_mps, m_subsystems.drive)
                             .ToPtr()
                             .Repeatedly())
+              .Until([this] {
+                return m_subsystems.intake->NotePresentUpper() &&
+                       m_subsystems.intake->NotePresentLower();
+              })
+              .FinallyDo([this] {
+                auto chassisSpeeds = frc::ChassisSpeeds::Discretize(
+                    0_mps, 0_mps, AutoConstants::kMaxAngularSpeed,
+                    DriveConstants::kLoopTime);
+                m_subsystems.drive->Drive(chassisSpeeds);
+              })
               // TODO: Put this in the "Loaded" state also have the intensity
               // vary based on if a note was successfully intooketh or not
-              .AndThen(ControllerCommands::Rumble(&m_driverController,
-                                                  [] { return 1_s; }))
+              // .AndThen(ControllerCommands::Rumble(&m_driverController,
+              //                                     [] { return 1_s; }))
               .WithTimeout(5_s));
 }
 
@@ -140,7 +165,10 @@ frc2::CommandPtr StateSubsystem::StartManual() {
      Signal that we are in manual
      (Call after automated commands or after manual intervention from driver 1)
   */
-  return m_subsystems.led->ShowFromState([] { return RobotState::Manual; });
+  return m_subsystems.led->ShowFromState([this] {
+    m_active = false;
+    return RobotState::Manual;
+  });
 }
 
 frc2::CommandPtr StateSubsystem::StartClimb() {
@@ -157,9 +185,10 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
       .AndThen(
           // TODO: method to get the stage location
           PathFactory::GetPathFromFinalLocation(
-              [this] { return GetFinalFromState(); }, m_subsystems.drive,
-              ExtendAbsolute(m_subsystems.leftClimb, m_subsystems.rightClimb)
-                  .ToPtr()))
+              [this] { return GetFinalFromState(); }, m_subsystems.drive
+              // ExtendAbsolute(m_subsystems.leftClimb, m_subsystems.rightClimb)
+              //  .ToPtr()))
+              ))
       .AndThen(
           RetractClimbCommand(m_subsystems.leftClimb, m_subsystems.rightClimb)
               .ToPtr())
@@ -167,6 +196,24 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
                               m_subsystems.rightClimb)
                    .ToPtr())
       .WithTimeout(20_s);
+}
+
+frc2::CommandPtr StateSubsystem::StartSource() {
+  /*
+     Signal that we about to go to the source
+     Use on the fly PP to go to approx. location
+     Use pre-made PP path to orient robot and drive forward
+  */
+
+  return m_subsystems.led->Intaking()
+      .AndThen(PathFactory::GetPathFromFinalLocation(
+          [this] { return GetFinalFromState(); }, m_subsystems.drive))
+      .WithTimeout(20_s);
+}
+
+frc2::CommandPtr StateSubsystem::StartFunni() {
+  return FunniCommands::Funni(m_subsystems.intake, m_subsystems.scoring,
+                              m_subsystems.led);
 }
 
 bool StateSubsystem::IsControllerActive() {
@@ -190,5 +237,5 @@ bool StateSubsystem::IsControllerActive() {
     ConsoleLogger::getInstance().logVerbose("StateSubsystem",
                                             "Controller interrupt! %s", "");
   }
-  return false;
+  return active;
 }

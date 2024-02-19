@@ -6,21 +6,22 @@
 
 #include "subsystems/IntakeSubsystem.h"
 
-class IntakeIn : public frc2::CommandHelper<frc2::Command, IntakeIn> {
+class IntakeInSecondary
+    : public frc2::CommandHelper<frc2::Command, IntakeInSecondary> {
  public:
   /**
    * Creates a new Intake.
    *
    * @param subsystem The subsystem used by this command.
    */
-  explicit IntakeIn(IntakeSubsystem* subsystem)
+  explicit IntakeInSecondary(IntakeSubsystem* subsystem)
       : m_intake{subsystem}, isFinished{false} {
     // Register that this command requires the subsystem.
     AddRequirements(m_intake);
   }
 
   void Initialize() override {
-    if (m_intake->NotePresentUpper()) {
+    if (!m_intake->NotePresent()) {
       isFinished = true;
       return;
     }
@@ -29,12 +30,12 @@ class IntakeIn : public frc2::CommandHelper<frc2::Command, IntakeIn> {
   }
 
   void Execute() override {
-    if (m_intake->NotePresentUpper()) {
+    if (m_intake->NotePresentLower()) {
       m_intake->Stop();
       isFinished = true;
     }
 
-    m_intake->In();
+    m_intake->Out(IntakingConstants::kSecondaryIntakeOutSpeed);
   }
 
   bool IsFinished() override { return isFinished; }

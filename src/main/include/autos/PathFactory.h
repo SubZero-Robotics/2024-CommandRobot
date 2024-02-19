@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc/DriverStation.h>
 #include <frc2/command/CommandPtr.h>
 #include <pathplanner/lib/commands/FollowPathHolonomic.h>
 
@@ -17,24 +18,60 @@ class PathFactory {
   static frc2::CommandPtr GetPathFromFinalLocation(
       std::function<FinalLocation()> locationGetter, DriveSubsystem* drive,
       frc2::CommandPtr&& prepCommand) {
-    auto location = locationGetter();
-
-    return GetApproxCommand(location)
+    return GetApproxCommand(locationGetter())
         .AndThen(std::move(prepCommand))
-        .AndThen(GetFinalApproachCommand(location, drive));
+        .AndThen(GetFinalApproachCommand(locationGetter(), drive));
   };
 
   static frc2::CommandPtr GetPathFromFinalLocation(
       std::function<FinalLocation()> locationGetter, DriveSubsystem* drive) {
-    auto location = locationGetter();
-
-    return GetApproxCommand(location).AndThen(
-        GetFinalApproachCommand(location, drive));
+    return GetApproxCommand(locationGetter())
+        .AndThen(GetFinalApproachCommand(locationGetter(), drive));
   }
 
  private:
+  static bool ShouldFlip(FinalLocation location) {
+    auto alliance = frc::DriverStation::GetAlliance();
+    if (!alliance) {
+      return false;
+    }
+    auto side = alliance.value();
+
+    if (side == frc::DriverStation::kBlue) {
+      if (location == FinalLocation::Source1 ||
+          location == FinalLocation::Source2 ||
+          location == FinalLocation::Source3) {
+        return true;
+      }
+      return false;
+    }
+    if (side == frc::DriverStation::kRed) {
+      if (location == FinalLocation::Source1 ||
+          location == FinalLocation::Source2 ||
+          location == FinalLocation::Source3) {
+        return false;
+      }
+      return true;
+    }
+    ConsoleLogger::getInstance().logError("PPF", "Invalid Alliance%s", "");
+    return false;
+  }
+
   static frc2::CommandPtr GetApproxCommand(FinalLocation location) {
     auto& approxPose = OnTheFlyFactory::GetApproxLocation(location);
+    frc::Pose2d betterapprox = approxPose;
+    ConsoleLogger::getInstance().logInfo("PATH factory", betterapprox);
+    if (ShouldFlip(location)) {
+      return pathplanner::AutoBuilder::pathfindToPoseFlipped(
+          approxPose,
+          pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
+                                       720_deg_per_s_sq},
+          0.0_mps,  // Goal end velocity in meters/sec
+          0.0_m     // Rotation delay distance in meters. This is how far
+                    // the robot should travel before attempting to rotate.
+      );
+    }
+
     return pathplanner::AutoBuilder::pathfindToPose(
         approxPose,
         pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
@@ -56,10 +93,10 @@ class PathFactory {
                  drive->Drive(speeds);
                },
                AutoConstants::PathConfig,
-               []() {
+               [location]() {
                  // todo, flip if is source
                  // reverse that if on red alliance
-                 return false;
+                 return ShouldFlip(location);
                },
                {drive})
         .ToPtr();
