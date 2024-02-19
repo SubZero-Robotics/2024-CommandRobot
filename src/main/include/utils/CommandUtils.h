@@ -34,13 +34,24 @@ static frc2::CommandPtr Rumble(frc2::CommandXboxController* controller,
 namespace ScoringCommands {
 using namespace ScoringConstants;
 
+static frc2::CommandPtr OutakeUntilTopNotPresent(IntakeSubsystem* intake) {
+  return (frc2::InstantCommand([intake] { intake->Out(); })
+              .ToPtr()
+              .Until([intake] { return !intake->NotePresentUpper(); })
+              .AndThen(frc2::WaitCommand(0_s).ToPtr())
+              .AndThen(
+                  frc2::InstantCommand([intake] { intake->Stop(); }).ToPtr()))
+      .Unless([intake] { return !intake->NotePresent(); })
+      .WithTimeout(5_s)
+      .FinallyDo([intake] { intake->Stop(); });
+}
+
 static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                               ScoringSubsystem* scoring,
                               IntakeSubsystem* intake) {
-  // TODO: Shuffle the note down first and then feed it to the shooter via Feed
-  // after ramping is done
   return (FlywheelRamp(intake, scoring, direction)
               .ToPtr()
+              .AlongWith(OutakeUntilTopNotPresent(intake))
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose("Next",
                                                                  "next %s", "");
@@ -71,14 +82,15 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem) {
               .AndThen(IntakeInInitial(intakeSubsystem).ToPtr())
               .AndThen(frc2::WaitCommand(0.2_s).ToPtr())
               .AndThen(IntakeInSecondary(intakeSubsystem).ToPtr())
+              .AndThen(frc2::WaitCommand(0_s).ToPtr())
+              .AndThen(frc2::InstantCommand([intakeSubsystem] {
+                         intakeSubsystem->Stop();
+                       }).ToPtr())
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose(
                              "Intake Subsystem", "Intake finished itself%s",
                              "");
                        }).ToPtr()))
-
-      // TODO: Run IntakeInSecondary for a bit longer after the note is detected
-      // so that it lands in the right spot
       .Unless([intakeSubsystem] { return intakeSubsystem->NotePresent(); })
       .WithTimeout(5_s)
       .FinallyDo([intakeSubsystem] { intakeSubsystem->Stop(); });
