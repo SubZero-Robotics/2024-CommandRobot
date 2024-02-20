@@ -78,9 +78,18 @@ class ScoringSubsystem : public frc2::SubsystemBase {
       CANSparkMaxConstants::kSpeakerUpperSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
 
-  //   rev::SparkPIDController m_speakerPidController =
-  //   m_speakerUpperSpinnyBoi.GetPIDController(); rev::SparkPIDController
-  //   m_ampUpperPidController = m_ampUpperSpinnyBoi.GetPIDController();
-  //   rev::SparkPIDController m_ampLowerPidController =
-  //   m_ampLowerSpinnyBoi.GetPIDController();
+  rev::SparkPIDController m_speakerPidController =
+      m_speakerUpperSpinnyBoi.GetPIDController();
+  rev::SparkPIDController m_ampUpperPidController =
+      m_ampUpperSpinnyBoi.GetPIDController();
+  rev::SparkPIDController m_ampLowerPidController =
+      m_ampLowerSpinnyBoi.GetPIDController();
+
+  double tuningLatestP;
+  double tuningLatestI;
+  double tuningLatestD;
+  double tuningLatestIZone;
+  double tuningLatestFF;
+
+  rev::SparkPIDController *m_tuningPidController = &m_speakerPidController;
 };

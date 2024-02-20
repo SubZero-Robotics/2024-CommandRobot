@@ -307,30 +307,27 @@ enum class ScoreState {
 constexpr units::second_t kFlywheelRampDelay = 0.75_s;
 
 namespace SpeakerPID {
-constexpr double kP = 1;
-constexpr double kI = 0;
+constexpr double kP = 6e-5;
+constexpr double kI = 1e-6;
 constexpr double kD = 0;
 constexpr double kIZone = 0;
-constexpr double kFF = 0;
-
+constexpr double kFF = 0.000015;
 }  // namespace SpeakerPID
 
 namespace AmpUpperPID {
-constexpr double kP = 1;
-constexpr double kI = 0;
+constexpr double kP = 6e-5;
+constexpr double kI = 1e-6;
 constexpr double kD = 0;
 constexpr double kIZone = 0;
-constexpr double kFF = 0;
-
+constexpr double kFF = 0.000015;
 }  // namespace AmpUpperPID
 
 namespace AmpLowerPID {
-constexpr double kP = 1;
-constexpr double kI = 0;
+constexpr double kP = 6e-5;
+constexpr double kI = 1e-6;
 constexpr double kD = 0;
 constexpr double kIZone = 0;
-constexpr double kFF = 0;
-
+constexpr double kFF = 0.000015;
 }  // namespace AmpLowerPID
 }  // namespace ScoringConstants
 
