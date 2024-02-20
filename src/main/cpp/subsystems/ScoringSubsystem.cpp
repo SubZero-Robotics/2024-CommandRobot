@@ -28,6 +28,13 @@ void ScoringSubsystem::Periodic() {}
 
 void ScoringSubsystem::SimulationPeriodic() {}
 
+void ScoringSubsystem::SpinOutake() {
+  m_ampLowerSpinnyBoi.Set(ScoringConstants::kScoringOutakeLowerSpeed);
+  m_ampUpperSpinnyBoi.Set(ScoringConstants::kScoringOutakeUpperSpeed);
+  m_speakerUpperSpinnyBoi.Set(ScoringConstants::kScoringOutakeUpperSpeed);
+  m_speakerLowerSpinnyBoi.Set(ScoringConstants::kScoringOutakeLowerSpeed);
+};
+
 void ScoringSubsystem::Stop() {
   m_vectorSpinnyBoi.Set(0);
   m_ampLowerSpinnyBoi.Set(0);

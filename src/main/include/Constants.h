@@ -261,7 +261,7 @@ constexpr int kTicksPerMotorRotation = 42;
 
 namespace IntakingConstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = -0.7;
+constexpr double kIntakeSpeed = -0.5;
 constexpr double kFeedAmpSpeed = -0.5;
 constexpr double kFeedSpeakerSpeed = -1;
 constexpr double kFeedSubwooferSpeed = -1;
@@ -270,8 +270,8 @@ constexpr double kOutakeSpeed = 0.5;
 
 constexpr double kSecondaryIntakeOutSpeed = 0.05;
 
-constexpr uint8_t kUpperBeamBreakDigitalPort = 2;
-constexpr uint8_t kLowerBeamBreakDigitalPort = 3;
+constexpr uint8_t kUpperBeamBreakDigitalPort = 3;
+constexpr uint8_t kLowerBeamBreakDigitalPort = 2;
 
 }  // namespace IntakingConstants
 
@@ -297,6 +297,9 @@ constexpr double kSpeakerUpperSpeed = -0.75;
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kSubwooferLowerSpeed = 0.95;
 constexpr double kSubwooferUpperSpeed = -kSubwooferLowerSpeed;
+
+constexpr double kScoringOutakeUpperSpeed = 0.2;
+constexpr double kScoringOutakeLowerSpeed = -kScoringOutakeUpperSpeed;
 
 enum class ScoreState {
   FlywheelRamp,
