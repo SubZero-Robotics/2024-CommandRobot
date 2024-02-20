@@ -59,7 +59,8 @@ Use the `main` branch for non-competition usage and practice.
 
 Before a competition, create a new branch based on `main` and lock it via a GitHub protection rule to prevent pushes. Only use this branch during a competition to avoid unnecessary or breaking deployments to the RIO.
 
-:warning: ***Changes should only be made to this branch if there is a blocking error that must be fixed immediately!*** :warning:
+> [!WARNING]
+> ***Changes should only be made to this branch if there is a blocking error that must be fixed immediately!***
 
 ## Subsystems
 
@@ -157,7 +158,7 @@ State actions are composed of underlying commands that are also called by the fi
 |        Score        |           Shuffles the note down while running `FlywheelRampCommand`, runs `FeedCommand`, finally runs `ShootCommand`. If there is not a note present it exits immediately            | 5 Seconds  |
 |       Intake        | Runs `IntakeInInitialCommand`, waits a predefined delay, runs `IntakeInSecondaryCommand`, waits a predefined delay, stops the motors. If there is a note present it exits immediately | 5 seconds  |
 | FeedUntilNotPresent |                                                     Runs `FeedCommand` until the top beam break is not broken; stops the motors.                                                      |    N/A     |
-| OuttakeUntilPresent |                                                       Outakes the note util the bottom beam break is broken; stops the motors.                                                        |    N/A     |
+| OuttakeUntilPresent |                                                       Outakes the note until the bottom beam break is broken; stops the motors.                                                        |    N/A     |
 |        Funni        |                                                                                     Does a Funni                                                                                      | 20 seconds |
 
 ## Factory Commands
