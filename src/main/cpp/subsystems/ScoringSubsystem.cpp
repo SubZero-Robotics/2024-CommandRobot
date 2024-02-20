@@ -159,10 +159,10 @@ void ScoringSubsystem::SpinAmp() {
 }
 
 void ScoringSubsystem::SpinSpeaker() {
-  m_tuningPidControllerUpper->SetReference(
+  m_speakerUpperPidController.SetReference(
       MaxSpeedToRpm(kSpeakerUpperSpeed),
       rev::CANSparkMax::ControlType::kVelocity);
-  m_tuningPidControllerLower->SetReference(
+  m_speakerLowerPidController.SetReference(
       MaxSpeedToRpm(kSpeakerLowerSpeed),
       rev::CANSparkMax::ControlType::kVelocity);
   // m_speakerUpperSpinnyBoi.Set(kSpeakerUpperSpeed);
