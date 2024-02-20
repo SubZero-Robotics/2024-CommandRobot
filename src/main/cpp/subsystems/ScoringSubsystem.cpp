@@ -7,7 +7,7 @@
 using namespace ScoringConstants;
 
 ScoringSubsystem::ScoringSubsystem() {
-  m_speakerLowerSpinnyBoi.Follow(m_speakerUpperSpinnyBoi, false);
+  // m_speakerLowerSpinnyBoi.Follow(m_speakerUpperSpinnyBoi, false);
 
   tuningLatestP = PID_NAMESPACE::kP;
   tuningLatestI = PID_NAMESPACE::kI;
@@ -15,11 +15,17 @@ ScoringSubsystem::ScoringSubsystem() {
   tuningLatestIZone = PID_NAMESPACE::kIZone;
   tuningLatestFF = PID_NAMESPACE::kFF;
 
-  m_speakerPidController.SetP(SpeakerPID::kP);
-  m_speakerPidController.SetI(SpeakerPID::kI);
-  m_speakerPidController.SetD(SpeakerPID::kD);
-  m_speakerPidController.SetIZone(SpeakerPID::kIZone);
-  m_speakerPidController.SetFF(SpeakerPID::kFF);
+  m_speakerUpperPidController.SetP(SpeakerPID::kP);
+  m_speakerUpperPidController.SetI(SpeakerPID::kI);
+  m_speakerUpperPidController.SetD(SpeakerPID::kD);
+  m_speakerUpperPidController.SetIZone(SpeakerPID::kIZone);
+  m_speakerUpperPidController.SetFF(SpeakerPID::kFF);
+
+  m_speakerLowerPidController.SetP(SpeakerPID::kP);
+  m_speakerLowerPidController.SetI(SpeakerPID::kI);
+  m_speakerLowerPidController.SetD(SpeakerPID::kD);
+  m_speakerLowerPidController.SetIZone(SpeakerPID::kIZone);
+  m_speakerLowerPidController.SetFF(SpeakerPID::kFF);
 
   m_ampUpperPidController.SetP(AmpUpperPID::kP);
   m_ampUpperPidController.SetI(AmpUpperPID::kI);
@@ -48,23 +54,28 @@ void ScoringSubsystem::Periodic() {
   double sFF = frc::SmartDashboard::GetNumber("Tuning Feed Forward", 0);
 
   if (sP != tuningLatestP) {
-    m_tuningPidController->SetP(sP);
+    m_tuningPidControllerUpper->SetP(sP);
+    m_tuningPidControllerLower->SetP(sP);
     tuningLatestP = sP;
   }
   if (sI != tuningLatestI) {
-    m_tuningPidController->SetI(sI);
+    m_tuningPidControllerUpper->SetI(sI);
+    m_tuningPidControllerLower->SetI(sI);
     tuningLatestI = sI;
   }
   if (sD != tuningLatestD) {
-    m_tuningPidController->SetD(sD);
+    m_tuningPidControllerUpper->SetD(sD);
+    m_tuningPidControllerLower->SetD(sD);
     tuningLatestD = sD;
   }
   if (sIZ != tuningLatestIZone) {
-    m_tuningPidController->SetIZone(sIZ);
+    m_tuningPidControllerUpper->SetIZone(sIZ);
+    m_tuningPidControllerLower->SetIZone(sIZ);
     tuningLatestIZone = sIZ;
   }
   if (sFF != tuningLatestFF) {
-    m_tuningPidController->SetFF(sFF);
+    m_tuningPidControllerUpper->SetFF(sFF);
+    m_tuningPidControllerLower->SetFF(sFF);
     tuningLatestFF = sFF;
   }
 
@@ -140,28 +151,32 @@ bool ScoringSubsystem::GetMotorFreeWheel(ScoringDirection direction) {
 }
 
 void ScoringSubsystem::SpinAmp() {
-  m_ampLowerPidController.SetReference(
-      kAmpLowerSpeed, rev::CANSparkMax::ControlType::kVelocity);
-  m_ampUpperPidController.SetReference(
-      kAmpUpperSpeed, rev::CANSparkMax::ControlType::kVelocity);
-  // m_ampLowerSpinnyBoi.Set(kAmpLowerSpeed);
-  // m_ampUpperSpinnyBoi.Set(kAmpUpperSpeed);
+  // m_ampLowerPidController.SetReference(
+  //     kAmpLowerSpeed, rev::CANSparkMax::ControlType::kVelocity);
+  // m_ampUpperPidController.SetReference(
+  //     kAmpUpperSpeed, rev::CANSparkMax::ControlType::kVelocity);
+  m_ampLowerSpinnyBoi.Set(kAmpLowerSpeed);
+  m_ampUpperSpinnyBoi.Set(kAmpUpperSpeed);
 }
 
 void ScoringSubsystem::SpinSpeaker() {
-  // m_speakerPidController.SetReference(kSpeakerUpperSpeed,
-  //                                     rev::CANSparkMax::ControlType::kVelocity);
-  m_speakerUpperSpinnyBoi.Set(kSpeakerUpperSpeed);
-  m_speakerLowerSpinnyBoi.Set(kSpeakerLowerSpeed);
+  m_tuningPidControllerUpper->SetReference(
+      MaxSpeedToRpm(kSpeakerUpperSpeed),
+      rev::CANSparkMax::ControlType::kVelocity);
+  m_tuningPidControllerLower->SetReference(
+      MaxSpeedToRpm(kSpeakerLowerSpeed),
+      rev::CANSparkMax::ControlType::kVelocity);
+  // m_speakerUpperSpinnyBoi.Set(kSpeakerUpperSpeed);
+  // m_speakerLowerSpinnyBoi.Set(kSpeakerLowerSpeed);
 }
 
 void ScoringSubsystem::SpinSubwoofer() {
-  m_ampLowerPidController.SetReference(
-      kSubwooferLowerSpeed, rev::CANSparkMax::ControlType::kVelocity);
-  m_ampUpperPidController.SetReference(
-      kSubwooferUpperSpeed, rev::CANSparkMax::ControlType::kVelocity);
-  // m_ampLowerSpinnyBoi.Set(kSubwooferLowerSpeed);
-  // m_ampUpperSpinnyBoi.Set(kSubwooferUpperSpeed);
+  // m_ampLowerPidController.SetReference(
+  //     kSubwooferLowerSpeed, rev::CANSparkMax::ControlType::kVelocity);
+  // m_ampUpperPidController.SetReference(
+  //     kSubwooferUpperSpeed, rev::CANSparkMax::ControlType::kVelocity);
+  m_ampLowerSpinnyBoi.Set(kSubwooferLowerSpeed);
+  m_ampUpperSpinnyBoi.Set(kSubwooferUpperSpeed);
 }
 
 bool ScoringSubsystem::CheckAmpSpeed() {
