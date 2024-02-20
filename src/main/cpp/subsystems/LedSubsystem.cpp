@@ -180,19 +180,19 @@ void LedSubsystem::IdlingAsync() {
                                          "Idling");
     setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
                              ColorConstants::kBlue, PatternType::Breathe, false,
-                             10, false);
+                             20, false);
     delaySeconds(kConnectorXDelay);
-    setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
+    setZoneColorPatternAsync(LedZone::Right, LedConstants::kIdleLedPort,
                              ColorConstants::kBlue, PatternType::Breathe, false,
-                             10, false);
+                             20, false);
     delaySeconds(kConnectorXDelay);
-    setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
+    setZoneColorPatternAsync(LedZone::Front, LedConstants::kIdleLedPort,
                              ColorConstants::kBlue, PatternType::Breathe, false,
-                             10, false);
+                             20, false);
     delaySeconds(kConnectorXDelay);
-    setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
+    setZoneColorPatternAsync(LedZone::Back, LedConstants::kIdleLedPort,
                              ColorConstants::kBlue, PatternType::Breathe, false,
-                             10, false);
+                             20, false);
     delaySeconds(kConnectorXDelay);
     m_connectorX.syncZones(LedConstants::kIntakeLedPort,
                            {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
@@ -283,7 +283,7 @@ void LedSubsystem::ErrorAsync() {
     delaySeconds(kConnectorXDelay);
     setZoneColorPatternAsync(LedZone::Right, LedConstants::kIntakeLedPort,
                              ColorConstants::kRed, PatternType::Blink, false,
-                             400, true);
+                             400, false);
     delaySeconds(kConnectorXDelay);
     setZoneColorPatternAsync(LedZone::Front, LedConstants::kIntakeLedPort,
                              ColorConstants::kRed, PatternType::Blink, false,
@@ -292,7 +292,7 @@ void LedSubsystem::ErrorAsync() {
     setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
                              ColorConstants::kRed, PatternType::Blink, false,
                              400, false);
-    delaySeconds(kConnectorXDelay);
+    delaySeconds(0.1_s);
     m_connectorX.syncZones(LedConstants::kIntakeLedPort,
                            {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
                             (uint8_t)LedZone::Front, (uint8_t)LedZone::Back});
