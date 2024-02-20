@@ -27,6 +27,10 @@
 - [Network Map](#network-map)
 - [State](#state)
 - [Commands](#commands)
+- [Command Compositions](#command-compositions)
+- [Factory Commands](#factory-commands)
+- [State Commands](#state-commands)
+- [LED Commands](#led-commands)
 - [Getting started](#getting-started)
   - [Prerequisites](#prerequisites)
 - [Making changes](#making-changes)
@@ -71,25 +75,25 @@ Following the WPILib command based structure we have broken our robot up into a 
 
 ## CAN IDs
 
-|         Purpose/Name          | CAN ID | Motor/Driver Type |
-| :---------------------------: | :----: | :---------------: |
-|       Front Right Drive       |   2    |     SparkMax      |
-|       Rear Right Drive        |   4    |     SparkMax      |
-|        Rear Left Drive        |   6    |     SparkMax      |
-|       Front Left Drive        |   8    |     SparkMax      |
-|       Front Right Turn        |   1    |     SparkMax      |
-|        Rear Right Turn        |   3    |     SparkMax      |
-|        Rear Left Turn         |   5    |     SparkMax      |
-|        Front Left Turn        |   7    |     SparkMax      |
-|         Rear (right)          |   23   |     SparkMax      |
-|         Front (left)          |   20   |     SparkMax      |
-|            Vector             |   22   |     SparkMax      |
-|           Amp Lower           |   24   |     SparkFlex     |
-|           Amp Upper           |   21   |     SparkFlex     |
-| Speaker Lower (follows Upper) |   25   |     SparkFlex     |
-|         Speaker Upper         |   19   |     SparkFlex     |
-
-:warning: TODO: Designate CAN IDs for subsystems :warning:
+|    Purpose/Name     | CAN ID | Motor/Driver Type | PDH Port |
+| :-----------------: | :----: | :---------------: | :------: |
+|  Front Right Drive  |   2    |     SparkMax      |    8     |
+|  Rear Right Drive   |   4    |     SparkMax      |    3     |
+|   Rear Left Drive   |   6    |     SparkMax      |    16    |
+|  Front Left Drive   |   8    |     SparkMax      |    11    |
+|  Front Right Turn   |   1    |     SparkMax      |    7     |
+|   Rear Right Turn   |   3    |     SparkMax      |    4     |
+|   Rear Left Turn    |   5    |     SparkMax      |    15    |
+|   Front Left Turn   |   7    |     SparkMax      |    12    |
+| Rear (right) Intake |   23   |     SparkMax      |    1     |
+| Front (left) Intake |   20   |     SparkMax      |    17    |
+|       Vector        |   22   |     SparkMax      |    5     |
+|      Amp Lower      |   24   |     SparkFlex     |    19    |
+|      Amp Upper      |   21   |     SparkFlex     |    2     |
+|    Speaker Lower    |   25   |     SparkFlex     |    18    |
+|    Speaker Upper    |   19   |     SparkFlex     |    0     |
+|    Left Climber     |   10   |     SparkMax      |    9     |
+|    Right Climber    |   11   |     SparkMax      |    10    |
 
 \* = Inverted
 
@@ -101,12 +105,13 @@ Following the WPILib command based structure we have broken our robot up into a 
 | Gateway | 10.56.90.129 (subject to change) |
 |   RIO   |            10.56.90.2            |
 | Laptop  |             Dynamic              |
-|   LL3   |            10.56.90.11           |
-|   LL2+  |            10.56.90.12           |
+|   LL3   |           10.56.90.11            |
+|  LL2+   |           10.56.90.12            |
+| RPi 3B  |           10.56.90.13            |
 
 ## State
 
-We have 9 states that each return a `CommandPtr` when bound via the `RunStateDeferred` factory method to a controller input. This allows a secondary operator to perform sweeping, fully-autonomous functions such as scoring, intaking, and more. Each state also has a check to ensure one action cannot lead to another if there's a conflict. Furthermore, the robot's LEDs will indicate the current state with changing colors and patterns.
+We have 9 states that each execute a function to schedule a command based on the desired state. This allows a secondary operator to perform sweeping, fully-autonomous functions such as scoring, intaking, and more. Each state also has a check to ensure one action cannot lead to another if there's a conflict. Furthermore, the robot's LEDs will indicate the current state with changing colors and patterns. States can be chained through use of `RunStateDeferred` to switch commands internally.
 
 | Name                         | Purpose                                                |
 | :--------------------------- | :----------------------------------------------------- |
@@ -128,6 +133,64 @@ Notes:
 ## Commands
 
 State actions are composed of underlying commands that are also called by the first operator's gamepad. Some of these might be intaking, run scoring subsystem, or drive.
+
+|                                     Command                                      |                                                 Purpose                                                 |
+| :------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------: |
+|           [BalanceCommand](src/main/include/commands/BalanceCommand.h)           |                      Automatically balance the robot while climbing based on gyro                       |
+|     [DriveVelocityCommand](src/main/include/commands/DriveVelocityCommand.h)     |                          Drives the robot at a set velocity in a set direction                          |
+|    [ExtendAbsoluteCommand](src/main/include/commands/ExtendAbsoluteCommand.h)    |                            Extends both ClimbSubsystems an absolute distance                            |
+|       [ExtendClimbCommand](src/main/include/commands/ExtendClimbCommand.h)       |                               Extends both ClimbSubsystems at a set speed                               |
+|      [FlywheelRampCommand](src/main/include/commands/FlywheelRampCommand.h)      | Ramps up one of the sides of the ScoringSubsystem to a predefined speed based on the `ScoringDirection` |
+|              [FeedCommand](src/main/include/commands/FeedCommand.h)              |     Feeds the note to one side of the robot using the vector motor based on the `ScoringDirection`      |
+|             [ShootCommand](src/main/include/commands/ShootCommand.h)             |                         Stops the shooting motors after the note has been shot                          |
+|          [IntakeInCommand](src/main/include/commands/IntakeInCommand.h)          |                           Spins the intake until the top beam break is broken                           |
+|   [IntakeInInitialCommand](src/main/include/commands/IntakeInInitialCommand.h)   |                      Spins the intake until **only** the top beam break is broken                       |
+| [IntakeInSecondaryCommand](src/main/include/commands/IntakeInSecondaryCommand.h) |                              Outakes until the bottom beam break is broken                              |
+|         [IntakeOutCommand](src/main/include/commands/IntakeOutCommand.h)         |                                    Evacuates a note out of the robot                                    |
+|      [RetractClimbCommand](src/main/include/commands/RetractClimbCommand.h)      |                         Retracts both ClimbSubsystems to a predefined position                          |
+
+## Command Compositions
+
+|       Command       |                                                                                        Purpose                                                                                        |  Timeout   |
+| :-----------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: |
+|       Rumble        |                                                                               Broken, Closed as wontfix                                                                               |    N/A     |
+|        Score        |           Shuffles the note down while running `FlywheelRampCommand`, runs `FeedCommand`, finally runs `ShootCommand`. If there is not a note present it exits immediately            | 5 Seconds  |
+|       Intake        | Runs `IntakeInInitialCommand`, waits a predefined delay, runs `IntakeInSecondaryCommand`, waits a predefined delay, stops the motors. If there is a note present it exits immediately | 5 seconds  |
+| FeedUntilNotPresent |                                                     Runs `FeedCommand` until the top beam break is not broken; stops the motors.                                                      |    N/A     |
+| OuttakeUntilPresent |                                                       Outakes the note util the bottom beam break is broken; stops the motors.                                                        |    N/A     |
+|        Funni        |                                                                                     Does a Funni                                                                                      | 20 seconds |
+
+## Factory Commands
+
+|          Method          |                                                                                Purpose                                                                                |
+| :----------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| GetPathFromFinalLocation |               Takes in a `FinalLocation` and returns a CommandPtr to drive to that location using `GetApproxCommand` and then `GetFinalApproachCommand`               |
+| GetPathFromFinalLocation | Takes in a `FinalLocation` and returns a CommandPtr to run a prep command before driving to that location using `GetApproxCommand` and then `GetFinalApproachCommand` |
+|     GetApproxCommand     |      Takes in a `FinalLocation` and returns a PP on the fly command to the `ApproxPose` of the `FinalLocation`; flips the pose depending on the `FinalLocation`       |
+| GetFinalApproachCommand  |                               Takes in a `FinalLocation` and returns a CommandPtr to drive from the `ApproxPose` to the `FinalLocation`                               |
+
+## State Commands
+
+All robot states begin by calling `ShowFromState` with the `RobotState` on the LedSubsystem
+
+|        Method         |                                             Purpose                                             |  Timeout   |
+| :-------------------: | :---------------------------------------------------------------------------------------------: | :--------: |
+|       RunState        |       Returns a CommandPtr to run the current state and then return to the `Manual` state       |    N/A     |
+|     StartIntaking     | Returns a CommandPtr to drive while running the intake until a note is present or until timeout | 5 seconds  |
+|  StartScoringSpeaker  |                      Returns a CommandPtr to drive to the podium and score                      | 20 seconds |
+|    StartScoringAmp    |                       Returns a CommandPtr to drive to the amp and score                        | 20 seconds |
+| StartScoringSubwoofer |                    Returns a CommandPtr to drive to the subwoofer and score                     | 20 seconds |
+|      StartManual      |                                   Switches to manual control                                    |    N/A     |
+|      StartClimb       |              Returns a CommandPtr to drive to a stage location, climb, and balance              | 20 seconds |
+|      StartSource      |                       Returns a CommandPtr to drive to a source location                        | 20 seconds |
+|      StartFunni       |                                              Funni                                              |    N/A     |
+
+## LED Commands
+
+| Method | Purpose |
+| :-: | :-: |
+| ShowFromState | Returns a CommandPtr to set the LEDs based on a `StateGetter` |
+| Intaking | 
 
 ## Getting started
 
