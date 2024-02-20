@@ -94,7 +94,7 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   double tuningLatestFF;
 
   rev::SparkPIDController *m_tuningPidControllerUpper =
-      &m_speakerUpperPidController;
+      &m_ampUpperPidController;
   rev::SparkPIDController *m_tuningPidControllerLower =
-      &m_speakerLowerPidController;
+      &m_ampLowerPidController;
 };
