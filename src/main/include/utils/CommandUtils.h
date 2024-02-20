@@ -80,9 +80,9 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem) {
           })
               .ToPtr()
               .AndThen(IntakeInInitial(intakeSubsystem).ToPtr())
-              .AndThen(frc2::WaitCommand(0.2_s).ToPtr())
+              .AndThen(frc2::WaitCommand(0.1_s).ToPtr())
               .AndThen(IntakeInSecondary(intakeSubsystem).ToPtr())
-              .AndThen(frc2::WaitCommand(0_s).ToPtr())
+              // .AndThen(frc2::WaitCommand(0_s).ToPtr())
               .AndThen(frc2::InstantCommand([intakeSubsystem] {
                          intakeSubsystem->Stop();
                        }).ToPtr())
