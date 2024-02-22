@@ -15,6 +15,8 @@
 
 #include "subsystems/DriveSubsystem.h"
 
+using namespace AutoConstants;
+
 class TurnToAngle : public frc2::CommandHelper<frc2::Command, TurnToAngle> {
  public:
   explicit TurnToAngle(DriveSubsystem *drive,
@@ -26,13 +28,14 @@ class TurnToAngle : public frc2::CommandHelper<frc2::Command, TurnToAngle> {
         m_goalAngle{angle} {
     AddRequirements(drive);
 
+    // Don't need constants for these since we're only rotating
     auto xController = frc::PIDController(1, 0, 0);
     auto yController = frc::PIDController(1, 0, 0);
     auto profile = frc::TrapezoidProfile<units::radians>::Constraints(
         AutoConstants::kMaxAngularSpeed,
         AutoConstants::kMaxAngularAcceleration);
-    auto profiledController =
-        frc::ProfiledPIDController<units::radians>(4, 0, 0, profile);
+    auto profiledController = frc::ProfiledPIDController<units::radians>(
+        kSnapToAngleP, kSnapToAngleI, kSnapToAngleD, profile);
     m_driveController = std::make_unique<frc::HolonomicDriveController>(
         xController, yController, profiledController);
     m_driveController->SetTolerance(

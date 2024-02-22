@@ -163,6 +163,10 @@ constexpr double kPXController = 0.5;
 constexpr double kPYController = 0.5;
 constexpr double kPThetaController = 0.5;
 
+constexpr double kSnapToAngleP = 4;
+constexpr double kSnapToAngleI = 0;
+constexpr double kSnapToAngleD = 0;
+
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
