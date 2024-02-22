@@ -10,24 +10,25 @@
 #include "commands/IntakeInInitialCommand.h"
 #include "commands/IntakeInSecondaryCommand.h"
 #include "commands/ShootCommand.h"
+#include "commands/TurnToAngleCommand.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 
 namespace ControllerCommands {
 
-static frc2::CommandPtr Rumble(frc2::CommandXboxController* controller,
-                               std::function<units::second_t()> timeout) {
-  return frc2::InstantCommand([controller] {
-           controller->SetRumble(frc::GenericHID::RumbleType::kBothRumble,
-                                 OIConstants::kVibrationIntensity);
-         })
-      .ToPtr()
-      .AndThen(frc2::WaitCommand(timeout()).ToPtr())
-      .AndThen(frc2::InstantCommand([controller] {
-                 controller->SetRumble(frc::GenericHID::RumbleType::kBothRumble,
-                                       0);
-               }).ToPtr());
-}
+// static frc2::CommandPtr Rumble(frc2::CommandXboxController* controller,
+//                                std::function<units::second_t()> timeout) {
+//   return frc2::InstantCommand([controller] {
+//            controller->SetRumble(frc::GenericHID::RumbleType::kBothRumble,
+//                                  OIConstants::kVibrationIntensity);
+//          })
+//       .ToPtr()
+//       .AndThen(frc2::WaitCommand(timeout()).ToPtr())
+//       .AndThen(frc2::InstantCommand([controller] {
+//                  controller->SetRumble(frc::GenericHID::RumbleType::kBothRumble,
+//                                        0);
+//                }).ToPtr());
+// }
 
 }  // namespace ControllerCommands
 
@@ -97,6 +98,62 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem) {
 }
 
 }  // namespace IntakingCommands
+
+namespace DrivingCommands {
+using namespace AutoConstants;
+struct RelativeLocation {
+  units::meter_t hypotDistance;
+  units::degree_t desiredRotation;
+};
+
+static units::degree_t RotationFromProximity(DriveSubsystem* drive) {
+  auto currentPose = drive->GetPose();
+  std::vector<RelativeLocation> locationDistances;
+  auto alliance = frc::DriverStation::GetAlliance();
+  if (!alliance) {
+    return 0_deg;
+  }
+  auto side = alliance.value();
+  auto& fixureLocations = side == frc::DriverStation::Alliance::kRed
+                              ? Locations::RedFixtureLocations
+                              : Locations::BlueFixtureLocations;
+  locationDistances.reserve(fixureLocations.size());
+  std::transform(fixureLocations.begin(), fixureLocations.end(),
+                 std::back_inserter(locationDistances),
+                 [currentPose](const Locations::FixtureLocation& loc) {
+                   auto dif = currentPose - loc.location;
+                   auto distance = std::hypot(dif.X().value(), dif.Y().value());
+                   return RelativeLocation{
+                       .hypotDistance = units::meter_t(distance),
+                       .desiredRotation = loc.desiredRotation};
+                 });
+  auto it = std::min_element(
+      locationDistances.begin(), locationDistances.end(),
+      [](const RelativeLocation& a, const RelativeLocation& b) {
+        return a.hypotDistance < b.hypotDistance;
+      });
+  return it->desiredRotation;
+}
+
+static frc2::CommandPtr SnapToAngle(DriveSubsystem* drive) {
+  return (frc2::InstantCommand([] {
+            ConsoleLogger::getInstance().logInfo(
+                "SnapToAngle", "Snapping to a new angle%s", "");
+          })
+              .ToPtr()
+              .AndThen(TurnToAngle(
+                           drive,
+                           [drive] { return RotationFromProximity(drive); },
+                           false)
+                           .ToPtr()))
+      .WithTimeout(5_s)
+      .FinallyDo([drive] {
+        frc::ChassisSpeeds chassisSpeeds = {
+            .vx = 0_mps, .vy = 0_mps, .omega = 0_rad_per_s};
+        drive->Drive(chassisSpeeds);
+      });
+}
+}  // namespace DrivingCommands
 
 namespace FunniCommands {
 static frc2::CommandPtr FeedUntilNotPresent(IntakeSubsystem* intake,

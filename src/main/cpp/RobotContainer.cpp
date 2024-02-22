@@ -138,6 +138,9 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.RightBumper().WhileTrue(
       m_leds.Intaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
 
+  m_driverController.RightStick().OnTrue(
+      DrivingCommands::SnapToAngle(&m_drive));
+
   ConfigureAutoBindings();
 #endif
 #ifdef TEST_SWERVE_BOT

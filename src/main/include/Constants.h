@@ -233,6 +233,34 @@ const std::map<FinalLocation, std::string> PoseToPath{
     {FinalLocation::Source3, "Wing Line 2 to Source 3"},
     {FinalLocation::CenterStage, "Center Field to Center Stage"},
     {FinalLocation::StageRight, "Wing Line 2 to Stage Right"}};
+
+struct FixtureLocation {
+  frc::Pose2d location;
+  units::degree_t desiredRotation;
+};
+
+const std::vector<FixtureLocation> RedFixtureLocations{
+    // Podium (ScoreSpeaker)
+    {.location = frc::Pose2d(13.8_m, 4.12_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = -148_deg},
+    // Amp (ScoreAmp)
+    {.location = frc::Pose2d(14.72_m, 7.85_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = 90_deg},
+    // Speaker (ScoreSubwoofer)
+    {.location = frc::Pose2d(15.39_m, 5.59_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = 0_deg},
+};
+const std::vector<FixtureLocation> BlueFixtureLocations{
+    // Podium (ScoreSpeaker)
+    {.location = frc::Pose2d(2.73_m, 4.11_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = -32_deg},
+    // Amp (ScoreAmp)
+    {.location = frc::Pose2d(1.83_m, 7.85_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = 90_deg},
+    // Speaker (ScoreSubwoofer)
+    {.location = frc::Pose2d(1.19_m, 5.57_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = 175_deg},
+};
 }  // namespace Locations
 }  // namespace AutoConstants
 
