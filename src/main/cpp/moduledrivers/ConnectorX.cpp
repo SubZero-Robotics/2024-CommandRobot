@@ -74,6 +74,7 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
                                                         bool reversed,
                                                         bool setReversed) {
   setLedPort(port);
+  delaySeconds(kConnectorXDelay);
   auto& currentPort = getCurrentCachedPort();
   auto& currentZone = getCurrentZone();
 
@@ -107,6 +108,8 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
 void ConnectorX::ConnectorXBoard::syncZones(LedPort port,
                                             const std::vector<uint8_t>& zones) {
   setLedPort(port);
+
+  delaySeconds(kConnectorXDelay);
 
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::SyncStates;
@@ -219,6 +222,8 @@ void ConnectorX::ConnectorXBoard::setPattern(LedPort port, PatternType pattern,
                                              uint8_t zoneIndex, bool reversed) {
   auto& zone = setCurrentZone(port, zoneIndex, reversed, true);
 
+  delaySeconds(kConnectorXDelay);
+
   if (zone.pattern != pattern) {
     ConsoleLogger::getInstance().logVerbose(
         "ConnectorX", "Setting new pattern to %u", (uint8_t)pattern);
@@ -243,6 +248,8 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
 
   auto& zone = setCurrentZone(port, zoneIndex);
   auto newColor = frc::Color8Bit(red, green, blue);
+
+  delaySeconds(kConnectorXDelay);
 
   ConsoleLogger::getInstance().logVerbose(
       "ConnectorX", "Zone %u cur color=%s | new color=%s", zoneIndex,

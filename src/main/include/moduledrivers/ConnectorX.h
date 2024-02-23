@@ -1,6 +1,7 @@
 #pragma once
 
 #include <frc/I2C.h>
+#include <frc/Timer.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/util/Color8Bit.h>
 #include <frc2/command/CommandPtr.h>
@@ -283,8 +284,8 @@ struct CachedZone {
            std::string("\tCount: ") + std::to_string(count) + "\n" +
            std::string("\tReversed: ") + std::to_string(reversed) + "\n" +
            std::string("\tColor: ") + std::string(color.HexString().c_str()) +
-           "\n" + std::string("\tPattern: ") + std::to_string((uint8_t)pattern) +
-           "\n";
+           "\n" + std::string("\tPattern: ") +
+           std::to_string((uint8_t)pattern) + "\n";
   }
 };
 
@@ -481,6 +482,14 @@ class ConnectorXBoard : public frc2::SubsystemBase {
  private:
   Commands::Response sendCommand(Commands::Command command,
                                  bool expectResponse = false);
+
+  void delaySeconds(units::second_t delaySeconds) {
+    frc::Timer timer;
+    timer.Start();
+    while (!timer.HasElapsed(delaySeconds))
+      ;
+    timer.Stop();
+  }
 
   std::unique_ptr<frc::I2C> _i2c;
   uint8_t _slaveAddress;
