@@ -96,6 +96,8 @@ class StateSubsystem : public frc2::SubsystemBase {
  private:
   bool IsControllerActive();
 
+  frc2::CommandPtr MoveToSourceAndIntake();
+
   inline FinalLocation GetFinalFromState() {
     switch (m_currentState) {
       case RobotState::ClimbStageLeft:

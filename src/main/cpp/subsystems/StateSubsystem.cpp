@@ -247,12 +247,26 @@ frc2::CommandPtr StateSubsystem::StartAutoSequence() {
       m_subsystems.led->ErrorAsync();
   }
 
-  return StartIntaking().AndThen(std::move(scoringCmd)).AndThen(StartSource());
+  return (MoveToSourceAndIntake()
+              .AndThen(StartScoringAmp())
+              .AndThen(MoveToSourceAndIntake())
+              .AndThen(StartScoringAmp())
+              .AndThen(MoveToSourceAndIntake())
+              .AndThen(StartScoringSpeaker()))
+      .Repeatedly();
 }
 
 frc2::CommandPtr StateSubsystem::StartFunni() {
   return FunniCommands::Funni(m_subsystems.intake, m_subsystems.scoring,
                               m_subsystems.led);
+}
+
+frc2::CommandPtr StateSubsystem::MoveToSourceAndIntake() {
+  return StartSource().AndThen(
+      FunniCommands::OuttakeUntilPresent(
+          m_subsystems.intake, m_subsystems.scoring, ScoringDirection::AmpSide)
+          // TODO: REMOVE THIS; ONLY FOR TESTING PURPOSES
+          .WithTimeout(5_s));
 }
 
 bool StateSubsystem::IsControllerActive() {
