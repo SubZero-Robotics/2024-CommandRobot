@@ -71,6 +71,13 @@ frc2::CommandPtr StateSubsystem::RunState() {
           .Until(std::bind(&StateSubsystem::IsControllerActive, this))
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
+    case RobotState::AutoSequenceAmp:
+    case RobotState::AutoSequenceSpeaker:
+    case RobotState::AutoSequenceSubwoofer:
+      return StartAutoSequence()
+          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
     case RobotState::Funni:
       return StartFunni()
           .Until(std::bind(&StateSubsystem::IsControllerActive, this))
@@ -98,8 +105,7 @@ frc2::CommandPtr StateSubsystem::StartIntaking() {
               })
               .FinallyDo([this] {
                 auto chassisSpeeds = frc::ChassisSpeeds::Discretize(
-                    0_mps, 0_mps, AutoConstants::kMaxAngularSpeed,
-                    DriveConstants::kLoopTime);
+                    0_mps, 0_mps, 0_deg_per_s, DriveConstants::kLoopTime);
                 m_subsystems.drive->Drive(chassisSpeeds);
               })
               // TODO: Put this in the "Loaded" state also have the intensity
@@ -212,6 +218,36 @@ frc2::CommandPtr StateSubsystem::StartSource() {
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [this] { return GetFinalFromState(); }, m_subsystems.drive))
       .WithTimeout(20_s);
+}
+
+frc2::CommandPtr StateSubsystem::StartAutoSequence() {
+  /*
+    Get the appropriate scoring location
+    Chain commands:
+      1. Auto-intake
+      2. Score at location
+      3. Go to source
+  */
+
+  frc2::CommandPtr scoringCmd = frc2::InstantCommand([] {}).ToPtr();
+  switch (m_currentState) {
+    case RobotState::AutoSequenceAmp:
+      scoringCmd = StartScoringAmp();
+      break;
+    case RobotState::AutoSequenceSpeaker:
+      scoringCmd = StartScoringAmp();
+      break;
+    case RobotState::AutoSequenceSubwoofer:
+      scoringCmd = StartScoringAmp();
+      break;
+    default:
+      ConsoleLogger::getInstance().logError(
+          "StateSubsystem", "Unsupported AutoSequence from state %d",
+          static_cast<uint8_t>(m_currentState));
+      m_subsystems.led->ErrorAsync();
+  }
+
+  return StartIntaking().AndThen(std::move(scoringCmd)).AndThen(StartSource());
 }
 
 frc2::CommandPtr StateSubsystem::StartFunni() {

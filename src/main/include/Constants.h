@@ -461,6 +461,9 @@ enum class RobotState {
   SourceCenter,
   SourceRight,
   Funni,
+  AutoSequenceSpeaker,
+  AutoSequenceAmp,
+  AutoSequenceSubwoofer,
 };
 
 typedef std::function<RobotState()> StateGetter;

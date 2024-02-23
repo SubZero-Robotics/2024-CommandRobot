@@ -168,13 +168,13 @@ void RobotContainer::ConfigureButtonBindings() {
 #ifndef TEST_SWERVE_BOT
 void RobotContainer::ConfigureAutoBindings() {
   // Maps to 9 on keyboard
-  m_operatorController.A().OnTrue(frc2::InstantCommand([this] {
-                                    if (!m_state.m_active) {
-                                      m_state.m_currentState =
-                                          RobotState::ScoringSpeaker;
-                                      m_state.SetDesiredState();
-                                    }
-                                  }).ToPtr());
+  // m_operatorController.A().OnTrue(frc2::InstantCommand([this] {
+  //                                   if (!m_state.m_active) {
+  //                                     m_state.m_currentState =
+  //                                         RobotState::ScoringSpeaker;
+  //                                     m_state.SetDesiredState();
+  //                                   }
+  //                                 }).ToPtr());
 
   // Maps to 8 on keyboard
   m_operatorController.B().OnTrue(frc2::InstantCommand([this] {
@@ -195,13 +195,13 @@ void RobotContainer::ConfigureAutoBindings() {
                                   }).ToPtr());
 
   // Maps to 4 on keyboard
-  m_operatorController.Y().OnTrue(frc2::InstantCommand([this] {
-                                    if (!m_state.m_active) {
-                                      m_state.m_currentState =
-                                          RobotState::Intaking;
-                                      m_state.SetDesiredState();
-                                    }
-                                  }).ToPtr());
+  // m_operatorController.Y().OnTrue(frc2::InstantCommand([this] {
+  //                                   if (!m_state.m_active) {
+  //                                     m_state.m_currentState =
+  //                                         RobotState::Intaking;
+  //                                     m_state.SetDesiredState();
+  //                                   }
+  //                                 }).ToPtr());
 
   // Maps to 1 on keyboard
   m_operatorController.LeftBumper().OnTrue(frc2::InstantCommand([this] {
@@ -267,6 +267,30 @@ void RobotContainer::ConfigureAutoBindings() {
 
   m_operatorController.Button(20).OnTrue(
       frc2::InstantCommand([this] { m_drive.ZeroHeading(); }).ToPtr());
+
+  (m_operatorController.Y() && m_operatorController.A())
+      .OnTrue(frc2::InstantCommand([this] {
+                if (!m_state.m_active) {
+                  m_state.m_currentState = RobotState::AutoSequenceSpeaker;
+                  m_state.SetDesiredState();
+                }
+              }).ToPtr());
+
+  (m_operatorController.Y() && m_operatorController.B())
+      .OnTrue(frc2::InstantCommand([this] {
+                if (!m_state.m_active) {
+                  m_state.m_currentState = RobotState::AutoSequenceSubwoofer;
+                  m_state.SetDesiredState();
+                }
+              }).ToPtr());
+
+  (m_operatorController.Y() && m_operatorController.X())
+      .OnTrue(frc2::InstantCommand([this] {
+                if (!m_state.m_active) {
+                  m_state.m_currentState = RobotState::AutoSequenceAmp;
+                  m_state.SetDesiredState();
+                }
+              }).ToPtr());
 }
 #endif
 
