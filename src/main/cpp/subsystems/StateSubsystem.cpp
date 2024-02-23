@@ -121,6 +121,7 @@ frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
       ->ShowFromState([] { return RobotState::ScoringSpeaker; })
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Podium; }, m_subsystems.drive))
+      // ? TODO: Snap to angle first?
       .AndThen(
           ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
                                  m_subsystems.scoring, m_subsystems.intake))
@@ -137,6 +138,7 @@ frc2::CommandPtr StateSubsystem::StartScoringAmp() {
   return m_subsystems.led->ShowFromState([] { return RobotState::ScoringAmp; })
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Amp; }, m_subsystems.drive))
+      // ? TODO: Snap to angle first?
       .AndThen(ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
                                       m_subsystems.scoring,
                                       m_subsystems.intake))
@@ -154,6 +156,7 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
       ->ShowFromState([] { return RobotState::ScoringSubwoofer; })
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Subwoofer; }, m_subsystems.drive))
+      // ? TODO: Snap to angle first?
       .AndThen(
           ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
                                  m_subsystems.scoring, m_subsystems.intake))
