@@ -177,8 +177,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
   frc::SwerveDrivePoseEstimator<4> poseEstimator{
       kDriveKinematics,
       m_gyro.GetRotation2d(),
-      {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
-       m_frontRight.GetPosition(), m_rearRight.GetPosition()},
+      {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
+       m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
       frc::Pose2d{0_m, 0_m, 0_rad}};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 

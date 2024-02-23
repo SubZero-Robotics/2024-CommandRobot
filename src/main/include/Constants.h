@@ -290,8 +290,8 @@ constexpr double kAmpUpperSpeed = -0.168;  //.278
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSpeakerLowerSpeed = 1;
-constexpr double kSpeakerUpperSpeed = -0.75;
+constexpr double kSpeakerLowerSpeed = -1;
+constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
