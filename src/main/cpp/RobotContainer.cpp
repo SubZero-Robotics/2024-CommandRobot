@@ -198,7 +198,7 @@ void RobotContainer::ConfigureAutoBindings() {
   m_operatorController.Y().OnTrue(frc2::InstantCommand([this] {
                                     if (!m_state.m_active) {
                                       m_state.m_currentState =
-                                          RobotState::Intaking;
+                                          RobotState::AutoSequenceAmp;
                                       m_state.SetDesiredState();
                                     }
                                   }).ToPtr());
@@ -267,6 +267,30 @@ void RobotContainer::ConfigureAutoBindings() {
 
   m_operatorController.Button(20).OnTrue(
       frc2::InstantCommand([this] { m_drive.ZeroHeading(); }).ToPtr());
+
+  // (m_operatorController.Y() && m_operatorController.A())
+  //     .OnTrue(frc2::InstantCommand([this] {
+  //               if (!m_state.m_active) {
+  //                 m_state.m_currentState = RobotState::AutoSequenceSpeaker;
+  //                 m_state.SetDesiredState();
+  //               }
+  //             }).ToPtr());
+
+  // (m_operatorController.Y() && m_operatorController.B())
+  //     .OnTrue(frc2::InstantCommand([this] {
+  //               if (!m_state.m_active) {
+  //                 m_state.m_currentState = RobotState::AutoSequenceSubwoofer;
+  //                 m_state.SetDesiredState();
+  //               }
+  //             }).ToPtr());
+
+  // (m_operatorController.Y() && m_operatorController.X())
+  //     .OnTrue(frc2::InstantCommand([this] {
+  //               if (!m_state.m_active) {
+  //                 m_state.m_currentState = RobotState::AutoSequenceAmp;
+  //                 m_state.SetDesiredState();
+  //               }
+  //             }).ToPtr());
 }
 #endif
 
