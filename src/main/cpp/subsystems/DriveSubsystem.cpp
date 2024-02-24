@@ -82,23 +82,15 @@ void DriveSubsystem::Periodic() {
   if (frc::RobotBase::IsReal()) {
     poseEstimator.Update(m_gyro.GetRotation2d(), GetModulePositions());
 
-    auto pose = m_vision->GetEstimatedGlobalPose(
-        frc::Pose3d(poseEstimator.GetEstimatedPosition()));
+    m_vision->UpdateEstimatedGlobalPose(poseEstimator);
 
-    if (pose.has_value()) {
-      auto est = pose.value();
-      auto estStdDevs = m_vision->GetEstimationStdDevs(
-          est.estimatedPose.ToPose2d(), est.targetsUsed);
-      // poseEstimator.AddVisionMeasurement(est.estimatedPose.ToPose2d(),
-      //                                    est.timestamp, estStdDevs);
-      poseEstimator.AddVisionMeasurement(est.estimatedPose.ToPose2d(),
-                                         est.timestamp);
-      auto visionPose = poseEstimator.GetEstimatedPosition();
-      ConsoleLogger::getInstance().logVerbose("DriveSubsystem PoseEstimator",
-                                              visionPose);
-      m_field.SetRobotPose(visionPose);
-      logDrivebase();
-    }
+    auto visionPose = poseEstimator.GetEstimatedPosition();
+    // ? Do we need to flip this first based on alliance?
+    // https://github.com/Hemlock5712/2023-Robot/blob/dd5ac64587a3839492cfdb0a28d21677d465584a/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java#L149
+    ConsoleLogger::getInstance().logVerbose("DriveSubsystem PoseEstimator",
+                                            visionPose);
+    m_field.SetRobotPose(visionPose);
+    logDrivebase();
   };
 }
 
@@ -295,13 +287,9 @@ frc::Pose2d DriveSubsystem::GetPose() {
 }
 
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
-  poseEstimator.ResetPosition(
-      GetHeading(),
-      {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
-       m_frontRight.GetPosition(), m_rearRight.GetPosition()},
-      pose);
-  m_frontLeft.ResetEncoders();
-  m_frontRight.ResetEncoders();
-  m_rearLeft.ResetEncoders();
-  m_rearRight.ResetEncoders();
+  poseEstimator.ResetPosition(GetHeading(), GetModulePositions(), pose);
+  // m_frontLeft.ResetEncoders();
+  // m_frontRight.ResetEncoders();
+  // m_rearLeft.ResetEncoders();
+  // m_rearRight.ResetEncoders();
 }
