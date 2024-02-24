@@ -118,6 +118,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   AHRS* getGyro() { return &m_gyro; }
 
+  wpi::array<frc::SwerveModulePosition, 4U> GetModulePositions() const;
+
   static void LogSpeeds(wpi::array<frc::SwerveModuleState, 4> desiredStates);
 
   void AddVisionMeasurement(const frc::Pose2d& visionMeasurement,
@@ -179,7 +181,9 @@ class DriveSubsystem : public frc2::SubsystemBase {
       m_gyro.GetRotation2d(),
       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
-      frc::Pose2d{0_m, 0_m, 0_rad}};
+      frc::Pose2d{0_m, 0_m, 0_rad},
+      {0.01, 0.01, 0.01},
+      {0.1, 0.1, 0.1}};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing

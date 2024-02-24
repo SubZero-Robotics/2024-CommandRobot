@@ -32,37 +32,49 @@ class Vision {
   Vision() {
     photonEstimator.SetMultiTagFallbackStrategy(
         photon::PoseStrategy::LOWEST_AMBIGUITY);
+    photonEstimator2.SetMultiTagFallbackStrategy(
+        photon::PoseStrategy::LOWEST_AMBIGUITY);
   }
 
-  CameraResults GetLatestResult() {
-    return {camera->GetLatestResult(), camera2->GetLatestResult()};
-  }
-
-  std::optional<photon::EstimatedRobotPose> GetEstimatedGlobalPose() {
+  std::optional<photon::EstimatedRobotPose> GetPoseFromCamera(
+      frc::Pose3d prevPose, photon::PhotonPoseEstimator& est,
+      photon::PhotonCamera& camera, double maxAbmiguity = 0.2) {
+    est.SetReferencePose(prevPose);
     auto visionEst = photonEstimator.Update();
-    auto camera1result = camera->GetLatestResult();
-    auto visionEst2 = photonEstimator2.Update();
-    auto camera2result = camera2->GetLatestResult();
-    auto camera1ts = camera1result.GetTimestamp();
-    auto camera2ts = camera2result.GetTimestamp();
-    auto camera1am = camera1result.GetTargets().size() == 0 ? 1 : camera1result.GetBestTarget().GetPoseAmbiguity();
-    auto camera2am = camera2result.GetTargets().size() == 0 ? 1 : camera2result.GetBestTarget().GetPoseAmbiguity();
+    auto camResult = camera.GetLatestResult();
 
-    units::second_t latestTimestamp = std::max(camera1ts, camera2ts);
-    bool newResult =
-        units::math::abs(latestTimestamp - lastEstTimestamp) > 1e-5_s;
-    if (newResult) {
-      lastEstTimestamp = latestTimestamp;
+    auto camMulti = camResult.MultiTagResult().result;
+
+    if ((camMulti.isPresent && camMulti.ambiguity <= maxAbmiguity) ||
+        (camResult.HasTargets() &&
+         camResult.GetBestTarget().poseAmbiguity <= maxAbmiguity)) {
+      return visionEst;
     }
 
-    // ConsoleLogger::getInstance().logVerbose("Vision", "Camera 1 ambiguiutey %f", camera1am);
-    // ConsoleLogger::getInstance().logVerbose("Vision", "Camera 2 ambiguiutey %f", camera2am);
-    return camera1am > camera2am ? visionEst2 : visionEst;
+    return std::nullopt;
   }
 
-  Eigen::Matrix<double, 3, 1> GetEstimationStdDevs(frc::Pose2d estimatedPose) {
+  std::optional<photon::EstimatedRobotPose> GetEstimatedGlobalPose(
+      frc::Pose3d prevPose) {
+    auto cam1Pose = GetPoseFromCamera(prevPose, photonEstimator, *camera);
+
+    if (cam1Pose.has_value()) {
+      return cam1Pose.value();
+    }
+
+    auto cam2Pose = GetPoseFromCamera(prevPose, photonEstimator2, *camera2);
+
+    if (cam2Pose.has_value()) {
+      return cam2Pose.value();
+    }
+
+    return std::nullopt;
+  }
+
+  Eigen::Matrix<double, 3, 1> GetEstimationStdDevs(
+      frc::Pose2d estimatedPose,
+      std::span<photon::PhotonTrackedTarget> targets) {
     Eigen::Matrix<double, 3, 1> estStdDevs = kSingleTagStdDevs;
-    auto targets = GetLatestResult().GetTargets();
     int numTags = 0;
     units::meter_t avgDist = 0_m;
     for (const auto& tgt : targets) {
