@@ -307,3 +307,7 @@ void RobotContainer::StartIdling() {
   m_state.m_active = false;
   m_leds.IdlingAsync();
 }
+
+void RobotContainer::ResetPose() {
+  m_drive.ResetOdometry(frc::Pose2d{0_m, 0_m, 0_rad});
+}

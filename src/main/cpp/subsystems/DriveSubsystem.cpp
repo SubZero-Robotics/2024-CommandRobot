@@ -65,15 +65,16 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
 }
 
 void DriveSubsystem::SimulationPeriodic() {
+  logDrivebase();
   frc::ChassisSpeeds chassisSpeeds = kDriveKinematics.ToChassisSpeeds(
-      m_frontLeft.GetState(), m_frontRight.GetState(), m_rearLeft.GetState(),
+      m_frontLeft.GetState(), m_rearLeft.GetState(), m_frontRight.GetState(),
       m_rearRight.GetState());
   m_gyroSimAngle.Set(m_gyro.GetYaw() +
                      (chassisSpeeds.omega.convert<units::deg_per_s>().value() *
                       DriveConstants::kLoopTime.value()));
   poseEstimator.Update(-m_gyro.GetRotation2d(),
-                       {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
-                        m_rearLeft.GetPosition(), m_rearRight.GetPosition()});
+                       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
+                        m_frontLeft.GetPosition(), m_rearRight.GetPosition()});
 
   m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
 };
@@ -82,8 +83,8 @@ void DriveSubsystem::Periodic() {
   // Implementation of subsystem periodic method goes here.
   if (frc::RobotBase::IsReal()) {
     poseEstimator.Update(frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}),
-                         {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
-                          m_rearLeft.GetPosition(), m_rearRight.GetPosition()});
+                         {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
+                          m_frontRight.GetPosition(), m_rearRight.GetPosition()});
 
     m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
   };
@@ -93,12 +94,14 @@ void DriveSubsystem::Periodic() {
   auto visionEst = m_vision->GetEstimatedGlobalPose();
   if (visionEst.has_value()) {
     auto est = visionEst.value();
+    // if (est.estimatedPose.X().value() == NAN) {
+    //   return;
+    // }
     auto estPose = est.estimatedPose.ToPose2d();
     auto estStdDevs = m_vision->GetEstimationStdDevs(estPose);
     AddVisionMeasurement(est.estimatedPose.ToPose2d(), est.timestamp,
                          estStdDevs);
   }
-  logDrivebase();
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
@@ -289,7 +292,11 @@ frc::Pose2d DriveSubsystem::GetPose() {
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
   poseEstimator.ResetPosition(
       GetHeading(),
-      {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
-       m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
+      {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
+       m_frontRight.GetPosition(), m_rearRight.GetPosition()},
       pose);
+  m_frontLeft.ResetEncoders();
+  m_frontRight.ResetEncoders();
+  m_rearLeft.ResetEncoders();
+  m_rearRight.ResetEncoders();
 }

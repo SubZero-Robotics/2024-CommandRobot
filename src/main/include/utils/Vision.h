@@ -46,8 +46,8 @@ class Vision {
     auto camera1ts = camera1result.GetTimestamp();
     auto camera2ts = camera2result.GetTimestamp();
 
-    if (camera1result.GetTargets().size() == 0 &&
-        camera2result.GetTargets().size() == 0) {
+    if (camera1result.GetTargets().empty() &&
+        camera2result.GetTargets().empty()) {
       return std::nullopt;
     }
 

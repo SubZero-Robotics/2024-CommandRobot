@@ -41,6 +41,7 @@ class RobotContainer {
 
   void ClearCurrentStateCommand();
   void StartIdling();
+  void ResetPose();
 
  private:
   // The driver's controller

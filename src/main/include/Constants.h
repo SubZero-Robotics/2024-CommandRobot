@@ -318,7 +318,7 @@ constexpr double kVectorSpeed = 0.1;
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kAmpLowerSpeed = 0.254;   //.264
-constexpr double kAmpUpperSpeed = -0.168;  //.278
+constexpr double kAmpUpperSpeed = 0.168;  //.278
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
@@ -328,7 +328,7 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kSubwooferLowerSpeed = 0.95;
-constexpr double kSubwooferUpperSpeed = -kSubwooferLowerSpeed;
+constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
 constexpr double kScoringOutakeUpperSpeed = 0.2;
 constexpr double kScoringOutakeLowerSpeed = -kScoringOutakeUpperSpeed;
@@ -418,7 +418,7 @@ constexpr double kClimberSetI = 0;
 constexpr double kClimberSetD = 0;
 
 // Maximum arm extension distance
-constexpr double kMaxArmDistance = 20;
+constexpr double kMaxArmDistance = 40;
 // Arm climbing position
 constexpr double kClimbExtensionPosition = 5;
 // Arm retracted position
