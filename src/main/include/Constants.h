@@ -163,6 +163,10 @@ constexpr double kPXController = 0.5;
 constexpr double kPYController = 0.5;
 constexpr double kPThetaController = 0.5;
 
+constexpr double kSnapToAngleP = 4;
+constexpr double kSnapToAngleI = 0;
+constexpr double kSnapToAngleD = 0;
+
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
@@ -233,6 +237,34 @@ const std::map<FinalLocation, std::string> PoseToPath{
     {FinalLocation::Source3, "Wing Line 2 to Source 3"},
     {FinalLocation::CenterStage, "Center Field to Center Stage"},
     {FinalLocation::StageRight, "Wing Line 2 to Stage Right"}};
+
+struct FixtureLocation {
+  frc::Pose2d location;
+  units::degree_t desiredRotation;
+};
+
+const std::vector<FixtureLocation> RedFixtureLocations{
+    // Podium (ScoreSpeaker)
+    {.location = frc::Pose2d(13.8_m, 4.12_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = -148_deg},
+    // Amp (ScoreAmp)
+    {.location = frc::Pose2d(14.72_m, 7.85_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = 90_deg},
+    // Speaker (ScoreSubwoofer)
+    {.location = frc::Pose2d(15.39_m, 5.59_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = 0_deg},
+};
+const std::vector<FixtureLocation> BlueFixtureLocations{
+    // Podium (ScoreSpeaker)
+    {.location = frc::Pose2d(2.73_m, 4.11_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = -32_deg},
+    // Amp (ScoreAmp)
+    {.location = frc::Pose2d(1.83_m, 7.85_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = 90_deg},
+    // Speaker (ScoreSubwoofer)
+    {.location = frc::Pose2d(1.19_m, 5.57_m, frc::Rotation2d(0_deg)),
+     .desiredRotation = 175_deg},
+};
 }  // namespace Locations
 }  // namespace AutoConstants
 
@@ -244,7 +276,7 @@ constexpr double kVibrationIntensity = 1;
 }  // namespace OIConstants
 
 constexpr uint8_t kLedAddress = 23;
-constexpr units::second_t kConnectorXDelay = 0.1_s;
+constexpr units::second_t kConnectorXDelay = 0.04_s;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
@@ -261,7 +293,7 @@ constexpr int kTicksPerMotorRotation = 42;
 
 namespace IntakingConstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = -0.7;
+constexpr double kIntakeSpeed = -0.5;
 constexpr double kFeedAmpSpeed = -0.5;
 constexpr double kFeedSpeakerSpeed = -1;
 constexpr double kFeedSubwooferSpeed = -1;
@@ -270,8 +302,8 @@ constexpr double kOutakeSpeed = 0.5;
 
 constexpr double kSecondaryIntakeOutSpeed = 0.05;
 
-constexpr uint8_t kUpperBeamBreakDigitalPort = 2;
-constexpr uint8_t kLowerBeamBreakDigitalPort = 3;
+constexpr uint8_t kUpperBeamBreakDigitalPort = 3;
+constexpr uint8_t kLowerBeamBreakDigitalPort = 2;
 
 }  // namespace IntakingConstants
 
@@ -286,17 +318,20 @@ constexpr double kVectorSpeed = 0.1;
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kAmpLowerSpeed = 0.254;   //.264
-constexpr double kAmpUpperSpeed = -0.168;  //.278
+constexpr double kAmpUpperSpeed = 0.168;  //.278
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSpeakerLowerSpeed = 1;
-constexpr double kSpeakerUpperSpeed = -0.75;
+constexpr double kSpeakerLowerSpeed = -1;
+constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kSubwooferLowerSpeed = 0.95;
-constexpr double kSubwooferUpperSpeed = -kSubwooferLowerSpeed;
+constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
+
+constexpr double kScoringOutakeUpperSpeed = 0.2;
+constexpr double kScoringOutakeLowerSpeed = -kScoringOutakeUpperSpeed;
 
 enum class ScoreState {
   FlywheelRamp,
@@ -360,11 +395,11 @@ namespace VisionConstants {
 static constexpr std::string_view kFrontCamera{"PhotonVision"};
 static constexpr std::string_view kRearCamera{"Photonvision2"};
 static const frc::Transform3d kRobotToCam{
-    frc::Translation3d{0.132_m, -0.013_m, 0.607_m},
-    frc::Rotation3d{0_rad, 0.654_rad, 0_rad}};
+    frc::Translation3d{2.651_in, 0_in, 23.892_in},
+    frc::Rotation3d{0_deg, -52.541_deg, 0_deg}};
 static const frc::Transform3d kRobotToCam2{
-    frc::Translation3d{0.583_in, 2.651_in, 23.252_in},
-    frc::Rotation3d{0_deg, (180_deg - 24.925_deg), 0_deg}};
+    frc::Translation3d{5.296_in, 0_in, 23.252_in},
+    frc::Rotation3d{0_deg, 24.85_deg, 180_deg}};
 constexpr photon::PoseStrategy kPoseStrategy =
     photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
 static const frc::AprilTagFieldLayout kTagLayout{
@@ -383,7 +418,7 @@ constexpr double kClimberSetI = 0;
 constexpr double kClimberSetD = 0;
 
 // Maximum arm extension distance
-constexpr double kMaxArmDistance = 20;
+constexpr double kMaxArmDistance = 40;
 // Arm climbing position
 constexpr double kClimbExtensionPosition = 5;
 // Arm retracted position
@@ -423,6 +458,9 @@ enum class RobotState {
   SourceCenter,
   SourceRight,
   Funni,
+  AutoSequenceSpeaker,
+  AutoSequenceAmp,
+  AutoSequenceSubwoofer,
 };
 
 typedef std::function<RobotState()> StateGetter;

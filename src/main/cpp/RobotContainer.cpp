@@ -82,13 +82,12 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureButtonBindings() {
-  m_driverController.Start()
-      .WhileTrue(new frc2::RunCommand(
-          [this] {
-            m_drive.SetX();
-            // ConsoleLogger::getInstance().logVerbose("Drive", "SetX %s", "");
-          },
-          {&m_drive}));
+  m_driverController.Start().WhileTrue(new frc2::RunCommand(
+      [this] {
+        m_drive.SetX();
+        // ConsoleLogger::getInstance().logVerbose("Drive", "SetX %s", "");
+      },
+      {&m_drive}));
 
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
@@ -107,7 +106,7 @@ void RobotContainer::ConfigureButtonBindings() {
               [this] { return 0; })
               .ToPtr()));
 
-  m_driverController.B().WhileTrue(
+  m_driverController.B().OnTrue(
       m_leds.Intaking()
           .AndThen(IntakingCommands::Intake(&m_intake))
           .AndThen(m_leds.Loaded()));
@@ -137,7 +136,10 @@ void RobotContainer::ConfigureButtonBindings() {
               .ToPtr()));
 
   m_driverController.RightBumper().WhileTrue(
-      m_leds.Intaking().AndThen(IntakeOut(&m_intake).ToPtr()));
+      m_leds.Intaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
+
+  m_driverController.RightStick().OnTrue(
+      DrivingCommands::SnapToAngle(&m_drive));
 
   ConfigureAutoBindings();
 #endif
@@ -196,7 +198,7 @@ void RobotContainer::ConfigureAutoBindings() {
   m_operatorController.Y().OnTrue(frc2::InstantCommand([this] {
                                     if (!m_state.m_active) {
                                       m_state.m_currentState =
-                                          RobotState::Intaking;
+                                          RobotState::AutoSequenceAmp;
                                       m_state.SetDesiredState();
                                     }
                                   }).ToPtr());
@@ -265,6 +267,30 @@ void RobotContainer::ConfigureAutoBindings() {
 
   m_operatorController.Button(20).OnTrue(
       frc2::InstantCommand([this] { m_drive.ZeroHeading(); }).ToPtr());
+
+  // (m_operatorController.Y() && m_operatorController.A())
+  //     .OnTrue(frc2::InstantCommand([this] {
+  //               if (!m_state.m_active) {
+  //                 m_state.m_currentState = RobotState::AutoSequenceSpeaker;
+  //                 m_state.SetDesiredState();
+  //               }
+  //             }).ToPtr());
+
+  // (m_operatorController.Y() && m_operatorController.B())
+  //     .OnTrue(frc2::InstantCommand([this] {
+  //               if (!m_state.m_active) {
+  //                 m_state.m_currentState = RobotState::AutoSequenceSubwoofer;
+  //                 m_state.SetDesiredState();
+  //               }
+  //             }).ToPtr());
+
+  // (m_operatorController.Y() && m_operatorController.X())
+  //     .OnTrue(frc2::InstantCommand([this] {
+  //               if (!m_state.m_active) {
+  //                 m_state.m_currentState = RobotState::AutoSequenceAmp;
+  //                 m_state.SetDesiredState();
+  //               }
+  //             }).ToPtr());
 }
 #endif
 
@@ -280,4 +306,8 @@ void RobotContainer::ClearCurrentStateCommand() {
 void RobotContainer::StartIdling() {
   m_state.m_active = false;
   m_leds.IdlingAsync();
+}
+
+void RobotContainer::ResetPose() {
+  m_drive.ResetOdometry(frc::Pose2d{0_m, 0_m, 0_rad});
 }

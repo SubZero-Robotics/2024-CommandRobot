@@ -65,15 +65,14 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
 }
 
 void DriveSubsystem::SimulationPeriodic() {
+  logDrivebase();
   frc::ChassisSpeeds chassisSpeeds = kDriveKinematics.ToChassisSpeeds(
       m_frontLeft.GetState(), m_rearLeft.GetState(), m_frontRight.GetState(),
       m_rearRight.GetState());
   m_gyroSimAngle.Set(m_gyro.GetYaw() +
                      (chassisSpeeds.omega.convert<units::deg_per_s>().value() *
                       DriveConstants::kLoopTime.value()));
-  poseEstimator.Update(-m_gyro.GetRotation2d(),
-                       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
-                        m_frontRight.GetPosition(), m_rearRight.GetPosition()});
+  poseEstimator.Update(-m_gyro.GetRotation2d(), GetModulePositions());
 
   m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
 };
@@ -301,4 +300,8 @@ void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
       pose);
+  m_frontLeft.ResetEncoders();
+  m_frontRight.ResetEncoders();
+  m_rearLeft.ResetEncoders();
+  m_rearRight.ResetEncoders();
 }

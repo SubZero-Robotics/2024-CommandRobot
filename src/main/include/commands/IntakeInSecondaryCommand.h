@@ -30,9 +30,12 @@ class IntakeInSecondary
   }
 
   void Execute() override {
+    ConsoleLogger::getInstance().logVerbose("IntakeInSecondary",
+                                            m_intake->NotePresentLower());
     if (m_intake->NotePresentLower()) {
       m_intake->Stop();
       isFinished = true;
+      return;
     }
 
     m_intake->Out(IntakingConstants::kSecondaryIntakeOutSpeed);
