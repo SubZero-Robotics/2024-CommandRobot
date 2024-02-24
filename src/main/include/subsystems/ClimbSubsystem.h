@@ -16,7 +16,7 @@ class ClimbSubsystem
   ClimbSubsystem(SingleAxisConfig &config, rev::CANSparkMax &motor,
                  rev::SparkRelativeEncoder &encoder, std::string name)
       : BaseSingleAxisSubsystem(config, motor, encoder, nullptr, nullptr, name,
-                                true) {}
+                                false) {}
 
   void ResetEncoder() override { _enc.SetPosition(0); }
 

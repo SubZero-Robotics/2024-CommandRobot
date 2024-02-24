@@ -45,8 +45,18 @@ class Vision {
     auto camera2result = camera2->GetLatestResult();
     auto camera1ts = camera1result.GetTimestamp();
     auto camera2ts = camera2result.GetTimestamp();
-    auto camera1am = camera1result.GetTargets().size() == 0 ? 1 : camera1result.GetBestTarget().GetPoseAmbiguity();
-    auto camera2am = camera2result.GetTargets().size() == 0 ? 1 : camera2result.GetBestTarget().GetPoseAmbiguity();
+
+    if (camera1result.GetTargets().size() == 0 &&
+        camera2result.GetTargets().size() == 0) {
+      return std::nullopt;
+    }
+
+    auto camera1am = camera1result.GetTargets().size() == 0
+                         ? 1
+                         : camera1result.GetBestTarget().GetPoseAmbiguity();
+    auto camera2am = camera2result.GetTargets().size() == 0
+                         ? 1
+                         : camera2result.GetBestTarget().GetPoseAmbiguity();
 
     units::second_t latestTimestamp = std::max(camera1ts, camera2ts);
     bool newResult =
@@ -55,8 +65,9 @@ class Vision {
       lastEstTimestamp = latestTimestamp;
     }
 
-    // ConsoleLogger::getInstance().logVerbose("Vision", "Camera 1 ambiguiutey %f", camera1am);
-    // ConsoleLogger::getInstance().logVerbose("Vision", "Camera 2 ambiguiutey %f", camera2am);
+    // ConsoleLogger::getInstance().logVerbose("Vision", "Camera 1 ambiguiutey
+    // %f", camera1am); ConsoleLogger::getInstance().logVerbose("Vision",
+    // "Camera 2 ambiguiutey %f", camera2am);
     return camera1am > camera2am ? visionEst2 : visionEst;
   }
 
