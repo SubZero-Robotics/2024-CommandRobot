@@ -23,6 +23,11 @@
 #include "utils/ConsoleLogger.h"
 #include "utils/Vision.h"
 
+// For sim to work
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 class DriveSubsystem : public frc2::SubsystemBase {
  public:
   DriveSubsystem(Vision* vision);
@@ -184,11 +189,12 @@ class DriveSubsystem : public frc2::SubsystemBase {
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
       frc::Pose2d{0_m, 0_m, 0_rad},
       {0.1, 0.1, 0.1},
-      {1, 1, M_PI}};
+      {1.0, 1.0, (double)M_PI}};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing
   frc::Field2d m_field;
+  frc::Pose2d m_lastGoodPosition;
 
   Vision* m_vision;
 };

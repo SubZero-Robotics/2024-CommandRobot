@@ -4,6 +4,9 @@
 #include <frc2/command/CommandPtr.h>
 #include <rev/CANSparkFlex.h>
 
+#include <map>
+#include <string>
+
 #include "ColorConstants.h"
 #include "Constants.h"
 
@@ -12,6 +15,16 @@ enum class ScoringDirection {
   SpeakerSide,
   Subwoofer,
 };
+
+typedef struct {
+  std::string name;
+  double P;
+  double I;
+  double D;
+  double IZone;
+  double FF;
+  double velocity;
+} PidSettings;
 
 using namespace CANSparkMaxConstants;
 
@@ -94,9 +107,14 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   double tuningLatestD;
   double tuningLatestIZone;
   double tuningLatestFF;
+  double tuningLatestVelocity;
 
-  rev::SparkPIDController *m_tuningPidControllerUpper =
+  std::map<std::string, PidSettings> scoringPIDs;
+
+  std::string tuningMotor;
+
+  rev::SparkPIDController* m_tuningPidControllerUpper =
       &m_ampUpperPidController;
-  rev::SparkPIDController *m_tuningPidControllerLower =
+  rev::SparkPIDController* m_tuningPidControllerLower =
       &m_ampLowerPidController;
 };

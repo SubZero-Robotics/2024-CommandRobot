@@ -1,85 +1,137 @@
 #include "subsystems/ScoringSubsystem.h"
 
-#include <frc/SmartDashboard/SmartDashboard.h>
-
-#define PID_NAMESPACE SpeakerPID
+#include <frc/smartdashboard/SmartDashboard.h>
 
 using namespace ScoringConstants;
 
 ScoringSubsystem::ScoringSubsystem() {
   // m_speakerLowerSpinnyBoi.Follow(m_speakerUpperSpinnyBoi, false);
 
-  tuningLatestP = PID_NAMESPACE::kP;
-  tuningLatestI = PID_NAMESPACE::kI;
-  tuningLatestD = PID_NAMESPACE::kD;
-  tuningLatestIZone = PID_NAMESPACE::kIZone;
-  tuningLatestFF = PID_NAMESPACE::kFF;
+  tuningMotor = "Speaker Upper";
 
-  m_speakerUpperPidController.SetP(SpeakerPID::kP);
-  m_speakerUpperPidController.SetI(SpeakerPID::kI);
-  m_speakerUpperPidController.SetD(SpeakerPID::kD);
-  m_speakerUpperPidController.SetIZone(SpeakerPID::kIZone);
-  m_speakerUpperPidController.SetFF(SpeakerPID::kFF);
+  m_speakerUpperPidController.SetP(ScoringPID::kSpeakerUpperP);
+  m_speakerUpperPidController.SetI(ScoringPID::kSpeakerUpperI);
+  m_speakerUpperPidController.SetD(ScoringPID::kSpeakerUpperD);
+  m_speakerUpperPidController.SetIZone(ScoringPID::kSpeakerUpperIZone);
+  m_speakerUpperPidController.SetFF(ScoringPID::kSpeakerUpperFF);
 
-  m_speakerLowerPidController.SetP(SpeakerPID::kP);
-  m_speakerLowerPidController.SetI(SpeakerPID::kI);
-  m_speakerLowerPidController.SetD(SpeakerPID::kD);
-  m_speakerLowerPidController.SetIZone(SpeakerPID::kIZone);
-  m_speakerLowerPidController.SetFF(SpeakerPID::kFF);
+  m_speakerLowerPidController.SetP(ScoringPID::kSpeakerLowerP);
+  m_speakerLowerPidController.SetI(ScoringPID::kSpeakerLowerI);
+  m_speakerLowerPidController.SetD(ScoringPID::kSpeakerLowerD);
+  m_speakerLowerPidController.SetIZone(ScoringPID::kSpeakerLowerIZone);
+  m_speakerLowerPidController.SetFF(ScoringPID::kSpeakerLowerFF);
 
-  m_ampUpperPidController.SetP(AmpUpperPID::kP);
-  m_ampUpperPidController.SetI(AmpUpperPID::kI);
-  m_ampUpperPidController.SetD(AmpUpperPID::kD);
-  m_ampUpperPidController.SetIZone(AmpUpperPID::kIZone);
-  m_ampUpperPidController.SetFF(AmpUpperPID::kFF);
+  m_ampUpperPidController.SetP(ScoringPID::kAmpUpperP);
+  m_ampUpperPidController.SetI(ScoringPID::kAmpUpperI);
+  m_ampUpperPidController.SetD(ScoringPID::kAmpUpperD);
+  m_ampUpperPidController.SetIZone(ScoringPID::kAmpUpperIZone);
+  m_ampUpperPidController.SetFF(ScoringPID::kAmpUpperFF);
 
-  m_ampLowerPidController.SetP(AmpLowerPID::kP);
-  m_ampLowerPidController.SetI(AmpLowerPID::kI);
-  m_ampLowerPidController.SetD(AmpLowerPID::kD);
-  m_ampLowerPidController.SetIZone(AmpLowerPID::kIZone);
-  m_ampLowerPidController.SetFF(AmpLowerPID::kFF);
+  m_ampLowerPidController.SetP(ScoringPID::kAmpLowerP);
+  m_ampLowerPidController.SetI(ScoringPID::kAmpLowerI);
+  m_ampLowerPidController.SetD(ScoringPID::kAmpLowerD);
+  m_ampLowerPidController.SetIZone(ScoringPID::kAmpLowerIZone);
+  m_ampLowerPidController.SetFF(ScoringPID::kAmpLowerFF);
 
-  frc::SmartDashboard::PutNumber("Tuning P Gain", PID_NAMESPACE::kP);
-  frc::SmartDashboard::PutNumber("Tuning I Gain", PID_NAMESPACE::kI);
-  frc::SmartDashboard::PutNumber("Tuning D Gain", PID_NAMESPACE::kD);
-  frc::SmartDashboard::PutNumber("Tuning I Zone", PID_NAMESPACE::kIZone);
-  frc::SmartDashboard::PutNumber("Tuning Feed Forward", PID_NAMESPACE::kFF);
+  scoringPIDs["Speaker Upper"] = {
+      .name = "Speaker Upper",
+      .P = ScoringPID::kSpeakerUpperP,
+      .I = ScoringPID::kSpeakerUpperI,
+      .D = ScoringPID::kSpeakerUpperD,
+      .IZone = ScoringPID::kSpeakerUpperIZone,
+      .FF = ScoringPID::kSpeakerUpperFF,
+      .velocity = ScoringPID::kSpeakerUpperVelocity};
+  scoringPIDs["Speaker Lower"] = {
+      .name = "Speaker Lower",
+      .P = ScoringPID::kSpeakerLowerP,
+      .I = ScoringPID::kSpeakerLowerI,
+      .D = ScoringPID::kSpeakerLowerD,
+      .IZone = ScoringPID::kSpeakerLowerIZone,
+      .FF = ScoringPID::kSpeakerLowerFF,
+      .velocity = ScoringPID::kSpeakerLowerVelocity};
+  scoringPIDs["Amp Upper"] = {.name = "Amp Upper",
+                              .P = ScoringPID::kAmpUpperP,
+                              .I = ScoringPID::kAmpUpperI,
+                              .D = ScoringPID::kAmpUpperD,
+                              .IZone = ScoringPID::kAmpUpperIZone,
+                              .FF = ScoringPID::kAmpUpperFF,
+                              .velocity = ScoringPID::kAmpUpperVelocity};
+  scoringPIDs["Amp Lower"] = {.name = "Amp Lower",
+                              .P = ScoringPID::kAmpLowerP,
+                              .I = ScoringPID::kAmpLowerI,
+                              .D = ScoringPID::kAmpLowerD,
+                              .IZone = ScoringPID::kAmpLowerIZone,
+                              .FF = ScoringPID::kAmpLowerFF,
+                              .velocity = ScoringPID::kAmpLowerVelocity};
+
+  if (scoringPIDs.find(tuningMotor) == scoringPIDs.end()) {
+    ConsoleLogger::getInstance().logError(
+        "PID Error:", "%s not in PID settings.", tuningMotor);
+  }
+
+  frc::SmartDashboard::PutNumber(tuningMotor + " P Gain",
+                                 scoringPIDs[tuningMotor].P);
+  frc::SmartDashboard::PutNumber(tuningMotor + " I Gain",
+                                 scoringPIDs[tuningMotor].I);
+  frc::SmartDashboard::PutNumber(tuningMotor + " D Gain",
+                                 scoringPIDs[tuningMotor].D);
+  frc::SmartDashboard::PutNumber(tuningMotor + " I Zone",
+                                 scoringPIDs[tuningMotor].IZone);
+  frc::SmartDashboard::PutNumber(tuningMotor + " Feed Forward",
+                                 scoringPIDs[tuningMotor].FF);
+  frc::SmartDashboard::PutNumber(tuningMotor + " Velocity",
+                                 scoringPIDs[tuningMotor].velocity);
+
+  tuningLatestP = scoringPIDs[tuningMotor].P;
+  tuningLatestI = scoringPIDs[tuningMotor].I;
+  tuningLatestD = scoringPIDs[tuningMotor].D;
+  tuningLatestIZone = scoringPIDs[tuningMotor].IZone;
+  tuningLatestFF = scoringPIDs[tuningMotor].FF;
+  tuningLatestVelocity = scoringPIDs[tuningMotor].velocity;
 }
 
 void ScoringSubsystem::Periodic() {
-  double sP = frc::SmartDashboard::GetNumber("Tuning P Gain", 0);
-  double sI = frc::SmartDashboard::GetNumber("Tuning I Gain", 0);
-  double sD = frc::SmartDashboard::GetNumber("Tuning D Gain", 0);
-  double sIZ = frc::SmartDashboard::GetNumber("Tuning I Zone", 0);
-  double sFF = frc::SmartDashboard::GetNumber("Tuning Feed Forward", 0);
+  double tP = frc::SmartDashboard::GetNumber(tuningMotor + " P Gain", 0);
+  double tI = frc::SmartDashboard::GetNumber(tuningMotor + " Tuning I Gain", 0);
+  double tD = frc::SmartDashboard::GetNumber(tuningMotor + " Tuning D Gain", 0);
+  double tIZ = frc::SmartDashboard::GetNumber(tuningMotor + " I Zone", 0);
+  double tFF = frc::SmartDashboard::GetNumber(tuningMotor + " Feed Forward", 0);
+  double tV = frc::SmartDashboard::GetNumber(tuningMotor + " Velocity", 0);
 
-  if (sP != tuningLatestP) {
-    m_tuningPidControllerUpper->SetP(sP);
-    m_tuningPidControllerLower->SetP(sP);
-    tuningLatestP = sP;
+  if (tP != tuningLatestP) {
+    m_tuningPidControllerUpper->SetP(tP);
+    m_tuningPidControllerLower->SetP(tP);
+    scoringPIDs[tuningMotor].P = tP;
+    tuningLatestP = tP;
   }
-  if (sI != tuningLatestI) {
-    m_tuningPidControllerUpper->SetI(sI);
-    m_tuningPidControllerLower->SetI(sI);
-    tuningLatestI = sI;
+  if (tI != tuningLatestI) {
+    m_tuningPidControllerUpper->SetI(tI);
+    m_tuningPidControllerLower->SetI(tI);
+    scoringPIDs[tuningMotor].I = tI;
+    tuningLatestI = tI;
   }
-  if (sD != tuningLatestD) {
-    m_tuningPidControllerUpper->SetD(sD);
-    m_tuningPidControllerLower->SetD(sD);
-    tuningLatestD = sD;
+  if (tD != tuningLatestD) {
+    m_tuningPidControllerUpper->SetD(tD);
+    m_tuningPidControllerLower->SetD(tD);
+    scoringPIDs[tuningMotor].D = tD;
+    tuningLatestD = tD;
   }
-  if (sIZ != tuningLatestIZone) {
-    m_tuningPidControllerUpper->SetIZone(sIZ);
-    m_tuningPidControllerLower->SetIZone(sIZ);
-    tuningLatestIZone = sIZ;
+  if (tIZ != tuningLatestIZone) {
+    m_tuningPidControllerUpper->SetIZone(tIZ);
+    m_tuningPidControllerLower->SetIZone(tIZ);
+    scoringPIDs[tuningMotor].IZone = tIZ;
+    tuningLatestIZone = tIZ;
   }
-  if (sFF != tuningLatestFF) {
-    m_tuningPidControllerUpper->SetFF(sFF);
-    m_tuningPidControllerLower->SetFF(sFF);
-    tuningLatestFF = sFF;
+  if (tFF != tuningLatestFF) {
+    m_tuningPidControllerUpper->SetFF(tFF);
+    m_tuningPidControllerLower->SetFF(tFF);
+    scoringPIDs[tuningMotor].FF = tFF;
+    tuningLatestFF = tFF;
   }
-
-  frc::SmartDashboard::PutNumber("Tuning Velocity", m_ampEncoder.GetVelocity());
+  if (tV != tuningLatestVelocity) {
+    scoringPIDs[tuningMotor].velocity = tV;
+    tuningLatestVelocity = tV;
+  }
 }
 
 void ScoringSubsystem::SimulationPeriodic() {}
@@ -158,19 +210,21 @@ bool ScoringSubsystem::GetMotorFreeWheel(ScoringDirection direction) {
 
 void ScoringSubsystem::SpinAmp() {
   m_ampLowerPidController.SetReference(
-      MaxSpeedToRpm(kAmpLowerSpeed), rev::CANSparkMax::ControlType::kVelocity);
+      MaxSpeedToRpm(scoringPIDs["Amp Lower"].velocity),
+      rev::CANSparkMax::ControlType::kVelocity);
   m_ampUpperPidController.SetReference(
-      MaxSpeedToRpm(kAmpUpperSpeed), rev::CANSparkMax::ControlType::kVelocity);
+      MaxSpeedToRpm(scoringPIDs["Amp Upper"].velocity),
+      rev::CANSparkMax::ControlType::kVelocity);
   // m_ampLowerSpinnyBoi.Set(kAmpLowerSpeed);
   // m_ampUpperSpinnyBoi.Set(kAmpUpperSpeed);
 }
 
 void ScoringSubsystem::SpinSpeaker() {
   m_speakerUpperPidController.SetReference(
-      MaxSpeedToRpm(kSpeakerUpperSpeed),
+      MaxSpeedToRpm(scoringPIDs["Speaker Upper"].velocity),
       rev::CANSparkMax::ControlType::kVelocity);
   m_speakerLowerPidController.SetReference(
-      MaxSpeedToRpm(kSpeakerLowerSpeed),
+      MaxSpeedToRpm(scoringPIDs["Speaker Lower"].velocity),
       rev::CANSparkMax::ControlType::kVelocity);
   // m_speakerUpperSpinnyBoi.Set(kSpeakerUpperSpeed);
   // m_speakerLowerSpinnyBoi.Set(kSpeakerLowerSpeed);
@@ -193,7 +247,8 @@ bool ScoringSubsystem::CheckAmpSpeed() {
       "Scoring Subsystem", "Amp Velocity %.3f", m_ampEncoder.GetVelocity());
   ShuffleboardLogger::getInstance().logVerbose("Amp Ramp Speed",
                                                m_ampEncoder.GetVelocity());
-  ShuffleboardLogger::getInstance().logVerbose("Amp Ramp Speed", m_ampEncoder.GetVelocity());
+  ShuffleboardLogger::getInstance().logVerbose("Amp Ramp Speed",
+                                               m_ampEncoder.GetVelocity());
   return abs(m_ampEncoder.GetVelocity()) - 750 >=
          abs(MaxSpeedToRpm(kAmpLowerSpeed));
 }
