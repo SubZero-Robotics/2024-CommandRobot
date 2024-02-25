@@ -369,6 +369,11 @@ constexpr double kAmpLowerD = 0;
 constexpr double kAmpLowerIZone = 0;
 constexpr double kAmpLowerFF = 0.000015;
 constexpr double kAmpLowerVelocity = 0.254;
+
+const std::string kSpeakerUpperName = "Speaker Upper";
+const std::string kSpeakerLowerName = "Speaker Lower";
+const std::string kAmpUpperName = "Amp Upper";
+const std::string kAmpLowerName = "Amp Lower";
 }  // namespace ScoringPID
 
 namespace SpeakerPID {

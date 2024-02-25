@@ -17,7 +17,6 @@ enum class ScoringDirection {
 };
 
 typedef struct {
-  std::string name;
   double P;
   double I;
   double D;
@@ -25,6 +24,63 @@ typedef struct {
   double FF;
   double velocity;
 } PidSettings;
+
+typedef struct PIDControllerInterface {
+  std::string name;
+  PidSettings settings;
+  double velocity;
+  rev::SparkPIDController* PIDController;
+
+  void setVelocity(double v) { velocity = v; }
+
+  void setP(double p) {
+    settings.P = p;
+    PIDController->SetP(p);
+  }
+
+  void setI(double i) {
+    settings.I = i;
+    PIDController->SetI(i);
+  }
+
+  void setD(double d) {
+    settings.D = d;
+    PIDController->SetD(d);
+  }
+
+  void setIZone(double iz) {
+    settings.IZone = iz;
+    PIDController->SetIZone(iz);
+  }
+
+  void setFF(double ff) {
+    settings.FF = ff;
+    PIDController->SetFF(ff);
+  }
+
+  void setAll(double p, double i, double d, double iz, double ff, double v) {
+    setP(p);
+    setI(i);
+    setD(d);
+    setIZone(iz);
+    setFF(ff);
+    setVelocity(v);
+  }
+
+  void setConfig() {
+    PIDController->SetP(settings.P);
+    PIDController->SetI(settings.I);
+    PIDController->SetD(settings.D);
+    PIDController->SetIZone(settings.IZone);
+    PIDController->SetFF(settings.FF);
+  }
+
+  void runWithVelocity() {
+    setConfig();
+    PIDController->SetReference(velocity,
+                                rev::CANSparkMax::ControlType::kVelocity);
+  }
+};
 
 using namespace CANSparkMaxConstants;
 
@@ -109,7 +165,7 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   double tuningLatestFF;
   double tuningLatestVelocity;
 
-  std::map<std::string, PidSettings> scoringPIDs;
+  std::map<std::string, PIDControllerInterface> scoringPIDs;
 
   std::string tuningMotor;
 

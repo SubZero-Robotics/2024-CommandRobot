@@ -7,6 +7,7 @@
 #include <frc/DriverStation.h>
 #include <frc/RobotBase.h>
 #include <frc/RobotController.h>
+#include <frc/Timer.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
