@@ -65,7 +65,9 @@ class Vision {
 
   // See:
   // https://github.com/Hemlock5712/2023-Robot/blob/Joe-Test/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java
-  void UpdateEstimatedGlobalPose(frc::SwerveDrivePoseEstimator<4U>& estimator) {
+  std::pair<std::optional<photon::EstimatedRobotPose>,
+            std::optional<photon::EstimatedRobotPose>>
+  UpdateEstimatedGlobalPose(frc::SwerveDrivePoseEstimator<4U>& estimator) {
     auto cam1Pose =
         GetPoseFromCamera(frc::Pose3d(estimator.GetEstimatedPosition()),
                           photonEstimator, *camera);
@@ -83,6 +85,8 @@ class Vision {
       auto est = cam2Pose.value();
       AddVisionMeasurement(est, estimator);
     }
+
+    return std::make_pair(cam1Pose, cam2Pose);
   }
 
   Eigen::Matrix<double, 3, 1> GetEstimationStdDevs(
