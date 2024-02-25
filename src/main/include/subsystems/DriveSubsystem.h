@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <AHRS.h>
 #include <frc/ADXRS450_Gyro.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 #include <frc/filter/SlewRateLimiter.h>
@@ -22,7 +23,6 @@
 #include "MAXSwerveModule.h"
 #include "utils/ConsoleLogger.h"
 #include "utils/Vision.h"
-#include <AHRS.h>
 
 // For sim to work
 #ifndef M_PI
@@ -134,7 +134,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
                             units::second_t timestamp,
                             const Eigen::Vector3d& stdDevs);
 
-  frc::SwerveDriveKinematics<4> kDriveKinematics{
+  frc::SwerveDriveKinematics<4> m_driveKinematics{
       frc::Translation2d{DriveConstants::kWheelBase / 2,
                          DriveConstants::kTrackWidth / 2},
       frc::Translation2d{DriveConstants::kWheelBase / 2,
@@ -159,6 +159,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   // The gyro sensor
   AHRS m_gyro{frc::SPI::Port::kMXP};
+  //   frc::ADXRS450_Gyro m_gyro;
   // AHRS m_gyro;
 
   HAL_SimDeviceHandle m_gyroSimHandle =
@@ -184,7 +185,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // 4 defines the number of modules
 
   frc::SwerveDrivePoseEstimator<4> poseEstimator{
-      kDriveKinematics,
+      m_driveKinematics,
       m_gyro.GetRotation2d(),
       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},

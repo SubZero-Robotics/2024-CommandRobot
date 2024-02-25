@@ -57,7 +57,7 @@ RobotContainer::RobotContainer() {
             -units::meters_per_second_t{axes.x},
             -units::radians_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-            true, false, kLoopTime);
+            true, true, kLoopTime);
       },
       {&m_drive}));
 #ifndef TEST_SWERVE_BOT
