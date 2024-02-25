@@ -22,6 +22,7 @@
 #include "MAXSwerveModule.h"
 #include "utils/ConsoleLogger.h"
 #include "utils/Vision.h"
+#include <AHRS.h>
 
 // For sim to work
 #ifndef M_PI
@@ -121,7 +122,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::ChassisSpeeds getSpeed();
 
-  frc::ADXRS450_Gyro* getGyro() { return &m_gyro; }
+  AHRS* getGyro() { return &m_gyro; }
 
   wpi::array<frc::SwerveModulePosition, 4U> GetModulePositions() const;
 
@@ -157,8 +158,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
   uint8_t logCounter = 0;
 
   // The gyro sensor
-  // AHRS m_gyro{frc::SPI::Port::kMXP};
-  frc::ADXRS450_Gyro m_gyro;
+  AHRS m_gyro{frc::SPI::Port::kMXP};
+  // AHRS m_gyro;
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");

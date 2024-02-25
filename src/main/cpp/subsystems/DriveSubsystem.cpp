@@ -7,6 +7,7 @@
 #include <frc/DriverStation.h>
 #include <frc/RobotBase.h>
 #include <frc/RobotController.h>
+#include <frc/Timer.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
@@ -67,9 +68,9 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
 void DriveSubsystem::SimulationPeriodic() {
   logDrivebase();
   frc::ChassisSpeeds chassisSpeeds = kDriveKinematics.ToChassisSpeeds(
-      m_frontLeft.GetState(), m_rearLeft.GetState(), m_frontRight.GetState(),
+      m_frontLeft.GetState(), m_frontRight.GetState(), m_rearLeft.GetState(),
       m_rearRight.GetState());
-  m_gyroSimAngle.Set(m_gyro.GetAngle() +
+  m_gyroSimAngle.Set(m_gyro.GetYaw() +
                      (chassisSpeeds.omega.convert<units::deg_per_s>().value() *
                       DriveConstants::kLoopTime.value()));
   poseEstimator.Update(-m_gyro.GetRotation2d(), GetModulePositions());
@@ -199,7 +200,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
           ? frc::ChassisSpeeds::Discretize(
                 frc::ChassisSpeeds::FromFieldRelativeSpeeds(
                     xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                    frc::Rotation2d(units::degree_t{m_gyro.GetAngle()})),
+                    frc::Rotation2d(units::degree_t{m_gyro.GetYaw()})),
                 DriveConstants::kLoopTime)
           : frc::ChassisSpeeds{xSpeedDelivered, ySpeedDelivered, rotDelivered});
 
@@ -289,12 +290,12 @@ void DriveSubsystem::ResetEncoders() {
 
 wpi::array<frc::SwerveModulePosition, 4U> DriveSubsystem::GetModulePositions()
     const {
-  return {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
-          m_frontRight.GetPosition(), m_rearRight.GetPosition()};
+  return {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
+          m_rearLeft.GetPosition(), m_rearRight.GetPosition()};
 }
 
 units::degree_t DriveSubsystem::GetHeading() {
-  return frc::Rotation2d(units::degree_t{m_gyro.GetAngle()}).Degrees();
+  return frc::Rotation2d(units::degree_t{m_gyro.GetYaw()}).Degrees();
 }
 
 void DriveSubsystem::ZeroHeading() { m_gyro.Reset(); }
