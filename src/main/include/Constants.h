@@ -317,7 +317,7 @@ constexpr double kVectorSpeed = 0.1;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kAmpLowerSpeed = 0.254;   //.264
+constexpr double kAmpLowerSpeed = 0.254;  //.264
 constexpr double kAmpUpperSpeed = 0.168;  //.278
 
 // These should match
@@ -340,6 +340,36 @@ enum class ScoreState {
 };
 
 constexpr units::second_t kFlywheelRampDelay = 0.75_s;
+
+namespace ScoringPID {
+constexpr double kSpeakerUpperP = 6e-5;
+constexpr double kSpeakerUpperI = 1e-6;
+constexpr double kSpeakerUpperD = 0;
+constexpr double kSpeakerUpperIZone = 0;
+constexpr double kSpeakerUpperFF = 0.000015;
+constexpr double kSpeakerUpperVelocity = -1;
+
+constexpr double kSpeakerLowerP = 6e-5;
+constexpr double kSpeakerLowerI = 1e-6;
+constexpr double kSpeakerLowerD = 0;
+constexpr double kSpeakerLowerIZone = 0;
+constexpr double kSpeakerLowerFF = 0.000015;
+constexpr double kSpeakerLowerVelocity = -1;
+
+constexpr double kAmpUpperP = 6e-5;
+constexpr double kAmpUpperI = 1e-6;
+constexpr double kAmpUpperD = 0;
+constexpr double kAmpUpperIZone = 0;
+constexpr double kAmpUpperFF = 0.000015;
+constexpr double kAmpUpperVelocity = 0.168;
+
+constexpr double kAmpLowerP = 6e-5;
+constexpr double kAmpLowerI = 1e-6;
+constexpr double kAmpLowerD = 0;
+constexpr double kAmpLowerIZone = 0;
+constexpr double kAmpLowerFF = 0.000015;
+constexpr double kAmpLowerVelocity = 0.254;
+}  // namespace ScoringPID
 
 namespace SpeakerPID {
 constexpr double kP = 6e-5;
