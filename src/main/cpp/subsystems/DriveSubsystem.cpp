@@ -69,7 +69,7 @@ void DriveSubsystem::SimulationPeriodic() {
   frc::ChassisSpeeds chassisSpeeds = kDriveKinematics.ToChassisSpeeds(
       m_frontLeft.GetState(), m_rearLeft.GetState(), m_frontRight.GetState(),
       m_rearRight.GetState());
-  m_gyroSimAngle.Set(m_gyro.GetYaw() +
+  m_gyroSimAngle.Set(m_gyro.GetAngle() +
                      (chassisSpeeds.omega.convert<units::deg_per_s>().value() *
                       DriveConstants::kLoopTime.value()));
   poseEstimator.Update(-m_gyro.GetRotation2d(), GetModulePositions());
@@ -89,8 +89,8 @@ void DriveSubsystem::Periodic() {
     // https://github.com/Hemlock5712/2023-Robot/blob/dd5ac64587a3839492cfdb0a28d21677d465584a/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java#L149
     ConsoleLogger::getInstance().logVerbose("DriveSubsystem PoseEstimator",
                                             visionPose);
-    m_field.SetRobotPose(visionPose);
-    logDrivebase();
+          m_field.SetRobotPose(visionPose);
+        logDrivebase();
   };
 }
 
@@ -180,7 +180,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
           ? frc::ChassisSpeeds::Discretize(
                 frc::ChassisSpeeds::FromFieldRelativeSpeeds(
                     xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                    frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()})),
+                    frc::Rotation2d(units::degree_t{m_gyro.GetAngle()})),
                 DriveConstants::kLoopTime)
           : frc::ChassisSpeeds{xSpeedDelivered, ySpeedDelivered, rotDelivered});
 
@@ -275,12 +275,12 @@ wpi::array<frc::SwerveModulePosition, 4U> DriveSubsystem::GetModulePositions()
 }
 
 units::degree_t DriveSubsystem::GetHeading() {
-  return frc::Rotation2d(units::degree_t{-m_gyro.GetAngle()}).Degrees();
+  return frc::Rotation2d(units::degree_t{m_gyro.GetAngle()}).Degrees();
 }
 
 void DriveSubsystem::ZeroHeading() { m_gyro.Reset(); }
 
-double DriveSubsystem::GetTurnRate() { return -m_gyro.GetRate(); }
+double DriveSubsystem::GetTurnRate() { return m_gyro.GetRate(); }
 
 frc::Pose2d DriveSubsystem::GetPose() {
   return poseEstimator.GetEstimatedPosition();

@@ -27,7 +27,8 @@ class BalanceCommand
 
   void Initialize() override {
     isFinished = false;
-    double roll = m_drive->getGyro()->GetRoll() * (M_PI / 180);
+    // double roll = m_drive->getGyro()->GetRoll() * (M_PI / 180);
+    double roll = 0;
     double climberExtentDistance =
         sin(roll) * ClimbConstants::kClimberOffsetDistance.value();
 

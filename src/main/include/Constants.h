@@ -418,7 +418,7 @@ constexpr double kClimberSetI = 0;
 constexpr double kClimberSetD = 0;
 
 // Maximum arm extension distance
-constexpr double kMaxArmDistance = 40;
+constexpr double kMaxArmDistance = 1000;
 // Arm climbing position
 constexpr double kClimbExtensionPosition = 5;
 // Arm retracted position
@@ -438,9 +438,9 @@ constexpr units::meter_t kClimberOffsetDistance = 4_m;
 
 namespace RobotConstants {
 #ifdef TEST_SWERVE_BOT
-const std::string kRoborioSerialNumber = "0326F2F2";
-#else
 const std::string kRoborioSerialNumber = "032B4B68";
+#else
+const std::string kRoborioSerialNumber = "0326F2F2";
 #endif
 }  // namespace RobotConstants
 

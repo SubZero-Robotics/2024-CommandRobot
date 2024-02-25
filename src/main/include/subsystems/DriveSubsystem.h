@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <AHRS.h>
+#include <frc/ADXRS450_Gyro.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/geometry/Pose2d.h>
@@ -116,7 +116,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::ChassisSpeeds getSpeed();
 
-  AHRS* getGyro() { return &m_gyro; }
+  frc::ADXRS450_Gyro* getGyro() { return &m_gyro; }
 
   wpi::array<frc::SwerveModulePosition, 4U> GetModulePositions() const;
 
@@ -152,7 +152,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
   uint8_t logCounter = 0;
 
   // The gyro sensor
-  AHRS m_gyro{frc::SPI::Port::kMXP};
+  // AHRS m_gyro{frc::SPI::Port::kMXP};
+  frc::ADXRS450_Gyro m_gyro;
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
