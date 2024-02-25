@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <AHRS.h>
 #include <frc/ADXRS450_Gyro.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 #include <frc/filter/SlewRateLimiter.h>
@@ -121,7 +122,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::ChassisSpeeds getSpeed();
 
-  frc::ADXRS450_Gyro* getGyro() { return &m_gyro; }
+  AHRS* getGyro() { return &m_gyro; }
 
   wpi::array<frc::SwerveModulePosition, 4U> GetModulePositions() const;
 
@@ -133,7 +134,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
                             units::second_t timestamp,
                             const Eigen::Vector3d& stdDevs);
 
-  frc::SwerveDriveKinematics<4> kDriveKinematics{
+  frc::SwerveDriveKinematics<4> m_driveKinematics{
       frc::Translation2d{DriveConstants::kWheelBase / 2,
                          DriveConstants::kTrackWidth / 2},
       frc::Translation2d{DriveConstants::kWheelBase / 2,
@@ -157,8 +158,9 @@ class DriveSubsystem : public frc2::SubsystemBase {
   uint8_t logCounter = 0;
 
   // The gyro sensor
-  // AHRS m_gyro{frc::SPI::Port::kMXP};
-  frc::ADXRS450_Gyro m_gyro;
+  AHRS m_gyro{frc::SPI::Port::kMXP};
+  //   frc::ADXRS450_Gyro m_gyro;
+  // AHRS m_gyro;
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
@@ -183,7 +185,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // 4 defines the number of modules
 
   frc::SwerveDrivePoseEstimator<4> poseEstimator{
-      kDriveKinematics,
+      m_driveKinematics,
       m_gyro.GetRotation2d(),
       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
