@@ -69,8 +69,17 @@ class RobotContainer {
   frc2::CommandPtr m_kepler2 =
       pathplanner::PathPlannerAuto("Kepler 2 Auto").ToPtr();
 
+    std::unordered_map<std::string, frc2::Command*> autoCommands = {
+        {AutoConstants::kDefaultAutoName, m_defaultAuto.get()},
+        {"3 in Amp", m_3inAmp.get()},
+        {"2 Note Auto", m_2noteAuto.get()},
+        {"4 Note Auto", m_4noteAuto.get()},
+        {"Kepler Auto", m_kepler.get()},
+        {"Kepler 2 Auto", m_kepler2.get()},
+    };
+
   // The chooser for the autonomous routines
-  frc::SendableChooser<frc2::Command*> m_chooser;
+  frc::SendableChooser<std::string> m_chooser;
 
 #ifdef TEST_SWERVE_BOT
 

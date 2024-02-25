@@ -72,12 +72,13 @@ RobotContainer::RobotContainer() {
 
   // This won't work since we're getting the reference of an r-value which goes
   // out of scope at the end of the method
-  m_chooser.SetDefaultOption("Leave Community", m_defaultAuto.get());
-  m_chooser.AddOption("3 in Amp", m_3inAmp.get());
-  m_chooser.AddOption("2 Note Auto", m_2noteAuto.get());
-  m_chooser.AddOption("4 Note Auto", m_4noteAuto.get());
-  m_chooser.AddOption("Kepler", m_kepler.get());
-  m_chooser.AddOption("Kepler2", m_kepler2.get());
+  m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
+                             AutoConstants::kDefaultAutoName);
+  m_chooser.AddOption("3 in Amp", "3 in Amp");
+  m_chooser.AddOption("2 Note Auto", "2 Note Auto");
+  m_chooser.AddOption("4 Note Auto", "4 Note Auto");
+  m_chooser.AddOption("Kepler", "Kepler");
+  m_chooser.AddOption("Kepler2", "Kepler2");
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
 
@@ -295,7 +296,11 @@ void RobotContainer::ConfigureAutoBindings() {
 #endif
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
-  return m_chooser.GetSelected();
+  auto selectedAutoName = m_chooser.GetSelected();
+  auto autoPose = pathplanner::PathPlannerAuto::getStartingPoseFromAutoFile(
+      selectedAutoName);
+  m_drive.ResetOdometry(autoPose);
+  return autoCommands.at(selectedAutoName);
 }
 
 void RobotContainer::ClearCurrentStateCommand() {
