@@ -330,8 +330,8 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 constexpr double kSubwooferLowerSpeed = 0.95;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
-constexpr double kScoringOutakeUpperSpeed = 0.2;
-constexpr double kScoringOutakeLowerSpeed = -kScoringOutakeUpperSpeed;
+constexpr double kScoringOutakeUpperSpeed = -0.2;
+constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
 
 enum class ScoreState {
   FlywheelRamp,
@@ -339,7 +339,7 @@ enum class ScoreState {
   Shooting,
 };
 
-constexpr units::second_t kFlywheelRampDelay = 0.75_s;
+constexpr units::second_t kFlywheelRampDelay = 1_s;
 
 namespace ScoringPID {
 constexpr double kSpeakerUpperP = 6e-5;

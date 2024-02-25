@@ -84,6 +84,9 @@ void DriveSubsystem::Periodic() {
     ConsoleLogger::getInstance().logInfo(
         "DriveSubsystem", "Gyro angle = %f",
         m_gyro.GetRotation2d().Degrees().value());
+    ConsoleLogger::getInstance().logInfo(
+        "DriveSubsystem", "Gyro rate = %f",
+        m_gyro.GetRate());
     poseEstimator.UpdateWithTime(frc::Timer::GetFPGATimestamp(),
                                  m_gyro.GetRotation2d(), GetModulePositions());
     logDrivebase();
@@ -335,7 +338,7 @@ wpi::array<frc::SwerveModulePosition, 4U> DriveSubsystem::GetModulePositions()
 }
 
 units::degree_t DriveSubsystem::GetHeading() {
-  return frc::Rotation2d(units::degree_t{m_gyro.GetAngle()}).Degrees();
+  return m_gyro.GetRotation2d().Degrees();
 }
 
 void DriveSubsystem::ZeroHeading() { m_gyro.Reset(); }
