@@ -84,9 +84,9 @@ void DriveSubsystem::Periodic() {
     ConsoleLogger::getInstance().logInfo(
         "DriveSubsystem", "Gyro angle = %f",
         m_gyro.GetRotation2d().Degrees().value());
-    ConsoleLogger::getInstance().logInfo(
-        "DriveSubsystem", "Gyro rate = %f",
-        m_gyro.GetRate());
+    ConsoleLogger::getInstance().logInfo("DriveSubsystem", "Gyro rate = %f",
+
+                                         m_gyro.GetRate());
     poseEstimator.UpdateWithTime(frc::Timer::GetFPGATimestamp(),
                                  m_gyro.GetRotation2d(), GetModulePositions());
     logDrivebase();
@@ -102,10 +102,10 @@ void DriveSubsystem::Periodic() {
     if (updatedPose.X() > 0_m && updatedPose.X() <= 100_m &&
         updatedPose.Y() > 0_m && updatedPose.Y() <= 100_m) {
       ConsoleLogger::getInstance().logVerbose(
-        "DriveSubsystem PoseEstimator final pose", updatedPose);
-    m_lastGoodPosition = updatedPose;
-    m_field.SetRobotPose(updatedPose);
-        }
+          "DriveSubsystem PoseEstimator final pose", updatedPose);
+      m_lastGoodPosition = updatedPose;
+      m_field.SetRobotPose(updatedPose);
+    }
     // else {
     //   auto cam1Est = visionPoses.first;
     //   auto cam2Est = visionPoses.second;
