@@ -447,11 +447,11 @@ namespace VisionConstants {
 static constexpr std::string_view kFrontCamera{"PhotonVision"};
 static constexpr std::string_view kRearCamera{"Photonvision2"};
 static const frc::Transform3d kRobotToCam{
-    frc::Translation3d{2.651_in, 0_in, 23.892_in},
+    frc::Translation3d{5.296_in, 0_in, 23.892_in},
     frc::Rotation3d{0_deg, -52.541_deg, 0_deg}};
 static const frc::Transform3d kRobotToCam2{
-    frc::Translation3d{5.296_in, 0_in, 23.252_in},
-    frc::Rotation3d{0_deg, 24.85_deg, 180_deg}};
+    frc::Translation3d{2.651_in, 0_in, 23.252_in},
+    frc::Rotation3d{0_deg, -24.85_deg, 180_deg}};
 constexpr photon::PoseStrategy kPoseStrategy =
     photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
 static const frc::AprilTagFieldLayout kTagLayout{
