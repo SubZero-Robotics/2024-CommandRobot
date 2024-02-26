@@ -312,6 +312,8 @@ constexpr double kFreeSpinCurrentThreshold = 90;
 // constexpr double kMaxSpinRpm = 5676;
 constexpr double kMaxSpinRpm = 6784;
 
+constexpr double kShuffleSpeed = 0.05;
+
 // Positive = clockwise
 constexpr double kVectorSpeed = 0.1;
 
@@ -467,3 +469,5 @@ enum class RobotState {
 };
 
 typedef std::function<RobotState()> StateGetter;
+
+//edgiiiiing!!!!!

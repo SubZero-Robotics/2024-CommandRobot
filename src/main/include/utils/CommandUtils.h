@@ -13,6 +13,7 @@
 #include "commands/TurnToAngleCommand.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
+#include "commands/NoteShuffle.h"
 
 namespace ControllerCommands {
 
@@ -36,9 +37,7 @@ namespace ScoringCommands {
 using namespace ScoringConstants;
 
 static frc2::CommandPtr OutakeUntilTopNotPresent(IntakeSubsystem* intake) {
-  return (frc2::InstantCommand([intake] { intake->Out(); })
-              .ToPtr()
-              .Until([intake] { return !intake->NotePresentUpper(); })
+  return ( NoteShuffle(intake).ToPtr()
               .AndThen(frc2::WaitCommand(0_s).ToPtr())
               .AndThen(
                   frc2::InstantCommand([intake] { intake->Stop(); }).ToPtr()))
