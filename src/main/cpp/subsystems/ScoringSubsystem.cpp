@@ -42,6 +42,7 @@ ScoringSubsystem::ScoringSubsystem() {
                    .FF = ScoringPID::kSpeakerUpperFF,
                    .velocity = ScoringPID::kSpeakerUpperVelocity},
       .velocity = ScoringPID::kSpeakerUpperVelocity,
+      .maxRPM = ScoringConstants::kMaxSpinRpm,
       .PIDController = &m_speakerUpperPidController};
   scoringPIDs[ScoringPID::kSpeakerLowerName] = {
       .name = ScoringPID::kSpeakerLowerName,
@@ -52,6 +53,7 @@ ScoringSubsystem::ScoringSubsystem() {
                    .FF = ScoringPID::kSpeakerLowerFF,
                    .velocity = ScoringPID::kSpeakerLowerVelocity},
       .velocity = ScoringPID::kSpeakerLowerVelocity,
+      .maxRPM = ScoringConstants::kMaxSpinRpm,
       .PIDController = &m_speakerLowerPidController};
   scoringPIDs[ScoringPID::kAmpUpperName] = {
       .name = ScoringPID::kAmpUpperName,
@@ -62,6 +64,7 @@ ScoringSubsystem::ScoringSubsystem() {
                    .FF = ScoringPID::kAmpUpperFF,
                    .velocity = ScoringPID::kAmpUpperVelocity},
       .velocity = ScoringPID::kAmpUpperVelocity,
+      .maxRPM = ScoringConstants::kMaxSpinRpm,
       .PIDController = &m_ampUpperPidController};
   scoringPIDs[ScoringPID::kAmpLowerName] = {
       .name = ScoringPID::kAmpLowerName,
@@ -72,6 +75,7 @@ ScoringSubsystem::ScoringSubsystem() {
                    .FF = ScoringPID::kAmpLowerFF,
                    .velocity = ScoringPID::kAmpLowerVelocity},
       .velocity = ScoringPID::kAmpLowerVelocity,
+      .maxRPM = ScoringConstants::kMaxSpinRpm,
       .PIDController = &m_ampLowerPidController};
 
   if (scoringPIDs.find(tuningMotor) == scoringPIDs.end()) {

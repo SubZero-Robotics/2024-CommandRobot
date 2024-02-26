@@ -29,6 +29,7 @@ typedef struct PIDControllerInterface {
   std::string name;
   PidSettings settings;
   double velocity;
+  double maxRPM;
   rev::SparkPIDController* PIDController;
 
   void setVelocity(double v) { velocity = v; }
@@ -77,8 +78,10 @@ typedef struct PIDControllerInterface {
 
   void runWithVelocity() {
     setConfig();
-    PIDController->SetReference(velocity,
+    PIDController->SetReference(maxRPM * velocity,
                                 rev::CANSparkMax::ControlType::kVelocity);
+    ConsoleLogger::getInstance().logInfo("Scoring Subsystem", "End rpm is %f",
+                                         maxRPM * velocity);
   }
 };
 
