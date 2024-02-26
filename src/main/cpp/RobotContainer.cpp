@@ -108,11 +108,11 @@ void RobotContainer::ConfigureButtonBindings() {
               .ToPtr()));
 
   m_driverController.B().OnTrue(
-      // m_leds.Intaking()
-          // .AndThen(
+      m_leds.Intaking()
+          .AndThen(
             IntakingCommands::Intake(&m_intake)
-            // )
-          // .AndThen(m_leds.Loaded())
+            )
+          .AndThen(m_leds.Loaded())
           );
 
   m_driverController.X().WhileTrue(m_leds.ScoringSpeaker().AndThen(

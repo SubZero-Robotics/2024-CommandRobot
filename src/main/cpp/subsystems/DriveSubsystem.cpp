@@ -95,28 +95,27 @@ void DriveSubsystem::Periodic() {
 
     auto updatedPose = poseEstimator.GetEstimatedPosition();
     // Might need to get the pose from somewhere else?
-    frc::Pose2d finalPose = m_lastGoodPosition;
+    // frc::Pose2d finalPose = m_lastGoodPosition;
     // ? Do we need to flip this first based on alliance?
     // https://github.com/Hemlock5712/2023-Robot/blob/dd5ac64587a3839492cfdb0a28d21677d465584a/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java#L149
 
     if (updatedPose.X() > 0_m && updatedPose.X() <= 100_m &&
         updatedPose.Y() > 0_m && updatedPose.Y() <= 100_m) {
-      finalPose = updatedPose;
-    } else {
-      auto cam1Est = visionPoses.first;
-      auto cam2Est = visionPoses.second;
+      ConsoleLogger::getInstance().logVerbose(
+        "DriveSubsystem PoseEstimator final pose", updatedPose);
+    m_lastGoodPosition = updatedPose;
+    m_field.SetRobotPose(updatedPose);
+        }
+    // else {
+    //   auto cam1Est = visionPoses.first;
+    //   auto cam2Est = visionPoses.second;
 
-      if (cam1Est.has_value()) {
-        finalPose = cam1Est.value().estimatedPose.ToPose2d();
-      } else if (cam2Est.has_value()) {
-        finalPose = cam2Est.value().estimatedPose.ToPose2d();
-      }
-    }
-
-    ConsoleLogger::getInstance().logVerbose(
-        "DriveSubsystem PoseEstimator final pose", finalPose);
-    m_lastGoodPosition = finalPose;
-    m_field.SetRobotPose(finalPose);
+    //   if (cam1Est.has_value()) {
+    //     finalPose = cam1Est.value().estimatedPose.ToPose2d();
+    //   } else if (cam2Est.has_value()) {
+    //     finalPose = cam2Est.value().estimatedPose.ToPose2d();
+    //   }
+    // }
   };
 }
 

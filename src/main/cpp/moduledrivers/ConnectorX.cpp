@@ -402,12 +402,12 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
   ConsoleLogger::getInstance().logVerbose("ConnectorX", "Sending data: %s",
                                           result.c_str());
 
-  // if (recSize == 0) {
-  //   _i2c->WriteBulk(sendBuf, sendLen + 1);
-  //   return response;
-  // }
+  if (recSize == 0) {
+    _i2c->WriteBulk(sendBuf, sendLen + 1);
+    return response;
+  }
 
-  // _i2c->Transaction(sendBuf, sendLen + 1, (uint8_t*)&response.responseData,
-  //                   recSize);
+  _i2c->Transaction(sendBuf, sendLen + 1, (uint8_t*)&response.responseData,
+                    recSize);
   return response;
 }
