@@ -63,11 +63,11 @@ RobotContainer::RobotContainer() {
 #ifndef TEST_SWERVE_BOT
   pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
   pathplanner::NamedCommands::registerCommand(
-      "Shoot Speaker",
+      "Shoot Subwoofer",
       ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
                              &m_scoring, &m_intake));
   pathplanner::NamedCommands::registerCommand(
-      "Intake", IntakingCommands::Intake(&m_intake));
+      "Run Intake", IntakingCommands::Intake(&m_intake));
 #endif
 
   // This won't work since we're getting the reference of an r-value which goes
@@ -77,8 +77,8 @@ RobotContainer::RobotContainer() {
   m_chooser.AddOption("3 in Amp", "3 in Amp");
   m_chooser.AddOption("2 Note Auto", "2 Note Auto");
   m_chooser.AddOption("4 Note Auto", "4 Note Auto");
-  m_chooser.AddOption("Kepler", "Kepler");
-  m_chooser.AddOption("Kepler2", "Kepler2");
+  // m_chooser.AddOption("Kepler", "Kepler");
+  // m_chooser.AddOption("Kepler2", "Kepler2");
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
 

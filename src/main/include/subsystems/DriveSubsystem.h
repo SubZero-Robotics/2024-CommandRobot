@@ -19,6 +19,8 @@
 #include <hal/simulation/SimDeviceData.h>
 #include <networktables/StructArrayTopic.h>
 
+#include <ctre/phoenix6/Pigeon2.hpp>
+
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 #include "utils/ConsoleLogger.h"
@@ -122,8 +124,9 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::ChassisSpeeds getSpeed();
 
-//   frc::ADXRS450_Gyro* getGyro() { return &m_gyro; }
-  AHRS* getGyro() { return &m_gyro; }
+  //   frc::ADXRS450_Gyro* getGyro() { return &m_gyro; }
+  //   AHRS* getGyro() { return &m_gyro; }
+  ctre::phoenix6::hardware::Pigeon2* getGyro() { return &m_gyro; }
 
   wpi::array<frc::SwerveModulePosition, 4U> GetModulePositions() const;
 
@@ -159,8 +162,9 @@ class DriveSubsystem : public frc2::SubsystemBase {
   uint8_t logCounter = 0;
 
   // The gyro sensor
-    AHRS m_gyro{frc::SPI::Port::kMXP};
-//   frc::ADXRS450_Gyro m_gyro;
+  // AHRS m_gyro{frc::SPI::Port::kMXP};
+  //   frc::ADXRS450_Gyro m_gyro;
+  ctre::phoenix6::hardware::Pigeon2 m_gyro{CANSparkMaxConstants::kPigeonCanId, "rio"};
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");

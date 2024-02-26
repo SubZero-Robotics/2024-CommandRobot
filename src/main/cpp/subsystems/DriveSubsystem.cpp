@@ -99,13 +99,13 @@ void DriveSubsystem::Periodic() {
     // ? Do we need to flip this first based on alliance?
     // https://github.com/Hemlock5712/2023-Robot/blob/dd5ac64587a3839492cfdb0a28d21677d465584a/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java#L149
 
-    if (updatedPose.X() > 0_m && updatedPose.X() <= 100_m &&
-        updatedPose.Y() > 0_m && updatedPose.Y() <= 100_m) {
+    // if (updatedPose.X() > 0_m && updatedPose.X() <= 100_m &&
+    //     updatedPose.Y() > 0_m && updatedPose.Y() <= 100_m) {
       ConsoleLogger::getInstance().logVerbose(
           "DriveSubsystem PoseEstimator final pose", updatedPose);
       m_lastGoodPosition = updatedPose;
       m_field.SetRobotPose(updatedPose);
-    }
+    //}
     // else {
     //   auto cam1Est = visionPoses.first;
     //   auto cam2Est = visionPoses.second;

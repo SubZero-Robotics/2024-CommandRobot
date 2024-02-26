@@ -68,7 +68,6 @@ frc2::CommandPtr LedSubsystem::Intaking() {
 
 frc2::CommandPtr LedSubsystem::ScoringSpeaker() {
   return frc2::InstantCommand([this] {
-           m_notifier.SetCallback([this] {
              ConsoleLogger::getInstance().logInfo(
                  "LedSubsystem", "Setting LEDs to %s", "ScoringSpeaker");
              setZoneColorPatternAsync(LedZone::Left,
@@ -95,16 +94,12 @@ frc2::CommandPtr LedSubsystem::ScoringSpeaker() {
                  LedConstants::kIntakeLedPort,
                  {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
                   (uint8_t)LedZone::Front, (uint8_t)LedZone::Back});
-           });
-           m_notifier.StartSingle(0_s);
          })
       .ToPtr();
 }
 
 frc2::CommandPtr LedSubsystem::ScoringAmp() {
   return frc2::InstantCommand([this] {
-           m_notifier.Stop();
-           m_notifier.SetCallback([this] {
              ConsoleLogger::getInstance().logInfo(
                  "LedSubsystem", "Setting LEDs to %s", "ScoringAmp");
              setZoneColorPatternAsync(LedZone::Left,
@@ -131,8 +126,6 @@ frc2::CommandPtr LedSubsystem::ScoringAmp() {
                  LedConstants::kIntakeLedPort,
                  {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
                   (uint8_t)LedZone::Front, (uint8_t)LedZone::Back});
-           });
-           m_notifier.StartSingle(0_s);
          })
       .ToPtr();
 }
@@ -174,8 +167,6 @@ frc2::CommandPtr LedSubsystem::Idling() {
 }
 
 void LedSubsystem::IdlingAsync() {
-  m_notifier.Stop();
-  m_notifier.SetCallback([this] {
     ConsoleLogger::getInstance().logInfo("LedSubsystem", "Setting LEDs to %s",
                                          "Idling");
     setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
@@ -197,14 +188,10 @@ void LedSubsystem::IdlingAsync() {
     m_connectorX.syncZones(LedConstants::kIntakeLedPort,
                            {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
                             (uint8_t)LedZone::Front, (uint8_t)LedZone::Back});
-  });
-  m_notifier.StartSingle(0_s);
 }
 
 frc2::CommandPtr LedSubsystem::Climbing() {
   return frc2::InstantCommand([this] {
-           m_notifier.Stop();
-           m_notifier.SetCallback([this] {
              ConsoleLogger::getInstance().logInfo(
                  "LedSubsystem", "Setting LEDs to %s", "Climbing");
              setZoneColorPatternAsync(LedZone::Left, LedConstants::kIdleLedPort,
@@ -227,15 +214,12 @@ frc2::CommandPtr LedSubsystem::Climbing() {
                  LedConstants::kIntakeLedPort,
                  {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
                   (uint8_t)LedZone::Front, (uint8_t)LedZone::Back});
-           });
-           m_notifier.StartSingle(0_s);
          })
       .ToPtr();
 }
 
 frc2::CommandPtr LedSubsystem::Funni() {
   return frc2::InstantCommand([this] {
-           m_notifier.SetCallback([this] {
              ConsoleLogger::getInstance().logInfo(
                  "LedSubsystem", "Setting LEDs to %s", "Funni");
              setZoneColorPatternAsync(LedZone::Left,
@@ -262,8 +246,6 @@ frc2::CommandPtr LedSubsystem::Funni() {
                  LedConstants::kIntakeLedPort,
                  {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
                   (uint8_t)LedZone::Front, (uint8_t)LedZone::Back});
-           });
-           m_notifier.StartSingle(0_s);
          })
       .ToPtr();
 }
@@ -273,8 +255,6 @@ frc2::CommandPtr LedSubsystem::Error() {
 }
 
 void LedSubsystem::ErrorAsync() {
-  m_notifier.Stop();
-  m_notifier.SetCallback([this] {
     ConsoleLogger::getInstance().logInfo("LedSubsystem", "Setting LEDs to %s",
                                          "Error");
     setZoneColorPatternAsync(LedZone::Left, LedConstants::kIntakeLedPort,
@@ -296,8 +276,6 @@ void LedSubsystem::ErrorAsync() {
     m_connectorX.syncZones(LedConstants::kIntakeLedPort,
                            {(uint8_t)LedZone::Left, (uint8_t)LedZone::Right,
                             (uint8_t)LedZone::Front, (uint8_t)LedZone::Back});
-  });
-  m_notifier.StartSingle(0_s);
 }
 
 frc2::CommandPtr LedSubsystem::setZoneColorPattern(LedZone zone, LedPort port,

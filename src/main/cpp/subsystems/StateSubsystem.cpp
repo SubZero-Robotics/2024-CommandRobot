@@ -174,10 +174,11 @@ frc2::CommandPtr StateSubsystem::StartManual() {
      Signal that we are in manual
      (Call after automated commands or after manual intervention from driver 1)
   */
-  return m_subsystems.led->ShowFromState([this] {
-    m_active = false;
-    return RobotState::Manual;
-  });
+  return frc2::InstantCommand([this] {
+           m_active = false;
+           m_subsystems.led->IdlingAsync();
+         })
+      .ToPtr();
 }
 
 frc2::CommandPtr StateSubsystem::StartClimb() {
