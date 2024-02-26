@@ -276,7 +276,7 @@ constexpr double kVibrationIntensity = 1;
 }  // namespace OIConstants
 
 constexpr uint8_t kLedAddress = 23;
-constexpr units::second_t kConnectorXDelay = 0.04_s;
+constexpr units::second_t kConnectorXDelay = 0.002_s;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
@@ -327,11 +327,11 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = 0.95;
+constexpr double kSubwooferLowerSpeed = 0.75;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
-constexpr double kScoringOutakeUpperSpeed = 0.2;
-constexpr double kScoringOutakeLowerSpeed = -kScoringOutakeUpperSpeed;
+constexpr double kScoringOutakeUpperSpeed = -0.2;
+constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
 
 enum class ScoreState {
   FlywheelRamp,
@@ -339,7 +339,7 @@ enum class ScoreState {
   Shooting,
 };
 
-constexpr units::second_t kFlywheelRampDelay = 0.75_s;
+constexpr units::second_t kFlywheelRampDelay = 1_s;
 
 namespace ScoringPID {
 constexpr double kSpeakerUpperP = 6e-5;

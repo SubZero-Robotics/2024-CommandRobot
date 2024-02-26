@@ -132,12 +132,18 @@ void ScoringSubsystem::Periodic() {
         "PID Error:", "%s not in PID settings.", tuningMotor);
   }
 
-  double tP = frc::SmartDashboard::GetNumber(tuningMotor + " P Gain", 0);
-  double tI = frc::SmartDashboard::GetNumber(tuningMotor + " Tuning I Gain", 0);
-  double tD = frc::SmartDashboard::GetNumber(tuningMotor + " Tuning D Gain", 0);
-  double tIZ = frc::SmartDashboard::GetNumber(tuningMotor + " I Zone", 0);
-  double tFF = frc::SmartDashboard::GetNumber(tuningMotor + " Feed Forward", 0);
-  double tV = frc::SmartDashboard::GetNumber(tuningMotor + " Velocity", 0);
+  double tP =
+      frc::SmartDashboard::GetNumber(tuningMotor + " P Gain", tuningLatestP);
+  double tI = frc::SmartDashboard::GetNumber(tuningMotor + " Tuning I Gain",
+                                             tuningLatestI);
+  double tD = frc::SmartDashboard::GetNumber(tuningMotor + " Tuning D Gain",
+                                             tuningLatestD);
+  double tIZ = frc::SmartDashboard::GetNumber(tuningMotor + " I Zone",
+                                              tuningLatestIZone);
+  double tFF = frc::SmartDashboard::GetNumber(tuningMotor + " Feed Forward",
+                                              tuningLatestFF);
+  double tV = frc::SmartDashboard::GetNumber(tuningMotor + " Velocity",
+                                             tuningLatestVelocity);
 
   if (tP != tuningLatestP) {
     scoringPIDs[tuningMotor].setP(tP);

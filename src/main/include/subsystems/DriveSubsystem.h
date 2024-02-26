@@ -122,6 +122,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::ChassisSpeeds getSpeed();
 
+//   frc::ADXRS450_Gyro* getGyro() { return &m_gyro; }
   AHRS* getGyro() { return &m_gyro; }
 
   wpi::array<frc::SwerveModulePosition, 4U> GetModulePositions() const;
@@ -158,9 +159,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
   uint8_t logCounter = 0;
 
   // The gyro sensor
-  AHRS m_gyro{frc::SPI::Port::kMXP};
-  //   frc::ADXRS450_Gyro m_gyro;
-  // AHRS m_gyro;
+    AHRS m_gyro{frc::SPI::Port::kMXP};
+//   frc::ADXRS450_Gyro m_gyro;
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
@@ -189,9 +189,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
       m_gyro.GetRotation2d(),
       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
-      frc::Pose2d{0_m, 0_m, 0_rad},
-      {0.1, 0.1, 0.1},
-      {1.0, 1.0, (double)M_PI}};
+      frc::Pose2d{0_m, 0_m, 0_rad}};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing
