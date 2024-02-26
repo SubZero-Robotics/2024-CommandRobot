@@ -77,6 +77,28 @@ ScoringSubsystem::ScoringSubsystem() {
       .velocity = ScoringPID::kAmpLowerVelocity,
       .maxRPM = ScoringConstants::kMaxSpinRpm,
       .PIDController = &m_ampLowerPidController};
+  scoringPIDs[ScoringPID::kSubwooferUpperName] = {
+      .name = ScoringPID::kSubwooferUpperName,
+      .settings = {.P = ScoringPID::kSubwooferUpperP,
+                   .I = ScoringPID::kSubwooferUpperI,
+                   .D = ScoringPID::kSubwooferUpperD,
+                   .IZone = ScoringPID::kSubwooferUpperIZone,
+                   .FF = ScoringPID::kSubwooferUpperFF,
+                   .velocity = ScoringPID::kSubwooferUpperVelocity},
+      .velocity = ScoringPID::kSubwooferUpperVelocity,
+      .maxRPM = ScoringConstants::kMaxSpinRpm,
+      .PIDController = &m_ampLowerPidController};
+  scoringPIDs[ScoringPID::kSubwooferLowerName] = {
+      .name = ScoringPID::kSubwooferLowerName,
+      .settings = {.P = ScoringPID::kSubwooferLowerP,
+                   .I = ScoringPID::kSubwooferLowerI,
+                   .D = ScoringPID::kSubwooferLowerD,
+                   .IZone = ScoringPID::kSubwooferLowerIZone,
+                   .FF = ScoringPID::kSubwooferLowerFF,
+                   .velocity = ScoringPID::kSubwooferLowerVelocity},
+      .velocity = ScoringPID::kSubwooferLowerVelocity,
+      .maxRPM = ScoringConstants::kMaxSpinRpm,
+      .PIDController = &m_ampUpperPidController};
 
   if (scoringPIDs.find(tuningMotor) == scoringPIDs.end()) {
     ConsoleLogger::getInstance().logError(
@@ -232,12 +254,8 @@ void ScoringSubsystem::SpinSpeaker() {
 }
 
 void ScoringSubsystem::SpinSubwoofer() {
-  m_ampLowerPidController.SetReference(
-      MaxSpeedToRpm(kSubwooferLowerSpeed),
-      rev::CANSparkMax::ControlType::kVelocity);
-  m_ampUpperPidController.SetReference(
-      MaxSpeedToRpm(kSubwooferUpperSpeed),
-      rev::CANSparkMax::ControlType::kVelocity);
+  scoringPIDs[ScoringPID::kSubwooferLowerName].runWithVelocity();
+  scoringPIDs[ScoringPID::kSubwooferUpperName].runWithVelocity();
   // m_ampLowerSpinnyBoi.Set(kSubwooferLowerSpeed);
   // m_ampUpperSpinnyBoi.Set(kSubwooferUpperSpeed);
 }

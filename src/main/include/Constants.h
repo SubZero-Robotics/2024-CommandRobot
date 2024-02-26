@@ -370,10 +370,26 @@ constexpr double kAmpLowerIZone = 0;
 constexpr double kAmpLowerFF = 0.000015;
 constexpr double kAmpLowerVelocity = 0.254;
 
+constexpr double kSubwooferUpperP = 6e-5;
+constexpr double kSubwooferUpperI = 1e-6;
+constexpr double kSubwooferUpperD = 0;
+constexpr double kSubwooferUpperIZone = 0;
+constexpr double kSubwooferUpperFF = 0.000015;
+constexpr double kSubwooferUpperVelocity = 0.95;
+
+constexpr double kSubwooferLowerP = 6e-5;
+constexpr double kSubwooferLowerI = 1e-6;
+constexpr double kSubwooferLowerD = 0;
+constexpr double kSubwooferLowerIZone = 0;
+constexpr double kSubwooferLowerFF = 0.000015;
+constexpr double kSubwooferLowerVelocity = 0.95;
+
 const std::string kSpeakerUpperName = "Speaker Upper";
 const std::string kSpeakerLowerName = "Speaker Lower";
 const std::string kAmpUpperName = "Amp Upper";
 const std::string kAmpLowerName = "Amp Lower";
+const std::string kSubwooferUpperName = "Subwoofer Upper";
+const std::string kSubwooferLowerName = "Subwoofer Lower";
 }  // namespace ScoringPID
 
 namespace SpeakerPID {
