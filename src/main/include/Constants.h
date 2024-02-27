@@ -328,7 +328,7 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = 0.75;
+constexpr double kSubwooferLowerSpeed = 0.5;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
 constexpr double kScoringOutakeUpperSpeed = -0.2;
@@ -376,14 +376,14 @@ constexpr double kSubwooferUpperI = 1e-6;
 constexpr double kSubwooferUpperD = 0;
 constexpr double kSubwooferUpperIZone = 0;
 constexpr double kSubwooferUpperFF = 0.000015;
-constexpr double kSubwooferUpperVelocity = 0.95;
+constexpr double kSubwooferUpperVelocity = 0.75;
 
 constexpr double kSubwooferLowerP = 6e-5;
 constexpr double kSubwooferLowerI = 1e-6;
 constexpr double kSubwooferLowerD = 0;
 constexpr double kSubwooferLowerIZone = 0;
 constexpr double kSubwooferLowerFF = 0.000015;
-constexpr double kSubwooferLowerVelocity = 0.95;
+constexpr double kSubwooferLowerVelocity = 0.75;
 
 const std::string kSpeakerUpperName = "Speaker Upper";
 const std::string kSpeakerLowerName = "Speaker Lower";

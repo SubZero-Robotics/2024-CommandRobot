@@ -61,6 +61,11 @@ RobotContainer::RobotContainer() {
       },
       {&m_drive}));
 #ifndef TEST_SWERVE_BOT
+  RegisterAutos();
+#endif
+}
+
+void RobotContainer::RegisterAutos() {
   pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
   pathplanner::NamedCommands::registerCommand(
       "Shoot Subwoofer",
@@ -73,17 +78,13 @@ RobotContainer::RobotContainer() {
                     })
                         .ToPtr()
                         .AndThen(IntakingCommands::Intake(&m_intake)));
-#endif
 
-  // This won't work since we're getting the reference of an r-value which goes
-  // out of scope at the end of the method
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoConstants::kDefaultAutoName);
   m_chooser.AddOption("3 in Amp", "3 in Amp");
   m_chooser.AddOption("2 Note Auto", "2 Note Auto");
   m_chooser.AddOption("4 Note Auto", "4 Note Auto");
-  // m_chooser.AddOption("Kepler", "Kepler");
-  // m_chooser.AddOption("Kepler2", "Kepler2");
+
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
 
@@ -307,16 +308,14 @@ void RobotContainer::ConfigureAutoBindings() {
 #endif
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
-  auto selectedAutoName = m_chooser.GetSelected();
-  auto autoPose = pathplanner::PathPlannerAuto::getStartingPoseFromAutoFile(
-      selectedAutoName);
-  m_drive.ResetOdometry(autoPose);
-  return autoCommands.at(selectedAutoName);
+  std::string autoName = m_chooser.GetSelected();
+  autoCommand = PathPlannerAuto(autoName).ToPtr();
+  return autoCommand.get();
 }
 
 void RobotContainer::ClearCurrentStateCommand() {
   m_state.m_active = false;
-  m_leds.ErrorAsync();
+  // m_leds.ErrorAsync();
 }
 
 void RobotContainer::StartIdling() {

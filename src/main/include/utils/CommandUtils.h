@@ -52,7 +52,7 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                               IntakeSubsystem* intake) {
   return (FlywheelRamp(intake, scoring, direction)
               .ToPtr()
-              .AlongWith(OutakeUntilTopNotPresent(intake))
+              // .AlongWith(OutakeUntilTopNotPresent(intake))
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose("Next",
                                                                  "next %s", "");
