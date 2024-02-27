@@ -67,7 +67,12 @@ RobotContainer::RobotContainer() {
       ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
                              &m_scoring, &m_intake));
   pathplanner::NamedCommands::registerCommand(
-      "Run Intake", IntakingCommands::Intake(&m_intake));
+      "Run Intake", frc2::InstantCommand([this] {
+                      ConsoleLogger::getInstance().logVerbose(
+                          "Autos", "Intaking %s", "");
+                    })
+                        .ToPtr()
+                        .AndThen(IntakingCommands::Intake(&m_intake)));
 #endif
 
   // This won't work since we're getting the reference of an r-value which goes
@@ -109,26 +114,23 @@ void RobotContainer::ConfigureButtonBindings() {
 
   m_driverController.B().OnTrue(
       m_leds.Intaking()
-          .AndThen(
-            IntakingCommands::Intake(&m_intake)
-            )
-          .AndThen(m_leds.Loaded())
-          );
+          .AndThen(IntakingCommands::Intake(&m_intake))
+          .AndThen(m_leds.Loaded()));
 
-  m_driverController.X().WhileTrue(m_leds.ScoringSpeaker().AndThen(
+  m_driverController.X().OnTrue(m_leds.ScoringSpeaker().AndThen(
       ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
                              &m_scoring, &m_intake)));
 
-  m_driverController.A().WhileTrue(
+  m_driverController.A().OnTrue(
       m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
           [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake)));
 
-  m_driverController.Y().WhileTrue(
+  m_driverController.Y().OnTrue(
       // m_leds.ScoringAmp().AndThen(
-        ScoringCommands::Score(
-          [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake)
-          // )
-          );
+      ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
+                             &m_scoring, &m_intake)
+      // )
+  );
 
   m_driverController.LeftBumper()
       .WhileTrue(m_leds.Climbing().AndThen(
@@ -144,9 +146,9 @@ void RobotContainer::ConfigureButtonBindings() {
 
   m_driverController.RightBumper().WhileTrue(
       // m_leds.Intaking().AndThen(
-        IntakeOut(&m_intake, &m_scoring).ToPtr()
-        // )
-        );
+      IntakeOut(&m_intake, &m_scoring).ToPtr()
+      // )
+  );
 
   m_driverController.RightStick().OnTrue(
       DrivingCommands::SnapToAngle(&m_drive));

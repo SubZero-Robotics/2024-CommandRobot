@@ -84,9 +84,9 @@ void DriveSubsystem::Periodic() {
     ConsoleLogger::getInstance().logInfo(
         "DriveSubsystem", "Gyro angle = %f",
         m_gyro.GetRotation2d().Degrees().value());
-    ConsoleLogger::getInstance().logInfo("DriveSubsystem", "Gyro rate = %f",
+    // ConsoleLogger::getInstance().logInfo("DriveSubsystem", "Gyro rate = %f",
 
-                                         m_gyro.GetRate());
+    //                                      m_gyro.GetRate());
     poseEstimator.UpdateWithTime(frc::Timer::GetFPGATimestamp(),
                                  m_gyro.GetRotation2d(), GetModulePositions());
     logDrivebase();
@@ -95,8 +95,8 @@ void DriveSubsystem::Periodic() {
 
     auto updatedPose = poseEstimator.GetEstimatedPosition();
     // https://github.com/Hemlock5712/2023-Robot/blob/dd5ac64587a3839492cfdb0a28d21677d465584a/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java#L149
-      ConsoleLogger::getInstance().logVerbose(
-          "DriveSubsystem PoseEstimator final pose", updatedPose);
+      // ConsoleLogger::getInstance().logVerbose(
+      //     "DriveSubsystem PoseEstimator final pose", updatedPose);
       m_lastGoodPosition = updatedPose;
       m_field.SetRobotPose(updatedPose);
   };

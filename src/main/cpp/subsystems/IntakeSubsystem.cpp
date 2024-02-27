@@ -9,15 +9,15 @@ void IntakeSubsystem::Periodic() {}
 void IntakeSubsystem::SimulationPeriodic() {}
 
 void IntakeSubsystem::Out(double outakeSpeed) {
-  // ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Outaking %s",
-  //                                         "");
+  ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Outaking %s",
+                                          "");
   m_leftIntakeSpinnyBoy.Set(outakeSpeed);
   m_rightIntakeSpinnyBoy.Set(outakeSpeed);
 }
 
 void IntakeSubsystem::In(double intakeSpeed) {
- //ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Intaking %s",
-  //                                        "");
+ ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Intaking %s",
+                                         "");
   m_leftIntakeSpinnyBoy.Set(intakeSpeed);
   m_rightIntakeSpinnyBoy.Set(intakeSpeed);
 }
