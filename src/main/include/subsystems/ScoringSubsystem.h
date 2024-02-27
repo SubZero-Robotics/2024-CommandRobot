@@ -9,6 +9,7 @@
 
 #include "ColorConstants.h"
 #include "Constants.h"
+#include "utils/PidMotorControllerPair.h"
 
 enum class ScoringDirection {
   AmpSide = 0,
@@ -16,76 +17,8 @@ enum class ScoringDirection {
   Subwoofer,
 };
 
-typedef struct {
-  double P;
-  double I;
-  double D;
-  double IZone;
-  double FF;
-  double velocity;
-} PidSettings;
-
-typedef struct PIDControllerInterface {
-  std::string name;
-  PidSettings settings;
-  double velocity;
-  double maxRPM;
-  rev::SparkPIDController* PIDController;
-
-  void setVelocity(double v) { velocity = v; }
-
-  void setP(double p) {
-    settings.P = p;
-    PIDController->SetP(p);
-  }
-
-  void setI(double i) {
-    settings.I = i;
-    PIDController->SetI(i);
-  }
-
-  void setD(double d) {
-    settings.D = d;
-    PIDController->SetD(d);
-  }
-
-  void setIZone(double iz) {
-    settings.IZone = iz;
-    PIDController->SetIZone(iz);
-  }
-
-  void setFF(double ff) {
-    settings.FF = ff;
-    PIDController->SetFF(ff);
-  }
-
-  void setAll(double p, double i, double d, double iz, double ff, double v) {
-    setP(p);
-    setI(i);
-    setD(d);
-    setIZone(iz);
-    setFF(ff);
-    setVelocity(v);
-  }
-
-  void setConfig() {
-    PIDController->SetP(settings.P);
-    PIDController->SetI(settings.I);
-    PIDController->SetD(settings.D);
-    PIDController->SetIZone(settings.IZone);
-    PIDController->SetFF(settings.FF);
-  }
-
-  void runWithVelocity() {
-    setConfig();
-    PIDController->SetReference(maxRPM * velocity,
-                                rev::CANSparkMax::ControlType::kVelocity);
-    ConsoleLogger::getInstance().logInfo("Scoring Subsystem", "End rpm is %f",
-                                         maxRPM * velocity);
-  }
-};
-
 using namespace CANSparkMaxConstants;
+using namespace ScoringConstants;
 
 class ScoringSubsystem : public frc2::SubsystemBase {
  public:
@@ -126,7 +59,7 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   bool CheckSubwooferSpeed();
 
   inline double MaxSpeedToRpm(double speedPercentage) {
-    return ScoringConstants::kMaxSpinRpm * speedPercentage;
+    return kMaxSpinRpm.value() * speedPercentage;
   }
 
   rev::CANSparkMax m_vectorSpinnyBoi{
@@ -161,19 +94,26 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   rev::SparkPIDController m_ampLowerPidController =
       m_ampLowerSpinnyBoi.GetPIDController();
 
-  double tuningLatestP;
-  double tuningLatestI;
-  double tuningLatestD;
-  double tuningLatestIZone;
-  double tuningLatestFF;
-  double tuningLatestVelocity;
+  PidSettings speakerPidSettings = {.p = ScoringPID::kSpeakerP,
+                                    .i = ScoringPID::kSpeakerI,
+                                    .d = ScoringPID::kSpeakerD,
+                                    .iZone = ScoringPID::kSpeakerIZone,
+                                    .ff = ScoringPID::kSpeakerFF};
 
-  std::map<std::string, PIDControllerInterface> scoringPIDs;
+  PidSettings ampPidSettings = {.p = ScoringPID::kAmpP,
+                                .i = ScoringPID::kAmpI,
+                                .d = ScoringPID::kAmpD,
+                                .iZone = ScoringPID::kAmpIZone,
+                                .ff = ScoringPID::kAmpFF};
 
-  std::string tuningMotor;
+  PidMotorControllerPair speakerSideMotors{
+      "SpeakerSide", m_speakerUpperPidController, m_speakerLowerPidController,
+      speakerPidSettings, kMaxSpinRpm};
 
-  rev::SparkPIDController* m_tuningPidControllerUpper =
-      &m_ampUpperPidController;
-  rev::SparkPIDController* m_tuningPidControllerLower =
-      &m_ampLowerPidController;
+  PidMotorControllerPair ampSideMotors{"AmpSide", m_ampUpperPidController,
+                                       m_ampLowerPidController, ampPidSettings,
+                                       kMaxSpinRpm};
+
+  PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
+  PidMotorControllerPairTuner ampTuner{ampSideMotors};
 };
