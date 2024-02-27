@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <AHRS.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -15,7 +16,6 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
-#include <AHRS.h>
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
@@ -88,8 +88,6 @@ class RobotContainer {
 #endif
 
   Vision m_vision;
-
-  AHRS gyro2{frc::SPI::Port::kMXP};
 
   void RegisterAutos();
 

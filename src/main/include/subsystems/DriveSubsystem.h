@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <AHRS.h>
-#include <frc/ADXRS450_Gyro.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/geometry/Pose2d.h>

@@ -16,11 +16,11 @@
 
 void Robot::RobotInit() {
   if (RobotBase::IsReal()) {
-    // if (frc::RobotController::GetSerialNumber() !=
-    //     RobotConstants::kRoborioSerialNumber) {
-    //   std::cout << "Error: wrong robot\n";
-    //   throw wpi::uv::Error(108);
-    // }
+    if (frc::RobotController::GetSerialNumber() !=
+        RobotConstants::kRoborioSerialNumber) {
+      std::cout << "Error: wrong robot\n";
+      throw wpi::uv::Error(108);
+    }
   }
   frc::DataLogManager::Start();
 

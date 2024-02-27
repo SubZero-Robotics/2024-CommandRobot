@@ -172,6 +172,10 @@ extern const frc::TrapezoidProfile<units::radians>::Constraints
 
 const std::string kDefaultAutoName = "Leave Wing";
 
+const std::string kScoreSubwooferName = "Shoot Subwoofer";
+const std::string kIntakeName = "Run Intake";
+const std::string kLedFunniName = "LedFunni";
+
 const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
     pathplanner::PIDConstants(0.9, 0.0,
                               0.0),            // Translation PID constants

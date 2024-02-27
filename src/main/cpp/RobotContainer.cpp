@@ -24,7 +24,6 @@
 #include <utility>
 
 #include "Constants.h"
-#include "commands/BalanceCommand.h"
 #include "commands/ExtendClimbCommand.h"
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
@@ -66,18 +65,19 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::RegisterAutos() {
-  pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
+  pathplanner::NamedCommands::registerCommand(AutoConstants::kLedFunniName,
+                                              m_leds.Intaking());
   pathplanner::NamedCommands::registerCommand(
-      "Shoot Subwoofer",
+      AutoConstants::kScoreSubwooferName,
       ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
                              &m_scoring, &m_intake));
   pathplanner::NamedCommands::registerCommand(
-      "Run Intake", frc2::InstantCommand([this] {
-                      ConsoleLogger::getInstance().logVerbose(
-                          "Autos", "Intaking %s", "");
-                    })
-                        .ToPtr()
-                        .AndThen(IntakingCommands::Intake(&m_intake)));
+      AutoConstants::kIntakeName,
+      frc2::InstantCommand([this] {
+        ConsoleLogger::getInstance().logVerbose("Autos", "Intaking %s", "");
+      })
+          .ToPtr()
+          .AndThen(IntakingCommands::Intake(&m_intake)));
 
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoConstants::kDefaultAutoName);
@@ -127,11 +127,8 @@ void RobotContainer::ConfigureButtonBindings() {
           [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake)));
 
   m_driverController.Y().OnTrue(
-      // m_leds.ScoringAmp().AndThen(
-      ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
-                             &m_scoring, &m_intake)
-      // )
-  );
+      m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
+          [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake)));
 
   m_driverController.LeftBumper()
       .WhileTrue(m_leds.Climbing().AndThen(
@@ -146,10 +143,7 @@ void RobotContainer::ConfigureButtonBindings() {
               .ToPtr()));
 
   m_driverController.RightBumper().WhileTrue(
-      // m_leds.Intaking().AndThen(
-      IntakeOut(&m_intake, &m_scoring).ToPtr()
-      // )
-  );
+      m_leds.Intaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
 
   m_driverController.RightStick().OnTrue(
       DrivingCommands::SnapToAngle(&m_drive));
@@ -275,35 +269,8 @@ void RobotContainer::ConfigureAutoBindings() {
                                            }
                                          }).ToPtr());
 
-  m_operatorController.Button(19).OnTrue(
-      BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());
-
   m_operatorController.Button(20).OnTrue(
       frc2::InstantCommand([this] { m_drive.ZeroHeading(); }).ToPtr());
-
-  // (m_operatorController.Y() && m_operatorController.A())
-  //     .OnTrue(frc2::InstantCommand([this] {
-  //               if (!m_state.m_active) {
-  //                 m_state.m_currentState = RobotState::AutoSequenceSpeaker;
-  //                 m_state.SetDesiredState();
-  //               }
-  //             }).ToPtr());
-
-  // (m_operatorController.Y() && m_operatorController.B())
-  //     .OnTrue(frc2::InstantCommand([this] {
-  //               if (!m_state.m_active) {
-  //                 m_state.m_currentState = RobotState::AutoSequenceSubwoofer;
-  //                 m_state.SetDesiredState();
-  //               }
-  //             }).ToPtr());
-
-  // (m_operatorController.Y() && m_operatorController.X())
-  //     .OnTrue(frc2::InstantCommand([this] {
-  //               if (!m_state.m_active) {
-  //                 m_state.m_currentState = RobotState::AutoSequenceAmp;
-  //                 m_state.SetDesiredState();
-  //               }
-  //             }).ToPtr());
 }
 #endif
 
