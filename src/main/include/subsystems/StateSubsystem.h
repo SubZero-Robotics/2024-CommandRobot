@@ -11,7 +11,6 @@
 #include "ColorConstants.h"
 #include "Constants.h"
 #include "autos/PathFactory.h"
-#include "commands/BalanceCommand.h"
 #include "commands/ExtendClimbCommand.h"
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"

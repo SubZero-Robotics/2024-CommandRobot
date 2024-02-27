@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 1.2516214345405796,
+        "x": 1.3769542042900886,
         "y": 5.577308253853149
       },
       "prevControl": {
-        "x": 1.9200628732046272,
+        "x": 2.0453956429541362,
         "y": 5.556419458894899
       },
       "nextControl": null,
@@ -28,20 +28,14 @@
       "linkedName": "Speaker"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.25,
-      "rotationDegrees": 180.0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0
+    "maxVelocity": 2.5,
+    "maxAcceleration": 1.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
     "velocity": 0,

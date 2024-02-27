@@ -2,6 +2,7 @@
 
 #include <frc/apriltag/AprilTagFieldLayout.h>
 #include <frc/apriltag/AprilTagFields.h>
+#include <frc/estimator/SwerveDrivePoseEstimator.h>
 #include <photon/PhotonCamera.h>
 #include <photon/PhotonPoseEstimator.h>
 
@@ -32,46 +33,74 @@ class Vision {
   Vision() {
     photonEstimator.SetMultiTagFallbackStrategy(
         photon::PoseStrategy::LOWEST_AMBIGUITY);
+    photonEstimator2.SetMultiTagFallbackStrategy(
+        photon::PoseStrategy::LOWEST_AMBIGUITY);
   }
 
-  CameraResults GetLatestResult() {
-    return {camera->GetLatestResult(), camera2->GetLatestResult()};
-  }
+  std::optional<photon::EstimatedRobotPose> GetPoseFromCamera(
+      frc::Pose3d prevPose, photon::PhotonPoseEstimator& est,
+      photon::PhotonCamera& camera, double maxAbmiguity = 0.2) {
+    est.SetReferencePose(prevPose);
+    auto camResult = camera.GetLatestResult();
 
-  std::optional<photon::EstimatedRobotPose> GetEstimatedGlobalPose() {
-    auto visionEst = photonEstimator.Update();
-    auto camera1result = camera->GetLatestResult();
-    auto visionEst2 = photonEstimator2.Update();
-    auto camera2result = camera2->GetLatestResult();
-    auto camera1ts = camera1result.GetTimestamp();
-    auto camera2ts = camera2result.GetTimestamp();
-    auto camera1am = camera1result.GetTargets().size() == 0 ? 1 : camera1result.GetBestTarget().GetPoseAmbiguity();
-    auto camera2am = camera2result.GetTargets().size() == 0 ? 1 : camera2result.GetBestTarget().GetPoseAmbiguity();
+    std::optional<photon::EstimatedRobotPose> visionEst;
 
-    units::second_t latestTimestamp = std::max(camera1ts, camera2ts);
-    bool newResult =
-        units::math::abs(latestTimestamp - lastEstTimestamp) > 1e-5_s;
-    if (newResult) {
-      lastEstTimestamp = latestTimestamp;
+    if (camResult.HasTargets() &&
+        (camResult.targets.size() > 1 ||
+         camResult.targets[0].GetPoseAmbiguity() <= maxAbmiguity)) {
+      visionEst = est.Update(camResult);
     }
 
-    // ConsoleLogger::getInstance().logVerbose("Vision", "Camera 1 ambiguiutey %f", camera1am);
-    // ConsoleLogger::getInstance().logVerbose("Vision", "Camera 2 ambiguiutey %f", camera2am);
-    return camera1am > camera2am ? visionEst2 : visionEst;
+    if (visionEst.has_value()) {
+      auto estimatedPose = visionEst.value().estimatedPose;
+      // Replace 100_m with actual field dimensions
+      if (estimatedPose.X() > 0_m && estimatedPose.X() <= 100_m &&
+          estimatedPose.Y() > 0_m && estimatedPose.Y() <= 100_m) {
+        return visionEst;
+      }
+    }
+
+    return std::nullopt;
   }
 
-  Eigen::Matrix<double, 3, 1> GetEstimationStdDevs(frc::Pose2d estimatedPose) {
+  // See:
+  // https://github.com/Hemlock5712/2023-Robot/blob/Joe-Test/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java
+  std::pair<std::optional<photon::EstimatedRobotPose>,
+            std::optional<photon::EstimatedRobotPose>>
+  UpdateEstimatedGlobalPose(frc::SwerveDrivePoseEstimator<4U>& estimator) {
+    auto cam1Pose =
+        GetPoseFromCamera(frc::Pose3d(estimator.GetEstimatedPosition()),
+                          photonEstimator, *camera);
+
+    if (cam1Pose.has_value()) {
+      auto est = cam1Pose.value();
+      AddVisionMeasurement(est, estimator);
+    }
+
+    auto cam2Pose =
+        GetPoseFromCamera(frc::Pose3d(estimator.GetEstimatedPosition()),
+                          photonEstimator2, *camera2);
+
+    if (cam2Pose.has_value()) {
+      auto est = cam2Pose.value();
+      AddVisionMeasurement(est, estimator);
+    }
+
+    return std::make_pair(cam1Pose, cam2Pose);
+  }
+
+  Eigen::Matrix<double, 3, 1> GetEstimationStdDevs(
+      photon::EstimatedRobotPose& pose) {
     Eigen::Matrix<double, 3, 1> estStdDevs = kSingleTagStdDevs;
-    auto targets = GetLatestResult().GetTargets();
     int numTags = 0;
     units::meter_t avgDist = 0_m;
-    for (const auto& tgt : targets) {
+    for (const auto& tgt : pose.targetsUsed) {
       auto tagPose =
           photonEstimator.GetFieldLayout().GetTagPose(tgt.GetFiducialId());
       if (tagPose.has_value()) {
         numTags++;
         avgDist += tagPose.value().ToPose2d().Translation().Distance(
-            estimatedPose.Translation());
+            pose.estimatedPose.ToPose2d().Translation());
       }
     }
     if (numTags == 0) {
@@ -93,6 +122,14 @@ class Vision {
   }
 
  private:
+  void AddVisionMeasurement(photon::EstimatedRobotPose& estimate,
+                            frc::SwerveDrivePoseEstimator<4U>& estimator) {
+    auto stdDevs = GetEstimationStdDevs(estimate);
+    wpi::array<double, 3> newStdDevs{stdDevs(0), stdDevs(1), stdDevs(2)};
+    estimator.AddVisionMeasurement(estimate.estimatedPose.ToPose2d(),
+                                   estimate.timestamp, newStdDevs);
+  }
+
   photon::PhotonPoseEstimator photonEstimator{
       kTagLayout, kPoseStrategy, photon::PhotonCamera{kFrontCamera},
       kRobotToCam};

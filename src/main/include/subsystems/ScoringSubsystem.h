@@ -4,8 +4,12 @@
 #include <frc2/command/CommandPtr.h>
 #include <rev/CANSparkFlex.h>
 
+#include <map>
+#include <string>
+
 #include "ColorConstants.h"
 #include "Constants.h"
+#include "utils/PidMotorControllerPair.h"
 
 enum class ScoringDirection {
   AmpSide = 0,
@@ -14,6 +18,7 @@ enum class ScoringDirection {
 };
 
 using namespace CANSparkMaxConstants;
+using namespace ScoringConstants;
 
 class ScoringSubsystem : public frc2::SubsystemBase {
  public:
@@ -54,7 +59,7 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   bool CheckSubwooferSpeed();
 
   inline double MaxSpeedToRpm(double speedPercentage) {
-    return ScoringConstants::kMaxSpinRpm * speedPercentage;
+    return kMaxSpinRpm.value() * speedPercentage;
   }
 
   rev::CANSparkMax m_vectorSpinnyBoi{
@@ -80,9 +85,35 @@ class ScoringSubsystem : public frc2::SubsystemBase {
       CANSparkMaxConstants::kSpeakerUpperSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
 
-  //   rev::SparkPIDController m_speakerPidController =
-  //   m_speakerUpperSpinnyBoi.GetPIDController(); rev::SparkPIDController
-  //   m_ampUpperPidController = m_ampUpperSpinnyBoi.GetPIDController();
-  //   rev::SparkPIDController m_ampLowerPidController =
-  //   m_ampLowerSpinnyBoi.GetPIDController();
+  rev::SparkPIDController m_speakerUpperPidController =
+      m_speakerUpperSpinnyBoi.GetPIDController();
+  rev::SparkPIDController m_speakerLowerPidController =
+      m_speakerLowerSpinnyBoi.GetPIDController();
+  rev::SparkPIDController m_ampUpperPidController =
+      m_ampUpperSpinnyBoi.GetPIDController();
+  rev::SparkPIDController m_ampLowerPidController =
+      m_ampLowerSpinnyBoi.GetPIDController();
+
+  PidSettings speakerPidSettings = {.p = ScoringPID::kSpeakerP,
+                                    .i = ScoringPID::kSpeakerI,
+                                    .d = ScoringPID::kSpeakerD,
+                                    .iZone = ScoringPID::kSpeakerIZone,
+                                    .ff = ScoringPID::kSpeakerFF};
+
+  PidSettings ampPidSettings = {.p = ScoringPID::kAmpP,
+                                .i = ScoringPID::kAmpI,
+                                .d = ScoringPID::kAmpD,
+                                .iZone = ScoringPID::kAmpIZone,
+                                .ff = ScoringPID::kAmpFF};
+
+  PidMotorControllerPair speakerSideMotors{
+      "SpeakerSide", m_speakerUpperPidController, m_speakerLowerPidController,
+      speakerPidSettings, kMaxSpinRpm};
+
+  PidMotorControllerPair ampSideMotors{"AmpSide", m_ampUpperPidController,
+                                       m_ampLowerPidController, ampPidSettings,
+                                       kMaxSpinRpm};
+
+  PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
+  PidMotorControllerPairTuner ampTuner{ampSideMotors};
 };

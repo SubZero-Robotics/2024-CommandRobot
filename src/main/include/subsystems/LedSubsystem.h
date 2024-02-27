@@ -70,6 +70,4 @@ class LedSubsystem : public frc2::SubsystemBase {
       {.offset = 50, .count = 25},
       {.offset = 75, .count = 25},
   };
-
-  frc::Notifier m_notifier{98, [] {}};
 };

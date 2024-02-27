@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <AHRS.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -41,6 +42,7 @@ class RobotContainer {
 
   void ClearCurrentStateCommand();
   void StartIdling();
+  void ResetPose();
 
  private:
   // The driver's controller
@@ -56,20 +58,8 @@ class RobotContainer {
 
   LedSubsystem m_leds;
 
-  frc2::CommandPtr m_defaultAuto =
-      pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName).ToPtr();
-  frc2::CommandPtr m_3inAmp = pathplanner::PathPlannerAuto("3 in Amp").ToPtr();
-  frc2::CommandPtr m_2noteAuto =
-      pathplanner::PathPlannerAuto("2 Note Auto").ToPtr();
-  frc2::CommandPtr m_4noteAuto =
-      pathplanner::PathPlannerAuto("4 Note Auto").ToPtr();
-  frc2::CommandPtr m_kepler =
-      pathplanner::PathPlannerAuto("Kepler Auto").ToPtr();
-  frc2::CommandPtr m_kepler2 =
-      pathplanner::PathPlannerAuto("Kepler 2 Auto").ToPtr();
-
   // The chooser for the autonomous routines
-  frc::SendableChooser<frc2::Command*> m_chooser;
+  frc::SendableChooser<std::string> m_chooser;
 
 #ifdef TEST_SWERVE_BOT
 
@@ -99,5 +89,9 @@ class RobotContainer {
 
   Vision m_vision;
 
+  void RegisterAutos();
+
   void ConfigureButtonBindings();
+
+  frc2::CommandPtr autoCommand = frc2::InstantCommand([] {}).ToPtr();
 };

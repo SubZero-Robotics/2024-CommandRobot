@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <AHRS.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/geometry/Pose2d.h>
@@ -18,10 +17,17 @@
 #include <hal/simulation/SimDeviceData.h>
 #include <networktables/StructArrayTopic.h>
 
+#include <ctre/phoenix6/Pigeon2.hpp>
+
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 #include "utils/ConsoleLogger.h"
 #include "utils/Vision.h"
+
+// For sim to work
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 class DriveSubsystem : public frc2::SubsystemBase {
  public:
@@ -116,7 +122,11 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::ChassisSpeeds getSpeed();
 
-  AHRS* getGyro() { return &m_gyro; }
+  //   frc::ADXRS450_Gyro* getGyro() { return &m_gyro; }
+  //   AHRS* getGyro() { return &m_gyro; }
+  ctre::phoenix6::hardware::Pigeon2* getGyro() { return &m_gyro; }
+
+  wpi::array<frc::SwerveModulePosition, 4U> GetModulePositions() const;
 
   static void LogSpeeds(wpi::array<frc::SwerveModuleState, 4> desiredStates);
 
@@ -126,7 +136,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
                             units::second_t timestamp,
                             const Eigen::Vector3d& stdDevs);
 
-  frc::SwerveDriveKinematics<4> kDriveKinematics{
+  frc::SwerveDriveKinematics<4> m_driveKinematics{
       frc::Translation2d{DriveConstants::kWheelBase / 2,
                          DriveConstants::kTrackWidth / 2},
       frc::Translation2d{DriveConstants::kWheelBase / 2,
@@ -150,7 +160,9 @@ class DriveSubsystem : public frc2::SubsystemBase {
   uint8_t logCounter = 0;
 
   // The gyro sensor
-  AHRS m_gyro{frc::SPI::Port::kMXP};
+  // AHRS m_gyro{frc::SPI::Port::kMXP};
+  //   frc::ADXRS450_Gyro m_gyro;
+  ctre::phoenix6::hardware::Pigeon2 m_gyro{CANSparkMaxConstants::kPigeonCanId, "rio"};
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
@@ -175,15 +187,19 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // 4 defines the number of modules
 
   frc::SwerveDrivePoseEstimator<4> poseEstimator{
-      kDriveKinematics,
+      m_driveKinematics,
       m_gyro.GetRotation2d(),
       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
-      frc::Pose2d{0_m, 0_m, 0_rad}};
+      frc::Pose2d{0_m, 0_m, 0_rad},
+      {0.3, 0.3, 0.3},
+      {1.0, 1.0, 3.0}
+      };
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing
   frc::Field2d m_field;
+  frc::Pose2d m_lastGoodPosition;
 
   Vision* m_vision;
 };

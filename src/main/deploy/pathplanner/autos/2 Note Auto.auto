@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot Speaker"
+            "name": "Shoot Subwoofer"
           }
         },
         {
@@ -38,7 +38,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot Speaker"
+            "name": "Shoot Subwoofer"
           }
         }
       ]
