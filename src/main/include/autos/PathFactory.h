@@ -64,7 +64,7 @@ class PathFactory {
     if (ShouldFlip(location)) {
       return pathplanner::AutoBuilder::pathfindToPoseFlipped(
           approxPose,
-          pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
+          pathplanner::PathConstraints{3.0_mps, 1.5_mps_sq, 540_deg_per_s,
                                        720_deg_per_s_sq},
           0.0_mps,  // Goal end velocity in meters/sec
           0.0_m     // Rotation delay distance in meters. This is how far
@@ -74,7 +74,7 @@ class PathFactory {
 
     return pathplanner::AutoBuilder::pathfindToPose(
         approxPose,
-        pathplanner::PathConstraints{3.0_mps, 4.0_mps_sq, 540_deg_per_s,
+        pathplanner::PathConstraints{3.0_mps, 1.5_mps_sq, 540_deg_per_s,
                                      720_deg_per_s_sq},
         0.0_mps,  // Goal end velocity in meters/sec
         0.0_m     // Rotation delay distance in meters. This is how far

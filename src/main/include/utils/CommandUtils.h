@@ -146,7 +146,7 @@ static frc2::CommandPtr SnapToAngle(DriveSubsystem* drive) {
                            [drive] { return RotationFromProximity(drive); },
                            false)
                            .ToPtr()))
-      .WithTimeout(5_s)
+      .WithTimeout(2_s)
       .FinallyDo([drive] {
         frc::ChassisSpeeds chassisSpeeds = {
             .vx = 0_mps, .vy = 0_mps, .omega = 0_rad_per_s};
