@@ -85,8 +85,8 @@ bool ScoringSubsystem::GetMotorFreeWheel(ScoringDirection direction) {
   return m_speakerLowerSpinnyBoi.GetOutputCurrent() < kFreeSpinCurrentThreshold;
 }
 
-void ScoringSubsystem::SpinAmp() {
-  ampSideMotors.RunWithVelocity(kAmpUpperSpeed, kAmpLowerSpeed);
+void ScoringSubsystem::SpinAmp(double upperPercentage, double lowerPercentage) {
+  ampSideMotors.RunWithVelocity(upperPercentage, lowerPercentage);
 }
 
 void ScoringSubsystem::SpinSpeaker() {

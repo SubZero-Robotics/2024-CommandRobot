@@ -30,14 +30,10 @@ class IntakeInInitial
   }
 
   void Execute() override {
-    if (m_intake->NotePresentUpper() && !m_intake->NotePresentLower()) {
-      isFinished = true;
-    }
-
     m_intake->In();
   }
 
-  bool IsFinished() override { return isFinished; }
+  bool IsFinished() override { return m_intake->NotePresentUpper() && !m_intake->NotePresentLower(); }
 
   void End(bool interrupted) {}
 

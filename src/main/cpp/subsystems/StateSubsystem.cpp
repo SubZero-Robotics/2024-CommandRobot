@@ -94,7 +94,7 @@ frc2::CommandPtr StateSubsystem::RunState() {
 frc2::CommandPtr StateSubsystem::StartIntaking() {
   return m_subsystems.led->ShowFromState([] { return RobotState::Intaking; })
       .AndThen(
-          IntakingCommands::Intake(m_subsystems.intake)
+          IntakingCommands::Intake(m_subsystems.intake, m_subsystems.scoring)
               .RaceWith(DriveVelocity(0_deg, 2_mps, m_subsystems.drive)
                             .ToPtr()
                             .Repeatedly())
@@ -260,7 +260,7 @@ frc2::CommandPtr StateSubsystem::StartFunni() {
 
 frc2::CommandPtr StateSubsystem::MoveToSourceAndIntake() {
   return StartSource().AndThen(
-      FunniCommands::OuttakeUntilPresent(
+      IntakingCommands::OuttakeUntilPresent(
           m_subsystems.intake, m_subsystems.scoring, ScoringDirection::AmpSide)
           // TODO: REMOVE THIS; ONLY FOR TESTING PURPOSES
           .WithTimeout(5_s));

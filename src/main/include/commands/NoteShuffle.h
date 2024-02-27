@@ -3,12 +3,12 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 
-#include "subsystems/ScoringSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
+#include "subsystems/ScoringSubsystem.h"
 
 class NoteShuffle : public frc2::CommandHelper<frc2::Command, NoteShuffle> {
  public:
-  NoteShuffle(IntakeSubsystem* intake) : m_intake{intake}, isFinished{false} {
+  NoteShuffle(IntakeSubsystem* intake) : isFinished{false}, m_intake{intake} {
     AddRequirements(m_intake);
   }
 
@@ -23,7 +23,7 @@ class NoteShuffle : public frc2::CommandHelper<frc2::Command, NoteShuffle> {
   void Execute() override {
     if (m_intake->NotePresentUpper()) {
       m_intake->Out(ScoringConstants::kShuffleSpeed);
-       return;
+      return;
     }
     m_intake->Stop();
     isFinished = true;

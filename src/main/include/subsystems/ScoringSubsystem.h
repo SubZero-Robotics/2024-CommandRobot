@@ -50,8 +50,10 @@ class ScoringSubsystem : public frc2::SubsystemBase {
 
   void SpinOutake();
 
+  void SpinAmp(double upperPercentage = kAmpUpperSpeed,
+               double lowerPercentage = kAmpLowerSpeed);
+
  private:
-  void SpinAmp();
   void SpinSpeaker();
   void SpinSubwoofer();
   bool CheckAmpSpeed();

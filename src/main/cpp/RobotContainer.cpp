@@ -77,7 +77,7 @@ void RobotContainer::RegisterAutos() {
         ConsoleLogger::getInstance().logVerbose("Autos", "Intaking %s", "");
       })
           .ToPtr()
-          .AndThen(IntakingCommands::Intake(&m_intake)));
+          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
 
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoConstants::kDefaultAutoName);
@@ -115,7 +115,7 @@ void RobotContainer::ConfigureButtonBindings() {
 
   m_driverController.B().OnTrue(
       m_leds.Intaking()
-          .AndThen(IntakingCommands::Intake(&m_intake))
+          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
           .AndThen(m_leds.Loaded()));
 
   m_driverController.X().OnTrue(m_leds.ScoringSpeaker().AndThen(
