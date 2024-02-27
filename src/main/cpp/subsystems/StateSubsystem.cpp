@@ -2,7 +2,6 @@
 
 #include "Constants.h"
 #include "autos/PathFactory.h"
-#include "commands/BalanceCommand.h"
 #include "commands/DriveVelocityCommand.h"
 #include "commands/ExtendAbsoluteCommand.h"
 #include "commands/ExtendClimbCommand.h"
@@ -174,10 +173,11 @@ frc2::CommandPtr StateSubsystem::StartManual() {
      Signal that we are in manual
      (Call after automated commands or after manual intervention from driver 1)
   */
-  return m_subsystems.led->ShowFromState([this] {
-    m_active = false;
-    return RobotState::Manual;
-  });
+  return frc2::InstantCommand([this] {
+           m_active = false;
+           m_subsystems.led->IdlingAsync();
+         })
+      .ToPtr();
 }
 
 frc2::CommandPtr StateSubsystem::StartClimb() {
@@ -201,9 +201,6 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
       .AndThen(
           RetractClimbCommand(m_subsystems.leftClimb, m_subsystems.rightClimb)
               .ToPtr())
-      .AndThen(BalanceCommand(m_subsystems.drive, m_subsystems.leftClimb,
-                              m_subsystems.rightClimb)
-                   .ToPtr())
       .WithTimeout(20_s);
 }
 

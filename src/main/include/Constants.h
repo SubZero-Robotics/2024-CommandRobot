@@ -155,7 +155,7 @@ constexpr units::ampere_t kTurningMotorCurrentLimit = 20_A;
 
 namespace AutoConstants {
 constexpr auto kMaxSpeed = 3_mps;
-constexpr auto kMaxAcceleration = 3_mps_sq;
+constexpr auto kMaxAcceleration = 1.5_mps_sq;
 constexpr auto kMaxAngularSpeed = 3.142_rad_per_s;
 constexpr auto kMaxAngularAcceleration = 3.142_rad_per_s_sq;
 
@@ -171,6 +171,10 @@ extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
 const std::string kDefaultAutoName = "Leave Wing";
+
+const std::string kScoreSubwooferName = "Shoot Subwoofer";
+const std::string kIntakeName = "Run Intake";
+const std::string kLedFunniName = "LedFunni";
 
 const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
     pathplanner::PIDConstants(0.9, 0.0,
@@ -276,7 +280,7 @@ constexpr double kVibrationIntensity = 1;
 }  // namespace OIConstants
 
 constexpr uint8_t kLedAddress = 23;
-constexpr units::second_t kConnectorXDelay = 0.04_s;
+constexpr units::second_t kConnectorXDelay = 0.002_s;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
@@ -287,6 +291,7 @@ constexpr int kAmpLowerSpinnyBoiId = 24;
 constexpr int kAmpUpperSpinnyBoiId = 21;
 constexpr int kSpeakerLowerSpinnyBoiId = 25;
 constexpr int kSpeakerUpperSpinnyBoiId = 19;
+constexpr int kPigeonCanId = 9;
 
 constexpr int kTicksPerMotorRotation = 42;
 }  // namespace CANSparkMaxConstants
@@ -305,12 +310,22 @@ constexpr double kSecondaryIntakeOutSpeed = 0.05;
 constexpr uint8_t kUpperBeamBreakDigitalPort = 3;
 constexpr uint8_t kLowerBeamBreakDigitalPort = 2;
 
+constexpr units::revolutions_per_minute_t kMaxRpm = 5676_rpm;
+
+namespace IntakingPID {
+constexpr double kIntakingP = 6e-5;
+constexpr double kIntakingI = 1e-6;
+constexpr double kIntakingD = 0;
+constexpr double kIntakingIZone = 0;
+constexpr double kIntakingFF = 0.000015;
+}  // namespace IntakingPID
+
 }  // namespace IntakingConstants
 
 namespace ScoringConstants {
 constexpr double kFreeSpinCurrentThreshold = 90;
 // constexpr double kMaxSpinRpm = 5676;
-constexpr double kMaxSpinRpm = 6784;
+constexpr units::revolutions_per_minute_t kMaxSpinRpm = 6784_rpm;
 
 constexpr double kShuffleSpeed = 0.05;
 
@@ -319,21 +334,21 @@ constexpr double kVectorSpeed = 0.1;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kAmpLowerSpeed = 0.254;   //.264
-constexpr double kAmpUpperSpeed = -0.168;  //.278
+constexpr double kAmpLowerSpeed = 0.254;  //.264
+constexpr double kAmpUpperSpeed = 0.168;  //.278
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSpeakerLowerSpeed = 1;
-constexpr double kSpeakerUpperSpeed = -0.75;
+constexpr double kSpeakerLowerSpeed = -1;
+constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = 0.95;
-constexpr double kSubwooferUpperSpeed = -kSubwooferLowerSpeed;
+constexpr double kSubwooferLowerSpeed = 0.5;
+constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
-constexpr double kScoringOutakeUpperSpeed = 0.2;
-constexpr double kScoringOutakeLowerSpeed = -kScoringOutakeUpperSpeed;
+constexpr double kScoringOutakeUpperSpeed = -0.2;
+constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
 
 enum class ScoreState {
   FlywheelRamp,
@@ -341,33 +356,79 @@ enum class ScoreState {
   Shooting,
 };
 
-constexpr units::second_t kFlywheelRampDelay = 0.75_s;
+constexpr units::second_t kFlywheelRampDelay = 1_s;
+
+namespace ScoringPID {
+constexpr double kSpeakerP = 6e-5;
+constexpr double kSpeakerI = 1e-6;
+constexpr double kSpeakerD = 0;
+constexpr double kSpeakerIZone = 0;
+constexpr double kSpeakerFF = 0.000015;
+
+// constexpr double kSpeakerLowerP = 6e-5;
+// constexpr double kSpeakerLowerI = 1e-6;
+// constexpr double kSpeakerLowerD = 0;
+// constexpr double kSpeakerLowerIZone = 0;
+// constexpr double kSpeakerLowerFF = 0.000015;
+// constexpr double kSpeakerLowerVelocity = -1;
+
+constexpr double kAmpP = 6e-5;
+constexpr double kAmpI = 1e-6;
+constexpr double kAmpD = 0;
+constexpr double kAmpIZone = 0;
+constexpr double kAmpFF = 0.000015;
+
+// constexpr double kAmpLowerP = 6e-5;
+// constexpr double kAmpLowerI = 1e-6;
+// constexpr double kAmpLowerD = 0;
+// constexpr double kAmpLowerIZone = 0;
+// constexpr double kAmpLowerFF = 0.000015;
+// constexpr double kAmpLowerVelocity = 0.254;
+
+// constexpr double kSubwooferUpperP = 6e-5;
+// constexpr double kSubwooferUpperI = 1e-6;
+// constexpr double kSubwooferUpperD = 0;
+// constexpr double kSubwooferUpperIZone = 0;
+// constexpr double kSubwooferUpperFF = 0.000015;
+// constexpr double kSubwooferUpperVelocity = 0.75;
+
+// constexpr double kSubwooferLowerP = 6e-5;
+// constexpr double kSubwooferLowerI = 1e-6;
+// constexpr double kSubwooferLowerD = 0;
+// constexpr double kSubwooferLowerIZone = 0;
+// constexpr double kSubwooferLowerFF = 0.000015;
+// constexpr double kSubwooferLowerVelocity = 0.75;
+
+const std::string kSpeakerUpperName = "Speaker Upper";
+const std::string kSpeakerLowerName = "Speaker Lower";
+const std::string kAmpUpperName = "Amp Upper";
+const std::string kAmpLowerName = "Amp Lower";
+const std::string kSubwooferUpperName = "Subwoofer Upper";
+const std::string kSubwooferLowerName = "Subwoofer Lower";
+}  // namespace ScoringPID
 
 namespace SpeakerPID {
-constexpr double kP = 1;
-constexpr double kI = 0;
+constexpr double kP = 6e-5;
+constexpr double kI = 1e-6;
 constexpr double kD = 0;
 constexpr double kIZone = 0;
-constexpr double kFF = 0;
-
+constexpr double kFF = 0.000015;
 }  // namespace SpeakerPID
 
 namespace AmpUpperPID {
-constexpr double kP = 1;
-constexpr double kI = 0;
+constexpr double kP = 6e-5;
+constexpr double kI = 1e-6;
 constexpr double kD = 0;
 constexpr double kIZone = 0;
-constexpr double kFF = 0;
-
+constexpr double kFF = 0.000015;
 }  // namespace AmpUpperPID
 
 namespace AmpLowerPID {
-constexpr double kP = 1;
-constexpr double kI = 0;
+constexpr double kP = 6e-5;
+constexpr double kI = 1e-6;
 constexpr double kD = 0;
 constexpr double kIZone = 0;
-constexpr double kFF = 0;
-
+constexpr double kFF = 0.000015;
 }  // namespace AmpLowerPID
 }  // namespace ScoringConstants
 
@@ -400,11 +461,11 @@ namespace VisionConstants {
 static constexpr std::string_view kFrontCamera{"PhotonVision"};
 static constexpr std::string_view kRearCamera{"Photonvision2"};
 static const frc::Transform3d kRobotToCam{
-    frc::Translation3d{0.132_m, -0.013_m, 0.607_m},
-    frc::Rotation3d{0_rad, 0.654_rad, 0_rad}};
+    frc::Translation3d{5.296_in, 0_in, 23.892_in},
+    frc::Rotation3d{0_deg, -52.541_deg, 0_deg}};
 static const frc::Transform3d kRobotToCam2{
-    frc::Translation3d{0.583_in, 2.651_in, 23.252_in},
-    frc::Rotation3d{0_deg, (180_deg - 24.925_deg), 0_deg}};
+    frc::Translation3d{2.651_in, 0_in, 23.252_in},
+    frc::Rotation3d{0_deg, -24.85_deg, 180_deg}};
 constexpr photon::PoseStrategy kPoseStrategy =
     photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
 static const frc::AprilTagFieldLayout kTagLayout{
@@ -423,7 +484,7 @@ constexpr double kClimberSetI = 0;
 constexpr double kClimberSetD = 0;
 
 // Maximum arm extension distance
-constexpr double kMaxArmDistance = 20;
+constexpr double kMaxArmDistance = 1000;
 // Arm climbing position
 constexpr double kClimbExtensionPosition = 5;
 // Arm retracted position
@@ -443,9 +504,9 @@ constexpr units::meter_t kClimberOffsetDistance = 4_m;
 
 namespace RobotConstants {
 #ifdef TEST_SWERVE_BOT
-const std::string kRoborioSerialNumber = "0326F2F2";
-#else
 const std::string kRoborioSerialNumber = "032B4B68";
+#else
+const std::string kRoborioSerialNumber = "0326F2F2";
 #endif
 }  // namespace RobotConstants
 
