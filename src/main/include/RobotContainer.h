@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <AHRS.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -58,27 +59,6 @@ class RobotContainer {
 
   LedSubsystem m_leds;
 
-  frc2::CommandPtr m_defaultAuto =
-      pathplanner::PathPlannerAuto(AutoConstants::kDefaultAutoName).ToPtr();
-  frc2::CommandPtr m_3inAmp = pathplanner::PathPlannerAuto("3 in Amp").ToPtr();
-  frc2::CommandPtr m_2noteAuto =
-      pathplanner::PathPlannerAuto("2 Note Auto").ToPtr();
-  frc2::CommandPtr m_4noteAuto =
-      pathplanner::PathPlannerAuto("4 Note Auto").ToPtr();
-  frc2::CommandPtr m_kepler =
-      pathplanner::PathPlannerAuto("Kepler Auto").ToPtr();
-  frc2::CommandPtr m_kepler2 =
-      pathplanner::PathPlannerAuto("Kepler 2 Auto").ToPtr();
-
-    std::unordered_map<std::string, frc2::Command*> autoCommands = {
-        {AutoConstants::kDefaultAutoName, m_defaultAuto.get()},
-        {"3 in Amp", m_3inAmp.get()},
-        {"2 Note Auto", m_2noteAuto.get()},
-        {"4 Note Auto", m_4noteAuto.get()},
-        {"Kepler Auto", m_kepler.get()},
-        {"Kepler 2 Auto", m_kepler2.get()},
-    };
-
   // The chooser for the autonomous routines
   frc::SendableChooser<std::string> m_chooser;
 
@@ -110,7 +90,9 @@ class RobotContainer {
 
   Vision m_vision;
 
-  AHRS gyro2{frc::SPI::Port::kMXP};
+  void RegisterAutos();
 
   void ConfigureButtonBindings();
+
+  frc2::CommandPtr autoCommand = frc2::InstantCommand([] {}).ToPtr();
 };

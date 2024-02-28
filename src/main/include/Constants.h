@@ -172,6 +172,10 @@ extern const frc::TrapezoidProfile<units::radians>::Constraints
 
 const std::string kDefaultAutoName = "Leave Wing";
 
+const std::string kScoreSubwooferName = "Shoot Subwoofer";
+const std::string kIntakeName = "Run Intake";
+const std::string kLedFunniName = "LedFunni";
+
 const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
     pathplanner::PIDConstants(0.9, 0.0,
                               0.0),            // Translation PID constants
@@ -306,12 +310,22 @@ constexpr double kSecondaryIntakeOutSpeed = 0.05;
 constexpr uint8_t kUpperBeamBreakDigitalPort = 3;
 constexpr uint8_t kLowerBeamBreakDigitalPort = 2;
 
+constexpr units::revolutions_per_minute_t kMaxRpm = 5676_rpm;
+
+namespace IntakingPID {
+constexpr double kIntakingP = 6e-5;
+constexpr double kIntakingI = 1e-6;
+constexpr double kIntakingD = 0;
+constexpr double kIntakingIZone = 0;
+constexpr double kIntakingFF = 0.000015;
+}  // namespace IntakingPID
+
 }  // namespace IntakingConstants
 
 namespace ScoringConstants {
 constexpr double kFreeSpinCurrentThreshold = 90;
 // constexpr double kMaxSpinRpm = 5676;
-constexpr double kMaxSpinRpm = 6784;
+constexpr units::revolutions_per_minute_t kMaxSpinRpm = 6784_rpm;
 
 // Positive = clockwise
 constexpr double kVectorSpeed = 0.1;
@@ -328,7 +342,7 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = 0.75;
+constexpr double kSubwooferLowerSpeed = 0.5;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
 constexpr double kScoringOutakeUpperSpeed = -0.2;
@@ -343,47 +357,45 @@ enum class ScoreState {
 constexpr units::second_t kFlywheelRampDelay = 1_s;
 
 namespace ScoringPID {
-constexpr double kSpeakerUpperP = 6e-5;
-constexpr double kSpeakerUpperI = 1e-6;
-constexpr double kSpeakerUpperD = 0;
-constexpr double kSpeakerUpperIZone = 0;
-constexpr double kSpeakerUpperFF = 0.000015;
-constexpr double kSpeakerUpperVelocity = -1;
+constexpr double kSpeakerP = 6e-5;
+constexpr double kSpeakerI = 1e-6;
+constexpr double kSpeakerD = 0;
+constexpr double kSpeakerIZone = 0;
+constexpr double kSpeakerFF = 0.000015;
 
-constexpr double kSpeakerLowerP = 6e-5;
-constexpr double kSpeakerLowerI = 1e-6;
-constexpr double kSpeakerLowerD = 0;
-constexpr double kSpeakerLowerIZone = 0;
-constexpr double kSpeakerLowerFF = 0.000015;
-constexpr double kSpeakerLowerVelocity = -1;
+// constexpr double kSpeakerLowerP = 6e-5;
+// constexpr double kSpeakerLowerI = 1e-6;
+// constexpr double kSpeakerLowerD = 0;
+// constexpr double kSpeakerLowerIZone = 0;
+// constexpr double kSpeakerLowerFF = 0.000015;
+// constexpr double kSpeakerLowerVelocity = -1;
 
-constexpr double kAmpUpperP = 6e-5;
-constexpr double kAmpUpperI = 1e-6;
-constexpr double kAmpUpperD = 0;
-constexpr double kAmpUpperIZone = 0;
-constexpr double kAmpUpperFF = 0.000015;
-constexpr double kAmpUpperVelocity = 0.168;
+constexpr double kAmpP = 6e-5;
+constexpr double kAmpI = 1e-6;
+constexpr double kAmpD = 0;
+constexpr double kAmpIZone = 0;
+constexpr double kAmpFF = 0.000015;
 
-constexpr double kAmpLowerP = 6e-5;
-constexpr double kAmpLowerI = 1e-6;
-constexpr double kAmpLowerD = 0;
-constexpr double kAmpLowerIZone = 0;
-constexpr double kAmpLowerFF = 0.000015;
-constexpr double kAmpLowerVelocity = 0.254;
+// constexpr double kAmpLowerP = 6e-5;
+// constexpr double kAmpLowerI = 1e-6;
+// constexpr double kAmpLowerD = 0;
+// constexpr double kAmpLowerIZone = 0;
+// constexpr double kAmpLowerFF = 0.000015;
+// constexpr double kAmpLowerVelocity = 0.254;
 
-constexpr double kSubwooferUpperP = 6e-5;
-constexpr double kSubwooferUpperI = 1e-6;
-constexpr double kSubwooferUpperD = 0;
-constexpr double kSubwooferUpperIZone = 0;
-constexpr double kSubwooferUpperFF = 0.000015;
-constexpr double kSubwooferUpperVelocity = 0.95;
+// constexpr double kSubwooferUpperP = 6e-5;
+// constexpr double kSubwooferUpperI = 1e-6;
+// constexpr double kSubwooferUpperD = 0;
+// constexpr double kSubwooferUpperIZone = 0;
+// constexpr double kSubwooferUpperFF = 0.000015;
+// constexpr double kSubwooferUpperVelocity = 0.75;
 
-constexpr double kSubwooferLowerP = 6e-5;
-constexpr double kSubwooferLowerI = 1e-6;
-constexpr double kSubwooferLowerD = 0;
-constexpr double kSubwooferLowerIZone = 0;
-constexpr double kSubwooferLowerFF = 0.000015;
-constexpr double kSubwooferLowerVelocity = 0.95;
+// constexpr double kSubwooferLowerP = 6e-5;
+// constexpr double kSubwooferLowerI = 1e-6;
+// constexpr double kSubwooferLowerD = 0;
+// constexpr double kSubwooferLowerIZone = 0;
+// constexpr double kSubwooferLowerFF = 0.000015;
+// constexpr double kSubwooferLowerVelocity = 0.75;
 
 const std::string kSpeakerUpperName = "Speaker Upper";
 const std::string kSpeakerLowerName = "Speaker Lower";

@@ -9,6 +9,7 @@
 
 #include "ColorConstants.h"
 #include "Constants.h"
+#include "utils/PidMotorControllerPair.h"
 
 enum class ScoringDirection {
   AmpSide = 0,
@@ -86,6 +87,7 @@ typedef struct PIDControllerInterface {
 };
 
 using namespace CANSparkMaxConstants;
+using namespace ScoringConstants;
 
 class ScoringSubsystem : public frc2::SubsystemBase {
  public:
@@ -126,7 +128,7 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   bool CheckSubwooferSpeed();
 
   inline double MaxSpeedToRpm(double speedPercentage) {
-    return ScoringConstants::kMaxSpinRpm * speedPercentage;
+    return kMaxSpinRpm.value() * speedPercentage;
   }
 
   rev::CANSparkMax m_vectorSpinnyBoi{
@@ -161,19 +163,26 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   rev::SparkPIDController m_ampLowerPidController =
       m_ampLowerSpinnyBoi.GetPIDController();
 
-  double tuningLatestP;
-  double tuningLatestI;
-  double tuningLatestD;
-  double tuningLatestIZone;
-  double tuningLatestFF;
-  double tuningLatestVelocity;
+  PidSettings speakerPidSettings = {.p = ScoringPID::kSpeakerP,
+                                    .i = ScoringPID::kSpeakerI,
+                                    .d = ScoringPID::kSpeakerD,
+                                    .iZone = ScoringPID::kSpeakerIZone,
+                                    .ff = ScoringPID::kSpeakerFF};
 
-  std::map<std::string, PIDControllerInterface> scoringPIDs;
+  PidSettings ampPidSettings = {.p = ScoringPID::kAmpP,
+                                .i = ScoringPID::kAmpI,
+                                .d = ScoringPID::kAmpD,
+                                .iZone = ScoringPID::kAmpIZone,
+                                .ff = ScoringPID::kAmpFF};
 
-  std::string tuningMotor;
+  PidMotorControllerPair speakerSideMotors{
+      "SpeakerSide", m_speakerUpperPidController, m_speakerLowerPidController,
+      speakerPidSettings, kMaxSpinRpm};
 
-  rev::SparkPIDController* m_tuningPidControllerUpper =
-      &m_ampUpperPidController;
-  rev::SparkPIDController* m_tuningPidControllerLower =
-      &m_ampLowerPidController;
+  PidMotorControllerPair ampSideMotors{"AmpSide", m_ampUpperPidController,
+                                       m_ampLowerPidController, ampPidSettings,
+                                       kMaxSpinRpm};
+
+  PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
+  PidMotorControllerPairTuner ampTuner{ampSideMotors};
 };

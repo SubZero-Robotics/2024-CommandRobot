@@ -24,7 +24,6 @@
 #include <utility>
 
 #include "Constants.h"
-#include "commands/BalanceCommand.h"
 #include "commands/ExtendClimbCommand.h"
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
@@ -61,24 +60,31 @@ RobotContainer::RobotContainer() {
       },
       {&m_drive}));
 #ifndef TEST_SWERVE_BOT
-  pathplanner::NamedCommands::registerCommand("LedFunni", m_leds.Intaking());
+  RegisterAutos();
+#endif
+}
+
+void RobotContainer::RegisterAutos() {
+  pathplanner::NamedCommands::registerCommand(AutoConstants::kLedFunniName,
+                                              m_leds.Intaking());
   pathplanner::NamedCommands::registerCommand(
-      "Shoot Subwoofer",
+      AutoConstants::kScoreSubwooferName,
       ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
                              &m_scoring, &m_intake));
   pathplanner::NamedCommands::registerCommand(
-      "Run Intake", IntakingCommands::Intake(&m_intake));
-#endif
+      AutoConstants::kIntakeName,
+      frc2::InstantCommand([this] {
+        ConsoleLogger::getInstance().logVerbose("Autos", "Intaking %s", "");
+      })
+          .ToPtr()
+          .AndThen(IntakingCommands::Intake(&m_intake)));
 
-  // This won't work since we're getting the reference of an r-value which goes
-  // out of scope at the end of the method
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoConstants::kDefaultAutoName);
   m_chooser.AddOption("3 in Amp", "3 in Amp");
   m_chooser.AddOption("2 Note Auto", "2 Note Auto");
   m_chooser.AddOption("4 Note Auto", "4 Note Auto");
-  // m_chooser.AddOption("Kepler", "Kepler");
-  // m_chooser.AddOption("Kepler2", "Kepler2");
+
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
 
@@ -115,20 +121,17 @@ void RobotContainer::ConfigureButtonBindings() {
           .AndThen(m_leds.Loaded())
           );
 
-  m_driverController.X().WhileTrue(m_leds.ScoringSpeaker().AndThen(
+  m_driverController.X().OnTrue(m_leds.ScoringSpeaker().AndThen(
       ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
                              &m_scoring, &m_intake)));
 
-  m_driverController.A().WhileTrue(
+  m_driverController.A().OnTrue(
       m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
           [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake)));
 
-  m_driverController.Y().WhileTrue(
-      // m_leds.ScoringAmp().AndThen(
-        ScoringCommands::Score(
-          [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake)
-          // )
-          );
+  m_driverController.Y().OnTrue(
+      m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
+          [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake)));
 
   m_driverController.LeftBumper()
       .WhileTrue(m_leds.Climbing().AndThen(
@@ -272,49 +275,20 @@ void RobotContainer::ConfigureAutoBindings() {
                                            }
                                          }).ToPtr());
 
-  m_operatorController.Button(19).OnTrue(
-      BalanceCommand(&m_drive, &m_leftClimb, &m_rightClimb).ToPtr());
-
   m_operatorController.Button(20).OnTrue(
       frc2::InstantCommand([this] { m_drive.ZeroHeading(); }).ToPtr());
-
-  // (m_operatorController.Y() && m_operatorController.A())
-  //     .OnTrue(frc2::InstantCommand([this] {
-  //               if (!m_state.m_active) {
-  //                 m_state.m_currentState = RobotState::AutoSequenceSpeaker;
-  //                 m_state.SetDesiredState();
-  //               }
-  //             }).ToPtr());
-
-  // (m_operatorController.Y() && m_operatorController.B())
-  //     .OnTrue(frc2::InstantCommand([this] {
-  //               if (!m_state.m_active) {
-  //                 m_state.m_currentState = RobotState::AutoSequenceSubwoofer;
-  //                 m_state.SetDesiredState();
-  //               }
-  //             }).ToPtr());
-
-  // (m_operatorController.Y() && m_operatorController.X())
-  //     .OnTrue(frc2::InstantCommand([this] {
-  //               if (!m_state.m_active) {
-  //                 m_state.m_currentState = RobotState::AutoSequenceAmp;
-  //                 m_state.SetDesiredState();
-  //               }
-  //             }).ToPtr());
 }
 #endif
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
-  auto selectedAutoName = m_chooser.GetSelected();
-  auto autoPose = pathplanner::PathPlannerAuto::getStartingPoseFromAutoFile(
-      selectedAutoName);
-  m_drive.ResetOdometry(autoPose);
-  return autoCommands.at(selectedAutoName);
+  std::string autoName = m_chooser.GetSelected();
+  autoCommand = PathPlannerAuto(autoName).ToPtr();
+  return autoCommand.get();
 }
 
 void RobotContainer::ClearCurrentStateCommand() {
   m_state.m_active = false;
-  m_leds.ErrorAsync();
+  // m_leds.ErrorAsync();
 }
 
 void RobotContainer::StartIdling() {
