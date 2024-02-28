@@ -27,8 +27,11 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr ShowFromState(StateGetter);
 
   frc2::CommandPtr Intaking();
+  // I really think it's outtaking with two T's...
+  frc2::CommandPtr Outaking();
   frc2::CommandPtr ScoringSpeaker();
   frc2::CommandPtr ScoringAmp();
+  frc2::CommandPtr ScoringSubwoofer();
   frc2::CommandPtr Loaded();
   frc2::CommandPtr Idling();
   frc2::CommandPtr Climbing();
@@ -40,10 +43,11 @@ class LedSubsystem : public frc2::SubsystemBase {
 
  private:
   enum class LedZone {
-    Back = 0,
-    Right,
-    Front,
-    Left,
+    LeftClimber = 0,
+    Back,
+    RightClimber,
+    RightEye,
+    LeftEye,
   };
 
   frc2::CommandPtr setZoneColorPattern(LedZone zone, LedPort port,
@@ -61,13 +65,14 @@ class LedSubsystem : public frc2::SubsystemBase {
 
   void createZones(LedPort port, std::vector<Commands::NewZone> &&zones);
 
-  frc2::CommandPtr syncAllZones();
+  void syncAllZones();
 
   ConnectorXBoard m_connectorX;
+  // TODO: make into a constant elsewhere
+  const uint16_t m_totalLeds = 41;
   std::vector<Commands::NewZone> m_ledZones = {
-      {.offset = 0, .count = 25},
-      {.offset = 25, .count = 25},
-      {.offset = 50, .count = 25},
-      {.offset = 75, .count = 25},
+      {.offset = 0, .count = 8},  {.offset = 8, .count = 15},
+      {.offset = 23, .count = 8}, {.offset = 31, .count = 5},
+      {.offset = 36, .count = 5},
   };
 };
