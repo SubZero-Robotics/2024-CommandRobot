@@ -36,8 +36,6 @@ frc2::CommandPtr LedSubsystem::ShowFromState(StateGetter stateGetter) {
 
 frc2::CommandPtr LedSubsystem::Intaking() {
   return frc2::InstantCommand([this] {
-           //  m_notifier.Stop();
-           //  m_notifier.SetCallback([this] {
            ConsoleLogger::getInstance().logInfo(
                "LedSubsystem", "Setting LEDs to %s", "Intaking");
            setZoneColorPatternAsync(
@@ -77,8 +75,6 @@ frc2::CommandPtr LedSubsystem::Intaking() {
 
 frc2::CommandPtr LedSubsystem::Outaking() {
   return frc2::InstantCommand([this] {
-           //  m_notifier.Stop();
-           //  m_notifier.SetCallback([this] {
            ConsoleLogger::getInstance().logInfo(
                "LedSubsystem", "Setting LEDs to %s", "Outaking");
            setZoneColorPatternAsync(

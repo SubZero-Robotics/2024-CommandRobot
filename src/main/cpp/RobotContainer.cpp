@@ -127,7 +127,7 @@ void RobotContainer::ConfigureButtonBindings() {
           [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake)));
 
   m_driverController.Y().OnTrue(
-      m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
+      m_leds.ScoringSubwoofer().AndThen(ScoringCommands::Score(
           [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake)));
 
   m_driverController.LeftBumper()
@@ -143,7 +143,7 @@ void RobotContainer::ConfigureButtonBindings() {
               .ToPtr()));
 
   m_driverController.RightBumper().WhileTrue(
-      m_leds.Intaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
+      m_leds.Outaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
 
   m_driverController.RightStick().OnTrue(
       DrivingCommands::SnapToAngle(&m_drive));
