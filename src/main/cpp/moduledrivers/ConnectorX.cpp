@@ -73,8 +73,8 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
                                                         uint8_t zoneIndex,
                                                         bool reversed,
                                                         bool setReversed) {
-  setLedPort(port);
-  delaySeconds(kConnectorXDelay);
+  // setLedPort(port);
+  // delaySeconds(kConnectorXDelay);
   auto& currentPort = getCurrentCachedPort();
   auto& currentZone = getCurrentZone();
 
@@ -107,9 +107,9 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
 
 void ConnectorX::ConnectorXBoard::syncZones(LedPort port,
                                             const std::vector<uint8_t>& zones) {
-  setLedPort(port);
+  // setLedPort(port);
 
-  delaySeconds(kConnectorXDelay);
+  // delaySeconds(kConnectorXDelay);
 
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::SyncStates;
@@ -125,16 +125,17 @@ void ConnectorX::ConnectorXBoard::syncZones(LedPort port,
 void ConnectorX::ConnectorXBoard::createZones(
     LedPort port, std::vector<ConnectorX::Commands::NewZone>&& newZones) {
   setLedPort(port);
+  delaySeconds(kConnectorXDelay);
 
-  // Commands::Command cmd;
-  // cmd.commandType = Commands::CommandType::SetNewZones;
-  // cmd.commandData.commandSetNewZones.zoneCount = newZones.size();
+  Commands::Command cmd;
+  cmd.commandType = Commands::CommandType::SetNewZones;
+  cmd.commandData.commandSetNewZones.zoneCount = newZones.size();
 
-  // for (uint8_t i = 0; i < newZones.size(); i++) {
-  //   cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
-  // }
+  for (uint8_t i = 0; i < newZones.size(); i++) {
+    cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
+  }
 
-  // sendCommand(cmd);
+  sendCommand(cmd);
 
   auto& currentPort = getCurrentCachedPort();
 
