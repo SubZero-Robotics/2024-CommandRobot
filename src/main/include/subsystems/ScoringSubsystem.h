@@ -17,15 +17,6 @@ enum class ScoringDirection {
   Subwoofer,
 };
 
-typedef struct {
-  double P;
-  double I;
-  double D;
-  double IZone;
-  double FF;
-  double velocity;
-} PidSettings;
-
 typedef struct PIDControllerInterface {
   std::string name;
   PidSettings settings;
