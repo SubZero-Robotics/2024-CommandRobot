@@ -25,8 +25,12 @@ void ScoringSubsystem::Periodic() {
 
   if (latestAmpUpperVelocity != m_ampUpperVelocity) {
     m_ampUpperVelocity = latestAmpUpperVelocity;
+    ConsoleLogger::getInstance().logVerbose(
+        "ScoringSubsystem", "Setting amp UPPER to %f", m_ampUpperVelocity);
   } else if (latestAmpLowerVelocity != m_ampLowerVelocity) {
     m_ampLowerVelocity = latestAmpLowerVelocity;
+    ConsoleLogger::getInstance().logVerbose(
+        "ScoringSubsystem", "Setting amp UPPER to %f", m_ampLowerVelocity);
   }
 }
 
