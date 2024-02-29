@@ -94,7 +94,7 @@ frc2::CommandPtr StateSubsystem::RunState() {
 frc2::CommandPtr StateSubsystem::StartIntaking() {
   return m_subsystems.led->ShowFromState([] { return RobotState::Intaking; })
       .AndThen(
-          IntakingCommands::Intake(m_subsystems.intake)
+          IntakingCommands::Intake(m_subsystems.intake, m_subsystems.scoring)
               .RaceWith(DriveVelocity(0_deg, 2_mps, m_subsystems.drive)
                             .ToPtr()
                             .Repeatedly())
@@ -122,8 +122,7 @@ frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
      Shoot with timeout
   */
 
-  return m_subsystems.led
-      ->ShowFromState([] { return RobotState::ScoringSpeaker; })
+  return m_subsystems.led->ScoringSpeaker()
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Podium; }, m_subsystems.drive))
       // ? TODO: Snap to angle first?
@@ -140,7 +139,7 @@ frc2::CommandPtr StateSubsystem::StartScoringAmp() {
      Orient the robot with the amp shooter facing the amp
      Shoot with timeout
   */
-  return m_subsystems.led->ShowFromState([] { return RobotState::ScoringAmp; })
+  return m_subsystems.led->ScoringAmp()
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Amp; }, m_subsystems.drive))
       // ? TODO: Snap to angle first?
@@ -157,8 +156,7 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
      Orient the robot with the amp shooter facing the speaker
      Shoot with timeout
   */
-  return m_subsystems.led
-      ->ShowFromState([] { return RobotState::ScoringSubwoofer; })
+  return m_subsystems.led->ScoringSubwoofer()
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Subwoofer; }, m_subsystems.drive))
       // ? TODO: Snap to angle first?
@@ -211,7 +209,7 @@ frc2::CommandPtr StateSubsystem::StartSource() {
      Use pre-made PP path to orient robot and drive forward
   */
 
-  return m_subsystems.led->Intaking()
+  return m_subsystems.led->Outaking()
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [this] { return GetFinalFromState(); }, m_subsystems.drive))
       .WithTimeout(20_s);
@@ -225,24 +223,6 @@ frc2::CommandPtr StateSubsystem::StartAutoSequence() {
       2. Score at location
       3. Go to source
   */
-
-  frc2::CommandPtr scoringCmd = frc2::InstantCommand([] {}).ToPtr();
-  switch (m_currentState) {
-    case RobotState::AutoSequenceAmp:
-      scoringCmd = StartScoringAmp();
-      break;
-    case RobotState::AutoSequenceSpeaker:
-      scoringCmd = StartScoringAmp();
-      break;
-    case RobotState::AutoSequenceSubwoofer:
-      scoringCmd = StartScoringAmp();
-      break;
-    default:
-      ConsoleLogger::getInstance().logError(
-          "StateSubsystem", "Unsupported AutoSequence from state %d",
-          static_cast<uint8_t>(m_currentState));
-      m_subsystems.led->ErrorAsync();
-  }
 
   return (MoveToSourceAndIntake()
               .AndThen(StartScoringAmp())
@@ -260,7 +240,7 @@ frc2::CommandPtr StateSubsystem::StartFunni() {
 
 frc2::CommandPtr StateSubsystem::MoveToSourceAndIntake() {
   return StartSource().AndThen(
-      FunniCommands::OuttakeUntilPresent(
+      IntakingCommands::OuttakeUntilPresent(
           m_subsystems.intake, m_subsystems.scoring, ScoringDirection::AmpSide)
           // TODO: REMOVE THIS; ONLY FOR TESTING PURPOSES
           .WithTimeout(5_s));

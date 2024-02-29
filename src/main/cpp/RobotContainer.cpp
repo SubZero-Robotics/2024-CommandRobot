@@ -77,13 +77,14 @@ void RobotContainer::RegisterAutos() {
         ConsoleLogger::getInstance().logVerbose("Autos", "Intaking %s", "");
       })
           .ToPtr()
-          .AndThen(IntakingCommands::Intake(&m_intake)));
+          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
 
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoConstants::kDefaultAutoName);
-  m_chooser.AddOption("3 in Amp", "3 in Amp");
-  m_chooser.AddOption("2 Note Auto", "2 Note Auto");
+  // m_chooser.AddOption("3 in Amp", "3 in Amp");
+  // m_chooser.AddOption("2 Note Auto", "2 Note Auto");
   m_chooser.AddOption("4 Note Auto", "4 Note Auto");
+  m_chooser.AddOption("Place and leave", "Place and leave");
 
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
@@ -114,8 +115,9 @@ void RobotContainer::ConfigureButtonBindings() {
               .ToPtr()));
 
   m_driverController.B().OnTrue(
+      // IntakingCommands::Intake(&m_intake, &m_scoring));
       m_leds.Intaking()
-          .AndThen(IntakingCommands::Intake(&m_intake))
+          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
           .AndThen(m_leds.Loaded()));
 
   m_driverController.X().OnTrue(m_leds.ScoringSpeaker().AndThen(
@@ -127,7 +129,7 @@ void RobotContainer::ConfigureButtonBindings() {
           [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake)));
 
   m_driverController.Y().OnTrue(
-      m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
+      m_leds.ScoringSubwoofer().AndThen(ScoringCommands::Score(
           [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake)));
 
   m_driverController.LeftBumper()
@@ -143,7 +145,7 @@ void RobotContainer::ConfigureButtonBindings() {
               .ToPtr()));
 
   m_driverController.RightBumper().WhileTrue(
-      m_leds.Intaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
+      m_leds.Outaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
 
   m_driverController.RightStick().OnTrue(
       DrivingCommands::SnapToAngle(&m_drive));

@@ -327,6 +327,8 @@ constexpr double kFreeSpinCurrentThreshold = 90;
 // constexpr double kMaxSpinRpm = 5676;
 constexpr units::revolutions_per_minute_t kMaxSpinRpm = 6784_rpm;
 
+constexpr double kShuffleSpeed = 0.05;
+
 // Positive = clockwise
 constexpr double kVectorSpeed = 0.1;
 
@@ -342,7 +344,7 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = 0.5;
+constexpr double kSubwooferLowerSpeed = 0.75;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
 constexpr double kScoringOutakeUpperSpeed = -0.2;
@@ -372,7 +374,7 @@ constexpr double kSpeakerFF = 0.000015;
 
 constexpr double kAmpP = 6e-5;
 constexpr double kAmpI = 1e-6;
-constexpr double kAmpD = 0;
+constexpr double kAmpD = 0.000003;
 constexpr double kAmpIZone = 0;
 constexpr double kAmpFF = 0.000015;
 

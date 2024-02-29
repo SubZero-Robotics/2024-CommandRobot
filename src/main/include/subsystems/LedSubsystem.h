@@ -15,6 +15,7 @@ using namespace ConnectorX;
 class LedSubsystem : public frc2::SubsystemBase {
  public:
   LedSubsystem() : m_connectorX(ConnectorXBoard(kLedAddress)) {
+    ConsoleLogger::getInstance().logVerbose("LedSubsystem", "LEDs init%s", "");
     createZones(LedPort::P1, std::move(m_ledZones));
     m_connectorX.setOn();
   }
@@ -27,8 +28,11 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr ShowFromState(StateGetter);
 
   frc2::CommandPtr Intaking();
+  // I really think it's outtaking with two T's...
+  frc2::CommandPtr Outaking();
   frc2::CommandPtr ScoringSpeaker();
   frc2::CommandPtr ScoringAmp();
+  frc2::CommandPtr ScoringSubwoofer();
   frc2::CommandPtr Loaded();
   frc2::CommandPtr Idling();
   frc2::CommandPtr Climbing();
@@ -40,10 +44,11 @@ class LedSubsystem : public frc2::SubsystemBase {
 
  private:
   enum class LedZone {
-    Back = 0,
-    Right,
-    Front,
-    Left,
+    LeftClimber = 0,
+    Back,
+    RightClimber,
+    RightEye,
+    LeftEye,
   };
 
   frc2::CommandPtr setZoneColorPattern(LedZone zone, LedPort port,
@@ -61,13 +66,14 @@ class LedSubsystem : public frc2::SubsystemBase {
 
   void createZones(LedPort port, std::vector<Commands::NewZone> &&zones);
 
-  frc2::CommandPtr syncAllZones();
+  void syncAllZones();
 
   ConnectorXBoard m_connectorX;
+  // TODO: make into a constant elsewhere
+  const uint16_t m_totalLeds = 41;
   std::vector<Commands::NewZone> m_ledZones = {
-      {.offset = 0, .count = 25},
-      {.offset = 25, .count = 25},
-      {.offset = 50, .count = 25},
-      {.offset = 75, .count = 25},
+      {.offset = 0, .count = 2048},    {.offset = 2048, .count = 3840},
+      {.offset = 5888, .count = 2048}, {.offset = 7936, .count = 1280},
+      {.offset = 9216, .count = 1280},
   };
 };

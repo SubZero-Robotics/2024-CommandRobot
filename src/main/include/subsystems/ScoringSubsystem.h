@@ -50,8 +50,10 @@ class ScoringSubsystem : public frc2::SubsystemBase {
 
   void SpinOutake();
 
+  void SpinAmp(double upperPercentage = kAmpUpperSpeed,
+               double lowerPercentage = kAmpLowerSpeed);
+
  private:
-  void SpinAmp();
   void SpinSpeaker();
   void SpinSubwoofer();
   bool CheckAmpSpeed();
@@ -114,6 +116,6 @@ class ScoringSubsystem : public frc2::SubsystemBase {
                                        m_ampLowerPidController, ampPidSettings,
                                        kMaxSpinRpm};
 
-  PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
-  PidMotorControllerPairTuner ampTuner{ampSideMotors};
+  // PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
+  // PidMotorControllerPairTuner ampTuner{ampSideMotors};
 };

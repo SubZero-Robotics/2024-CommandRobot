@@ -23,8 +23,7 @@ void PidMotorControllerPair::RunWithVelocity(
 
 void PidMotorControllerPair::RunWithVelocity(double percentageFirst,
                                              double percentageSecond) {
-  if (percentageFirst < 0.0 || percentageFirst > 1.0 ||
-      percentageSecond < 0.0 || percentageSecond > 1.0) {
+  if (abs(percentageFirst) > 1.0 || abs(percentageSecond) > 1.0) {
     ConsoleLogger::getInstance().logError(
         "PidMotorControllerPair",
         "Incorrect percentages for motor pair %s: First=%.4f | Second=%.4f",

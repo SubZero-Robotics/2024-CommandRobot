@@ -9,8 +9,8 @@ ScoringSubsystem::ScoringSubsystem() {
 }
 
 void ScoringSubsystem::Periodic() {
-  speakerTuner.UpdateFromShuffleboard();
-  ampTuner.UpdateFromShuffleboard();
+  // speakerTuner.UpdateFromShuffleboard();
+  // ampTuner.UpdateFromShuffleboard();
 }
 
 void ScoringSubsystem::SimulationPeriodic() {}
@@ -24,8 +24,10 @@ void ScoringSubsystem::SpinOutake() {
 
 void ScoringSubsystem::Stop() {
   m_vectorSpinnyBoi.Set(0);
-  speakerSideMotors.Stop();
-  ampSideMotors.Stop();
+  m_speakerLowerSpinnyBoi.Set(0);
+  m_speakerUpperSpinnyBoi.Set(0);
+  m_ampLowerSpinnyBoi.Set(0);
+  m_ampUpperSpinnyBoi.Set(0);
 }
 
 void ScoringSubsystem::SpinVectorSide(ScoringDirection direction) {
@@ -85,8 +87,8 @@ bool ScoringSubsystem::GetMotorFreeWheel(ScoringDirection direction) {
   return m_speakerLowerSpinnyBoi.GetOutputCurrent() < kFreeSpinCurrentThreshold;
 }
 
-void ScoringSubsystem::SpinAmp() {
-  ampSideMotors.RunWithVelocity(kAmpUpperSpeed, kAmpLowerSpeed);
+void ScoringSubsystem::SpinAmp(double upperPercentage, double lowerPercentage) {
+  ampSideMotors.RunWithVelocity(upperPercentage, lowerPercentage);
 }
 
 void ScoringSubsystem::SpinSpeaker() {
@@ -127,6 +129,6 @@ bool ScoringSubsystem::CheckSubwooferSpeed() {
                                           m_ampEncoder.GetVelocity());
   ShuffleboardLogger::getInstance().logVerbose("Subwoofer Ramp Speed",
                                                m_ampEncoder.GetVelocity());
-  return abs(m_ampEncoder.GetVelocity()) + 1500 >=
+  return abs(m_ampEncoder.GetVelocity()) >=
          abs(MaxSpeedToRpm(kSubwooferLowerSpeed));
 }

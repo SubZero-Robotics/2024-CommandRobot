@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.62,
+      "y": 4.49
+    },
+    "rotation": 120.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Subwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Side speaker to leave"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
