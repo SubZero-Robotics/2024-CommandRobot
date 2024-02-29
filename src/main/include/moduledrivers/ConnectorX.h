@@ -8,6 +8,8 @@
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SubsystemBase.h>
 #include <hal/SimDevice.h>
+#include <chrono>
+#include <thread>
 
 #include <memory>
 
@@ -484,11 +486,7 @@ class ConnectorXBoard : public frc2::SubsystemBase {
                                  bool expectResponse = false);
 
   void delaySeconds(units::second_t delaySeconds) {
-    static frc::Timer timer;
-    timer.Start();
-    while (!timer.AdvanceIfElapsed(delaySeconds))
-      ;
-    timer.Stop();
+    // std::this_thread::sleep_for(std::chrono::milliseconds(2));
   }
 
   std::unique_ptr<frc::I2C> _i2c;

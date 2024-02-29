@@ -334,8 +334,8 @@ constexpr double kVectorSpeed = 0.1;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kAmpLowerSpeed = 0.254;  //.264
-constexpr double kAmpUpperSpeed = 0.168;  //.278
+constexpr double kAmpLowerSpeed = 0.264;  //.264
+constexpr double kAmpUpperSpeed = 0.278;  //.278
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT

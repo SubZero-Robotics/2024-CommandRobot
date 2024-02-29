@@ -402,11 +402,17 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
   std::string result = stream.str();
   ConsoleLogger::getInstance().logVerbose("ConnectorX", "Sending data: %s",
                                           result.c_str());
+  // if (recSize == 0) {
+  //   ConsoleLogger::getInstance().logVerbose("ConnectorX", "FPGA TIMESTAMP BEFORE %f", frc::Timer::GetFPGATimestamp().value());
+  //   // _i2c->WriteBulk(sendBuf, sendLen + 1);
+  //   bool transactionresponse = _i2c->Transaction(sendBuf, sendLen + 1, (uint8_t*)&response.responseData,
+  //                   recSize);
+  //   ConsoleLogger::getInstance().logVerbose("ConnectorX", "FPGA TIMESTAMP AFTER ", );
+  //   ConsoleLogger::getInstance().logVerbose("ConnectorX", "FPGA TIMESTAMP AFTER %f", frc::Timer::GetFPGATimestamp().value());
+  //   return response;
+  // }
 
-  if (recSize == 0) {
-    _i2c->WriteBulk(sendBuf, sendLen + 1);
-    return response;
-  }
+  ConsoleLogger::getInstance().logVerbose("ConnectorX", "UNREACHABLE %s", "");
 
   _i2c->Transaction(sendBuf, sendLen + 1, (uint8_t*)&response.responseData,
                     recSize);

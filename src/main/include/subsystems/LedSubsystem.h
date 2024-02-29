@@ -6,6 +6,8 @@
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/WaitCommand.h>
+#include <chrono>
+#include <thread>
 
 #include "Constants.h"
 #include "moduledrivers/ConnectorX.h"
