@@ -1,5 +1,10 @@
 #include "moduledrivers/ConnectorX.h"
 
+#include <hal/I2C.h>
+#include <linux/i2c-dev.h>
+#include <linux/i2c.h>
+#include <sys/ioctl.h>
+
 using namespace ConnectorX;
 
 ConnectorX::ConnectorXBoard::ConnectorXBoard(uint8_t slaveAddress,
@@ -400,19 +405,23 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
     stream << std::to_string(sendBuf[i]) << " ";
   }
   std::string result = stream.str();
-  ConsoleLogger::getInstance().logVerbose("ConnectorX", "Sending data: %s",
-                                          result.c_str());
+  ConsoleLogger::getInstance().logVerbose("ConnectorX",
+                                          "Sending data: %s with len=%d",
+                                          result.c_str(), sendLen + 1);
   if (recSize == 0) {
     ConsoleLogger::getInstance().logVerbose(
         "ConnectorX", "FPGA TIMESTAMP BEFORE %f",
         frc::Timer::GetFPGATimestamp().value());
     // _i2c->WriteBulk(sendBuf, sendLen + 1);
     // bool failure = _i2c->WriteBulk(sendBuf, sendLen + 1);
-    bool failure = false;
 
-    if (failure) {
+    int result =
+        HAL_WriteI2C(HAL_I2C_kMXP, _slaveAddress, sendBuf, sendLen + 1);
+
+    if (result == -1) {
       ConsoleLogger::getInstance().logError("ConnectorX",
-                                            "Write Result Failed%s", "");
+                                            "Write Result Failed %d errno=%s",
+                                            result, std::strerror(errno));
     }
 
     ConsoleLogger::getInstance().logVerbose(
