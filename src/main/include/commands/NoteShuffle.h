@@ -20,18 +20,11 @@ class NoteShuffle : public frc2::CommandHelper<frc2::Command, NoteShuffle> {
     isFinished = false;
   }
 
-  void Execute() override {
-    if (m_intake->NotePresentUpper()) {
-      m_intake->Out(ScoringConstants::kShuffleSpeed);
-      return;
-    }
-    m_intake->Stop();
-    isFinished = true;
-  }
+  void Execute() override { m_intake->Out(ScoringConstants::kShuffleSpeed); }
 
-  bool IsFinished() override { return isFinished; }
+  bool IsFinished() override { m_intake->NotePresentLower(); }
 
-  void End() { m_intake->Stop(); }
+  void End() { }
 
  private:
   bool isFinished;

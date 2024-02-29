@@ -81,9 +81,9 @@ void DriveSubsystem::SimulationPeriodic() {
 void DriveSubsystem::Periodic() {
   // Implementation of subsystem periodic method goes here.
   if (frc::RobotBase::IsReal()) {
-    ConsoleLogger::getInstance().logInfo(
-        "DriveSubsystem", "Gyro angle = %f",
-        m_gyro.GetRotation2d().Degrees().value());
+    // ConsoleLogger::getInstance().logInfo(
+    //     "DriveSubsystem", "Gyro angle = %f",
+    //     m_gyro.GetRotation2d().Degrees().value());
     // ConsoleLogger::getInstance().logInfo("DriveSubsystem", "Gyro rate = %f",
 
     //                                      m_gyro.GetRate());

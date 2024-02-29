@@ -24,7 +24,7 @@ static frc2::CommandPtr OutakeUntilTopNotPresent(IntakeSubsystem* intake) {
               .AndThen(frc2::WaitCommand(0_s).ToPtr())
               .AndThen(
                   frc2::InstantCommand([intake] { intake->Stop(); }).ToPtr()))
-      .Unless([intake] { return !intake->NotePresent(); })
+      // .Unless([intake] { return !intake->NotePresent(); })
       .WithTimeout(5_s)
       .FinallyDo([intake] { intake->Stop(); });
 }
@@ -32,9 +32,8 @@ static frc2::CommandPtr OutakeUntilTopNotPresent(IntakeSubsystem* intake) {
 static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                               ScoringSubsystem* scoring,
                               IntakeSubsystem* intake) {
-  return (FlywheelRamp(intake, scoring, direction)
-              .ToPtr()
-              // .AlongWith(OutakeUntilTopNotPresent(intake))
+  return (OutakeUntilTopNotPresent(intake)
+              .AndThen(FlywheelRamp(intake, scoring, direction).ToPtr())
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose("Next",
                                                                  "next %s", "");
@@ -71,11 +70,7 @@ static frc2::CommandPtr FeedUntilNotPresent(IntakeSubsystem* intake,
                               }).ToPtr()))
       // Might need to be time-based instead
       .WithTimeout(4_s)
-      .Until([intake] { return !intake->NotePresentUpper(); })
-      .FinallyDo([intake, scoring] {
-        intake->Stop();
-        scoring->Stop();
-      });
+      .Until([intake] { return !intake->NotePresentUpper(); });
 }
 static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
                                             ScoringSubsystem* scoring,
@@ -88,9 +83,10 @@ static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
       .AndThen(frc2::InstantCommand([intake, scoring, direction] {
                  intake->Out(0.2);
                  scoring->SpinVectorSide(direction);
+                 scoring->SpinOutake();
                }).ToPtr())
       .Repeatedly()
-      .WithTimeout(3_s)
+      .WithTimeout(5_s)
       .Until([intake] { return intake->NotePresentLower(); })
       .FinallyDo([intake, scoring] {
         intake->Stop();
@@ -109,6 +105,11 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
               .AndThen(frc2::WaitCommand(0.05_s).ToPtr())
               .AndThen(FeedUntilNotPresent(intakeSubsystem, scoring,
                                            ScoringDirection::AmpSide))
+              .AndThen(frc2::WaitCommand(0.5_s).ToPtr())
+              .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
+                         intakeSubsystem->Stop();
+                         scoring->Stop();
+                       }).ToPtr())
               .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
                                            ScoringDirection::SpeakerSide))
               // .AndThen(frc2::WaitCommand(0_s).ToPtr())
@@ -122,7 +123,7 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
                              "");
                        }).ToPtr()))
       .Unless([intakeSubsystem] { return intakeSubsystem->NotePresent(); })
-      .WithTimeout(5_s)
+      .WithTimeout(8_s)
       .FinallyDo([intakeSubsystem, scoring] {
         intakeSubsystem->Stop();
         scoring->Stop();

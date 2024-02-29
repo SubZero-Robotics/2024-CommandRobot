@@ -24,8 +24,10 @@ void ScoringSubsystem::SpinOutake() {
 
 void ScoringSubsystem::Stop() {
   m_vectorSpinnyBoi.Set(0);
-  speakerSideMotors.Stop();
-  ampSideMotors.Stop();
+  m_speakerLowerSpinnyBoi.Set(0);
+  m_speakerUpperSpinnyBoi.Set(0);
+  m_ampLowerSpinnyBoi.Set(0);
+  m_ampUpperSpinnyBoi.Set(0);
 }
 
 void ScoringSubsystem::SpinVectorSide(ScoringDirection direction) {
