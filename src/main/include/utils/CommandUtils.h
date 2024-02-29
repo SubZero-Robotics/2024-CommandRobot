@@ -36,7 +36,7 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
               .AlongWith(frc2::InstantCommand([scoring] {
                            scoring->SpinOutake();
                          }).ToPtr())
-              .AndThen(frc2::WaitCommand(0.4_s).ToPtr())
+              .AndThen(frc2::WaitCommand(0.2_s).ToPtr())
               .AndThen(FlywheelRamp(intake, scoring, direction).ToPtr())
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose("Next",
@@ -46,7 +46,7 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
               .AndThen(Feed(intake, scoring, direction).ToPtr())
               .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
               .AndThen(Shoot(intake, scoring, direction).ToPtr()))
-      // .Unless([intake] { return !intake->NotePresent(); })
+      .Unless([intake] { return !intake->NotePresent(); })
       .WithTimeout(5_s)
       .FinallyDo([intake, scoring] {
         intake->Stop();

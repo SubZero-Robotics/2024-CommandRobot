@@ -12,19 +12,26 @@ void IntakeSubsystem::Out(double outakeSpeed) {
   ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Outaking %s",
                                           "");
 
-  intakeMotors.RunWithVelocity(outakeSpeed, outakeSpeed);
+  // intakeMotors.RunWithVelocity(outakeSpeed, outakeSpeed);
+  m_leftIntakeSpinnyBoy.Set(outakeSpeed);
+  m_rightIntakeSpinnyBoy.Set(outakeSpeed);
 }
 
 void IntakeSubsystem::In(double intakeSpeed) {
   ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Intaking %s",
                                           "");
-  intakeMotors.RunWithVelocity(intakeSpeed, intakeSpeed);
+  // intakeMotors.RunWithVelocity(intakeSpeed, intakeSpeed);
+  m_leftIntakeSpinnyBoy.Set(intakeSpeed);
+  m_rightIntakeSpinnyBoy.Set(intakeSpeed);
 }
 
 void IntakeSubsystem::Stop() {
   ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Stopping %s",
                                           "");
-  intakeMotors.Stop();
+  // intakeMotors.Stop();
+
+  m_leftIntakeSpinnyBoy.Set(0);
+  m_rightIntakeSpinnyBoy.Set(0);
 }
 
 void IntakeSubsystem::Feed(ScoringDirection direction) {
