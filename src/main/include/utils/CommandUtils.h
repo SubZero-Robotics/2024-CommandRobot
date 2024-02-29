@@ -32,7 +32,9 @@ static frc2::CommandPtr OutakeUntilTopNotPresent(IntakeSubsystem* intake) {
 static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                               ScoringSubsystem* scoring,
                               IntakeSubsystem* intake) {
-  return (OutakeUntilTopNotPresent(intake)
+  return ((NoteShuffle(intake).ToPtr())
+              .AlongWith(frc2::InstantCommand([scoring] {scoring->SpinOutake();}).ToPtr())
+              .AndThen(frc2::WaitCommand(0.2_s).ToPtr())
               .AndThen(FlywheelRamp(intake, scoring, direction).ToPtr())
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose("Next",

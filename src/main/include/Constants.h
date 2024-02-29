@@ -374,7 +374,7 @@ constexpr double kSpeakerFF = 0.000015;
 
 constexpr double kAmpP = 6e-5;
 constexpr double kAmpI = 1e-6;
-constexpr double kAmpD = 0;
+constexpr double kAmpD = 0.000003;
 constexpr double kAmpIZone = 0;
 constexpr double kAmpFF = 0.000015;
 

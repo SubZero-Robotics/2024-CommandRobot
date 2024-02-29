@@ -13,16 +13,14 @@ class NoteShuffle : public frc2::CommandHelper<frc2::Command, NoteShuffle> {
   }
 
   void Initialize() override {
-    if (!m_intake->NotePresentUpper()) {
-      isFinished = true;
-      return;
-    }
     isFinished = false;
   }
 
-  void Execute() override { m_intake->Out(ScoringConstants::kShuffleSpeed); }
+  void Execute() override { 
+    m_intake->Out(ScoringConstants::kShuffleSpeed);
+  }
 
-  bool IsFinished() override { m_intake->NotePresentLower(); }
+  bool IsFinished() override { return m_intake->NotePresentLower(); }
 
   void End() { }
 

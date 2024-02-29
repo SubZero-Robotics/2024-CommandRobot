@@ -116,76 +116,76 @@ frc2::CommandPtr LedSubsystem::ScoringSpeaker() {
   return frc2::InstantCommand([this] {
            ConsoleLogger::getInstance().logInfo(
                "LedSubsystem", "Setting LEDs to %s", "ScoringSpeaker");
-           setZoneColorPatternAsync(
-               LedZone::LeftClimber, LedConstants::kIntakeLedPort,
-               ColorConstants::kPurple, PatternType::Chase, false, 100, false);
-           delaySeconds(kConnectorXDelay);
-           setZoneColorPatternAsync(
-               LedZone::RightClimber, LedConstants::kIntakeLedPort,
-               ColorConstants::kPurple, PatternType::Chase, false, 100, true);
-           delaySeconds(kConnectorXDelay);
-           setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
-                                    ColorConstants::kRed, PatternType::SineRoll,
-                                    false, 40, false);
-           delaySeconds(kConnectorXDelay);
-           setZoneColorPatternAsync(
-               LedZone::RightEye, LedConstants::kIntakeLedPort,
-               ColorConstants::kRed, PatternType::Breathe, false, 30, true);
-           delaySeconds(kConnectorXDelay);
-           setZoneColorPatternAsync(
-               LedZone::LeftEye, LedConstants::kIntakeLedPort,
-               ColorConstants::kRed, PatternType::Breathe, false, 30, false);
-           delaySeconds(kConnectorXDelay);
-           m_connectorX.syncZones(LedConstants::kIntakeLedPort,
-                                  {
-                                      (uint8_t)LedZone::LeftClimber,
-                                      (uint8_t)LedZone::RightClimber,
-                                  });
-           delaySeconds(kConnectorXDelay);
-           m_connectorX.syncZones(LedConstants::kIntakeLedPort,
-                                  {
-                                      (uint8_t)LedZone::LeftEye,
-                                      (uint8_t)LedZone::RightEye,
-                                  });
+        //    setZoneColorPatternAsync(
+        //        LedZone::LeftClimber, LedConstants::kIntakeLedPort,
+        //        ColorConstants::kPurple, PatternType::Chase, false, 100, false);
+        //    delaySeconds(kConnectorXDelay);
+        //    setZoneColorPatternAsync(
+        //        LedZone::RightClimber, LedConstants::kIntakeLedPort,
+        //        ColorConstants::kPurple, PatternType::Chase, false, 100, true);
+        //    delaySeconds(kConnectorXDelay);
+        //    setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
+        //                             ColorConstants::kRed, PatternType::SineRoll,
+        //                             false, 40, false);
+        //    delaySeconds(kConnectorXDelay);
+        //    setZoneColorPatternAsync(
+        //        LedZone::RightEye, LedConstants::kIntakeLedPort,
+        //        ColorConstants::kRed, PatternType::Breathe, false, 30, true);
+        //    delaySeconds(kConnectorXDelay);
+        //    setZoneColorPatternAsync(
+        //        LedZone::LeftEye, LedConstants::kIntakeLedPort,
+        //        ColorConstants::kRed, PatternType::Breathe, false, 30, false);
+        //    delaySeconds(kConnectorXDelay);
+        //    m_connectorX.syncZones(LedConstants::kIntakeLedPort,
+        //                           {
+        //                               (uint8_t)LedZone::LeftClimber,
+        //                               (uint8_t)LedZone::RightClimber,
+        //                           });
+        //    delaySeconds(kConnectorXDelay);
+        //    m_connectorX.syncZones(LedConstants::kIntakeLedPort,
+        //                           {
+        //                               (uint8_t)LedZone::LeftEye,
+        //                               (uint8_t)LedZone::RightEye,
+        //                           });
          })
       .ToPtr();
 }
 
 frc2::CommandPtr LedSubsystem::ScoringAmp() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo(
-               "LedSubsystem", "Setting LEDs to %s", "ScoringAmp");
-           setZoneColorPatternAsync(
-               LedZone::LeftClimber, LedConstants::kIntakeLedPort,
-               ColorConstants::kTeal, PatternType::Chase, false, 100, false);
-           delaySeconds(kConnectorXDelay);
-           setZoneColorPatternAsync(
-               LedZone::RightClimber, LedConstants::kIntakeLedPort,
-               ColorConstants::kTeal, PatternType::Chase, false, 100, true);
-           delaySeconds(kConnectorXDelay);
-           setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
-                                    ColorConstants::kRed, PatternType::Breathe,
-                                    false, 30, false);
-           delaySeconds(kConnectorXDelay);
-           setZoneColorPatternAsync(
-               LedZone::RightEye, LedConstants::kIntakeLedPort,
-               ColorConstants::kTeal, PatternType::SineRoll, false, 40, true);
-           delaySeconds(kConnectorXDelay);
-           setZoneColorPatternAsync(
-               LedZone::LeftEye, LedConstants::kIntakeLedPort,
-               ColorConstants::kTeal, PatternType::SineRoll, false, 40, false);
-           delaySeconds(kConnectorXDelay);
-           m_connectorX.syncZones(LedConstants::kIntakeLedPort,
-                                  {
-                                      (uint8_t)LedZone::LeftClimber,
-                                      (uint8_t)LedZone::RightClimber,
-                                  });
-           delaySeconds(kConnectorXDelay);
-           m_connectorX.syncZones(LedConstants::kIntakeLedPort,
-                                  {
-                                      (uint8_t)LedZone::LeftEye,
-                                      (uint8_t)LedZone::RightEye,
-                                  });
+        //    ConsoleLogger::getInstance().logInfo(
+        //        "LedSubsystem", "Setting LEDs to %s", "ScoringAmp");
+        //    setZoneColorPatternAsync(
+        //        LedZone::LeftClimber, LedConstants::kIntakeLedPort,
+        //        ColorConstants::kTeal, PatternType::Chase, false, 100, false);
+        //    delaySeconds(kConnectorXDelay);
+        //    setZoneColorPatternAsync(
+        //        LedZone::RightClimber, LedConstants::kIntakeLedPort,
+        //        ColorConstants::kTeal, PatternType::Chase, false, 100, true);
+        //    delaySeconds(kConnectorXDelay);
+        //    setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
+        //                             ColorConstants::kRed, PatternType::Breathe,
+        //                             false, 30, false);
+        //    delaySeconds(kConnectorXDelay);
+        //    setZoneColorPatternAsync(
+        //        LedZone::RightEye, LedConstants::kIntakeLedPort,
+        //        ColorConstants::kTeal, PatternType::SineRoll, false, 40, true);
+        //    delaySeconds(kConnectorXDelay);
+        //    setZoneColorPatternAsync(
+        //        LedZone::LeftEye, LedConstants::kIntakeLedPort,
+        //        ColorConstants::kTeal, PatternType::SineRoll, false, 40, false);
+        //    delaySeconds(kConnectorXDelay);
+        //    m_connectorX.syncZones(LedConstants::kIntakeLedPort,
+        //                           {
+        //                               (uint8_t)LedZone::LeftClimber,
+        //                               (uint8_t)LedZone::RightClimber,
+        //                           });
+        //    delaySeconds(kConnectorXDelay);
+        //    m_connectorX.syncZones(LedConstants::kIntakeLedPort,
+        //                           {
+        //                               (uint8_t)LedZone::LeftEye,
+        //                               (uint8_t)LedZone::RightEye,
+        //                           });
          })
       .ToPtr();
 }
