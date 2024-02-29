@@ -81,9 +81,10 @@ void RobotContainer::RegisterAutos() {
 
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoConstants::kDefaultAutoName);
-  m_chooser.AddOption("3 in Amp", "3 in Amp");
-  m_chooser.AddOption("2 Note Auto", "2 Note Auto");
+  // m_chooser.AddOption("3 in Amp", "3 in Amp");
+  // m_chooser.AddOption("2 Note Auto", "2 Note Auto");
   m_chooser.AddOption("4 Note Auto", "4 Note Auto");
+  m_chooser.AddOption("Place and leave", "Place and leave");
 
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
