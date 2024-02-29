@@ -484,9 +484,9 @@ class ConnectorXBoard : public frc2::SubsystemBase {
                                  bool expectResponse = false);
 
   void delaySeconds(units::second_t delaySeconds) {
-    frc::Timer timer;
+    static frc::Timer timer;
     timer.Start();
-    while (!timer.HasElapsed(delaySeconds))
+    while (!timer.AdvanceIfElapsed(delaySeconds))
       ;
     timer.Stop();
   }

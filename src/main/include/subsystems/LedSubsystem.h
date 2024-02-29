@@ -72,8 +72,8 @@ class LedSubsystem : public frc2::SubsystemBase {
   // TODO: make into a constant elsewhere
   const uint16_t m_totalLeds = 41;
   std::vector<Commands::NewZone> m_ledZones = {
-      {.offset = 0, .count = 8},  {.offset = 8, .count = 15},
-      {.offset = 23, .count = 8}, {.offset = 31, .count = 5},
-      {.offset = 36, .count = 5},
+      {.offset = 0, .count = 2048},    {.offset = 2048, .count = 3840},
+      {.offset = 5888, .count = 2048}, {.offset = 7936, .count = 1280},
+      {.offset = 9216, .count = 1280},
   };
 };
