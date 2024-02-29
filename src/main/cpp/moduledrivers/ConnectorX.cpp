@@ -407,7 +407,8 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
         "ConnectorX", "FPGA TIMESTAMP BEFORE %f",
         frc::Timer::GetFPGATimestamp().value());
     // _i2c->WriteBulk(sendBuf, sendLen + 1);
-    bool failure = _i2c->WriteBulk(sendBuf, sendLen + 1);
+    // bool failure = _i2c->WriteBulk(sendBuf, sendLen + 1);
+    bool failure = false;
 
     if (failure) {
       ConsoleLogger::getInstance().logError("ConnectorX",
