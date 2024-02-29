@@ -135,7 +135,7 @@ void ConnectorX::ConnectorXBoard::createZones(
     cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
   }
 
-  // sendCommand(cmd);
+  sendCommand(cmd);
 
   auto& currentPort = getCurrentCachedPort();
 
