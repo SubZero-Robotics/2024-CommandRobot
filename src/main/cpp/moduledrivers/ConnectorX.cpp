@@ -124,8 +124,8 @@ void ConnectorX::ConnectorXBoard::syncZones(LedPort port,
 
 void ConnectorX::ConnectorXBoard::createZones(
     LedPort port, std::vector<ConnectorX::Commands::NewZone>&& newZones) {
-  setLedPort(port);
-  delaySeconds(kConnectorXDelay);
+  // setLedPort(port);
+  // delaySeconds(kConnectorXDelay);
 
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::SetNewZones;
@@ -135,7 +135,7 @@ void ConnectorX::ConnectorXBoard::createZones(
     cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
   }
 
-  sendCommand(cmd);
+  // sendCommand(cmd);
 
   auto& currentPort = getCurrentCachedPort();
 
