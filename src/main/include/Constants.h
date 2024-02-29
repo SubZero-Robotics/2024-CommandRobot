@@ -344,7 +344,7 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = 0.65;
+constexpr double kSubwooferLowerSpeed = 0.75;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
 constexpr double kScoringOutakeUpperSpeed = -0.2;
@@ -530,5 +530,3 @@ enum class RobotState {
 };
 
 typedef std::function<RobotState()> StateGetter;
-
-// edgiiiiing!!!!!
