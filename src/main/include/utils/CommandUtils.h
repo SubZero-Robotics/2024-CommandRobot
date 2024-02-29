@@ -103,7 +103,9 @@ static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
                  intake->Out(kOutakeSpeed);
                  scoring->SpinVectorSide(direction);
                  scoring->SpinOutake();
-               }).ToPtr())
+               })
+                   .ToPtr()
+                   .Repeatedly())
       .WithTimeout(5_s)
       .Until([intake] { return intake->NotePresentLower(); })
       .FinallyDo([intake, scoring] {
