@@ -4,13 +4,15 @@ IntakeSubsystem::IntakeSubsystem() {
   // m_rightIntakeSpinnyBoy.Follow(m_leftIntakeSpinnyBoy, false);
 }
 
-void IntakeSubsystem::Periodic() { intakeTuner.UpdateFromShuffleboard(); }
+void IntakeSubsystem::Periodic() {
+  // intakeTuner.UpdateFromShuffleboard();
+}
 
 void IntakeSubsystem::SimulationPeriodic() {}
 
 void IntakeSubsystem::Out(double outakeSpeed) {
-  ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Outaking %s",
-                                          "");
+  // ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Outaking %s",
+  //                                         "");
 
   // intakeMotors.RunWithVelocity(outakeSpeed, outakeSpeed);
   m_leftIntakeSpinnyBoy.Set(outakeSpeed);
@@ -18,8 +20,8 @@ void IntakeSubsystem::Out(double outakeSpeed) {
 }
 
 void IntakeSubsystem::In(double intakeSpeed) {
-  ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Intaking %s",
-                                          "");
+  // ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Intaking %s",
+  //                                         "");
   // intakeMotors.RunWithVelocity(intakeSpeed, intakeSpeed);
   m_leftIntakeSpinnyBoy.Set(intakeSpeed);
   m_rightIntakeSpinnyBoy.Set(intakeSpeed);

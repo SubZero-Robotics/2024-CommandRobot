@@ -9,8 +9,8 @@ ScoringSubsystem::ScoringSubsystem() {
 }
 
 void ScoringSubsystem::Periodic() {
-  speakerTuner.UpdateFromShuffleboard();
-  ampTuner.UpdateFromShuffleboard();
+  // speakerTuner.UpdateFromShuffleboard();
+  // ampTuner.UpdateFromShuffleboard();
 }
 
 void ScoringSubsystem::SimulationPeriodic() {}

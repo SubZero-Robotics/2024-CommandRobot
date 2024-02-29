@@ -42,7 +42,7 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
               .AndThen(FlywheelRamp(intake, scoring, direction).ToPtr())
               .AndThen(frc2::InstantCommand( [] { ConsoleLogger::getInstance().logVerbose("Scoring Composition", "flywheel ramped %s", "");}).ToPtr())
               .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
-              .AndThen(Feed(intake, scoring, direction).ToPtr())
+              .AndThen(Feed(intake, scoring, direction).ToPtr().WithTimeout(2_s))
               .AndThen(frc2::InstantCommand( [] { ConsoleLogger::getInstance().logVerbose("Scoring Composition", "fed %s", "");}).ToPtr())
               .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
               .AndThen(Shoot(intake, scoring, direction).ToPtr()))
@@ -72,7 +72,8 @@ static frc2::CommandPtr FeedUntilNotPresent(IntakeSubsystem* intake,
                    .ToPtr()
                    .AlongWith(frc2::InstantCommand([scoring] {
                                 scoring->SpinAmp(kShuffleSpeed, kShuffleSpeed);
-                              }).ToPtr()))
+                              }).ToPtr())
+                              .WithTimeout(2_s))
       // Might need to be time-based instead
       .WithTimeout(4_s)
       .Until([intake] { return !intake->NotePresentUpper(); });
@@ -120,7 +121,8 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
               .AndThen((NoteShuffle(intakeSubsystem).ToPtr())
               .AlongWith(frc2::InstantCommand([scoring] {
                            scoring->SpinOutake();
-                         }).ToPtr())
+                         }).ToPtr()
+                         .WithTimeout(2_s))
               .AndThen(frc2::WaitCommand(0.2_s).ToPtr()))
               // .AndThen(frc2::WaitCommand(0_s).ToPtr())
               .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
