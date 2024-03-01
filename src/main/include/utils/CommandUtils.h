@@ -41,7 +41,7 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                          ConsoleLogger::getInstance().logVerbose(
                              "Scoring Composition", "shuffled %s", "");
                        }).ToPtr())
-              .AndThen(frc2::WaitCommand(0_s).ToPtr())
+              .AndThen(frc2::WaitCommand(0.4_s).ToPtr())
               .AndThen(FlywheelRamp(intake, scoring, direction).ToPtr())
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose(
