@@ -100,12 +100,36 @@ static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
          })
       .ToPtr()
       .AndThen(frc2::InstantCommand([intake, scoring, direction] {
-                 intake->Out(kOutakeSpeed);
+                 intake->Out(0.3);
                  scoring->SpinVectorSide(direction);
                  scoring->SpinOutake();
+               })
+                   .ToPtr()
+                   .Until([intake] { return intake->NotePresentLower(); }))
+      .AndThen(FeedUntilNotPresent(intake, scoring, ScoringDirection::AmpSide))
+      .AndThen(frc2::WaitCommand(0.1_s).ToPtr())
+      .AndThen(frc2::InstantCommand([intake, scoring] {
+                 intake->Stop();
+                 scoring->Stop();
                }).ToPtr())
-      .WithTimeout(5_s)
-      .Until([intake] { return intake->NotePresentLower(); })
+      // .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
+      //                              ScoringDirection::SpeakerSide))
+      .AndThen((NoteShuffle(intake).ToPtr())
+                   .AlongWith(frc2::InstantCommand(
+                                  [scoring] { scoring->SpinOutake(); })
+                                  .ToPtr()
+                                  .WithTimeout(2_s))
+                   .AndThen(frc2::WaitCommand(0.2_s).ToPtr()))
+      // .AndThen(frc2::WaitCommand(0_s).ToPtr())
+      .AndThen(frc2::InstantCommand([intake, scoring] {
+                 intake->Stop();
+                 scoring->Stop();
+               }).ToPtr())
+      .AndThen(frc2::InstantCommand([] {
+                 ConsoleLogger::getInstance().logVerbose(
+                     "Intake Subsystem", "Intake completed normally%s", "");
+               }).ToPtr())
+      .WithTimeout(8_s)
       .FinallyDo([intake, scoring] {
         intake->Stop();
         scoring->Stop();
