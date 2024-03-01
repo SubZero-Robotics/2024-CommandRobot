@@ -2,7 +2,7 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2516214345405796,
+      "x": 1.3769542042900886,
       "y": 5.577308253853149
     },
     "rotation": 180.0
@@ -20,19 +20,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Speaker to Note 1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Run Intake"
+            "pathName": "Speaker to Note 2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Note 1 to Speaker"
+            "pathName": "Note 2 to Speaker"
           }
         },
         {
@@ -44,7 +38,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Speaker to Center Note 1"
+            "pathName": "Speaker to Note 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 3 to Speaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Subwoofer"
           }
         }
       ]

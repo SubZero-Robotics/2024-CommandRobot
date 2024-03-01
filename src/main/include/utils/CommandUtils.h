@@ -100,7 +100,7 @@ static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
          })
       .ToPtr()
       .AndThen(frc2::InstantCommand([intake, scoring, direction] {
-                 intake->Out(kOutakeSpeed);
+                 intake->Out(0.3);
                  scoring->SpinVectorSide(direction);
                  scoring->SpinOutake();
                })
