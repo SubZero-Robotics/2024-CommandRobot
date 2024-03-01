@@ -73,7 +73,7 @@ void DriveSubsystem::SimulationPeriodic() {
   m_gyroSimAngle.Set(m_gyro.GetAngle() +
                      (chassisSpeeds.omega.convert<units::deg_per_s>().value() *
                       DriveConstants::kLoopTime.value()));
-  poseEstimator.Update(-m_gyro.GetRotation2d(), GetModulePositions());
+  poseEstimator.Update(-GetRotation(), GetModulePositions());
 
   m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
 };
@@ -87,8 +87,8 @@ void DriveSubsystem::Periodic() {
     // ConsoleLogger::getInstance().logInfo("DriveSubsystem", "Gyro rate = %f",
 
     //                                      m_gyro.GetRate());
-    poseEstimator.UpdateWithTime(frc::Timer::GetFPGATimestamp(),
-                                 m_gyro.GetRotation2d(), GetModulePositions());
+    poseEstimator.UpdateWithTime(frc::Timer::GetFPGATimestamp(), GetRotation(),
+                                 GetModulePositions());
     logDrivebase();
 
     auto visionPoses = m_vision->UpdateEstimatedGlobalPose(poseEstimator);
@@ -110,7 +110,8 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   auto dif = now - driveLoopTime;
 
   if (dif > 30_ms) {
-    ConsoleLogger::getInstance().logVerbose("EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
+    ConsoleLogger::getInstance().logVerbose(
+        "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
   }
 
   auto states =
@@ -119,7 +120,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
                               xSpeed * DriveConstants::kMaxSpeed.value(),
                               ySpeed * DriveConstants::kMaxSpeed.value(),
                               rot * DriveConstants::kMaxAngularSpeed.value(),
-                              m_gyro.GetRotation2d())
+                              GetRotation())
                         : frc::ChassisSpeeds{xSpeed, ySpeed, rot},
           dif));
 
@@ -215,11 +216,15 @@ wpi::array<frc::SwerveModulePosition, 4U> DriveSubsystem::GetModulePositions()
           m_rearLeft.GetPosition(), m_rearRight.GetPosition()};
 }
 
-units::degree_t DriveSubsystem::GetHeading() {
-  return m_gyro.GetRotation2d().Degrees();
+frc::Rotation2d DriveSubsystem::GetRotation() {
+  return m_gyro.GetRotation2d() + m_rotationOffset.Rotation();
 }
 
 void DriveSubsystem::ZeroHeading() { m_gyro.Reset(); }
+
+void DriveSubsystem::SetRotationOffset(units::degree_t offset) {
+  m_rotationOffset = frc::Transform2d{0_m, 0_m, offset};
+}
 
 double DriveSubsystem::GetTurnRate() { return m_gyro.GetRate(); }
 
@@ -229,6 +234,6 @@ frc::Pose2d DriveSubsystem::GetPose() {
 
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
   m_lastGoodPosition = pose;
-  poseEstimator.ResetPosition(GetHeading(), GetModulePositions(), pose);
+  poseEstimator.ResetPosition(GetRotation(), GetModulePositions(), pose);
   // ResetEncoders();
 }

@@ -43,6 +43,7 @@ class RobotContainer {
   void ClearCurrentStateCommand();
   void StartIdling();
   void ResetPose();
+  void ResetFieldHeadingFromAlliance();
 
  private:
   // The driver's controller
@@ -94,4 +95,7 @@ class RobotContainer {
   void ConfigureButtonBindings();
 
   frc2::CommandPtr autoCommand = frc2::InstantCommand([] {}).ToPtr();
+
+ private:
+  double m_joystickFlipMultiplier = 1.0;
 };

@@ -88,11 +88,11 @@ class DriveSubsystem : public frc2::SubsystemBase {
   void SetModuleStates(wpi::array<frc::SwerveModuleState, 4> desiredStates);
 
   /**
-   * Returns the heading of the robot.
+   * Returns the rotation of the robot.
    *
    * @return the robot's heading in degrees, from 180 to 180
    */
-  units::degree_t GetHeading();
+  frc::Rotation2d GetRotation();
 
   /**
    * Zeroes the heading of the robot.
@@ -119,6 +119,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   void ResetOdometry(frc::Pose2d pose);
+
+  void SetRotationOffset(units::degree_t offset);
 
   frc::ChassisSpeeds getSpeed();
 
@@ -162,7 +164,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // The gyro sensor
   // AHRS m_gyro{frc::SPI::Port::kMXP};
   //   frc::ADXRS450_Gyro m_gyro;
-  ctre::phoenix6::hardware::Pigeon2 m_gyro{CANSparkMaxConstants::kPigeonCanId, "rio"};
+  ctre::phoenix6::hardware::Pigeon2 m_gyro{CANSparkMaxConstants::kPigeonCanId,
+                                           "rio"};
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
@@ -193,13 +196,14 @@ class DriveSubsystem : public frc2::SubsystemBase {
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
       frc::Pose2d{0_m, 0_m, 0_rad},
       {0.3, 0.3, 0.3},
-      {1.0, 1.0, 3.0}
-      };
+      {1.0, 1.0, 3.0}};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing
   frc::Field2d m_field;
   frc::Pose2d m_lastGoodPosition;
+
+  frc::Transform2d m_rotationOffset = frc::Transform2d{0_m, 0_m, 0_deg};
 
   Vision* m_vision;
 };
