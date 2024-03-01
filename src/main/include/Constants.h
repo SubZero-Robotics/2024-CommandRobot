@@ -334,8 +334,8 @@ constexpr double kVectorSpeed = 0.1;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kAmpLowerSpeed = 0.254;  //.264
-constexpr double kAmpUpperSpeed = 0.168;  //.278
+constexpr double kAmpLowerSpeed = 0.254 * 1.15;  //.264
+constexpr double kAmpUpperSpeed = 0.168 * 1.15;  //.278
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
@@ -374,7 +374,7 @@ constexpr double kSpeakerFF = 0.000015;
 
 constexpr double kAmpP = 6e-5;
 constexpr double kAmpI = 1e-6;
-constexpr double kAmpD = 0.000003;
+constexpr double kAmpD = 0.000002;
 constexpr double kAmpIZone = 0;
 constexpr double kAmpFF = 0.000015;
 

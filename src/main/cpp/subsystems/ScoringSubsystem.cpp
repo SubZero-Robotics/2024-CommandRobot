@@ -6,11 +6,32 @@ using namespace ScoringConstants;
 
 ScoringSubsystem::ScoringSubsystem() {
   // m_speakerLowerSpinnyBoi.Follow(m_speakerUpperSpinnyBoi, false);
+
+  m_ampUpperVelocity = ScoringConstants::kAmpUpperSpeed;
+  m_ampLowerVelocity = ScoringConstants::kAmpLowerSpeed;
+
+  frc::SmartDashboard::PutNumber("Amp Upper Velocity", m_ampUpperVelocity);
+  frc::SmartDashboard::PutNumber("Amp Lower Velocity", m_ampLowerVelocity);
 }
 
 void ScoringSubsystem::Periodic() {
   // speakerTuner.UpdateFromShuffleboard();
-  // ampTuner.UpdateFromShuffleboard();
+  ampTuner.UpdateFromShuffleboard();
+
+  double latestAmpUpperVelocity =
+      frc::SmartDashboard::GetNumber("Amp Upper Velocity", m_ampUpperVelocity);
+  double latestAmpLowerVelocity =
+      frc::SmartDashboard::GetNumber("Amp Lower Velocity", m_ampLowerVelocity);
+
+  if (latestAmpUpperVelocity != m_ampUpperVelocity) {
+    m_ampUpperVelocity = latestAmpUpperVelocity;
+    ConsoleLogger::getInstance().logVerbose(
+        "ScoringSubsystem", "Setting amp UPPER to %f", m_ampUpperVelocity);
+  } else if (latestAmpLowerVelocity != m_ampLowerVelocity) {
+    m_ampLowerVelocity = latestAmpLowerVelocity;
+    ConsoleLogger::getInstance().logVerbose(
+        "ScoringSubsystem", "Setting amp UPPER to %f", m_ampLowerVelocity);
+  }
 }
 
 void ScoringSubsystem::SimulationPeriodic() {}
@@ -42,7 +63,7 @@ void ScoringSubsystem::SpinVectorSide(ScoringDirection direction) {
 
 void ScoringSubsystem::StartScoringRamp(ScoringDirection direction) {
   if (direction == ScoringDirection::AmpSide) {
-    SpinAmp();
+    SpinAmp(m_ampUpperVelocity, m_ampLowerVelocity);
     return;
   }
 

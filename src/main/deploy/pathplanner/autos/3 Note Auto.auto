@@ -20,19 +20,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Speaker to Note 1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Run Intake"
+            "pathName": "Speaker to Note 2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Note 1 to Speaker"
+            "pathName": "Note 2 to Speaker"
           }
         },
         {
@@ -44,7 +38,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Speaker to Center Note 1"
+            "pathName": "Speaker to Note 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 3 to Speaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Subwoofer"
           }
         }
       ]

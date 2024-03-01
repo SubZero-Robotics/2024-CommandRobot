@@ -1,5 +1,7 @@
 #include "moduledrivers/ConnectorX.h"
 
+#include <hal/I2C.h>
+
 using namespace ConnectorX;
 
 ConnectorX::ConnectorXBoard::ConnectorXBoard(uint8_t slaveAddress,
@@ -124,8 +126,8 @@ void ConnectorX::ConnectorXBoard::syncZones(LedPort port,
 
 void ConnectorX::ConnectorXBoard::createZones(
     LedPort port, std::vector<ConnectorX::Commands::NewZone>&& newZones) {
-  setLedPort(port);
-  delaySeconds(kConnectorXDelay);
+  // setLedPort(port);
+  // delaySeconds(kConnectorXDelay);
 
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::SetNewZones;
@@ -400,13 +402,32 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
     stream << std::to_string(sendBuf[i]) << " ";
   }
   std::string result = stream.str();
-  ConsoleLogger::getInstance().logVerbose("ConnectorX", "Sending data: %s",
-                                          result.c_str());
-
+  ConsoleLogger::getInstance().logVerbose("ConnectorX",
+                                          "Sending data: %s with len=%d",
+                                          result.c_str(), sendLen + 1);
   if (recSize == 0) {
-    _i2c->WriteBulk(sendBuf, sendLen + 1);
+    ConsoleLogger::getInstance().logVerbose(
+        "ConnectorX", "FPGA TIMESTAMP BEFORE %f",
+        frc::Timer::GetFPGATimestamp().value());
+    // _i2c->WriteBulk(sendBuf, sendLen + 1);
+    // bool failure = _i2c->WriteBulk(sendBuf, sendLen + 1);
+
+    int result =
+        HAL_WriteI2C(HAL_I2C_kMXP, _slaveAddress, sendBuf, sendLen + 1);
+
+    if (result == -1) {
+      ConsoleLogger::getInstance().logError("ConnectorX",
+                                            "Write Result Failed %d errno=%s",
+                                            result, std::strerror(errno));
+    }
+
+    ConsoleLogger::getInstance().logVerbose(
+        "ConnectorX", "FPGA TIMESTAMP AFTER %f",
+        frc::Timer::GetFPGATimestamp().value());
     return response;
   }
+
+  ConsoleLogger::getInstance().logVerbose("ConnectorX", "UNREACHABLE %s", "");
 
   _i2c->Transaction(sendBuf, sendLen + 1, (uint8_t*)&response.responseData,
                     recSize);

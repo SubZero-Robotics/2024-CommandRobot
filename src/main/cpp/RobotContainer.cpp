@@ -85,6 +85,8 @@ void RobotContainer::RegisterAutos() {
   // m_chooser.AddOption("2 Note Auto", "2 Note Auto");
   m_chooser.AddOption("4 Note Auto", "4 Note Auto");
   m_chooser.AddOption("Place and leave", "Place and leave");
+  m_chooser.AddOption("3 Note Auto", "3 Note Auto");
+  m_chooser.AddOption("2 Note and Center Line", "2 Note Auto");
 
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
@@ -120,9 +122,8 @@ void RobotContainer::ConfigureButtonBindings() {
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
           .AndThen(m_leds.Loaded()));
 
-  m_driverController.X().OnTrue(m_leds.ScoringSpeaker().AndThen(
-      ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
-                             &m_scoring, &m_intake)));
+  m_driverController.X().OnTrue(IntakingCommands::OuttakeUntilPresent(
+      &m_intake, &m_scoring, ScoringDirection::SpeakerSide));
 
   m_driverController.A().OnTrue(
       m_leds.ScoringAmp().AndThen(ScoringCommands::Score(

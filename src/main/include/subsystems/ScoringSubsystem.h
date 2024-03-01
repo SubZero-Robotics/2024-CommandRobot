@@ -117,5 +117,8 @@ class ScoringSubsystem : public frc2::SubsystemBase {
                                        kMaxSpinRpm};
 
   // PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
-  // PidMotorControllerPairTuner ampTuner{ampSideMotors};
+  PidMotorControllerPairTuner ampTuner{ampSideMotors};
+
+  double m_ampUpperVelocity;
+  double m_ampLowerVelocity;
 };
