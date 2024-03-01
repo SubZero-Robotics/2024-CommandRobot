@@ -206,6 +206,8 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
                          intakeSubsystem->Stop();
                          scoring->Stop();
                        }).ToPtr())
+              .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
+                                           ScoringDirection::SpeakerSide))
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose(
                              "Intake Subsystem", "Intake completed normally%s",
