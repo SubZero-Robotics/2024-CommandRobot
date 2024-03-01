@@ -24,6 +24,7 @@
 #include <utility>
 
 #include "Constants.h"
+#include "autos/AutoFactory.h"
 #include "commands/ExtendClimbCommand.h"
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
@@ -78,16 +79,14 @@ void RobotContainer::RegisterAutos() {
       })
           .ToPtr()
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
-
+  using namespace AutoConstants;
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
-                             AutoConstants::kDefaultAutoName);
-  // m_chooser.AddOption("3 in Amp", "3 in Amp");
-  // m_chooser.AddOption("2 Note Auto", "2 Note Auto");
-  m_chooser.AddOption("4 Note Auto", "4 Note Auto");
-  m_chooser.AddOption("Place and leave", "Place and leave");
-  m_chooser.AddOption("3 Note Auto", "3 Note Auto");
-  m_chooser.AddOption("2 Note and Center Line", "2 Note Auto");
-  m_chooser.AddOption("Empty Auto", "Empty Auto");
+                             AutoType::LeaveWing);
+  m_chooser.AddOption("4 Note Auto", AutoType::FourNoteAuto);
+  m_chooser.AddOption("Place and leave", AutoType::PlaceAndLeave);
+  m_chooser.AddOption("3 Note Auto", AutoType::ThreeNoteAuto);
+  m_chooser.AddOption("2 Note and Center Line", AutoType::TwoNoteAuto);
+  m_chooser.AddOption("Empty Auto", AutoType::EmptyAuto);
 
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
@@ -279,12 +278,8 @@ void RobotContainer::ConfigureAutoBindings() {
 #endif
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
-  std::string autoName = m_chooser.GetSelected();
-  if (autoName == "Empty Auto") {
-    autoCommand = frc2::WaitCommand(15_s).ToPtr();
-    return autoCommand.get();
-  }
-  autoCommand = PathPlannerAuto(autoName).ToPtr();
+  auto autoType = m_chooser.GetSelected();
+  autoCommand = AutoFactory::GetAuto(autoType);
   return autoCommand.get();
 }
 
