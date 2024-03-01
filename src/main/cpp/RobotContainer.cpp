@@ -87,6 +87,7 @@ void RobotContainer::RegisterAutos() {
   m_chooser.AddOption("Place and leave", "Place and leave");
   m_chooser.AddOption("3 Note Auto", "3 Note Auto");
   m_chooser.AddOption("2 Note and Center Line", "2 Note Auto");
+  m_chooser.AddOption("Empty Auto", "Empty Auto");
 
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
@@ -279,6 +280,10 @@ void RobotContainer::ConfigureAutoBindings() {
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
   std::string autoName = m_chooser.GetSelected();
+  if (autoName == "Empty Auto") {
+    autoCommand = frc2::WaitCommand(15_s).ToPtr();
+    return autoCommand.get();
+  }
   autoCommand = PathPlannerAuto(autoName).ToPtr();
   return autoCommand.get();
 }
