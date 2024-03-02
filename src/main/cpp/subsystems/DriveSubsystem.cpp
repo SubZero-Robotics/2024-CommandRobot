@@ -226,12 +226,12 @@ frc::Rotation2d DriveSubsystem::GetHeading() {
         "Pigeon Gyro 1 has experienced fault '%s', using second pigeon gyro "
         "instead",
         m_gyro1.GetFaultField().GetStatus().GetName());
-    rotation = m_gyro1.GetRotation2d();
+    rotation = m_gyro2.GetRotation2d();
   } else {
     ConsoleLogger::getInstance().logError(
         "Pigeon Gyro 2 has experienced fault '%s', using ADXRS450 gyro instead",
-        m_gyro1.GetFaultField().GetStatus().GetName());
-    rotation = m_gyro1.GetRotation2d();
+        m_gyro2.GetFaultField().GetStatus().GetName());
+    rotation = m_gyro3.GetRotation2d();
   }
 
   ConsoleLogger::getInstance().logVerbose("Gyro", "Rotation: %f",
