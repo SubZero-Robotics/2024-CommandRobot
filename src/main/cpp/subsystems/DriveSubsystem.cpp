@@ -217,21 +217,26 @@ wpi::array<frc::SwerveModulePosition, 4U> DriveSubsystem::GetModulePositions()
 }
 
 frc::Rotation2d DriveSubsystem::GetHeading() {
+  frc::Rotation2d rotation;
   if (m_gyro1.GetFaultField().GetStatus() == ctre::phoenix::StatusCode::OK) {
-    return m_gyro1.GetRotation2d();
+    rotation = m_gyro1.GetRotation2d();
   } else if (m_gyro2.GetFaultField().GetStatus() ==
              ctre::phoenix::StatusCode::OK) {
-    ConsoleLogger::getInstance().logWarning(
+    ConsoleLogger::getInstance().logError(
         "Pigeon Gyro 1 has experienced fault '%s', using second pigeon gyro "
         "instead",
         m_gyro1.GetFaultField().GetStatus().GetName());
-    return m_gyro2.GetRotation2d();
+    rotation = m_gyro1.GetRotation2d();
   } else {
-    ConsoleLogger::getInstance().logWarning(
+    ConsoleLogger::getInstance().logError(
         "Pigeon Gyro 2 has experienced fault '%s', using ADXRS450 gyro instead",
         m_gyro1.GetFaultField().GetStatus().GetName());
-    return m_gyro3.GetRotation2d();
+    rotation = m_gyro1.GetRotation2d();
   }
+
+  ConsoleLogger::getInstance().logVerbose("Gyro", "Rotation: %f",
+                                          rotation.Degrees().value());
+  return rotation;
 }
 
 void DriveSubsystem::ZeroHeading() { m_gyro1.Reset(); }
