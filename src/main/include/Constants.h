@@ -291,7 +291,8 @@ constexpr int kAmpLowerSpinnyBoiId = 24;
 constexpr int kAmpUpperSpinnyBoiId = 21;
 constexpr int kSpeakerLowerSpinnyBoiId = 25;
 constexpr int kSpeakerUpperSpinnyBoiId = 19;
-constexpr int kPigeonCanId = 9;
+constexpr int kPigeonCanId1 = 9;
+constexpr int kPigeonCanId2 = 13;
 
 constexpr int kTicksPerMotorRotation = 42;
 }  // namespace CANSparkMaxConstants
