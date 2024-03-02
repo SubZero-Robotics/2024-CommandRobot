@@ -292,6 +292,8 @@ constexpr int kAmpUpperSpinnyBoiId = 21;
 constexpr int kSpeakerLowerSpinnyBoiId = 25;
 constexpr int kSpeakerUpperSpinnyBoiId = 19;
 constexpr int kPigeonCanId = 9;
+// Amp guide IDs are dummy values
+constexpr int kLeftAmpGuideId = 30;
 
 constexpr int kTicksPerMotorRotation = 42;
 }  // namespace CANSparkMaxConstants
@@ -321,6 +323,22 @@ constexpr double kIntakingFF = 0.000015;
 }  // namespace IntakingPID
 
 }  // namespace IntakingConstants
+
+namespace ArmGuideConstants {
+constexpr double kArmP = 1.0;
+constexpr double kArmI = 0.0;
+constexpr double kArmD = 0.0;
+
+// TODO: Change max arm distance, currently placeholder value
+constexpr double kMaxArmDistance = 90.0;
+
+constexpr double kDistancePerRevolution = 360;
+
+constexpr int kMinLimitSwitchPort = 6;
+constexpr int kMaxLimitSwitchPort = 7;
+
+constexpr double kSpeed = 0.2;
+}  // namespace ArmGuideConstants
 
 namespace ScoringConstants {
 constexpr double kFreeSpinCurrentThreshold = 90;
