@@ -86,7 +86,7 @@ void RobotContainer::RegisterAutos() {
   m_chooser.AddOption("4 Note Auto", "4 Note Auto");
   m_chooser.AddOption("Place and leave", "Place and leave");
   m_chooser.AddOption("3 Note Auto", "3 Note Auto");
-  m_chooser.AddOption("2 Note and Center Line", "2 Note Auto");
+  m_chooser.AddOption("2 Note and Center Line", "2 Note Starting Away From Speaker");
 
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
