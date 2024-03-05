@@ -46,7 +46,7 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose(
                              "Scoring Composition", "flywheel ramped %s", "");
-                       }).ToPtr())
+                       }).ToPtr())  // Break here
               .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
               .AndThen(
                   Feed(intake, scoring, direction).ToPtr().WithTimeout(2_s))
@@ -68,6 +68,47 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
       });
 }
 
+static frc2::CommandPtr ScoringRamp(std::function<ScoringDirection()> direction,
+                                    ScoringSubsystem* scoring,
+                                    IntakeSubsystem* intake) {
+  return (NoteShuffle(intake).ToPtr())
+      .AlongWith(
+          frc2::InstantCommand([scoring] { scoring->SpinOutake(); }).ToPtr())
+      .WithTimeout(2_s)
+      .AndThen(frc2::InstantCommand([] {
+                 ConsoleLogger::getInstance().logVerbose("Scoring Composition",
+                                                         "shuffled %s", "");
+               }).ToPtr())
+      .AndThen(frc2::WaitCommand(0.4_s).ToPtr())
+      .AndThen(FlywheelRamp(intake, scoring, direction).ToPtr())
+      .AndThen(frc2::InstantCommand([] {
+                 ConsoleLogger::getInstance().logVerbose(
+                     "Scoring Composition", "flywheel ramped %s", "");
+               }).ToPtr());  // Break here
+}
+
+static frc2::CommandPtr ScoreAfterRamp(
+    std::function<ScoringDirection()> direction, ScoringSubsystem* scoring,
+    IntakeSubsystem* intake) {
+  return (frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
+      .AndThen(Feed(intake, scoring, direction).ToPtr().WithTimeout(2_s))
+      .AndThen(frc2::InstantCommand([] {
+                 ConsoleLogger::getInstance().logVerbose("Scoring Composition",
+                                                         "fed %s", "");
+               }).ToPtr())
+      .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
+      .AndThen(Shoot(intake, scoring, direction).ToPtr())
+      .AndThen(frc2::InstantCommand([] {
+                 ConsoleLogger::getInstance().logVerbose("Scoring Composition",
+                                                         "shot %s", "");
+               }).ToPtr())
+      .Unless([intake] { return !intake->NotePresent(); })
+      .WithTimeout(5_s)
+      .FinallyDo([intake, scoring] {
+        intake->Stop();
+        scoring->Stop();
+      });
+}
 }  // namespace ScoringCommands
 
 namespace IntakingCommands {

@@ -99,6 +99,8 @@ void DriveSubsystem::Periodic() {
     //     "DriveSubsystem PoseEstimator final pose", updatedPose);
     m_lastGoodPosition = updatedPose;
     m_field.SetRobotPose(updatedPose);
+
+    ConsoleLogger::getInstance().logVerbose("gyro pitch", "%f", (m_gyro.GetPitch().GetValue().value() * 180.0 / M_PI));
   };
 }
 
@@ -219,7 +221,9 @@ units::degree_t DriveSubsystem::GetHeading() {
   return m_gyro.GetRotation2d().Degrees();
 }
 
-void DriveSubsystem::ZeroHeading() { m_gyro.Reset(); }
+void DriveSubsystem::ZeroHeading() { 
+  m_gyro.Reset();
+}
 
 double DriveSubsystem::GetTurnRate() { return m_gyro.GetRate(); }
 

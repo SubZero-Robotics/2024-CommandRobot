@@ -78,9 +78,13 @@ void RobotContainer::RegisterAutos() {
       })
           .ToPtr()
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
+  // pathplanner::NamedCommands::registerCommand(
+  //     "RampSubwoofer",
+  //     ScoringCommands::ScoringRamp(
+  //         [] { return ScoringDirection::Subwoofer; }, ), )
 
-  m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
-                             AutoConstants::kDefaultAutoName);
+  //     m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
+  //                                AutoConstants::kDefaultAutoName);
   // m_chooser.AddOption("3 in Amp", "3 in Amp");
   // m_chooser.AddOption("2 Note Auto", "2 Note Auto");
   m_chooser.AddOption("4 Note Auto", "4 Note Auto");
@@ -122,8 +126,11 @@ void RobotContainer::ConfigureButtonBindings() {
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
           .AndThen(m_leds.Loaded()));
 
-  m_driverController.X().OnTrue(IntakingCommands::OuttakeUntilPresent(
-      &m_intake, &m_scoring, ScoringDirection::SpeakerSide));
+  // m_driverController.B().OnTrue(IntakingCommands::OuttakeUntilPresent(
+  //     &m_intake, &m_scoring, ScoringDirection::SpeakerSide));
+
+  m_driverController.X().OnTrue(ScoringCommands::Score(
+      [] { return ScoringDirection::SpeakerSide; }, &m_scoring, &m_intake));
 
   m_driverController.A().OnTrue(
       m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
