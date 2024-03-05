@@ -21,7 +21,7 @@ class StateManager : public frc2::SubsystemBase {
    * will be canceled
    */
   void RegisterState(StateType State, frc2::CommandPtr Entrypoint,
-                     units::second_t Timeout);
+                     units::second_t Timeout, bool ReturnToDefault = false);
 
   /**
    * Register a new state
@@ -29,7 +29,17 @@ class StateManager : public frc2::SubsystemBase {
    * @param StateType A type that represents the state
    * @param Entrypoint A CommandPtr that will run while the state is active
    */
-  void RegisterState(StateType State, frc2::CommandPtr Entrypoint);
+  void RegisterState(StateType State, frc2::CommandPtr Entrypoint,
+                     bool ReturnToDefault = false);
+
+  /**
+   * Register a new state
+   *
+   * @param StateType A type that represents the state
+   * @param Entrypoint A std::function that will run while the state is active
+   */
+  void RegisterState(StateType State, std::function<void()> Entrypoint,
+                     bool ReturnToDefault = false);
 
   /**
    * Returns a CommandPtr for the state with management attached, may be bound
@@ -40,6 +50,13 @@ class StateManager : public frc2::SubsystemBase {
    * @returns The CommandPtr to invoke the state
    */
   frc2::CommandPtr GetStateCommand(StateType State);
+
+  /**
+   * Returns a CommandPtr for the current state with management attached
+   *
+   * @returns The CommandPtr to schedule the state
+   */
+  frc2::CommandPtr GetStateCommand();
 
   /**
    * Set the state to a new state
@@ -58,14 +75,9 @@ class StateManager : public frc2::SubsystemBase {
   frc2::DeferredCommand RunStateDeferred();
 
   /**
-   * Run the current state
+   * Schedule the current state
    */
-  frc2::CommandPtr RunState();
-
-  /**
-   * Set the desired state
-   */
-  void SetDesiredState();
+  void ScheduleCurrentState();
 
   /**
    * @returns The indentifier for the current state
@@ -73,9 +85,11 @@ class StateManager : public frc2::SubsystemBase {
   StateType GetState();
 
  private:
-  std::unordered_map<StateType, frc2::CommandPtr> m_cmds{};
+  std::unordered_map<StateType, frc2::CommandPtr> m_cmds;
 
   StateType m_currentState;
   frc2::CommandPtr m_cmd = frc2::InstantCommand([] {}).ToPtr();
   bool m_active = false;
+  frc2::CommandPtr m_defaultState;
+  StateType m_defaultEntryPoint;
 };
