@@ -73,3 +73,8 @@ void StateManager<StateType>::ScheduleCurrentState() {
   frc2::CommandScheduler::GetInstance().Schedule(m_cmd);
   m_active = true;
 }
+
+template <typename StateType>
+bool StateManager<StateType>::IsStateActive() {
+  return m_active;
+}

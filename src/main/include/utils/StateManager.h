@@ -84,6 +84,8 @@ class StateManager : public frc2::SubsystemBase {
    */
   StateType GetState();
 
+  bool IsStateActive();
+
  private:
   std::unordered_map<StateType, frc2::CommandPtr> m_cmds;
 
