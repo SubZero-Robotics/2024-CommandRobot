@@ -25,6 +25,7 @@
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 #include "subsystems/StateSubsystem.h"
+#include "utils/StateManager.h"
 #include "utils/Vision.h"
 
 /**
@@ -61,6 +62,8 @@ class RobotContainer {
   // The chooser for the autonomous routines
   frc::SendableChooser<std::string> m_chooser;
 
+  bool IsControllerActive();
+
 #ifdef TEST_SWERVE_BOT
 
 #endif
@@ -89,9 +92,15 @@ class RobotContainer {
 
   Vision m_vision;
 
+  StateManager<RobotState> m_stateManager{
+      [this] { return IsControllerActive(); }, RobotState::Manual,
+      m_state.StartManual()};
+
   void RegisterAutos();
 
   void ConfigureButtonBindings();
+
+  void RegisterStates();
 
   frc2::CommandPtr autoCommand = frc2::InstantCommand([] {}).ToPtr();
 };

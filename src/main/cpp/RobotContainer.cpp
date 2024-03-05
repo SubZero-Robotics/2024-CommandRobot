@@ -61,6 +61,7 @@ RobotContainer::RobotContainer() {
       {&m_drive}));
 #ifndef TEST_SWERVE_BOT
   RegisterAutos();
+  RegisterStates();
 #endif
 }
 
@@ -90,6 +91,8 @@ void RobotContainer::RegisterAutos() {
 
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
+
+void RobotContainer::RegisterStates() {}
 
 void RobotContainer::ConfigureButtonBindings() {
   m_driverController.Start().WhileTrue(new frc2::RunCommand(
@@ -291,6 +294,30 @@ void RobotContainer::ClearCurrentStateCommand() {
 void RobotContainer::StartIdling() {
   m_state.m_active = false;
   m_leds.IdlingAsync();
+}
+
+bool RobotContainer::IsControllerActive() {
+  bool active = false;
+  int count = m_driverController.GetButtonCount();
+  for (int i = 1; i <= count; i++) {
+    active |= m_driverController.GetRawButton(i);
+  }
+  count = m_driverController.GetAxisCount();
+  for (int i = 0; i < count; i++) {
+    active |=
+        abs(m_driverController.GetRawAxis(i)) >= OIConstants::kDriveDeadband;
+  }
+  count = m_driverController.GetPOVCount();
+  for (int i = 0; i < count; i++) {
+    active |= m_driverController.GetPOV(i) != -1;
+  }
+  // Check the operator's "stop" button
+  active |= m_operatorController.RightStick().Get();
+  if (active) {
+    ConsoleLogger::getInstance().logVerbose("StateSubsystem",
+                                            "Controller interrupt! %s", "");
+  }
+  return active;
 }
 
 void RobotContainer::ResetPose() {
