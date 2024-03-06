@@ -77,9 +77,7 @@ class StateManager : public frc2::SubsystemBase {
    *
    * @returns The CommandPtr to schedule the state
    */
-  frc2::CommandPtr GetStateCommand() {
-    return std::move(m_cmds[m_currentState]);
-  };
+  frc2::CommandPtr GetStateCommand() { return m_cmds[m_currentState]; };
 
   /**
    * Set the state to a new state
