@@ -6,27 +6,27 @@
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SubsystemBase.h>
 
-template <typename StateType>
+template <typename T>
 class StateManager : public frc2::SubsystemBase {
  public:
-  StateManager(const std::function<bool()> Interrupt, StateType DefaultState,
-               frc2::CommandPtr&& DefaultEntrypoint)
-      : m_currentState(DefaultState),
-        m_defaultState(DefaultState),
-        m_defaultEntryPoint(DefaultEntrypoint){};
+  StateManager(const std::function<bool()> Interrupt, T defaultState,
+               frc2::CommandPtr&& defaultCommand)
+      : m_currentState(defaultState),
+        m_defaultState(defaultState),
+        m_defaultCommand(std::move(defaultCommand)){};
 
   /**
    * Register a new state
    *
-   * @param StateType A type that represents the state
-   * @param Entrypoint A CommandPtr that will run while the state is active
-   * @param Timeout A timeout for the Entrypoint, after it has elapsed the state
+   * @param T A type that represents the state
+   * @param command A CommandPtr that will run while the state is active
+   * @param Timeout A timeout for the command, after it has elapsed the state
    * will be canceled
    */
-  void RegisterState(StateType State, frc2::CommandPtr&& Entrypoint,
-                     units::second_t Timeout, bool ReturnToDefault = false) {
-    auto cmd = std::move(Entrypoint).WithTimeout(Timeout);
-    if (ReturnToDefault) {
+  void RegisterState(T State, frc2::CommandPtr&& command,
+                     units::second_t timeout, bool returnToDefault = false) {
+    auto cmd = std::move(command).WithTimeout(timeout);
+    if (returnToDefault) {
       cmd = cmd.AndThen(SetState(m_defaultState));
     }
     m_cmds[State] = cmd;
@@ -35,13 +35,13 @@ class StateManager : public frc2::SubsystemBase {
   /**
    * Register a new state
    *
-   * @param StateType A type that represents the state
-   * @param Entrypoint A CommandPtr that will run while the state is active
+   * @param T A type that represents the state
+   * @param command A CommandPtr that will run while the state is active
    */
-  void RegisterState(StateType State, frc2::CommandPtr&& Entrypoint,
-                     bool ReturnToDefault = false) {
-    auto cmd = std::move(Entrypoint);
-    if (ReturnToDefault) {
+  void RegisterState(T State, frc2::CommandPtr&& command,
+                     bool returnToDefault = false) {
+    auto cmd = std::move(command);
+    if (returnToDefault) {
       cmd = cmd.AndThen(SetState(m_defaultState));
     }
     m_cmds[State] = cmd;
@@ -50,13 +50,13 @@ class StateManager : public frc2::SubsystemBase {
   /**
    * Register a new state
    *
-   * @param StateType A type that represents the state
-   * @param Entrypoint A std::function that will run while the state is active
+   * @param T A type that represents the state
+   * @param action A std::function that will be converted into a state
    */
-  void RegisterState(StateType State, std::function<void()> Entrypoint,
-                     bool ReturnToDefault = false) {
-    auto cmd = frc2::InstantCommand(Entrypoint).ToPtr();
-    if (ReturnToDefault) {
+  void RegisterState(T State, std::function<void()> action,
+                     bool returnToDefault = false) {
+    auto cmd = frc2::InstantCommand(action).ToPtr();
+    if (returnToDefault) {
       cmd = cmd.AndThen(SetState(m_defaultState));
     }
     m_cmds[State] = cmd;
@@ -66,11 +66,11 @@ class StateManager : public frc2::SubsystemBase {
    * Returns a CommandPtr for the state with management attached, may be bound
    * to a button to schedule the state.
    *
-   * @param StateType The state to get the command for
+   * @param T The state to get the command for
    *
    * @returns The CommandPtr to invoke the state
    */
-  frc2::CommandPtr GetStateCommand(StateType State) { return m_cmds[State]; };
+  frc2::CommandPtr GetStateCommand(T state) { return m_cmds[state]; };
 
   /**
    * Returns a CommandPtr for the current state with management attached
@@ -86,7 +86,7 @@ class StateManager : public frc2::SubsystemBase {
    *
    * @returns A DeferredCommand that will set the state and run the state
    */
-  frc2::CommandPtr SetState(StateType newState) {
+  frc2::CommandPtr SetState(T newState) {
     return frc2::InstantCommand([this, newState] {
              m_currentState = newState;
              GetStateCommand();
@@ -107,25 +107,34 @@ class StateManager : public frc2::SubsystemBase {
    * Schedule the current state
    */
   void ScheduleCurrentState() {
-    frc2::CommandScheduler::GetInstance().Cancel(m_cmd);
-    m_cmd = GetStateCommand();
-    frc2::CommandScheduler::GetInstance().Schedule(m_cmd);
+    frc2::CommandScheduler::GetInstance().Cancel(m_currentCommand);
+    m_currentCommand = GetStateCommand();
+    frc2::CommandScheduler::GetInstance().Schedule(m_currentCommand);
     m_active = true;
   };
 
   /**
    * @returns The indentifier for the current state
    */
-  StateType GetState() { return m_currentState; };
+  T GetState() { return m_currentState; };
 
   bool IsStateActive() { return m_active; };
 
- private:
-  std::unordered_map<StateType, frc2::CommandPtr> m_cmds;
+  /**
+   * Cancel the current state and set active to false
+  */
+  void CancelState() {
+    frc2::CommandScheduler::GetInstance().Cancel(m_currentCommand);
+    m_currentCommand = frc2::InstantCommand([] {}).ToPtr();
+    m_active = false;
+  };
 
-  StateType m_currentState;
-  frc2::CommandPtr m_cmd = frc2::InstantCommand([] {}).ToPtr();
+ private:
+  std::unordered_map<T, frc2::CommandPtr> m_cmds;
+
+  T m_currentState;
+  frc2::CommandPtr m_currentCommand = frc2::InstantCommand([] {}).ToPtr();
   bool m_active = false;
-  StateType m_defaultState;
-  frc2::CommandPtr&& m_defaultEntryPoint;
+  T m_defaultState;
+  frc2::CommandPtr m_defaultCommand;
 };
