@@ -27,9 +27,9 @@ class StateManager : public frc2::SubsystemBase {
                      units::second_t timeout, bool returnToDefault = false) {
     auto cmd = std::move(command).WithTimeout(timeout);
     if (returnToDefault) {
-      cmd = cmd.AndThen(SetState(m_defaultState));
+      cmd = std::move(cmd).AndThen(SetState(m_defaultState));
     }
-    m_cmds[State] = cmd;
+    m_cmds[State] = std::move(cmd);
   };
 
   /**
@@ -39,7 +39,7 @@ class StateManager : public frc2::SubsystemBase {
    * @param command A CommandPtr that will run while the state is active
    */
   void RegisterState(T State, frc2::CommandPtr&& command,
-                     bool returnToDefault = false) {
+                     bool returnToDefault = true) {
     auto cmd = std::move(command);
     if (returnToDefault) {
       cmd = cmd.AndThen(SetState(m_defaultState));
@@ -54,7 +54,7 @@ class StateManager : public frc2::SubsystemBase {
    * @param action A std::function that will be converted into a state
    */
   void RegisterState(T State, std::function<void()> action,
-                     bool returnToDefault = false) {
+                     bool returnToDefault = true) {
     auto cmd = frc2::InstantCommand(action).ToPtr();
     if (returnToDefault) {
       cmd = cmd.AndThen(SetState(m_defaultState));
@@ -77,7 +77,9 @@ class StateManager : public frc2::SubsystemBase {
    *
    * @returns The CommandPtr to schedule the state
    */
-  frc2::CommandPtr GetStateCommand() { return m_cmds[m_currentState]; };
+  frc2::CommandPtr GetStateCommand() {
+    return std::move(m_cmds[m_currentState]);
+  };
 
   /**
    * Set the state to a new state
@@ -99,7 +101,7 @@ class StateManager : public frc2::SubsystemBase {
    *
    * @returns A DeferredCommand that will run the state
    */
-  frc2::DeferredCommand RunStateDeferred() {
+  frc2::DeferredCommand GetStateDeferred() {
     return frc2::DeferredCommand([this] { GetStateCommand(); }, {this});
   };
 
@@ -122,7 +124,7 @@ class StateManager : public frc2::SubsystemBase {
 
   /**
    * Cancel the current state and set active to false
-  */
+   */
   void CancelState() {
     frc2::CommandScheduler::GetInstance().Cancel(m_currentCommand);
     m_currentCommand = frc2::InstantCommand([] {}).ToPtr();

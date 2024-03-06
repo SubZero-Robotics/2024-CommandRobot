@@ -166,6 +166,31 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
       .WithTimeout(20_s);
 }
 
+frc2::CommandPtr StateSubsystem::StartScoring(ScoringDirection direction,
+                                              FinalLocation location) {
+  auto cmd = m_subsystems.led->Error();
+  switch (direction) {
+    case ScoringDirection::AmpSide:
+      cmd = m_subsystems.led->ScoringAmp();
+      break;
+    case ScoringDirection::SpeakerSide:
+      cmd = m_subsystems.led->ScoringSpeaker();
+      break;
+    case ScoringDirection::Subwoofer:
+      cmd = m_subsystems.led->ScoringSubwoofer();
+      break;
+    default:
+      cmd = m_subsystems.led->Error();
+      break;
+  };
+  return std::move(cmd)
+      .AndThen(PathFactory::GetPathFromFinalLocation(
+          [location] { return location; }, m_subsystems.drive))
+      .AndThen(ScoringCommands::Score([direction] { return direction; },
+                                      m_subsystems.scoring,
+                                      m_subsystems.intake));
+}
+
 frc2::CommandPtr StateSubsystem::StartManual() {
   /*
      Signal that we are in manual

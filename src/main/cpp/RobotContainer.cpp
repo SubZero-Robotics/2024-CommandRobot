@@ -92,7 +92,17 @@ void RobotContainer::RegisterAutos() {
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
 
-void RobotContainer::RegisterStates() {}
+void RobotContainer::RegisterStates() {
+  m_stateManager.RegisterState(
+      RobotState::ScoringSpeaker,
+      m_state.StartScoring(ScoringDirection::SpeakerSide,
+                           FinalLocation::Podium),
+      20_s);
+  m_stateManager.RegisterState(
+      RobotState::ScoringAmp,
+      m_state.StartScoring(ScoringDirection::AmpSide, FinalLocation::Subwoofer),
+      20_s);
+}
 
 void RobotContainer::ConfigureButtonBindings() {
   m_driverController.Start().WhileTrue(new frc2::RunCommand(

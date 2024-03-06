@@ -76,6 +76,8 @@ class StateSubsystem : public frc2::SubsystemBase {
 
   frc2::CommandPtr StartScoringSubwoofer();
 
+  frc2::CommandPtr StartScoring(ScoringDirection, FinalLocation);
+
   frc2::CommandPtr StartManual();
 
   frc2::CommandPtr StartClimb();
