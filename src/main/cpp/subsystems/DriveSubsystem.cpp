@@ -231,7 +231,9 @@ frc::Rotation2d DriveSubsystem::GetHeading() {
   } else {
     ConsoleLogger::getInstance().logError(
         "Gyro",
-        "Pigeon Gyro 2 has experienced fault '%s', using ADXRS450 gyro instead",
+        "Pigeon Gyro 1 has experienced fault '%s' and Pigeon Gyro 2 has "
+        "expierenced fault '%s', using ADXRS450 gyro instead",
+        m_gyro1.GetFaultField().GetStatus().GetName(),
         m_gyro2.GetFaultField().GetStatus().GetName());
     rotation = m_gyro3.GetRotation2d();
   }
