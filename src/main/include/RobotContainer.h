@@ -25,6 +25,7 @@
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 #include "subsystems/StateSubsystem.h"
+#include "subsystems/WristSubsystem.h"
 #include "utils/Vision.h"
 
 /**
@@ -68,6 +69,7 @@ class RobotContainer {
 #ifndef TEST_SWERVE_BOT
   LeftClimbSubsystem m_leftClimb;
   RightClimbSubsystem m_rightClimb;
+  WristSubsystem m_wrist;
   IntakeSubsystem m_intake;
   ScoringSubsystem m_scoring;
 

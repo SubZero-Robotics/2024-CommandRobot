@@ -89,46 +89,6 @@ class LinearSingleAxisSubsystem
             name, controller, config, minLimitSwitch, maxLimitSwitch} {}
 };
 
-using namespace ScoringConstants;
-
-class WristSubsystem
-    : public RotationalSingleAxisSubsystem<rev::SparkPIDController,
-                                           rev::SparkRelativeEncoder> {
- public:
-  WristSubsystem()
-      : RotationalSingleAxisSubsystem<rev::SparkPIDController,
-                                      rev::SparkRelativeEncoder>{
-            "Wrist", speakerUpperController, m_config, &m_minLimit,
-            std::nullopt} {}
-
- private:
-  SingleAxisConfig2<units::degree_t, units::degrees_per_second_t> m_config = {
-      .pid = frc::PIDController{1, 0, 0},
-      .minDistance = 0_deg,
-      .maxDistance = 100_deg,
-      .distancePerRevolution = 10_deg,
-      .velocityScalar = 1.0,
-      .pidResultMultiplier = 1.0,
-      .reversed = false};
-  frc::DigitalInput m_minLimit = frc::DigitalInput{4};
-  rev::CANSparkFlex m_speakerUpperSpinnyBoi{
-      CANSparkMaxConstants::kSpeakerUpperSpinnyBoiId,
-      rev::CANSparkLowLevel::MotorType::kBrushless};
-  rev::SparkPIDController m_speakerUpperPidController =
-      m_speakerUpperSpinnyBoi.GetPIDController();
-  rev::SparkRelativeEncoder m_enc = m_speakerUpperSpinnyBoi.GetEncoder();
-  PidSettings speakerPidSettings = {.p = ScoringPID::kSpeakerP,
-                                    .i = ScoringPID::kSpeakerI,
-                                    .d = ScoringPID::kSpeakerD,
-                                    .iZone = ScoringPID::kSpeakerIZone,
-                                    .ff = ScoringPID::kSpeakerFF};
-  PidMotorController<rev::SparkPIDController, rev::SparkRelativeEncoder>
-      speakerUpperController{"Speaker Upper", m_speakerUpperPidController,
-                             m_enc, speakerPidSettings, kMaxSpinRpm};
-};
-
-static WristSubsystem m_wrist;
-
 template <typename Motor, typename Encoder>
 class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
  public:
