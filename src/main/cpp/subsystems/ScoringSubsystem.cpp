@@ -18,6 +18,8 @@ void ScoringSubsystem::Periodic() {
   // speakerTuner.UpdateFromShuffleboard();
   ampTuner.UpdateFromShuffleboard();
 
+  speakerUpperTuner.UpdateFromShuffleboard();
+
   double latestAmpUpperVelocity =
       frc::SmartDashboard::GetNumber("Amp Upper Velocity", m_ampUpperVelocity);
   double latestAmpLowerVelocity =
