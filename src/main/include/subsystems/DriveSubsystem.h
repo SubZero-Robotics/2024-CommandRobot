@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <frc/ADXRS450_Gyro.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/geometry/Pose2d.h>
@@ -92,7 +93,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
    *
    * @return the robot's heading in degrees, from 180 to 180
    */
-  units::degree_t GetHeading();
+  frc::Rotation2d GetHeading();
 
   /**
    * Zeroes the heading of the robot.
@@ -124,7 +125,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   //   frc::ADXRS450_Gyro* getGyro() { return &m_gyro; }
   //   AHRS* getGyro() { return &m_gyro; }
-  ctre::phoenix6::hardware::Pigeon2* getGyro() { return &m_gyro; }
+  ctre::phoenix6::hardware::Pigeon2* getGyro() { return &m_gyro1; }
 
   wpi::array<frc::SwerveModulePosition, 4U> GetModulePositions() const;
 
@@ -159,10 +160,13 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   uint8_t logCounter = 0;
 
-  // The gyro sensor
+  ctre::phoenix6::hardware::Pigeon2 m_gyro1{CANSparkMaxConstants::kPigeonCanId1,
+                                            "rio"};
+  ctre::phoenix6::hardware::Pigeon2 m_gyro2{CANSparkMaxConstants::kPigeonCanId2,
+                                            "rio"};
+
   // AHRS m_gyro{frc::SPI::Port::kMXP};
-  //   frc::ADXRS450_Gyro m_gyro;
-  ctre::phoenix6::hardware::Pigeon2 m_gyro{CANSparkMaxConstants::kPigeonCanId, "rio"};
+  frc::ADXRS450_Gyro m_gyro3;
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
@@ -188,13 +192,12 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::SwerveDrivePoseEstimator<4> poseEstimator{
       m_driveKinematics,
-      m_gyro.GetRotation2d(),
+      GetHeading(),
       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
       frc::Pose2d{0_m, 0_m, 0_rad},
       {0.3, 0.3, 0.3},
-      {1.0, 1.0, 3.0}
-      };
+      {1.0, 1.0, 3.0}};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing

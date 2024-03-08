@@ -84,25 +84,24 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
     return currentZone;
   }
 
-  if (currentPort.currentZoneIndex != zoneIndex) {
-    ConsoleLogger::getInstance().logVerbose(
-        "ConnectorX", "Setting new zone index to %u", zoneIndex);
-    currentPort.currentZoneIndex = zoneIndex;
-    currentZone = getCurrentZone();
+  ConsoleLogger::getInstance().logVerbose(
+      "ConnectorX", "Setting new zone index to %u", zoneIndex);
+  currentPort.currentZoneIndex = zoneIndex;
+  currentZone = getCurrentZone();
 
-    ConsoleLogger::getInstance().logVerbose("ConnectorX", "Got zone %s",
-                                            currentZone.toString().c_str());
+  ConsoleLogger::getInstance().logVerbose("ConnectorX", "Got zone %s",
+                                          currentZone.toString().c_str());
 
-    Commands::Command cmd;
-    cmd.commandType = Commands::CommandType::SetPatternZone;
-    cmd.commandData.commandSetPatternZone.zoneIndex = zoneIndex;
-    if (currentZone.reversed != reversed && setReversed) {
-      currentZone.reversed = reversed;
-      cmd.commandData.commandSetPatternZone.reversed = (uint8_t)reversed;
-    }
-
-    sendCommand(cmd);
+  Commands::Command cmd;
+  cmd.commandType = Commands::CommandType::SetPatternZone;
+  cmd.commandData.commandSetPatternZone.zoneIndex = zoneIndex;
+  cmd.commandData.commandSetPatternZone.reversed = currentZone.reversed ? 1 : 0;
+  if (setReversed) {
+    currentZone.reversed = reversed;
+    cmd.commandData.commandSetPatternZone.reversed = reversed ? 1 : 0;
   }
+
+  sendCommand(cmd);
 
   return getCurrentZone();
 }
@@ -137,7 +136,7 @@ void ConnectorX::ConnectorXBoard::createZones(
     cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
   }
 
-  sendCommand(cmd);
+  // sendCommand(cmd);
 
   auto& currentPort = getCurrentCachedPort();
 
@@ -249,7 +248,7 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
     m_simColorB.Set(blue);
   }
 
-  auto& zone = setCurrentZone(port, zoneIndex);
+  auto& zone = getCurrentZone();
   auto newColor = frc::Color8Bit(red, green, blue);
 
   delaySeconds(kConnectorXDelay);
@@ -381,7 +380,7 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
       sendLen = 0;
       break;
     case CommandType::SetPatternZone:
-      sendLen = sizeof(CommandSetPatternZone);
+      sendLen = 3;
       break;
     case CommandType::SetNewZones:
       sendLen =
