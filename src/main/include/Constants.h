@@ -167,6 +167,15 @@ constexpr double kSnapToAngleP = 4;
 constexpr double kSnapToAngleI = 0;
 constexpr double kSnapToAngleD = 0;
 
+enum class AutoType {
+  EmptyAuto = 0,
+  FourNoteAuto,
+  PlaceAndLeave,
+  ThreeNoteAuto,
+  TwoNoteAuto,
+  LeaveWing
+};
+
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
