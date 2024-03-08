@@ -309,6 +309,8 @@ constexpr double kSecondaryIntakeOutSpeed = 0.05;
 
 constexpr uint8_t kUpperBeamBreakDigitalPort = 3;
 constexpr uint8_t kLowerBeamBreakDigitalPort = 2;
+constexpr uint8_t kPodiumBeamBreakDigitalPort = 4;
+constexpr uint8_t kAmpBeamBreakDigitalPort = 5;
 
 constexpr units::revolutions_per_minute_t kMaxRpm = 5676_rpm;
 

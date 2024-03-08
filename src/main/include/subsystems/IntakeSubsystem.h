@@ -33,6 +33,8 @@ class IntakeSubsystem : public frc2::SubsystemBase {
   bool NotePresent();
   bool NotePresentUpper();
   bool NotePresentLower();
+  bool NotePresentAmp();
+  bool NotePresentPodium();
 
  private:
   rev::CANSparkMax m_rightIntakeSpinnyBoy{
@@ -46,6 +48,9 @@ class IntakeSubsystem : public frc2::SubsystemBase {
       IntakingConstants::kUpperBeamBreakDigitalPort};
   frc::DigitalInput m_lowerBeamBreak{
       IntakingConstants::kLowerBeamBreakDigitalPort};
+  frc::DigitalInput m_podiumBeamBreak{
+      IntakingConstants::kPodiumBeamBreakDigitalPort};
+  frc::DigitalInput m_ampBeamBreak{IntakingConstants::kAmpBeamBreakDigitalPort};
 
   rev::SparkPIDController m_rightIntakeSpinnyBoyPID =
       m_rightIntakeSpinnyBoy.GetPIDController();
@@ -62,5 +67,5 @@ class IntakeSubsystem : public frc2::SubsystemBase {
                                       m_rightIntakeSpinnyBoyPID,
                                       intakePidSettings, kMaxRpm};
 
-//   PidMotorControllerPairTuner intakeTuner{intakeMotors};
+  //   PidMotorControllerPairTuner intakeTuner{intakeMotors};
 };
