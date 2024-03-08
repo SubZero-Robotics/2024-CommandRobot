@@ -37,10 +37,10 @@ void ScoringSubsystem::Periodic() {
 void ScoringSubsystem::SimulationPeriodic() {}
 
 void ScoringSubsystem::SpinOutake() {
-  speakerSideMotors.RunWithVelocity(ScoringConstants::kScoringOutakeUpperSpeed,
-                                    ScoringConstants::kScoringOutakeLowerSpeed);
-  ampSideMotors.RunWithVelocity(ScoringConstants::kScoringOutakeUpperSpeed,
-                                ScoringConstants::kScoringOutakeLowerSpeed);
+  speakerPidPair.RunWithVelocity(ScoringConstants::kScoringOutakeUpperSpeed,
+                                 ScoringConstants::kScoringOutakeLowerSpeed);
+  ampPidPair.RunWithVelocity(ScoringConstants::kScoringOutakeUpperSpeed,
+                             ScoringConstants::kScoringOutakeLowerSpeed);
 };
 
 void ScoringSubsystem::Stop() {
@@ -109,15 +109,15 @@ bool ScoringSubsystem::GetMotorFreeWheel(ScoringDirection direction) {
 }
 
 void ScoringSubsystem::SpinAmp(double upperPercentage, double lowerPercentage) {
-  ampSideMotors.RunWithVelocity(upperPercentage, lowerPercentage);
+  ampPidPair.RunWithVelocity(upperPercentage, lowerPercentage);
 }
 
 void ScoringSubsystem::SpinSpeaker() {
-  speakerSideMotors.RunWithVelocity(kSpeakerUpperSpeed, kSpeakerLowerSpeed);
+  speakerPidPair.RunWithVelocity(kSpeakerUpperSpeed, kSpeakerLowerSpeed);
 }
 
 void ScoringSubsystem::SpinSubwoofer() {
-  ampSideMotors.RunWithVelocity(kSubwooferUpperSpeed, kSubwooferLowerSpeed);
+  ampPidPair.RunWithVelocity(kSubwooferUpperSpeed, kSubwooferLowerSpeed);
 }
 
 bool ScoringSubsystem::CheckAmpSpeed() {
