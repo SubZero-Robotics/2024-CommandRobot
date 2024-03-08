@@ -5,6 +5,7 @@
 #include <frc/controller/PIDController.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/FunctionalCommand.h>
+#include <rev/CANSparkFlex.h>
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <units/acceleration.h>
@@ -23,80 +24,92 @@
 #include "utils/ShuffleboardLogger.h"
 
 template <typename TDistance, typename TVelocity>
-struct SingleAxisConfig {
+struct SingleAxisConfig2 {
   frc::PIDController pid;
   // TODO: Make a velocity PID
-  TDistance minDistance;
-  TDistance maxDistance;
-  TDistance distancePerRevolution;
-  double velocityScalar = 1.0;
-  double pidResultMultiplier = 1.0;
+  units::degree_t minDistance;
+  units::degree_t maxDistance;
+  units::degree_t distancePerRevolution;
+  double velocityScalar;
+  double pidResultMultiplier;
   bool reversed;
 };
 
-template <template <typename TController, typename TEncoder> class Controller,
-          typename TDistance, typename TVelocity>
+template <typename TController, typename TEncoder, typename TDistance,
+          typename TVelocity>
 class BaseSingleAxisSubsystem2
-    : public ISingleAxisSubsystem<TDistance, TVelocity> {
+    : public ISingleAxisSubsystem2<TDistance, TVelocity> {
  public:
-  BaseSingleAxisSubsystem2(std::string name, Controller &controller,
-                           SingleAxisConfig<TDistance, TVelocity> config,
-                           std::optional<frc::DigitalInput *> minLimitSwitch,
-                           std::optional<frc::DigitalInput *> maxLimitSwitch)
+  BaseSingleAxisSubsystem2(
+      std::string name, PidMotorController<TController, TEncoder> &controller,
+      SingleAxisConfig2<TDistance, TVelocity> config,
+      std::optional<frc::DigitalInput *> minLimitSwitch,
+      std::optional<frc::DigitalInput *> maxLimitSwitch)
       : m_minLimitSwitch{minLimitSwitch},
         m_maxLimitSwitch{maxLimitSwitch},
         m_controller{controller},
+        m_config{config},
         m_name{name} {}
 
  protected:
   std::optional<frc::DigitalInput *> m_minLimitSwitch;
   std::optional<frc::DigitalInput *> m_maxLimitSwitch;
-  Controller &m_controller;
+  PidMotorController<TController, TEncoder> &m_controller;
+  SingleAxisConfig2<TDistance, TVelocity> m_config;
   std::string m_name;
 };
 
-template <template <typename TController, typename TEncoder> class Controller>
+template <typename TController, typename TEncoder>
 class RotationalSingleAxisSubsystem
-    : public BaseSingleAxisSubsystem<Controller, units::degree_t,
-                                     units::degrees_per_second_t> {
+    : public BaseSingleAxisSubsystem2<TController, TEncoder, units::degree_t,
+                                      units::degrees_per_second_t> {
  public:
   RotationalSingleAxisSubsystem(
-      std::string name, Controller &controller,
-      SingleAxisConfig<units::degree_t, units::degrees_per_second_t> config,
+      std::string name, PidMotorController<TController, TEncoder> &controller,
+      SingleAxisConfig2<units::degree_t, units::degrees_per_second_t> config,
       std::optional<frc::DigitalInput *> minLimitSwitch,
       std::optional<frc::DigitalInput *> maxLimitSwitch)
-      : BaseSingleAxisSubsystem2{name, controller, config, minLimitSwitch,
-                                 maxLimitSwitch} {}
+      : BaseSingleAxisSubsystem2<TController, TEncoder, units::degree_t,
+                                 units::degrees_per_second_t>{
+            name, controller, config, minLimitSwitch, maxLimitSwitch} {}
 };
 
-template <template <typename TController, typename TEncoder> class Controller>
+template <typename TController, typename TEncoder>
 class LinearSingleAxisSubsystem
-    : public BaseSingleAxisSubsystem<Controller, units::meter_t,
-                                     units::meters_per_second_t> {
+    : public BaseSingleAxisSubsystem2<TController, TEncoder, units::meter_t,
+                                      units::meters_per_second_t> {
  public:
   LinearSingleAxisSubsystem(
-      std::string name, Controller &controller,
-      SingleAxisConfig<units::meter_t, units::meters_per_second_t> config,
+      std::string name, PidMotorController<TController, TEncoder> &controller,
+      SingleAxisConfig2<units::meter_t, units::meters_per_second_t> config,
       std::optional<frc::DigitalInput *> minLimitSwitch,
       std::optional<frc::DigitalInput *> maxLimitSwitch)
-      : BaseSingleAxisSubsystem2{name, controller, config, minLimitSwitch,
-                                 maxLimitSwitch} {}
+      : BaseSingleAxisSubsystem2<TController, TEncoder, units::meter_t,
+                                 units::meters_per_second_t>{
+            name, controller, config, minLimitSwitch, maxLimitSwitch} {}
 };
 
+using namespace ScoringConstants;
+
 class WristSubsystem
-    : public RotationalSingleAxisSubsystem<RevPidMotorController> {
+    : public RotationalSingleAxisSubsystem<rev::SparkPIDController,
+                                           rev::SparkRelativeEncoder> {
  public:
   WristSubsystem()
-      : RotationalSingleAxisSubsystem{"Wrist", speakerUpperController, m_config,
-                                      &m_minLimit, std::nullopt} {}
+      : RotationalSingleAxisSubsystem<rev::SparkPIDController,
+                                      rev::SparkRelativeEncoder>{
+            "Wrist", speakerUpperController, m_config, &m_minLimit,
+            std::nullopt} {}
 
  private:
-  SingleAxisConfig<units::degree_t, units::degrees_per_second_t> m_config = {
+  SingleAxisConfig2<units::degree_t, units::degrees_per_second_t> m_config = {
       .pid = frc::PIDController{1, 0, 0},
       .minDistance = 0_deg,
       .maxDistance = 100_deg,
       .distancePerRevolution = 10_deg,
-      .velocityScalar = 1};
+      .velocityScalar = 1.0,
+      .pidResultMultiplier = 1.0,
+      .reversed = false};
   frc::DigitalInput m_minLimit = frc::DigitalInput{4};
   rev::CANSparkFlex m_speakerUpperSpinnyBoi{
       CANSparkMaxConstants::kSpeakerUpperSpinnyBoiId,

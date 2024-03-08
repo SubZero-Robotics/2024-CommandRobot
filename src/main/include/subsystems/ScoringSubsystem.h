@@ -132,16 +132,16 @@ class ScoringSubsystem : public frc2::SubsystemBase {
       ampLowerController{"Amp Lower", m_ampLowerPidController, m_ampLowerEnc,
                          ampPidSettings, kMaxSpinRpm};
 
-  PidMotorControllerPair speakerPidPair{"Speaker", speakerUpperController,
+  PidMotorControllerPair<rev::SparkPIDController, rev::SparkRelativeEncoder> speakerPidPair{"Speaker", speakerUpperController,
                                         speakerLowerController};
 
-  PidMotorControllerPair ampPidPair{"Amp", ampUpperController,
+  PidMotorControllerPair<rev::SparkPIDController, rev::SparkRelativeEncoder> ampPidPair{"Amp", ampUpperController,
                                     ampLowerController};
 
   // PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
   //   PidMotorControllerPairTuner speakerTuner{speakerPidPair};
-  PidMotorControllerPairTuner ampTuner{ampPidPair};
-  PidMotorControllerTuner<RevPidMotorController> speakerUpperTuner{
+  PidMotorControllerPairTuner<rev::SparkPIDController, rev::SparkRelativeEncoder> ampTuner{ampPidPair};
+  PidMotorControllerTuner<rev::SparkPIDController, rev::SparkRelativeEncoder> speakerUpperTuner{
       speakerUpperController};
 
   double m_ampUpperVelocity;
