@@ -27,9 +27,9 @@ template <typename TDistance, typename TVelocity>
 struct SingleAxisConfig2 {
   frc::PIDController pid;
   // TODO: Make a velocity PID
-  units::degree_t minDistance;
-  units::degree_t maxDistance;
-  units::degree_t distancePerRevolution;
+  TDistance minDistance;
+  TDistance maxDistance;
+  TDistance distancePerRevolution;
   double velocityScalar;
   double pidResultMultiplier;
   bool reversed;
