@@ -19,7 +19,102 @@
 #include "Constants.h"
 #include "subsystems/ISingleAxisSubsystem.h"
 #include "utils/ConsoleLogger.h"
+#include "utils/PidMotorController.h"
 #include "utils/ShuffleboardLogger.h"
+
+template <typename TDistance, typename TVelocity>
+struct SingleAxisConfig {
+  frc::PIDController pid;
+  // TODO: Make a velocity PID
+  TDistance minDistance;
+  TDistance maxDistance;
+  TDistance distancePerRevolution;
+  double velocityScalar = 1.0;
+  double pidResultMultiplier = 1.0;
+  bool reversed;
+};
+
+template <template <typename TController, typename TEncoder> class Controller,
+          typename TDistance, typename TVelocity>
+class BaseSingleAxisSubsystem2
+    : public ISingleAxisSubsystem<TDistance, TVelocity> {
+ public:
+  BaseSingleAxisSubsystem2(std::string name, Controller &controller,
+                           SingleAxisConfig<TDistance, TVelocity> config,
+                           std::optional<frc::DigitalInput *> minLimitSwitch,
+                           std::optional<frc::DigitalInput *> maxLimitSwitch)
+      : m_minLimitSwitch{minLimitSwitch},
+        m_maxLimitSwitch{maxLimitSwitch},
+        m_controller{controller},
+        m_name{name} {}
+
+ protected:
+  std::optional<frc::DigitalInput *> m_minLimitSwitch;
+  std::optional<frc::DigitalInput *> m_maxLimitSwitch;
+  Controller &m_controller;
+  std::string m_name;
+};
+
+template <template <typename TController, typename TEncoder> class Controller>
+class RotationalSingleAxisSubsystem
+    : public BaseSingleAxisSubsystem<Controller, units::degree_t,
+                                     units::degrees_per_second_t> {
+ public:
+  RotationalSingleAxisSubsystem(
+      std::string name, Controller &controller,
+      SingleAxisConfig<units::degree_t, units::degrees_per_second_t> config,
+      std::optional<frc::DigitalInput *> minLimitSwitch,
+      std::optional<frc::DigitalInput *> maxLimitSwitch)
+      : BaseSingleAxisSubsystem2{name, controller, config, minLimitSwitch,
+                                 maxLimitSwitch} {}
+};
+
+template <template <typename TController, typename TEncoder> class Controller>
+class LinearSingleAxisSubsystem
+    : public BaseSingleAxisSubsystem<Controller, units::meter_t,
+                                     units::meters_per_second_t> {
+ public:
+  LinearSingleAxisSubsystem(
+      std::string name, Controller &controller,
+      SingleAxisConfig<units::meter_t, units::meters_per_second_t> config,
+      std::optional<frc::DigitalInput *> minLimitSwitch,
+      std::optional<frc::DigitalInput *> maxLimitSwitch)
+      : BaseSingleAxisSubsystem2{name, controller, config, minLimitSwitch,
+                                 maxLimitSwitch} {}
+};
+
+class WristSubsystem
+    : public RotationalSingleAxisSubsystem<RevPidMotorController> {
+ public:
+  WristSubsystem()
+      : RotationalSingleAxisSubsystem{"Wrist", speakerUpperController, m_config,
+                                      &m_minLimit, std::nullopt} {}
+
+ private:
+  SingleAxisConfig<units::degree_t, units::degrees_per_second_t> m_config = {
+      .pid = frc::PIDController{1, 0, 0},
+      .minDistance = 0_deg,
+      .maxDistance = 100_deg,
+      .distancePerRevolution = 10_deg,
+      .velocityScalar = 1};
+  frc::DigitalInput m_minLimit = frc::DigitalInput{4};
+  rev::CANSparkFlex m_speakerUpperSpinnyBoi{
+      CANSparkMaxConstants::kSpeakerUpperSpinnyBoiId,
+      rev::CANSparkLowLevel::MotorType::kBrushless};
+  rev::SparkPIDController m_speakerUpperPidController =
+      m_speakerUpperSpinnyBoi.GetPIDController();
+  rev::SparkRelativeEncoder m_enc = m_speakerUpperSpinnyBoi.GetEncoder();
+  PidSettings speakerPidSettings = {.p = ScoringPID::kSpeakerP,
+                                    .i = ScoringPID::kSpeakerI,
+                                    .d = ScoringPID::kSpeakerD,
+                                    .iZone = ScoringPID::kSpeakerIZone,
+                                    .ff = ScoringPID::kSpeakerFF};
+  PidMotorController<rev::SparkPIDController, rev::SparkRelativeEncoder>
+      speakerUpperController{"Speaker Upper", m_speakerUpperPidController,
+                             m_enc, speakerPidSettings, kMaxSpinRpm};
+};
+
+static WristSubsystem m_wrist;
 
 template <typename Motor, typename Encoder>
 class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
@@ -211,8 +306,10 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
         return;
       }
 
-      ShuffleboardLogger::getInstance().logVerbose(_prefix, "amperage %f", _motor.GetOutputCurrent(), "");
-      ConsoleLogger::getInstance().logVerbose(_prefix, "amperage %f", _motor.GetOutputCurrent(), "");
+      ShuffleboardLogger::getInstance().logVerbose(
+          _prefix, "amperage %f", _motor.GetOutputCurrent(), "");
+      ConsoleLogger::getInstance().logVerbose(_prefix, "amperage %f",
+                                              _motor.GetOutputCurrent(), "");
 
       RunMotorSpeed(clampedRes);
     }

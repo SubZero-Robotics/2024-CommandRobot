@@ -89,12 +89,18 @@ class ScoringSubsystem : public frc2::SubsystemBase {
 
   rev::SparkPIDController m_speakerUpperPidController =
       m_speakerUpperSpinnyBoi.GetPIDController();
+  rev::SparkRelativeEncoder m_speakerUpperEnc =
+      m_speakerUpperSpinnyBoi.GetEncoder();
   rev::SparkPIDController m_speakerLowerPidController =
       m_speakerLowerSpinnyBoi.GetPIDController();
+  rev::SparkRelativeEncoder m_speakerLowerEnc =
+      m_speakerLowerSpinnyBoi.GetEncoder();
   rev::SparkPIDController m_ampUpperPidController =
       m_ampUpperSpinnyBoi.GetPIDController();
+  rev::SparkRelativeEncoder m_ampUpperEnc = m_ampUpperSpinnyBoi.GetEncoder();
   rev::SparkPIDController m_ampLowerPidController =
       m_ampLowerSpinnyBoi.GetPIDController();
+  rev::SparkRelativeEncoder m_ampLowerEnc = m_ampLowerSpinnyBoi.GetEncoder();
 
   PidSettings speakerPidSettings = {.p = ScoringPID::kSpeakerP,
                                     .i = ScoringPID::kSpeakerI,
@@ -108,19 +114,23 @@ class ScoringSubsystem : public frc2::SubsystemBase {
                                 .iZone = ScoringPID::kAmpIZone,
                                 .ff = ScoringPID::kAmpFF};
 
-  PidMotorController speakerUpperController{"Speaker Upper",
-                                            m_speakerUpperPidController,
-                                            speakerPidSettings, kMaxSpinRpm};
+  PidMotorController<rev::SparkPIDController, rev::SparkRelativeEncoder>
+      speakerUpperController{"Speaker Upper", m_speakerUpperPidController,
+                             m_speakerUpperEnc, speakerPidSettings,
+                             kMaxSpinRpm};
 
-  PidMotorController speakerLowerController{"Speaker Lower",
-                                            m_speakerLowerPidController,
-                                            speakerPidSettings, kMaxSpinRpm};
+  PidMotorController<rev::SparkPIDController, rev::SparkRelativeEncoder>
+      speakerLowerController{"Speaker Lower", m_speakerLowerPidController,
+                             m_speakerLowerEnc, speakerPidSettings,
+                             kMaxSpinRpm};
 
-  PidMotorController ampUpperController{"Amp Upper", m_ampUpperPidController,
-                                        ampPidSettings, kMaxSpinRpm};
+  PidMotorController<rev::SparkPIDController, rev::SparkRelativeEncoder>
+      ampUpperController{"Amp Upper", m_ampUpperPidController, m_ampUpperEnc,
+                         ampPidSettings, kMaxSpinRpm};
 
-  PidMotorController ampLowerController{"Amp Lower", m_ampLowerPidController,
-                                        ampPidSettings, kMaxSpinRpm};
+  PidMotorController<rev::SparkPIDController, rev::SparkRelativeEncoder>
+      ampLowerController{"Amp Lower", m_ampLowerPidController, m_ampLowerEnc,
+                         ampPidSettings, kMaxSpinRpm};
 
   PidMotorControllerPair speakerPidPair{"Speaker", speakerUpperController,
                                         speakerLowerController};
@@ -131,7 +141,8 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   // PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
   //   PidMotorControllerPairTuner speakerTuner{speakerPidPair};
   PidMotorControllerPairTuner ampTuner{ampPidPair};
-  PidMotorControllerTuner speakerUpperTuner{speakerUpperController};
+  PidMotorControllerTuner<RevPidMotorController> speakerUpperTuner{
+      speakerUpperController};
 
   double m_ampUpperVelocity;
   double m_ampLowerVelocity;
