@@ -32,6 +32,8 @@ struct SingleAxisConfig2 {
   TDistance distancePerRevolution;
   double velocityScalar;
   double pidResultMultiplier;
+  frc::DigitalInput *minLimitSwitch;
+  frc::DigitalInput *maxLimitSwitch;
   bool reversed;
 };
 
@@ -42,11 +44,9 @@ class BaseSingleAxisSubsystem2
  public:
   BaseSingleAxisSubsystem2(
       std::string name, PidMotorController<TController, TEncoder> &controller,
-      SingleAxisConfig2<TDistance, TVelocity> config,
-      std::optional<frc::DigitalInput *> minLimitSwitch,
-      std::optional<frc::DigitalInput *> maxLimitSwitch)
-      : m_minLimitSwitch{minLimitSwitch},
-        m_maxLimitSwitch{maxLimitSwitch},
+      SingleAxisConfig2<TDistance, TVelocity> config)
+      : m_minLimitSwitch{config.minLimitSwitch},
+        m_maxLimitSwitch{config.maxLimitSwitch},
         m_controller{controller},
         m_config{config},
         m_name{name} {}
@@ -66,12 +66,10 @@ class RotationalSingleAxisSubsystem
  public:
   RotationalSingleAxisSubsystem(
       std::string name, PidMotorController<TController, TEncoder> &controller,
-      SingleAxisConfig2<units::degree_t, units::degrees_per_second_t> config,
-      std::optional<frc::DigitalInput *> minLimitSwitch,
-      std::optional<frc::DigitalInput *> maxLimitSwitch)
+      SingleAxisConfig2<units::degree_t, units::degrees_per_second_t> config)
       : BaseSingleAxisSubsystem2<TController, TEncoder, units::degree_t,
                                  units::degrees_per_second_t>{
-            name, controller, config, minLimitSwitch, maxLimitSwitch} {}
+            name, controller, config} {}
 };
 
 template <typename TController, typename TEncoder>
@@ -81,12 +79,10 @@ class LinearSingleAxisSubsystem
  public:
   LinearSingleAxisSubsystem(
       std::string name, PidMotorController<TController, TEncoder> &controller,
-      SingleAxisConfig2<units::meter_t, units::meters_per_second_t> config,
-      std::optional<frc::DigitalInput *> minLimitSwitch,
-      std::optional<frc::DigitalInput *> maxLimitSwitch)
+      SingleAxisConfig2<units::meter_t, units::meters_per_second_t> config)
       : BaseSingleAxisSubsystem2<TController, TEncoder, units::meter_t,
                                  units::meters_per_second_t>{
-            name, controller, config, minLimitSwitch, maxLimitSwitch} {}
+            name, controller, config} {}
 };
 
 template <typename Motor, typename Encoder>

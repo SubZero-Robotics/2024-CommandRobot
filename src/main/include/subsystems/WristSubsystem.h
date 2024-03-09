@@ -11,7 +11,7 @@ class WristSubsystem
   WristSubsystem()
       : RotationalSingleAxisSubsystem<rev::SparkPIDController,
                                       rev::SparkRelativeEncoder>{
-            "Wrist", upperController, m_config, &m_minLimit, std::nullopt} {}
+            "Wrist", upperController, m_config} {}
 
  private:
   SingleAxisConfig2<units::degree_t, units::degrees_per_second_t> m_config = {
@@ -21,8 +21,9 @@ class WristSubsystem
       .distancePerRevolution = 10_deg,
       .velocityScalar = 1.0,
       .pidResultMultiplier = 1.0,
+      .minLimitSwitch = nullptr,
+      .maxLimitSwitch = nullptr,
       .reversed = false};
-  frc::DigitalInput m_minLimit = frc::DigitalInput{4};
   rev::CANSparkMax m_SpinnyBoi{CANSparkMaxConstants::kSpeakerUpperSpinnyBoiId,
                                rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::SparkPIDController m_PidController = m_SpinnyBoi.GetPIDController();
