@@ -23,6 +23,7 @@
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 #include "utils/ConsoleLogger.h"
+#include "utils/GyroContainer.h"
 #include "utils/Vision.h"
 
 // For sim to work
@@ -114,6 +115,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
    */
   frc::Pose2d GetPose();
 
+  std::optional<IGyroContainer*> GetGyro();
+
   /**
    * Resets the odometry to the specified pose.
    *
@@ -165,8 +168,18 @@ class DriveSubsystem : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::Pigeon2 m_gyro2{CANSparkMaxConstants::kPigeonCanId2,
                                             "rio"};
 
-  // AHRS m_gyro{frc::SPI::Port::kMXP};
   frc::ADXRS450_Gyro m_gyro3;
+
+  PigeonGyroContainer m_gyroContainer1{m_gyro1, "First Pigeon"};
+  PigeonGyroContainer m_gyroContainer2{m_gyro2, "Second Pigeon"};
+  Adxrs450Gyro m_gyroContainer3{m_gyro3, "ADXRS450 Gyro"};
+
+  std::vector<IGyroContainer*> m_gyros = {
+      dynamic_cast<IGyroContainer*>(&m_gyroContainer1),
+      dynamic_cast<IGyroContainer*>(&m_gyroContainer2),
+      dynamic_cast<IGyroContainer*>(&m_gyroContainer3)};
+
+  // AHRS m_gyro{frc::SPI::Port::kMXP};
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
@@ -203,6 +216,10 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // Pose viewing
   frc::Field2d m_field;
   frc::Pose2d m_lastGoodPosition;
+
+  int m_lastGoodGyroIndex = 0;
+
+  frc::Rotation2d m_lastKnownRotation;
 
   Vision* m_vision;
 };

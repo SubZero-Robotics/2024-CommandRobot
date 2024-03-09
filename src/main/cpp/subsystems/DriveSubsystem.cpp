@@ -217,30 +217,12 @@ wpi::array<frc::SwerveModulePosition, 4U> DriveSubsystem::GetModulePositions()
 }
 
 frc::Rotation2d DriveSubsystem::GetHeading() {
-  frc::Rotation2d rotation;
-  if (m_gyro1.GetFaultField().GetStatus() == ctre::phoenix::StatusCode::OK) {
-    rotation = m_gyro1.GetRotation2d();
-  } else if (m_gyro2.GetFaultField().GetStatus() ==
-             ctre::phoenix::StatusCode::OK) {
-    ConsoleLogger::getInstance().logError(
-        "Gyro",
-        "Pigeon Gyro 1 has experienced fault '%s', using second pigeon gyro "
-        "instead",
-        m_gyro1.GetFaultField().GetStatus().GetName());
-    rotation = m_gyro2.GetRotation2d();
-  } else {
-    ConsoleLogger::getInstance().logError(
-        "Gyro",
-        "Pigeon Gyro 1 has experienced fault '%s' and Pigeon Gyro 2 has "
-        "expierenced fault '%s', using ADXRS450 gyro instead",
-        m_gyro1.GetFaultField().GetStatus().GetName(),
-        m_gyro2.GetFaultField().GetStatus().GetName());
-    rotation = m_gyro3.GetRotation2d();
+  auto gyro = GetGyro();
+  if (!gyro) {
+    return m_lastKnownRotation;
   }
-
-  // ConsoleLogger::getInstance().logVerbose("Gyro", "Rotation: %f",
-  //                                         rotation.Degrees().value());
-  return rotation;
+  m_lastKnownRotation = gyro.value()->GetRotation();
+  return gyro.value()->GetRotation();
 }
 
 void DriveSubsystem::ZeroHeading() {
@@ -260,4 +242,23 @@ void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
   m_lastGoodPosition = pose;
   poseEstimator.ResetPosition(GetHeading(), GetModulePositions(), pose);
   // ResetEncoders();
+}
+
+std::optional<IGyroContainer*> DriveSubsystem::GetGyro() {
+  for (int i = m_lastGoodGyroIndex; i < m_gyros.size(); i++) {
+    auto* gyro = m_gyros[i];
+    if (gyro->HasError()) {
+      ConsoleLogger::getInstance().logError(
+          "DriveSubsystem", "Gyro %s has had error '%s'.", gyro->GetName(),
+          gyro->GetStatusMessage());
+      m_lastGoodGyroIndex++;
+      continue;
+    }
+    return gyro;
+  }
+
+  ConsoleLogger::getInstance().logError(
+      "DriveSubsystem", "All gyros have failed. HELP US EVAN!!!!1!!1!%s", "");
+
+  return std::nullopt;
 }
