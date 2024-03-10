@@ -68,8 +68,17 @@ class RotationalSingleAxisSubsystem
       std::string name, PidMotorController<TController, TEncoder> &controller,
       SingleAxisConfig2<units::degree_t, units::degrees_per_second_t> config)
       : BaseSingleAxisSubsystem2<TController, TEncoder, units::degree_t,
-                                 units::degrees_per_second_t>{
-            name, controller, config} {}
+                                 units::degrees_per_second_t>{name, controller,
+                                                              config} {}
+
+  void UseState(State setpoint) override {
+    m_controller.SetReference(setpoint.position.to<double>(),
+                              rev::ControlType::kPosition);
+  }
+
+  void RunMotorSpeed(units::degrees_per_second_t speed, bool ignoreEncoder) {
+    m_controller.SetReference(speed.to<double>(), rev::ControlType::kVelocity);
+  }
 };
 
 template <typename TController, typename TEncoder>
@@ -81,8 +90,8 @@ class LinearSingleAxisSubsystem
       std::string name, PidMotorController<TController, TEncoder> &controller,
       SingleAxisConfig2<units::meter_t, units::meters_per_second_t> config)
       : BaseSingleAxisSubsystem2<TController, TEncoder, units::meter_t,
-                                 units::meters_per_second_t>{
-            name, controller, config} {}
+                                 units::meters_per_second_t>{name, controller,
+                                                             config} {}
 };
 
 template <typename Motor, typename Encoder>

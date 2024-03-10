@@ -32,7 +32,10 @@ class ISingleAxisSubsystem : public frc2::SubsystemBase {
 };
 
 template <typename TDistance, typename TVelocity>
-class ISingleAxisSubsystem2 : public frc2::SubsystemBase {
+class ISingleAxisSubsystem2
+    : public frc2::TrapezoidProfileSubsystem<TDistance> {
+  using State = typename frc2::TrapezoidProfileSubsystem<TDistance>::State;
+
  public:
   // Need controller input
   virtual void RunMotorSpeed(TVelocity speed, bool ignoreEncoder) {}
@@ -53,4 +56,5 @@ class ISingleAxisSubsystem2 : public frc2::SubsystemBase {
   virtual frc2::CommandPtr GetHomeCommand() {
     return frc2::InstantCommand([] {}).ToPtr();
   }
+  virtual void UseState(State setpoint) override{};
 };
