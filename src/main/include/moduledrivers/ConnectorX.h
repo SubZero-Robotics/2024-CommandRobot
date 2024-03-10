@@ -8,10 +8,10 @@
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SubsystemBase.h>
 #include <hal/SimDevice.h>
-#include <chrono>
-#include <thread>
 
+#include <chrono>
 #include <memory>
+#include <thread>
 
 #include "Constants.h"
 #include "utils/ConsoleLogger.h"
@@ -247,6 +247,10 @@ enum class PatternType {
   Breathe = 5,
   SineRoll = 6,
   Chase = 7,
+  AngryEyes = 8,
+  HappyEyes = 9,
+  BlinkingEyes = 10,
+  SurprisedEyes = 11,
 };
 
 enum class PinMode {

@@ -16,9 +16,9 @@ static const frc::Color8Bit kBlack{0x00, 0x00, 0x00};
 }  // namespace ColorConstants
 
 namespace LedConstants {
-constexpr ConnectorX::LedPort kIntakeLedPort = ConnectorX::LedPort::P1;
-constexpr ConnectorX::LedPort kSpeakerLedPort = ConnectorX::LedPort::P1;
-constexpr ConnectorX::LedPort kAmpLedPort = ConnectorX::LedPort::P1;
-constexpr ConnectorX::LedPort kStowLedPort = ConnectorX::LedPort::P1;
-constexpr ConnectorX::LedPort kIdleLedPort = ConnectorX::LedPort::P1;
+constexpr ConnectorX::LedPort kIntakeLedPort = ConnectorX::LedPort::P0;
+constexpr ConnectorX::LedPort kSpeakerLedPort = ConnectorX::LedPort::P0;
+constexpr ConnectorX::LedPort kAmpLedPort = ConnectorX::LedPort::P0;
+constexpr ConnectorX::LedPort kStowLedPort = ConnectorX::LedPort::P0;
+constexpr ConnectorX::LedPort kIdleLedPort = ConnectorX::LedPort::P0;
 }  // namespace LedConstants

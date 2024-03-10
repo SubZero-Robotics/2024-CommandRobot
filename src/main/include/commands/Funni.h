@@ -21,7 +21,7 @@ class GamepieceFunni
 
   void Initialize() override {
     m_leds->setOn();
-    m_leds->setPattern(ConnectorX::LedPort::P1,
+    m_leds->setPattern(ConnectorX::LedPort::P0,
                        ConnectorX::PatternType::RGBFade, false, 22);
   }
 

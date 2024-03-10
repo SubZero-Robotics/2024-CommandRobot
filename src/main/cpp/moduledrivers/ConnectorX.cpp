@@ -14,12 +14,12 @@ ConnectorX::ConnectorXBoard::ConnectorXBoard(uint8_t slaveAddress,
       {
           .on = false,
           .currentZoneIndex = 0,
-          .zones = {CachedZone({.offset = 0, .count = 60})},
+          .zones = {CachedZone({.offset = 0, .count = 43})},
       },
       {
           .on = false,
           .currentZoneIndex = 0,
-          .zones = {CachedZone({.offset = 0, .count = 60})},
+          .zones = {CachedZone({.offset = 0, .count = 257})},
       },
   };
 
@@ -75,8 +75,8 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
                                                         uint8_t zoneIndex,
                                                         bool reversed,
                                                         bool setReversed) {
-  // setLedPort(port);
-  // delaySeconds(kConnectorXDelay);
+  setLedPort(port);
+  delaySeconds(kConnectorXDelay);
   auto& currentPort = getCurrentCachedPort();
   auto& currentZone = getCurrentZone();
 
@@ -125,8 +125,8 @@ void ConnectorX::ConnectorXBoard::syncZones(LedPort port,
 
 void ConnectorX::ConnectorXBoard::createZones(
     LedPort port, std::vector<ConnectorX::Commands::NewZone>&& newZones) {
-  // setLedPort(port);
-  // delaySeconds(kConnectorXDelay);
+  setLedPort(port);
+  delaySeconds(kConnectorXDelay);
 
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::SetNewZones;
@@ -190,6 +190,14 @@ void ConnectorX::ConnectorXBoard::setOn() {
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::On;
     cmd.commandData.commandOn = {};
+
+    // TODO: move into a loop
+    setLedPort(LedPort::P0);
+    delaySeconds(kConnectorXDelay);
+    sendCommand(cmd);
+
+    setLedPort(LedPort::P1);
+    delaySeconds(kConnectorXDelay);
     sendCommand(cmd);
   }
 }
@@ -251,6 +259,7 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
   auto& zone = getCurrentZone();
   auto newColor = frc::Color8Bit(red, green, blue);
 
+  setLedPort(port);
   delaySeconds(kConnectorXDelay);
 
   ConsoleLogger::getInstance().logVerbose(

@@ -1,11 +1,13 @@
 #pragma once
 
+#include <frc/BuiltInAccelerometer.h>
 #include <frc/Notifier.h>
 #include <frc/util/Color8Bit.h>
 #include <frc2/command/DeferredCommand.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/WaitCommand.h>
+
 #include <chrono>
 #include <thread>
 
@@ -18,7 +20,8 @@ class LedSubsystem : public frc2::SubsystemBase {
  public:
   LedSubsystem() : m_connectorX(ConnectorXBoard(kLedAddress)) {
     ConsoleLogger::getInstance().logVerbose("LedSubsystem", "LEDs init%s", "");
-    createZones(LedPort::P1, std::move(m_ledZones));
+    createZones(LedPort::P0, std::move(m_ledZones0));
+    createZones(LedPort::P1, std::move(m_ledZones1));
     m_connectorX.setOn();
   }
 
@@ -40,6 +43,10 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr Climbing();
   frc2::CommandPtr Funni();
   frc2::CommandPtr Error();
+  frc2::CommandPtr AngryFace();
+  frc2::CommandPtr HappyFace();
+  frc2::CommandPtr BlinkingFace();
+  frc2::CommandPtr SurprisedFace();
 
   void IdlingAsync();
   void ErrorAsync();
@@ -51,6 +58,13 @@ class LedSubsystem : public frc2::SubsystemBase {
     RightClimber,
     RightEye,
     LeftEye,
+  };
+
+  enum class EyePattern {
+    Angry = 8,
+    Happy = 9,
+    Blinking = 10,
+    Surprised = 11,
   };
 
   frc2::CommandPtr setZoneColorPattern(LedZone zone, LedPort port,
@@ -66,16 +80,25 @@ class LedSubsystem : public frc2::SubsystemBase {
 
   void delaySeconds(units::second_t delaySeconds);
 
+  void showFace(EyePattern pattern);
+
   void createZones(LedPort port, std::vector<Commands::NewZone> &&zones);
 
   void syncAllZones();
 
   ConnectorXBoard m_connectorX;
+
+  frc::BuiltInAccelerometer m_accel;
+
   // TODO: make into a constant elsewhere
   const uint16_t m_totalLeds = 41;
-  std::vector<Commands::NewZone> m_ledZones = {
-      {.offset = 0, .count = 2048},    {.offset = 2048, .count = 3840},
-      {.offset = 5888, .count = 2048}, {.offset = 7936, .count = 1280},
-      {.offset = 9216, .count = 1280},
+  std::vector<Commands::NewZone> m_ledZones0 = {
+      {.offset = 0, .count = 9},  {.offset = 9, .count = 15},
+      {.offset = 24, .count = 8}, {.offset = 32, .count = 5},
+      {.offset = 37, .count = 5},
+  };
+  std::vector<Commands::NewZone> m_ledZones1 = {
+      {.offset = 0, .count = 1},
+      {.offset = 1, .count = 256},
   };
 };

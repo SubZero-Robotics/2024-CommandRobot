@@ -5,7 +5,15 @@
 #include "ColorConstants.h"
 #include "utils/ConsoleLogger.h"
 
-void LedSubsystem::Periodic() {}
+// TODO: Move to Constants.h
+constexpr double kAccelThreshold = 7;
+
+void LedSubsystem::Periodic() {
+  if (abs(m_accel.GetX()) >= kAccelThreshold ||
+      abs(m_accel.GetY()) >= kAccelThreshold) {
+    RunOnce([this] { showFace(EyePattern::Surprised); });
+  }
+}
 
 void LedSubsystem::SimulationPeriodic() {}
 
@@ -395,6 +403,42 @@ void LedSubsystem::ErrorAsync() {
                          });
 }
 
+frc2::CommandPtr LedSubsystem::AngryFace() {
+  return frc2::InstantCommand([this] {
+           ConsoleLogger::getInstance().logInfo("LedSubsystem",
+                                                "Setting LEDs to %s", "Angry");
+           showFace(EyePattern::Angry);
+         })
+      .ToPtr();
+}
+
+frc2::CommandPtr LedSubsystem::HappyFace() {
+  return frc2::InstantCommand([this] {
+           ConsoleLogger::getInstance().logInfo("LedSubsystem",
+                                                "Setting LEDs to %s", "Happy");
+           showFace(EyePattern::Happy);
+         })
+      .ToPtr();
+}
+
+frc2::CommandPtr LedSubsystem::BlinkingFace() {
+  return frc2::InstantCommand([this] {
+           ConsoleLogger::getInstance().logInfo(
+               "LedSubsystem", "Setting LEDs to %s", "Blinking");
+           showFace(EyePattern::Blinking);
+         })
+      .ToPtr();
+}
+
+frc2::CommandPtr LedSubsystem::SurprisedFace() {
+  return frc2::InstantCommand([this] {
+           ConsoleLogger::getInstance().logInfo(
+               "LedSubsystem", "Setting LEDs to %s", "Surprised");
+           showFace(EyePattern::Surprised);
+         })
+      .ToPtr();
+}
+
 frc2::CommandPtr LedSubsystem::setZoneColorPattern(LedZone zone, LedPort port,
                                                    frc::Color8Bit color,
                                                    PatternType pattern,
@@ -453,7 +497,13 @@ void LedSubsystem::delaySeconds(units::second_t delaySeconds) {
 
 void LedSubsystem::createZones(LedPort port,
                                std::vector<Commands::NewZone> &&zones) {
-  m_connectorX.createZones(LedPort::P1, std::move(zones));
+  m_connectorX.createZones(port, std::move(zones));
+}
+
+void LedSubsystem::showFace(EyePattern pattern) {
+  setZoneColorPatternAsync(LedZone::Back, LedPort::P1, ColorConstants::kRed,
+                           static_cast<PatternType>(pattern), false, 500,
+                           false);
 }
 
 void LedSubsystem::syncAllZones() {
