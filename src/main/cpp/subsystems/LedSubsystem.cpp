@@ -465,3 +465,28 @@ void LedSubsystem::syncAllZones() {
        (uint8_t)LedZone::RightClimber, (uint8_t)LedZone::RightEye,
        (uint8_t)LedZone::LeftEye});
 }
+
+void LedSubsystem::setMatrixPattern(MatrixPattern pattern) {
+  switch (pattern) {
+    case MatrixPattern::AngryEyes:
+      m_connectorX.setPattern(ConnectorX::LedPort::P1,
+                              ConnectorX::PatternType::AngryEyes, false, -1, 0,
+                              false);
+      break;
+    case MatrixPattern::HappyEyes:
+      m_connectorX.setPattern(ConnectorX::LedPort::P1,
+                              ConnectorX::PatternType::HappyEyes, false, -1, 0,
+                              false);
+      break;
+    case MatrixPattern::BlinkingEyes:
+      m_connectorX.setPattern(ConnectorX::LedPort::P1,
+                              ConnectorX::PatternType::BlinkingEyes, false, -1,
+                              0, false);
+      break;
+    case MatrixPattern::SurprisedEyes:
+      m_connectorX.setPattern(ConnectorX::LedPort::P1,
+                              ConnectorX::PatternType::SurprisedEyes, false, -1,
+                              0, false);
+      break;
+  }
+}

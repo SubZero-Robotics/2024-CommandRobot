@@ -6,6 +6,7 @@
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/WaitCommand.h>
+
 #include <chrono>
 #include <thread>
 
@@ -53,6 +54,13 @@ class LedSubsystem : public frc2::SubsystemBase {
     LeftEye,
   };
 
+  enum class MatrixPattern {
+    AngryEyes = 0,
+    HappyEyes,
+    BlinkingEyes,
+    SurprisedEyes,
+  };
+
   frc2::CommandPtr setZoneColorPattern(LedZone zone, LedPort port,
                                        frc::Color8Bit color,
                                        PatternType pattern,
@@ -69,6 +77,8 @@ class LedSubsystem : public frc2::SubsystemBase {
   void createZones(LedPort port, std::vector<Commands::NewZone> &&zones);
 
   void syncAllZones();
+
+  void setMatrixPattern(MatrixPattern pattern);
 
   ConnectorXBoard m_connectorX;
   // TODO: make into a constant elsewhere
