@@ -53,15 +53,25 @@ void IntakeSubsystem::Feed(ScoringDirection direction) {
   }
 }
 
-bool IntakeSubsystem::NotePresentLower() { return !m_lowerBeamBreak.Get(); }
+bool IntakeSubsystem::NotePresentLowerPodium() {
+  return !m_lowerPodiumBeamBreak.Get();
+}
 
-bool IntakeSubsystem::NotePresentUpper() { return !m_upperBeamBreak.Get(); }
+bool IntakeSubsystem::NotePresentUpperAmp() { return !m_upperAmpBeamBreak.Get(); }
 
-bool IntakeSubsystem::NotePresentAmp() { return !m_ampBeamBreak.Get(); }
+bool IntakeSubsystem::NotePresentLowerAmp() { return !m_lowerAmpBeamBreak.Get(); }
 
-bool IntakeSubsystem::NotePresentPodium() { return !m_podiumBeamBreak.Get(); }
+bool IntakeSubsystem::NotePresentUpperPodium() {
+  return !m_upperPodiumBeamBreak.Get();
+}
+
+bool IntakeSubsystem::NotePresentCenter() { return !m_centerBeamBreak.Get(); }
+
+bool IntakeSubsystem::NotePresentUpper() { return NotePresentUpperAmp() || NotePresentUpperPodium(); }
+
+bool IntakeSubsystem::NotePresentLower() { return NotePresentLowerAmp() || NotePresentLowerPodium(); }
 
 bool IntakeSubsystem::NotePresent() {
-  return NotePresentUpper() || NotePresentLower() || NotePresentAmp() ||
-         NotePresentPodium();
+  return NotePresentUpperAmp() || NotePresentLowerPodium() ||
+         NotePresentLowerAmp() || NotePresentUpperPodium() || NotePresentCenter();
 }

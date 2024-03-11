@@ -307,10 +307,12 @@ constexpr double kOutakeSpeed = 0.5;
 
 constexpr double kSecondaryIntakeOutSpeed = 0.05;
 
-constexpr uint8_t kUpperBeamBreakDigitalPort = 3;
-constexpr uint8_t kLowerBeamBreakDigitalPort = 2;
-constexpr uint8_t kPodiumBeamBreakDigitalPort = 4;
-constexpr uint8_t kAmpBeamBreakDigitalPort = 5;
+
+constexpr uint8_t kCenterBeamBreakDigitalPort = 1;
+constexpr uint8_t kLowerPodiumBeamBreakDigitalPort = 0;
+constexpr uint8_t kLowerampBeamBreakDigitalPort = 2;
+constexpr uint8_t kUpperPodiumBeamBreakDigitalPort = 4;
+constexpr uint8_t kUpperAmpBeamBreakDigitalPort = 3;
 
 constexpr units::revolutions_per_minute_t kMaxRpm = 5676_rpm;
 
