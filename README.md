@@ -101,6 +101,16 @@ Following the WPILib command based structure we have broken our robot up into a 
 
 \* = Inverted
 
+## Digital Input Ports
+
+| Ports |            device            |
+|   2   | Lower Podium Side Beam Break |
+|   3   |       Center Beam Break      |
+|   4   |   Lower Amp Side Beam Break  |
+|   5   |   Upper Amp Side Beam Break  |
+|   6   | Upper Podium Side Beam Break |
+
+
 ## Network Map
 
 | Device  |             Address              |
