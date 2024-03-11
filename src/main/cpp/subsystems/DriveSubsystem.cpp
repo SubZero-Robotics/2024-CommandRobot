@@ -70,10 +70,10 @@ void DriveSubsystem::SimulationPeriodic() {
   frc::ChassisSpeeds chassisSpeeds = m_driveKinematics.ToChassisSpeeds(
       m_frontLeft.GetState(), m_frontRight.GetState(), m_rearLeft.GetState(),
       m_rearRight.GetState());
-  m_gyroSimAngle.Set(m_gyro.GetAngle() +
+  m_gyroSimAngle.Set(m_gyro1.GetAngle() +
                      (chassisSpeeds.omega.convert<units::deg_per_s>().value() *
                       DriveConstants::kLoopTime.value()));
-  poseEstimator.Update(-m_gyro.GetRotation2d(), GetModulePositions());
+  poseEstimator.Update(-GetHeading().Degrees(), GetModulePositions());
 
   m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
 };
@@ -87,8 +87,8 @@ void DriveSubsystem::Periodic() {
     // ConsoleLogger::getInstance().logInfo("DriveSubsystem", "Gyro rate = %f",
 
     //                                      m_gyro.GetRate());
-    poseEstimator.UpdateWithTime(frc::Timer::GetFPGATimestamp(),
-                                 m_gyro.GetRotation2d(), GetModulePositions());
+    poseEstimator.UpdateWithTime(frc::Timer::GetFPGATimestamp(), GetHeading(),
+                                 GetModulePositions());
     logDrivebase();
 
     auto visionPoses = m_vision->UpdateEstimatedGlobalPose(poseEstimator);
@@ -110,7 +110,8 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   auto dif = now - driveLoopTime;
 
   if (dif > 30_ms) {
-    ConsoleLogger::getInstance().logVerbose("EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
+    ConsoleLogger::getInstance().logVerbose(
+        "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
   }
 
   auto states =
@@ -119,7 +120,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
                               xSpeed * DriveConstants::kMaxSpeed.value(),
                               ySpeed * DriveConstants::kMaxSpeed.value(),
                               rot * DriveConstants::kMaxAngularSpeed.value(),
-                              m_gyro.GetRotation2d())
+                              GetHeading())
                         : frc::ChassisSpeeds{xSpeed, ySpeed, rot},
           dif));
 
@@ -215,13 +216,41 @@ wpi::array<frc::SwerveModulePosition, 4U> DriveSubsystem::GetModulePositions()
           m_rearLeft.GetPosition(), m_rearRight.GetPosition()};
 }
 
-units::degree_t DriveSubsystem::GetHeading() {
-  return m_gyro.GetRotation2d().Degrees();
+frc::Rotation2d DriveSubsystem::GetHeading() {
+  frc::Rotation2d rotation;
+  if (m_gyro1.GetFaultField().GetStatus() == ctre::phoenix::StatusCode::OK) {
+    rotation = m_gyro1.GetRotation2d();
+  } else if (m_gyro2.GetFaultField().GetStatus() ==
+             ctre::phoenix::StatusCode::OK) {
+    ConsoleLogger::getInstance().logError(
+        "Gyro",
+        "Pigeon Gyro 1 has experienced fault '%s', using second pigeon gyro "
+        "instead",
+        m_gyro1.GetFaultField().GetStatus().GetName());
+    rotation = m_gyro2.GetRotation2d();
+  } else {
+    ConsoleLogger::getInstance().logError(
+        "Gyro",
+        "Pigeon Gyro 1 has experienced fault '%s' and Pigeon Gyro 2 has "
+        "expierenced fault '%s', using ADXRS450 gyro instead",
+        m_gyro1.GetFaultField().GetStatus().GetName(),
+        m_gyro2.GetFaultField().GetStatus().GetName());
+    rotation = m_gyro3.GetRotation2d();
+  }
+
+  // ConsoleLogger::getInstance().logVerbose("Gyro", "Rotation: %f",
+  //                                         rotation.Degrees().value());
+  return rotation;
 }
 
-void DriveSubsystem::ZeroHeading() { m_gyro.Reset(); }
+void DriveSubsystem::ZeroHeading() {
+  m_gyro1.Reset();
+  m_gyro2.Reset();
+  m_gyro3.Reset();
+}
 
-double DriveSubsystem::GetTurnRate() { return m_gyro.GetRate(); }
+// TODO: Return the rate of the currently used gyro
+double DriveSubsystem::GetTurnRate() { return m_gyro1.GetRate(); }
 
 frc::Pose2d DriveSubsystem::GetPose() {
   return poseEstimator.GetEstimatedPosition();

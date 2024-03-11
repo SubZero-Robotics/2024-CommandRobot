@@ -59,20 +59,20 @@ class IntakeSubsystem : public frc2::SubsystemBase {
   frc::DigitalInput m_lowerAmpBeamBreak{
       IntakingConstants::kLowerampBeamBreakDigitalPort};
 
-  rev::SparkPIDController m_rightIntakeSpinnyBoyPID =
-      m_rightIntakeSpinnyBoy.GetPIDController();
-  rev::SparkPIDController m_leftIntakeSpinnyBoyPID =
-      m_leftIntakeSpinnyBoy.GetPIDController();
+  //   rev::SparkPIDController m_rightIntakeSpinnyBoyPID =
+  //       m_rightIntakeSpinnyBoy.GetPIDController();
+  //   rev::SparkPIDController m_leftIntakeSpinnyBoyPID =
+  //       m_leftIntakeSpinnyBoy.GetPIDController();
 
-  PidSettings intakePidSettings = {.p = IntakingPID::kIntakingP,
-                                   .i = IntakingPID::kIntakingI,
-                                   .d = IntakingPID::kIntakingD,
-                                   .iZone = IntakingPID::kIntakingIZone,
-                                   .ff = IntakingPID::kIntakingFF};
+  //   PidSettings intakePidSettings = {.p = IntakingPID::kIntakingP,
+  //                                    .i = IntakingPID::kIntakingI,
+  //                                    .d = IntakingPID::kIntakingD,
+  //                                    .iZone = IntakingPID::kIntakingIZone,
+  //                                    .ff = IntakingPID::kIntakingFF};
 
-  PidMotorControllerPair intakeMotors{"Intake", m_leftIntakeSpinnyBoyPID,
-                                      m_rightIntakeSpinnyBoyPID,
-                                      intakePidSettings, kMaxRpm};
+  //   PidMotorControllerPair intakeMotors{"Intake", m_leftIntakeSpinnyBoyPID,
+  //                                       m_rightIntakeSpinnyBoyPID,
+  //                                       intakePidSettings, kMaxRpm};
 
   //   PidMotorControllerPairTuner intakeTuner{intakeMotors};
 };
