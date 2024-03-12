@@ -59,7 +59,7 @@ class PidMotorController {
                               rev::CANSparkBase::ControlType::kPosition);
   }
 
-  void ResetEncoders() { m_encoder.SetPosition(0); }
+  virtual void ResetEncoders() = 0;
 
   double GetEncoderPosition() { return m_encoder.GetPosition(); }
 
@@ -109,11 +109,42 @@ class PidMotorController {
 
   const std::string m_shuffleboardName;
 
- private:
+ protected:
   TController &m_controller;
   TEncoder &m_encoder;
   PidSettings m_settings;
   const units::revolutions_per_minute_t m_maxRpm;
+};
+
+template <typename TController>
+class RevAbsolutePidController
+    : public PidMotorController<TController, rev::SparkAbsoluteEncoder> {
+ public:
+  RevAbsolutePidController(std::string name, TController &controller,
+                           rev::SparkAbsoluteEncoder &encoder,
+                           PidSettings pidSettings,
+                           units::revolutions_per_minute_t maxRpm)
+      : PidMotorController<TController, rev::SparkAbsoluteEncoder>{
+            name, controller, encoder, pidSettings, maxRpm} {}
+
+  void ResetEncoders() override {}
+};
+
+template <typename TController>
+class RevRelativePidController
+    : public PidMotorController<TController, rev::SparkRelativeEncoder> {
+ public:
+  RevRelativePidController(std::string name, TController &controller,
+                           rev::SparkRelativeEncoder &encoder,
+                           PidSettings pidSettings,
+                           units::revolutions_per_minute_t maxRpm)
+      : PidMotorController<TController, rev::SparkRelativeEncoder>{
+            name, controller, encoder, pidSettings, maxRpm} {}
+
+  void ResetEncoders() override {
+    PidMotorController<TController, rev::SparkRelativeEncoder>::m_encoder
+        .SetPosition(0);
+  }
 };
 
 template <typename TController, typename TEncoder>

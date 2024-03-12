@@ -114,35 +114,35 @@ class ScoringSubsystem : public frc2::SubsystemBase {
                                 .iZone = ScoringPID::kAmpIZone,
                                 .ff = ScoringPID::kAmpFF};
 
-  PidMotorController<rev::SparkPIDController, rev::SparkRelativeEncoder>
-      speakerUpperController{"Speaker Upper", m_speakerUpperPidController,
-                             m_speakerUpperEnc, speakerPidSettings,
-                             kMaxSpinRpm};
+  RevRelativePidController<rev::SparkPIDController> speakerUpperController{
+      "Speaker Upper", m_speakerUpperPidController, m_speakerUpperEnc,
+      speakerPidSettings, kMaxSpinRpm};
 
-  PidMotorController<rev::SparkPIDController, rev::SparkRelativeEncoder>
-      speakerLowerController{"Speaker Lower", m_speakerLowerPidController,
-                             m_speakerLowerEnc, speakerPidSettings,
-                             kMaxSpinRpm};
+  RevRelativePidController<rev::SparkPIDController> speakerLowerController{
+      "Speaker Lower", m_speakerLowerPidController, m_speakerLowerEnc,
+      speakerPidSettings, kMaxSpinRpm};
 
-  PidMotorController<rev::SparkPIDController, rev::SparkRelativeEncoder>
-      ampUpperController{"Amp Upper", m_ampUpperPidController, m_ampUpperEnc,
-                         ampPidSettings, kMaxSpinRpm};
+  RevRelativePidController<rev::SparkPIDController> ampUpperController{
+      "Amp Upper", m_ampUpperPidController, m_ampUpperEnc, ampPidSettings,
+      kMaxSpinRpm};
 
-  PidMotorController<rev::SparkPIDController, rev::SparkRelativeEncoder>
-      ampLowerController{"Amp Lower", m_ampLowerPidController, m_ampLowerEnc,
-                         ampPidSettings, kMaxSpinRpm};
+  RevRelativePidController<rev::SparkPIDController> ampLowerController{
+      "Amp Lower", m_ampLowerPidController, m_ampLowerEnc, ampPidSettings,
+      kMaxSpinRpm};
 
-  PidMotorControllerPair<rev::SparkPIDController, rev::SparkRelativeEncoder> speakerPidPair{"Speaker", speakerUpperController,
-                                        speakerLowerController};
+  PidMotorControllerPair<rev::SparkPIDController, rev::SparkRelativeEncoder>
+      speakerPidPair{"Speaker", speakerUpperController, speakerLowerController};
 
-  PidMotorControllerPair<rev::SparkPIDController, rev::SparkRelativeEncoder> ampPidPair{"Amp", ampUpperController,
-                                    ampLowerController};
+  PidMotorControllerPair<rev::SparkPIDController, rev::SparkRelativeEncoder>
+      ampPidPair{"Amp", ampUpperController, ampLowerController};
 
   // PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
   //   PidMotorControllerPairTuner speakerTuner{speakerPidPair};
-  PidMotorControllerPairTuner<rev::SparkPIDController, rev::SparkRelativeEncoder> ampTuner{ampPidPair};
-  PidMotorControllerTuner<rev::SparkPIDController, rev::SparkRelativeEncoder> speakerUpperTuner{
-      speakerUpperController};
+  PidMotorControllerPairTuner<rev::SparkPIDController,
+                              rev::SparkRelativeEncoder>
+      ampTuner{ampPidPair};
+  PidMotorControllerTuner<rev::SparkPIDController, rev::SparkRelativeEncoder>
+      speakerUpperTuner{speakerUpperController};
 
   double m_ampUpperVelocity;
   double m_ampLowerVelocity;

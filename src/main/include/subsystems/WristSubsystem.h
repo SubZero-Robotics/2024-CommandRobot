@@ -6,11 +6,11 @@ using namespace ScoringConstants;
 // TODO: CHANGE THIS; FOR TESTING PURPOSES ONLY
 class WristSubsystem
     : public RotationalSingleAxisSubsystem<rev::SparkPIDController,
-                                           rev::SparkRelativeEncoder> {
+                                           rev::SparkAbsoluteEncoder> {
  public:
   WristSubsystem()
       : RotationalSingleAxisSubsystem<rev::SparkPIDController,
-                                      rev::SparkRelativeEncoder>{
+                                      rev::SparkAbsoluteEncoder>{
             "Wrist", upperController, m_config, 0.2_m} {}
 
  private:
@@ -27,13 +27,12 @@ class WristSubsystem
   rev::CANSparkMax m_SpinnyBoi{CANSparkMaxConstants::kSpeakerUpperSpinnyBoiId,
                                rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::SparkPIDController m_PidController = m_SpinnyBoi.GetPIDController();
-  rev::SparkRelativeEncoder m_enc = m_SpinnyBoi.GetEncoder();
+  rev::SparkAbsoluteEncoder m_enc = m_SpinnyBoi.GetAbsoluteEncoder();
   PidSettings speakerPidSettings = {.p = ScoringPID::kSpeakerP,
                                     .i = ScoringPID::kSpeakerI,
                                     .d = ScoringPID::kSpeakerD,
                                     .iZone = ScoringPID::kSpeakerIZone,
                                     .ff = ScoringPID::kSpeakerFF};
-  PidMotorController<rev::SparkPIDController, rev::SparkRelativeEncoder>
-      upperController{"Speaker Upper", m_PidController, m_enc,
-                      speakerPidSettings, kMaxSpinRpm};
+  RevAbsolutePidController<rev::SparkPIDController> upperController{
+      "Speaker Upper", m_PidController, m_enc, speakerPidSettings, kMaxSpinRpm};
 };
