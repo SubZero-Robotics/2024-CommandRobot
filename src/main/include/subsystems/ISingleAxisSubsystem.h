@@ -50,15 +50,15 @@ class ISingleAxisSubsystem2 {
     Distance_t distancePerRevolution;
     Velocity_t defaultSpeed;
     double velocityScalar;
-    double pidResultMultiplier;
     std::optional<frc::DigitalInput*> minLimitSwitch;
     std::optional<frc::DigitalInput*> maxLimitSwitch;
     bool reversed;
   };
 
-  // Need controller input
-  virtual void RunMotorSpeed(Velocity_t speed, bool ignoreEncoder = false) = 0;
-  virtual void RunMotorSpeed(double percentSpeed,
+  // Will disable position-based movements when called
+  virtual void RunMotorVelocity(Velocity_t speed, bool ignoreEncoder = false) = 0;
+  // Will disable position-based movements when called
+  virtual void RunMotorPercentage(double percentSpeed,
                              bool ignoreEncoder = false) = 0;
   virtual void RunMotorSpeedDefault() = 0;
   virtual void ResetEncoder() = 0;
@@ -71,7 +71,7 @@ class ISingleAxisSubsystem2 {
   virtual frc2::CommandPtr MoveToPositionRelative(Distance_t position) = 0;
   virtual frc2::CommandPtr Home() = 0;
   virtual bool IsEnabled() = 0;
-  virtual void Disable() = 0;
-  virtual void Enable() = 0;
+  virtual void DisablePid() = 0;
+  virtual void EnablePid() = 0;
   virtual void Stop() = 0;
 };

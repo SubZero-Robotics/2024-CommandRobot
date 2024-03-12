@@ -38,6 +38,27 @@ class BaseSingleAxisSubsystem2
       units::compound_unit<Velocity, units::inverse<units::seconds>>;
   using Acceleration_t = units::unit_t<Acceleration>;
 
+ protected:
+  bool IsMovementAllowed(double speed, bool ignoreEncoder = false) {
+    bool atMin = ignoreEncoder ? AtLimitSwitchMin() : AtHome();
+    bool atMax = ignoreEncoder ? AtLimitSwitchMax() : AtMax();
+
+    if (atMin) {
+      ConsoleLogger::getInstance().logVerbose(
+          m_name, "At minimum, movement = %d", speed >= 0);
+      return speed >= 0;
+    }
+
+    if (atMax) {
+      ConsoleLogger::getInstance().logVerbose(
+          m_name, "At maximum, movement = %d", speed <= 0);
+      return speed <= 0;
+    }
+
+    return true;
+  }
+
+ public:
   BaseSingleAxisSubsystem2(
       std::string name, PidMotorController<TController, TEncoder> &controller,
       ISingleAxisSubsystem2<TDistance>::SingleAxisConfig2 config)
@@ -48,20 +69,43 @@ class BaseSingleAxisSubsystem2
         m_controller{controller},
         m_config{config},
         m_name{name},
-        m_enabled{false} {}
+        m_pidEnabled{false} {}
 
   void Periodic() override {
     frc2::TrapezoidProfileSubsystem<TDistance>::Periodic();
+
+    if (!m_pidEnabled && !IsMovementAllowed(m_latestSpeed)) {
+      ConsoleLogger::getInstance().logInfo(
+          m_name, "Periodic: Movement with speed %f is not allowed",
+          m_latestSpeed);
+
+      Stop();
+    }
   }
+
+  virtual void RunMotorVelocity(Velocity_t speed,
+                                bool ignoreEncoder = false) = 0;
 
   void UseState(PidState setpoint) override {
     m_controller.RunToPosition(setpoint.position /
                                m_config.distancePerRevolution);
   }
 
-  void RunMotorSpeedDefault() override {}
+  void RunMotorSpeedDefault() override {
+    RunMotorVelocity(m_config.defaultSpeed);
+  }
 
-  void RunMotorSpeed(double percentSpeed, bool ignoreEncoder = false) override {
+  void RunMotorPercentage(double percentSpeed,
+                          bool ignoreEncoder = false) override {
+    if (!IsMovementAllowed(percentSpeed, ignoreEncoder)) {
+      ConsoleLogger::getInstance().logInfo(
+          m_name, "Movement with speed %f is not allowed", percentSpeed);
+      return;
+    }
+
+    ConsoleLogger::getInstance().logVerbose(m_name, "Running with speed = %f",
+                                            percentSpeed);
+    DisablePid();
     m_controller.RunWithVelocity(percentSpeed);
   }
 
@@ -69,18 +113,24 @@ class BaseSingleAxisSubsystem2
     return m_config.distancePerRevolution * m_controller.GetEncoderPosition();
   }
 
-  void Stop() override { RunMotorSpeed(0); }
-
-  void ResetEncoder() override { m_controller.ResetEncoders(); }
-
-  virtual Distance_t GetCurrentPosition() override {
-    return m_controller.GetEncoderPosition() * m_config.distancePerRevolution;
+  void Stop() override {
+    ConsoleLogger::getInstance().logInfo(m_name, "Stopping%s", "");
+    DisablePid();
+    m_controller.Stop();
   }
 
-  // TODO
-  bool AtHome() override { return false; }
+  void ResetEncoder() override {
+    ConsoleLogger::getInstance().logInfo(m_name, "Reset encoder%s", "");
+    m_controller.ResetEncoders();
+  }
 
-  bool AtMax() override { return false; }
+  bool AtHome() override {
+    return AtLimitSwitchMin() || GetCurrentPosition() <= m_config.minDistance;
+  }
+
+  bool AtMax() override {
+    return AtLimitSwitchMax() || GetCurrentPosition() >= m_config.maxDistance;
+  }
 
   bool AtLimitSwitchMin() override {
     if (m_minLimitSwitch && m_minLimitSwitch.value()) {
@@ -99,7 +149,18 @@ class BaseSingleAxisSubsystem2
   }
 
   frc2::CommandPtr MoveToPositionAbsolute(Distance_t position) override {
+    if (position < m_config.minDistance || position > m_config.maxDistance) {
+      ConsoleLogger::getInstance().logWarning(
+          m_name, "Attempting to move to position %f outside of boundary",
+          position.value());
+    }
+
+    ConsoleLogger::getInstance().logVerbose(
+        m_name, "Moving to absolute position %f", position.value());
+
     m_goalPosition = position;
+    EnablePid();
+
     return frc2::cmd::RunOnce(
         [this, position] {
           frc2::TrapezoidProfileSubsystem<TDistance>::SetGoal(position);
@@ -127,16 +188,16 @@ class BaseSingleAxisSubsystem2
         .ToPtr();
   }
 
-  bool IsEnabled() override { return m_enabled; }
+  bool IsEnabled() override { return m_pidEnabled; }
 
-  // TODO: Come back to this
-  void Disable() override {
-    m_enabled = false;
+  void DisablePid() override {
+    m_pidEnabled = false;
+    Stop();
     frc2::TrapezoidProfileSubsystem<TDistance>::Disable();
   }
 
-  void Enable() override {
-    m_enabled = true;
+  void EnablePid() override {
+    m_pidEnabled = true;
     frc2::TrapezoidProfileSubsystem<TDistance>::Enable();
   }
 
@@ -147,8 +208,9 @@ class BaseSingleAxisSubsystem2
   ISingleAxisSubsystem2<TDistance>::SingleAxisConfig2 m_config;
   std::string m_name;
   Distance_t m_goalPosition;
-  bool m_enabled;
+  bool m_pidEnabled;
   bool m_home;
+  double m_latestSpeed;
 };
 
 template <typename TController, typename TEncoder>
@@ -163,9 +225,18 @@ class RotationalSingleAxisSubsystem
                                  units::degree>{name, controller, config},
         m_armatureLength{armatureLength} {}
 
-  void RunMotorSpeed(units::degrees_per_second_t speed,
-                     bool ignoreEncoder = false) override {
-    m_controller.RunWithVelocity(speed);
+  void RunMotorVelocity(units::degrees_per_second_t speed,
+                        bool ignoreEncoder = false) override {
+    if (!BaseSingleAxisSubsystem2<TController, TEncoder, units::degree>::
+            IsMovementAllowed(speed.value(), ignoreEncoder)) {
+      return;
+    }
+
+    BaseSingleAxisSubsystem2<TController, TEncoder,
+                             units::degree>::DisablePid();
+
+    BaseSingleAxisSubsystem2<TController, TEncoder, units::degree>::m_controller
+        .RunWithVelocity(speed);
   }
 
  protected:
@@ -182,8 +253,10 @@ class LinearSingleAxisSubsystem
       : BaseSingleAxisSubsystem2<TController, TEncoder, units::meter>{
             name, controller, config} {}
 
-  void RunMotorSpeed(units::meters_per_second_t speed,
-                     bool ignoreEncoder = false) override {}
+  void RunMotorVelocity(units::meters_per_second_t speed,
+                        bool ignoreEncoder = false) override {
+    BaseSingleAxisSubsystem2<TController, TEncoder, units::meter>::DisablePid();
+  }
 };
 
 template <typename Motor, typename Encoder>

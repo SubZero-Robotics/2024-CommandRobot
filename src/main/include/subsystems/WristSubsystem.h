@@ -21,7 +21,6 @@ class WristSubsystem
       .distancePerRevolution = 360_deg,
       .defaultSpeed = 10_deg_per_s,
       .velocityScalar = 1.0,
-      .pidResultMultiplier = 1.0,
       .minLimitSwitch = std::nullopt,
       .maxLimitSwitch = std::nullopt,
       .reversed = false};
