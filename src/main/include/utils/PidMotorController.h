@@ -61,10 +61,7 @@ class PidMotorController {
 
   void ResetEncoders() { m_encoder.SetPosition(0); }
 
-  double GetEncoderPosition() {
-    // TODO:
-    return 0;
-  }
+  double GetEncoderPosition() { return m_encoder.GetPosition(); }
 
   /// @brief Stop the motor
   void Stop() { RunWithVelocity(0); }

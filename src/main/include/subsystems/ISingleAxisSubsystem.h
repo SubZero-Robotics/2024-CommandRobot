@@ -48,10 +48,11 @@ class ISingleAxisSubsystem2 {
     Distance_t minDistance;
     Distance_t maxDistance;
     Distance_t distancePerRevolution;
+    Velocity_t defaultSpeed;
     double velocityScalar;
     double pidResultMultiplier;
-    frc::DigitalInput *minLimitSwitch;
-    frc::DigitalInput *maxLimitSwitch;
+    std::optional<frc::DigitalInput*> minLimitSwitch;
+    std::optional<frc::DigitalInput*> maxLimitSwitch;
     bool reversed;
   };
 

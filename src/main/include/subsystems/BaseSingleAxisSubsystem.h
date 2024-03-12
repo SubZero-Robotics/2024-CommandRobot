@@ -65,6 +65,10 @@ class BaseSingleAxisSubsystem2
     m_controller.RunWithVelocity(percentSpeed);
   }
 
+  Distance_t GetCurrentPosition() override {
+    return m_config.distancePerRevolution * m_controller.GetEncoderPosition();
+  }
+
   void Stop() override { RunMotorSpeed(0); }
 
   void ResetEncoder() override { m_controller.ResetEncoders(); }
@@ -153,9 +157,19 @@ class RotationalSingleAxisSubsystem
  public:
   RotationalSingleAxisSubsystem(
       std::string name, PidMotorController<TController, TEncoder> &controller,
-      ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 config)
-      : BaseSingleAxisSubsystem2<TController, TEncoder, units::degree>{
-            name, controller, config} {}
+      ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 config,
+      units::meter_t armatureLength)
+      : BaseSingleAxisSubsystem2<TController, TEncoder,
+                                 units::degree>{name, controller, config},
+        m_armatureLength{armatureLength} {}
+
+  void RunMotorSpeed(units::degrees_per_second_t speed,
+                     bool ignoreEncoder = false) override {
+    m_controller.RunWithVelocity(speed);
+  }
+
+ protected:
+  units::meter_t m_armatureLength;
 };
 
 template <typename TController, typename TEncoder>
@@ -167,6 +181,9 @@ class LinearSingleAxisSubsystem
       ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 config)
       : BaseSingleAxisSubsystem2<TController, TEncoder, units::meter>{
             name, controller, config} {}
+
+  void RunMotorSpeed(units::meters_per_second_t speed,
+                     bool ignoreEncoder = false) override {}
 };
 
 template <typename Motor, typename Encoder>
