@@ -344,16 +344,16 @@ constexpr units::revolutions_per_minute_t kMaxSpinRpm = 6784_rpm;
 constexpr double kShuffleSpeed = 0.05;
 
 // Positive = clockwise
-constexpr double kVectorSpeed = -0.1;
+constexpr double kVectorSpeed = -0.4;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kAmpLowerSpeed = 0.254 * 1.15;  //.264
-constexpr double kAmpUpperSpeed = 0.168 * 1.15;  //.278
+constexpr double kAmpLowerSpeed = -0.254 * 1.15;  //.264
+constexpr double kAmpUpperSpeed = -0.168 * 1.15;  //.278
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSpeakerLowerSpeed = -1;
+constexpr double kSpeakerLowerSpeed = 1;
 constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
@@ -361,7 +361,7 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 constexpr double kSubwooferLowerSpeed = 0.75;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
-constexpr double kScoringOutakeUpperSpeed = -0.2;
+constexpr double kScoringOutakeUpperSpeed = 0.2;
 constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
 
 enum class ScoreState {
