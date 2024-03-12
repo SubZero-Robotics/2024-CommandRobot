@@ -5,6 +5,7 @@
 #include <frc/controller/PIDController.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/FunctionalCommand.h>
+#include <frc2/command/TrapezoidProfileSubsystem.h>
 #include <rev/CANSparkFlex.h>
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
@@ -49,7 +50,89 @@ class BaseSingleAxisSubsystem2
         m_maxLimitSwitch{config.maxLimitSwitch},
         m_controller{controller},
         m_config{config},
-        m_name{name} {}
+        m_name{name},
+        m_enabled{false} {}
+
+  void Periodic() override {}
+
+  void UseState(PidState setpoint) override {
+    m_controller.RunToPosition(setpoint.position /
+                               m_config.distancePerRevolution);
+  }
+
+  void RunMotorSpeedDefault(bool invertDirection) override {}
+
+  void RunMotorSpeed(double percentSpeed, bool ignoreEncoder = false) override {
+    m_controller.RunWithVelocity(percentSpeed);
+  }
+
+  void Stop() override { RunMotorSpeed(0); }
+
+  void ResetEncoder() override { m_controller.ResetEncoders(); }
+
+  virtual TDistance GetCurrentPosition() override {
+    return m_controller.GetEncoderPosition() * m_config.distancePerRevolution;
+  }
+
+  bool AtHome() override {}
+
+  bool AtMax() override {}
+
+  bool AtLimitSwitchMin() override {
+    if (m_minLimitSwitch && m_minLimitSwitch.value()) {
+      return !m_minLimitSwitch.value()->Get();
+    }
+
+    return false;
+  }
+
+  bool AtLimitSwitchMax() override {
+    if (m_maxLimitSwitch && m_maxLimitSwitch.value()) {
+      return !m_maxLimitSwitch.value()->Get();
+    }
+
+    return false;
+  }
+
+  frc2::CommandPtr MoveToPositionAbsolute(TDistance position) override {
+    m_goalPosition = position;
+    return frc2::cmd::RunOnce([this, position] { this->SetGoal(position); },
+                              {this})
+  }
+
+  frc2::CommandPtr MoveToPositionRelative(TDistance position) override {
+    return MoveToPositionAbsolute(m_goalPosition + position);
+  }
+
+  frc2::CommandPtr Home() override {
+    return frc2::FunctionalCommand(
+        // onInit
+        [this] { Stop(); },
+        // onExecute
+        [this] { RunMotorSpeedDefault(); },
+        // onEnd
+        [this](bool interrupted) {
+          Stop();
+          ResetEncoder();
+        },
+        // isFinished
+        [this] { return AtLimitSwitchMin(); }, {this})
+  }
+
+  bool IsEnabled() override { return m_enabled; }
+
+  // TODO: Come back to this
+  void Disable() override {
+    m_enabled = false;
+    frc2::TrapezoidProfileSubsystem<TDistance>::Disable();
+  }
+
+  void Enable() override {
+    m_enabled = true;
+    frc2::TrapezoidProfileSubsystem<TDistance>::Enable();
+  }
+
+  frc2::CommandPtr setTarget() {}
 
  protected:
   std::optional<frc::DigitalInput *> m_minLimitSwitch;
@@ -57,6 +140,9 @@ class BaseSingleAxisSubsystem2
   PidMotorController<TController, TEncoder> &m_controller;
   SingleAxisConfig2<TDistance, TVelocity> m_config;
   std::string m_name;
+  TDistance m_goalPosition;
+  bool m_enabled;
+  bool m_home;
 };
 
 template <typename TController, typename TEncoder>
@@ -70,15 +156,6 @@ class RotationalSingleAxisSubsystem
       : BaseSingleAxisSubsystem2<TController, TEncoder, units::degree_t,
                                  units::degrees_per_second_t>{name, controller,
                                                               config} {}
-
-  void UseState(State setpoint) override {
-    m_controller.SetReference(setpoint.position.to<double>(),
-                              rev::ControlType::kPosition);
-  }
-
-  void RunMotorSpeed(units::degrees_per_second_t speed, bool ignoreEncoder) {
-    m_controller.SetReference(speed.to<double>(), rev::ControlType::kVelocity);
-  }
 };
 
 template <typename TController, typename TEncoder>

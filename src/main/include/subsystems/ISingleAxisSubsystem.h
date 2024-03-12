@@ -34,27 +34,25 @@ class ISingleAxisSubsystem : public frc2::SubsystemBase {
 template <typename TDistance, typename TVelocity>
 class ISingleAxisSubsystem2
     : public frc2::TrapezoidProfileSubsystem<TDistance> {
-  using State = typename frc2::TrapezoidProfileSubsystem<TDistance>::State;
+  using PidState = typename frc::TrapezoidProfile<TDistance>::State;
 
  public:
   // Need controller input
-  virtual void RunMotorSpeed(TVelocity speed, bool ignoreEncoder) {}
-  virtual void RunMotorSpeedDefault(bool invertDirection) {}
-  virtual void RunMotorExternal(TVelocity speed, bool ignoreEncoder = false) {}
-  virtual void UpdateMovement() {}
-  virtual void ResetEncoder() {}
-  virtual double GetCurrentPosition() { return 0; }
-  virtual bool AtHome() { return false; }
-  virtual bool AtMax() { return false; }
-  virtual bool AtLimitSwitchHome() { return false; }
-  virtual bool AtLimitSwitchMax() { return false; }
-  virtual void MoveToPositionAbsolute(TDistance position) {}
-  virtual void MoveToPositionRelative(TDistance position) {}
-  virtual void Home() {}
-  virtual bool GetIsMovingToPosition() { return false; }
-  virtual void StopMovement() {}
-  virtual frc2::CommandPtr GetHomeCommand() {
-    return frc2::InstantCommand([] {}).ToPtr();
-  }
-  virtual void UseState(State setpoint) override{};
+  virtual void RunMotorSpeed(TVelocity speed, bool ignoreEncoder = false) = 0;
+  virtual void RunMotorSpeed(double percentSpeed,
+                             bool ignoreEncoder = false) = 0;
+  virtual void RunMotorSpeedDefault(bool invertDirection) = 0;
+  virtual void ResetEncoder() = 0;
+  virtual TDistance GetCurrentPosition() = 0;
+  virtual bool AtHome() = 0;
+  virtual bool AtMax() = 0;
+  virtual bool AtLimitSwitchMin() = 0;
+  virtual bool AtLimitSwitchMax() = 0;
+  virtual frc2::CommandPtr MoveToPositionAbsolute(TDistance position) = 0;
+  virtual frc2::CommandPtr MoveToPositionRelative(TDistance position) = 0;
+  virtual frc2::CommandPtr Home() = 0;
+  virtual bool IsEnabled() = 0;
+  virtual void Disable() = 0;
+  virtual void Enable() = 0;
+  virtual void Stop() = 0;
 };
