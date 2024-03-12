@@ -130,8 +130,8 @@ class ScoringSubsystem : public frc2::SubsystemBase {
 
   // PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
   //   PidMotorControllerPairTuner speakerTuner{speakerPidPair};
-  PidMotorControllerPairTuner ampTuner{ampPidPair};
-  PidMotorControllerTuner speakerUpperTuner{speakerUpperController};
+//   PidMotorControllerPairTuner ampTuner{ampPidPair};
+//   PidMotorControllerTuner speakerUpperTuner{speakerUpperController};
 
   double m_ampUpperVelocity;
   double m_ampLowerVelocity;

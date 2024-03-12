@@ -308,21 +308,21 @@ constexpr int kTicksPerMotorRotation = 42;
 
 namespace IntakingConstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = -0.5;
-constexpr double kFeedAmpSpeed = -0.5;
-constexpr double kFeedSpeakerSpeed = -1;
-constexpr double kFeedSubwooferSpeed = -1;
+constexpr double kIntakeSpeed = 0.8;
+constexpr double kFeedAmpSpeed = 0.5;
+constexpr double kFeedSpeakerSpeed = 1;
+constexpr double kFeedSubwooferSpeed = 1;
 
-constexpr double kOutakeSpeed = 0.5;
+constexpr double kOutakeSpeed = -0.5;
 
-constexpr double kSecondaryIntakeOutSpeed = 0.05;
+constexpr double kSecondaryIntakeOutSpeed = -0.05;
 
 
-constexpr uint8_t kCenterBeamBreakDigitalPort = 1;
-constexpr uint8_t kLowerPodiumBeamBreakDigitalPort = 0;
-constexpr uint8_t kLowerampBeamBreakDigitalPort = 2;
-constexpr uint8_t kUpperPodiumBeamBreakDigitalPort = 4;
-constexpr uint8_t kUpperAmpBeamBreakDigitalPort = 3;
+constexpr uint8_t kCenterBeamBreakDigitalPort = 3;
+constexpr uint8_t kLowerPodiumBeamBreakDigitalPort = 2;
+constexpr uint8_t kLowerampBeamBreakDigitalPort = 4;
+constexpr uint8_t kUpperPodiumBeamBreakDigitalPort = 6;
+constexpr uint8_t kUpperAmpBeamBreakDigitalPort = 5;
 
 constexpr units::revolutions_per_minute_t kMaxRpm = 5676_rpm;
 
@@ -344,7 +344,7 @@ constexpr units::revolutions_per_minute_t kMaxSpinRpm = 6784_rpm;
 constexpr double kShuffleSpeed = 0.05;
 
 // Positive = clockwise
-constexpr double kVectorSpeed = 0.1;
+constexpr double kVectorSpeed = -0.1;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
