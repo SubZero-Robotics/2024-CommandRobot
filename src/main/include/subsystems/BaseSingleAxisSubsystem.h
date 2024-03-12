@@ -91,8 +91,8 @@ class BaseSingleAxisSubsystem2
                                m_config.distancePerRevolution);
   }
 
-  void RunMotorSpeedDefault() override {
-    RunMotorVelocity(m_config.defaultSpeed);
+  void RunMotorSpeedDefault(bool ignoreEncoder = false) override {
+    RunMotorVelocity(m_config.defaultSpeed, ignoreEncoder);
   }
 
   void RunMotorPercentage(double percentSpeed,
@@ -174,16 +174,16 @@ class BaseSingleAxisSubsystem2
 
   frc2::CommandPtr Home() override {
     return frc2::FunctionalCommand(
-               // onInit
+               // OnInit
                [this] { Stop(); },
-               // onExecute
-               [this] { RunMotorSpeedDefault(); },
-               // onEnd
+               // OnExecute
+               [this] { RunMotorSpeedDefault(true); },
+               // OnEnd
                [this](bool interrupted) {
                  Stop();
                  ResetEncoder();
                },
-               // isFinished
+               // IsFinished
                [this] { return AtLimitSwitchMin(); }, {this})
         .ToPtr();
   }

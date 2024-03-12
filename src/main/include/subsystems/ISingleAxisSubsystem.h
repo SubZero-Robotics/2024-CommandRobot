@@ -60,7 +60,7 @@ class ISingleAxisSubsystem2 {
   // Will disable position-based movements when called
   virtual void RunMotorPercentage(double percentSpeed,
                              bool ignoreEncoder = false) = 0;
-  virtual void RunMotorSpeedDefault() = 0;
+  virtual void RunMotorSpeedDefault(bool ignoreEncoder = false) = 0;
   virtual void ResetEncoder() = 0;
   virtual Distance_t GetCurrentPosition() = 0;
   virtual bool AtHome() = 0;
