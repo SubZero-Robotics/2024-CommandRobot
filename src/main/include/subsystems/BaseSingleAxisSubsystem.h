@@ -24,43 +24,42 @@
 #include "utils/PidMotorController.h"
 #include "utils/ShuffleboardLogger.h"
 
-template <typename TDistance, typename TVelocity>
-struct SingleAxisConfig2 {
-  frc::PIDController pid;
-  // TODO: Make a velocity PID
-  TDistance minDistance;
-  TDistance maxDistance;
-  TDistance distancePerRevolution;
-  double velocityScalar;
-  double pidResultMultiplier;
-  frc::DigitalInput *minLimitSwitch;
-  frc::DigitalInput *maxLimitSwitch;
-  bool reversed;
-};
-
-template <typename TController, typename TEncoder, typename TDistance,
-          typename TVelocity>
+template <typename TController, typename TEncoder, typename TDistance>
 class BaseSingleAxisSubsystem2
-    : public ISingleAxisSubsystem2<TDistance, TVelocity> {
+    : public ISingleAxisSubsystem2<TDistance>,
+      public frc2::TrapezoidProfileSubsystem<TDistance> {
  public:
+  using PidState = typename frc::TrapezoidProfile<TDistance>::State;
+  using Distance_t = units::unit_t<TDistance>;
+  using Velocity =
+      units::compound_unit<TDistance, units::inverse<units::seconds>>;
+  using Velocity_t = units::unit_t<Velocity>;
+  using Acceleration =
+      units::compound_unit<Velocity, units::inverse<units::seconds>>;
+  using Acceleration_t = units::unit_t<Acceleration>;
+
   BaseSingleAxisSubsystem2(
       std::string name, PidMotorController<TController, TEncoder> &controller,
-      SingleAxisConfig2<TDistance, TVelocity> config)
-      : m_minLimitSwitch{config.minLimitSwitch},
+      ISingleAxisSubsystem2<TDistance>::SingleAxisConfig2 config)
+      : frc2::TrapezoidProfileSubsystem<
+            TDistance>{AutoConstants::kSingleAxisConstraints},
+        m_minLimitSwitch{config.minLimitSwitch},
         m_maxLimitSwitch{config.maxLimitSwitch},
         m_controller{controller},
         m_config{config},
         m_name{name},
         m_enabled{false} {}
 
-  void Periodic() override {}
+  void Periodic() override {
+    frc2::TrapezoidProfileSubsystem<TDistance>::Periodic();
+  }
 
   void UseState(PidState setpoint) override {
     m_controller.RunToPosition(setpoint.position /
                                m_config.distancePerRevolution);
   }
 
-  void RunMotorSpeedDefault(bool invertDirection) override {}
+  void RunMotorSpeedDefault() override {}
 
   void RunMotorSpeed(double percentSpeed, bool ignoreEncoder = false) override {
     m_controller.RunWithVelocity(percentSpeed);
@@ -70,13 +69,14 @@ class BaseSingleAxisSubsystem2
 
   void ResetEncoder() override { m_controller.ResetEncoders(); }
 
-  virtual TDistance GetCurrentPosition() override {
+  virtual Distance_t GetCurrentPosition() override {
     return m_controller.GetEncoderPosition() * m_config.distancePerRevolution;
   }
 
-  bool AtHome() override {}
+  // TODO
+  bool AtHome() override { return false; }
 
-  bool AtMax() override {}
+  bool AtMax() override { return false; }
 
   bool AtLimitSwitchMin() override {
     if (m_minLimitSwitch && m_minLimitSwitch.value()) {
@@ -94,29 +94,33 @@ class BaseSingleAxisSubsystem2
     return false;
   }
 
-  frc2::CommandPtr MoveToPositionAbsolute(TDistance position) override {
+  frc2::CommandPtr MoveToPositionAbsolute(Distance_t position) override {
     m_goalPosition = position;
-    return frc2::cmd::RunOnce([this, position] { this->SetGoal(position); },
-                              {this})
+    return frc2::cmd::RunOnce(
+        [this, position] {
+          frc2::TrapezoidProfileSubsystem<TDistance>::SetGoal(position);
+        },
+        {this});
   }
 
-  frc2::CommandPtr MoveToPositionRelative(TDistance position) override {
+  frc2::CommandPtr MoveToPositionRelative(Distance_t position) override {
     return MoveToPositionAbsolute(m_goalPosition + position);
   }
 
   frc2::CommandPtr Home() override {
     return frc2::FunctionalCommand(
-        // onInit
-        [this] { Stop(); },
-        // onExecute
-        [this] { RunMotorSpeedDefault(); },
-        // onEnd
-        [this](bool interrupted) {
-          Stop();
-          ResetEncoder();
-        },
-        // isFinished
-        [this] { return AtLimitSwitchMin(); }, {this})
+               // onInit
+               [this] { Stop(); },
+               // onExecute
+               [this] { RunMotorSpeedDefault(); },
+               // onEnd
+               [this](bool interrupted) {
+                 Stop();
+                 ResetEncoder();
+               },
+               // isFinished
+               [this] { return AtLimitSwitchMin(); }, {this})
+        .ToPtr();
   }
 
   bool IsEnabled() override { return m_enabled; }
@@ -132,43 +136,37 @@ class BaseSingleAxisSubsystem2
     frc2::TrapezoidProfileSubsystem<TDistance>::Enable();
   }
 
-  frc2::CommandPtr setTarget() {}
-
  protected:
   std::optional<frc::DigitalInput *> m_minLimitSwitch;
   std::optional<frc::DigitalInput *> m_maxLimitSwitch;
   PidMotorController<TController, TEncoder> &m_controller;
-  SingleAxisConfig2<TDistance, TVelocity> m_config;
+  ISingleAxisSubsystem2<TDistance>::SingleAxisConfig2 m_config;
   std::string m_name;
-  TDistance m_goalPosition;
+  Distance_t m_goalPosition;
   bool m_enabled;
   bool m_home;
 };
 
 template <typename TController, typename TEncoder>
 class RotationalSingleAxisSubsystem
-    : public BaseSingleAxisSubsystem2<TController, TEncoder, units::degree_t,
-                                      units::degrees_per_second_t> {
+    : public BaseSingleAxisSubsystem2<TController, TEncoder, units::degree> {
  public:
   RotationalSingleAxisSubsystem(
       std::string name, PidMotorController<TController, TEncoder> &controller,
-      SingleAxisConfig2<units::degree_t, units::degrees_per_second_t> config)
-      : BaseSingleAxisSubsystem2<TController, TEncoder, units::degree_t,
-                                 units::degrees_per_second_t>{name, controller,
-                                                              config} {}
+      ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 config)
+      : BaseSingleAxisSubsystem2<TController, TEncoder, units::degree>{
+            name, controller, config} {}
 };
 
 template <typename TController, typename TEncoder>
 class LinearSingleAxisSubsystem
-    : public BaseSingleAxisSubsystem2<TController, TEncoder, units::meter_t,
-                                      units::meters_per_second_t> {
+    : public BaseSingleAxisSubsystem2<TController, TEncoder, units::meter> {
  public:
   LinearSingleAxisSubsystem(
       std::string name, PidMotorController<TController, TEncoder> &controller,
-      SingleAxisConfig2<units::meter_t, units::meters_per_second_t> config)
-      : BaseSingleAxisSubsystem2<TController, TEncoder, units::meter_t,
-                                 units::meters_per_second_t>{name, controller,
-                                                             config} {}
+      ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 config)
+      : BaseSingleAxisSubsystem2<TController, TEncoder, units::meter>{
+            name, controller, config} {}
 };
 
 template <typename Motor, typename Encoder>

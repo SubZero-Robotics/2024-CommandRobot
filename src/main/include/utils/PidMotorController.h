@@ -56,7 +56,7 @@ class PidMotorController {
 
   void RunToPosition(double rotations) {
     m_controller.SetReference(rotations,
-                              rev::CANSparkMax::ControlType::kPosition);
+                              rev::CANSparkBase::ControlType::kPosition);
   }
 
   void ResetEncoders() { m_encoder.SetPosition(0); }

@@ -179,6 +179,9 @@ enum class AutoType {
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
+extern const frc::TrapezoidProfile<units::degree>::Constraints
+    kSingleAxisConstraints;
+
 const std::string kDefaultAutoName = "Leave Wing";
 
 const std::string kScoreSubwooferName = "Shoot Subwoofer";

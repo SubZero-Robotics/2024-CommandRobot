@@ -13,8 +13,14 @@ class WristSubsystem
                                       rev::SparkRelativeEncoder>{
             "Wrist", upperController, m_config} {}
 
+  void RunMotorSpeed(units::degrees_per_second_t speed,
+                     bool ignoreEncoder = false) override {}
+
+  // TODO:
+  units::degree_t GetCurrentPosition() override { return 0_deg; }
+
  private:
-  SingleAxisConfig2<units::degree_t, units::degrees_per_second_t> m_config = {
+  ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 m_config = {
       .pid = frc::PIDController{1, 0, 0},
       .minDistance = 0_deg,
       .maxDistance = 100_deg,
