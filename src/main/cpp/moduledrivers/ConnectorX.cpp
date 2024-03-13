@@ -414,6 +414,8 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
     int result =
         HAL_WriteI2C(HAL_I2C_kMXP, _slaveAddress, sendBuf, sendLen + 1);
 
+    // int result = 0;
+
     if (result == -1) {
       ConsoleLogger::getInstance().logError("ConnectorX",
                                             "Write Result Failed %d errno=%s",
