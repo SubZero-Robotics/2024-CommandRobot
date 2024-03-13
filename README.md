@@ -24,6 +24,7 @@
   - [Competition](#competition)
 - [Subsystems](#subsystems)
 - [CAN IDs](#can-ids)
+- [Digital Input Ports](#digital-input-ports)
 - [Network Map](#network-map)
 - [State](#state)
 - [Commands](#commands)
@@ -109,7 +110,6 @@ Following the WPILib command based structure we have broken our robot up into a 
 |   4   |   Lower Amp Side Beam Break  |
 |   5   |   Upper Amp Side Beam Break  |
 |   6   | Upper Podium Side Beam Break |
-
 
 ## Network Map
 
