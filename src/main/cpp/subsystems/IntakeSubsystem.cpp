@@ -16,7 +16,6 @@ void IntakeSubsystem::Out(double outakeSpeed) {
 
   // intakeMotors.RunWithVelocity(outakeSpeed, outakeSpeed);
   m_leftIntakeSpinnyBoy.Set(outakeSpeed);
-  m_rightIntakeSpinnyBoy.Set(outakeSpeed);
 }
 
 void IntakeSubsystem::In(double intakeSpeed) {
@@ -24,7 +23,6 @@ void IntakeSubsystem::In(double intakeSpeed) {
   //                                         "");
   // intakeMotors.RunWithVelocity(intakeSpeed, intakeSpeed);
   m_leftIntakeSpinnyBoy.Set(intakeSpeed);
-  m_rightIntakeSpinnyBoy.Set(intakeSpeed);
 }
 
 void IntakeSubsystem::Stop() {
@@ -33,7 +31,6 @@ void IntakeSubsystem::Stop() {
   // intakeMotors.Stop();
 
   m_leftIntakeSpinnyBoy.Set(0);
-  m_rightIntakeSpinnyBoy.Set(0);
 }
 
 void IntakeSubsystem::Feed(ScoringDirection direction) {

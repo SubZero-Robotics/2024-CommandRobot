@@ -94,13 +94,13 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   rev::SparkPIDController m_speakerLowerPidController =
       m_speakerLowerSpinnyBoi.GetPIDController();
   rev::SparkRelativeEncoder m_speakerLowerEnc =
-      m_speakerLowerSpinnyBoi.GetEncoder();
+      m_speakerEncoder;
   rev::SparkPIDController m_ampUpperPidController =
       m_ampUpperSpinnyBoi.GetPIDController();
   rev::SparkRelativeEncoder m_ampUpperEnc = m_ampUpperSpinnyBoi.GetEncoder();
   rev::SparkPIDController m_ampLowerPidController =
       m_ampLowerSpinnyBoi.GetPIDController();
-  rev::SparkRelativeEncoder m_ampLowerEnc = m_ampLowerSpinnyBoi.GetEncoder();
+  rev::SparkRelativeEncoder m_ampLowerEnc = m_ampEncoder;
 
   PidSettings speakerPidSettings = {.p = ScoringPID::kSpeakerP,
                                     .i = ScoringPID::kSpeakerI,

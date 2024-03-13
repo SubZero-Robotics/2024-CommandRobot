@@ -50,16 +50,45 @@ class ISingleAxisSubsystem2 {
     Distance_t distancePerRevolution;
     Velocity_t defaultSpeed;
     double velocityScalar;
-    std::optional<frc::DigitalInput*> minLimitSwitch;
-    std::optional<frc::DigitalInput*> maxLimitSwitch;
+    std::optional<frc::DigitalInput *> minLimitSwitch;
+    std::optional<frc::DigitalInput *> maxLimitSwitch;
     bool reversed;
+
+    SingleAxisConfig2(const SingleAxisConfig2 &other) : pid{other.pid} {
+      minDistance = other.minDistance;
+      maxDistance = other.maxDistance;
+      distancePerRevolution = other.maxDistance;
+      defaultSpeed = other.defaultSpeed;
+      velocityScalar = other.velocityScalar;
+      minLimitSwitch = other.minLimitSwitch;
+      maxLimitSwitch = other.maxLimitSwitch;
+      reversed = other.reversed;
+    }
+
+    SingleAxisConfig2(frc::PIDController _pid, Distance_t _minDistance,
+                      Distance_t _maxDistance,
+                      Distance_t _distancePerRevolution,
+                      Velocity_t _defaultSpeed, double _velocityScalar,
+                      std::optional<frc::DigitalInput *> _minLimitSwitch,
+                      std::optional<frc::DigitalInput *> _maxLimitSwitch,
+                      bool _reversed)
+        : pid{_pid},
+          minDistance{-100_deg},
+          maxDistance{_maxDistance},
+          distancePerRevolution{_distancePerRevolution},
+          defaultSpeed{_defaultSpeed},
+          velocityScalar{_velocityScalar},
+          minLimitSwitch{_minLimitSwitch},
+          maxLimitSwitch{_maxLimitSwitch},
+          reversed{_reversed} {}
   };
 
   // Will disable position-based movements when called
-  virtual void RunMotorVelocity(Velocity_t speed, bool ignoreEncoder = false) = 0;
+  virtual void RunMotorVelocity(Velocity_t speed,
+                                bool ignoreEncoder = false) = 0;
   // Will disable position-based movements when called
   virtual void RunMotorPercentage(double percentSpeed,
-                             bool ignoreEncoder = false) = 0;
+                                  bool ignoreEncoder = false) = 0;
   virtual void RunMotorSpeedDefault(bool ignoreEncoder = false) = 0;
   virtual void ResetEncoder() = 0;
   virtual Distance_t GetCurrentPosition() = 0;

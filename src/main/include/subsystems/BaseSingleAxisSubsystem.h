@@ -69,7 +69,9 @@ class BaseSingleAxisSubsystem2
         m_controller{controller},
         m_config{config},
         m_name{name},
-        m_pidEnabled{false} {}
+        m_pidEnabled{false} {
+          m_config = config;
+        }
 
   void Periodic() override {
     frc2::TrapezoidProfileSubsystem<TDistance>::Periodic();
@@ -125,6 +127,7 @@ class BaseSingleAxisSubsystem2
   }
 
   bool AtHome() override {
+    ConsoleLogger::getInstance().logVerbose(m_name, "Current Position %0.3f, Min Distance %0.3f", GetCurrentPosition().value(), m_config.minDistance.value());
     return AtLimitSwitchMin() || GetCurrentPosition() <= m_config.minDistance;
   }
 
@@ -133,17 +136,17 @@ class BaseSingleAxisSubsystem2
   }
 
   bool AtLimitSwitchMin() override {
-    if (m_minLimitSwitch && m_minLimitSwitch.value()) {
-      return !m_minLimitSwitch.value()->Get();
-    }
+    // if (m_minLimitSwitch && m_minLimitSwitch.value()) {
+    //   return !m_minLimitSwitch.value()->Get();
+    // }
 
     return false;
   }
 
   bool AtLimitSwitchMax() override {
-    if (m_maxLimitSwitch && m_maxLimitSwitch.value()) {
-      return !m_maxLimitSwitch.value()->Get();
-    }
+    // if (m_maxLimitSwitch && m_maxLimitSwitch.value()) {
+    //   return !m_maxLimitSwitch.value()->Get();
+    // }
 
     return false;
   }
