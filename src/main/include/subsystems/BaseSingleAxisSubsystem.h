@@ -44,15 +44,30 @@ class BaseSingleAxisSubsystem2
     bool atMax = ignoreEncoder ? AtLimitSwitchMax() : AtMax();
 
     if (atMin) {
-      ConsoleLogger::getInstance().logVerbose(
-          m_name, "At minimum, movement = %d", speed >= 0);
+      // ConsoleLogger::getInstance().logVerbose(
+      //     m_name, "At minimum, movement = %d", speed >= 0);
       return speed >= 0;
     }
 
     if (atMax) {
-      ConsoleLogger::getInstance().logVerbose(
-          m_name, "At maximum, movement = %d", speed <= 0);
+      // ConsoleLogger::getInstance().logVerbose(
+      //     m_name, "At maximum, movement = %d", speed <= 0);
       return speed <= 0;
+    }
+
+    return true;
+  }
+
+  bool IsMovementAllowed(bool ignoreEncoder = false) {
+    bool atMin = ignoreEncoder ? AtLimitSwitchMin() : AtHome();
+    bool atMax = ignoreEncoder ? AtLimitSwitchMax() : AtMax();
+
+    if (atMin) {
+      return false;
+    }
+
+    if (atMax) {
+      return false;
     }
 
     return true;
@@ -70,11 +85,13 @@ class BaseSingleAxisSubsystem2
         m_config{config},
         m_name{name},
         m_pidEnabled{false} {
-          m_config = config;
-        }
+    m_config = config;
+  }
 
   void Periodic() override {
     frc2::TrapezoidProfileSubsystem<TDistance>::Periodic();
+    
+    GetCurrentPosition();
 
     if (!m_pidEnabled && !IsMovementAllowed(m_latestSpeed)) {
       ConsoleLogger::getInstance().logInfo(
@@ -89,8 +106,14 @@ class BaseSingleAxisSubsystem2
                                 bool ignoreEncoder = false) = 0;
 
   void UseState(PidState setpoint) override {
-    m_controller.RunToPosition(setpoint.position /
-                               m_config.distancePerRevolution);
+    // if (IsMovementAllowed()) {
+      m_controller.RunToPosition(setpoint.position /
+                                 m_config.distancePerRevolution);
+    // } else {
+    //   ConsoleLogger::getInstance().logVerbose(
+    //       m_name, "PID Trying to move out of limits! %s", "");
+    //   Stop();
+    // }
   }
 
   void RunMotorSpeedDefault(bool ignoreEncoder = false) override {
@@ -112,12 +135,18 @@ class BaseSingleAxisSubsystem2
   }
 
   Distance_t GetCurrentPosition() override {
-    return m_config.distancePerRevolution * m_controller.GetEncoderPosition();
+    auto multiplied =
+        m_config.distancePerRevolution * m_controller.GetEncoderPosition();
+    ConsoleLogger::getInstance().logVerbose(
+        m_name,
+        "distance per rev %0.3f encoder position %0.3f, multiplied %0.3f",
+        m_config.distancePerRevolution.value(),
+        m_controller.GetEncoderPosition(), multiplied.value());
+    return multiplied;
   }
 
   void Stop() override {
     ConsoleLogger::getInstance().logInfo(m_name, "Stopping%s", "");
-    DisablePid();
     m_controller.Stop();
   }
 
@@ -127,7 +156,9 @@ class BaseSingleAxisSubsystem2
   }
 
   bool AtHome() override {
-    ConsoleLogger::getInstance().logVerbose(m_name, "Current Position %0.3f, Min Distance %0.3f", GetCurrentPosition().value(), m_config.minDistance.value());
+    ShuffleboardLogger::getInstance().logVerbose(
+        m_name, "Current Position %0.3f, Min Distance %0.3f",
+        GetCurrentPosition().value(), m_config.minDistance.value());
     return AtLimitSwitchMin() || GetCurrentPosition() <= m_config.minDistance;
   }
 
@@ -136,17 +167,17 @@ class BaseSingleAxisSubsystem2
   }
 
   bool AtLimitSwitchMin() override {
-    // if (m_minLimitSwitch && m_minLimitSwitch.value()) {
-    //   return !m_minLimitSwitch.value()->Get();
-    // }
+    if (m_minLimitSwitch && m_minLimitSwitch.value()) {
+      return !m_minLimitSwitch.value()->Get();
+    }
 
     return false;
   }
 
   bool AtLimitSwitchMax() override {
-    // if (m_maxLimitSwitch && m_maxLimitSwitch.value()) {
-    //   return !m_maxLimitSwitch.value()->Get();
-    // }
+    if (m_maxLimitSwitch && m_maxLimitSwitch.value()) {
+      return !m_maxLimitSwitch.value()->Get();
+    }
 
     return false;
   }

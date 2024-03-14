@@ -28,6 +28,8 @@ class PidMotorController {
         m_encoder{encoder},
         m_settings{pidSettings},
         m_maxRpm{maxRpm} {
+    m_controller.SetFeedbackDevice(m_encoder);
+    m_encoder.SetPositionConversionFactor(360);
     // Doing it here so the PID controllers themselves get updated
     UpdatePidSettings(pidSettings);
   }
@@ -55,6 +57,8 @@ class PidMotorController {
   }
 
   void RunToPosition(double rotations) {
+    rotations *= 360;
+    ConsoleLogger::getInstance().logVerbose(m_shuffleboardName, "Setting rotations %0.3f", rotations);
     m_controller.SetReference(rotations,
                               rev::CANSparkBase::ControlType::kPosition);
   }
@@ -64,7 +68,8 @@ class PidMotorController {
   double GetEncoderPosition() { return m_encoder.GetPosition(); }
 
   /// @brief Stop the motor
-  void Stop() { RunWithVelocity(0); }
+  // TODO: USE MOTOR HERE, THIS IS BAD AND SHOULD NOT BE EMPTY
+  void Stop() {}
 
   const PidSettings &GetPidSettings() const { return m_settings; }
 

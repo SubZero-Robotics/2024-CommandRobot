@@ -57,7 +57,7 @@ class ISingleAxisSubsystem2 {
     SingleAxisConfig2(const SingleAxisConfig2 &other) : pid{other.pid} {
       minDistance = other.minDistance;
       maxDistance = other.maxDistance;
-      distancePerRevolution = other.maxDistance;
+      distancePerRevolution = other.distancePerRevolution;
       defaultSpeed = other.defaultSpeed;
       velocityScalar = other.velocityScalar;
       minLimitSwitch = other.minLimitSwitch;
@@ -73,7 +73,7 @@ class ISingleAxisSubsystem2 {
                       std::optional<frc::DigitalInput *> _maxLimitSwitch,
                       bool _reversed)
         : pid{_pid},
-          minDistance{-100_deg},
+          minDistance{_minDistance},
           maxDistance{_maxDistance},
           distancePerRevolution{_distancePerRevolution},
           defaultSpeed{_defaultSpeed},
