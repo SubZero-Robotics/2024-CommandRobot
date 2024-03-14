@@ -93,8 +93,7 @@ class ScoringSubsystem : public frc2::SubsystemBase {
       m_speakerUpperSpinnyBoi.GetEncoder();
   rev::SparkPIDController m_speakerLowerPidController =
       m_speakerLowerSpinnyBoi.GetPIDController();
-  rev::SparkRelativeEncoder m_speakerLowerEnc =
-      m_speakerEncoder;
+  rev::SparkRelativeEncoder m_speakerLowerEnc = m_speakerEncoder;
   rev::SparkPIDController m_ampUpperPidController =
       m_ampUpperSpinnyBoi.GetPIDController();
   rev::SparkRelativeEncoder m_ampUpperEnc = m_ampUpperSpinnyBoi.GetEncoder();
@@ -114,24 +113,52 @@ class ScoringSubsystem : public frc2::SubsystemBase {
                                 .iZone = ScoringPID::kAmpIZone,
                                 .ff = ScoringPID::kAmpFF};
 
-  RevRelativePidController<rev::SparkPIDController> speakerUpperController{
-      "Speaker Upper", m_speakerUpperPidController, m_speakerUpperEnc,
-      speakerPidSettings, kMaxSpinRpm};
+  //   RevRelativePidController<rev::SparkPIDController> speakerUpperController{
+  //       "Speaker Upper", m_speakerUpperPidController, m_speakerUpperEnc,
+  //       speakerPidSettings, kMaxSpinRpm};
 
-  RevRelativePidController<rev::SparkPIDController> speakerLowerController{
-      "Speaker Lower", m_speakerLowerPidController, m_speakerLowerEnc,
-      speakerPidSettings, kMaxSpinRpm};
+  //   RevRelativePidController<rev::SparkPIDController> speakerLowerController{
+  //       "Speaker Lower", m_speakerLowerPidController, m_speakerLowerEnc,
+  //       speakerPidSettings, kMaxSpinRpm};
 
-  RevRelativePidController<rev::SparkPIDController> ampUpperController{
-      "Amp Upper", m_ampUpperPidController, m_ampUpperEnc, ampPidSettings,
-      kMaxSpinRpm};
+  //   RevRelativePidController<rev::SparkPIDController> ampUpperController{
+  //       "Amp Upper", m_ampUpperPidController, m_ampUpperEnc, ampPidSettings,
+  //       kMaxSpinRpm};
 
-  RevRelativePidController<rev::SparkPIDController> ampLowerController{
-      "Amp Lower", m_ampLowerPidController, m_ampLowerEnc, ampPidSettings,
-      kMaxSpinRpm};
+  //   RevRelativePidController<rev::SparkPIDController> ampLowerController{
+  //       "Amp Lower", m_ampLowerPidController, m_ampLowerEnc, ampPidSettings,
+  //       kMaxSpinRpm};
 
-//   PidMotorControllerPair speakerPidPair{"Speaker", speakerUpperController,
-//                                         speakerLowerController};
+  PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
+                     rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
+      speakerUpperController{"Speaker Upper",    m_speakerUpperSpinnyBoi,
+                             m_speakerUpperEnc,  m_speakerUpperPidController,
+                             speakerPidSettings, std::nullopt,
+                             kMaxSpinRpm};
+
+  PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
+                     rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
+      speakerLowerController{"Speaker Lower",    m_speakerLowerSpinnyBoi,
+                             m_speakerLowerEnc,  m_speakerLowerPidController,
+                             speakerPidSettings, std::nullopt,
+                             kMaxSpinRpm};
+
+  PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
+                     rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
+      ampUpperController{"Amp Upper",    m_ampUpperSpinnyBoi,
+                         m_ampUpperEnc,  m_ampUpperPidController,
+                         ampPidSettings, std::nullopt,
+                         kMaxSpinRpm};
+
+  PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
+                     rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
+      ampLowerController{"Amp Lower",    m_ampLowerSpinnyBoi,
+                         m_ampLowerEnc,  m_ampLowerPidController,
+                         ampPidSettings, std::nullopt,
+                         kMaxSpinRpm};
+
+  //   PidMotorControllerPair speakerPidPair{"Speaker", speakerUpperController,
+  //                                         speakerLowerController};
 
   //   PidMotorControllerPair ampPidPair{"Amp", ampUpperController,
   //                                     ampLowerController};

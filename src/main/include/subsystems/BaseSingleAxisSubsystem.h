@@ -77,8 +77,8 @@ class BaseSingleAxisSubsystem2
  public:
   BaseSingleAxisSubsystem2(
       std::string name,
-      PidMotorController<typename TMotor, typename TController,
-                         typename TRelativeEncoder, typename TAbsoluteEncoder>
+      PidMotorController<TMotor, TController,
+                         TRelativeEncoder, TAbsoluteEncoder>
           &controller,
       ISingleAxisSubsystem2<TDistance>::SingleAxisConfig2 config)
       : frc2::TrapezoidProfileSubsystem<
@@ -156,7 +156,7 @@ class BaseSingleAxisSubsystem2
 
   void ResetEncoder() override {
     ConsoleLogger::getInstance().logInfo(m_name, "Reset encoder%s", "");
-    m_controller.ResetEncoders();
+    m_controller.ResetEncoder();
   }
 
   bool AtHome() override {

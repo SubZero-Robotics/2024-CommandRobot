@@ -25,12 +25,12 @@ class PidMotorController {
   /// @param maxRpm The maximum RPM of the motor
   explicit PidMotorController(std::string name, TMotor &motor,
                               TRelativeEncoder &encoder,
-                              PidSettings pidSettings,
+                              TController &controller, PidSettings pidSettings,
                               std::optional<TAbsoluteEncoder *> absEncoder,
                               units::revolutions_per_minute_t maxRpm)
       : m_shuffleboardName{name},
         m_motor{motor},
-        m_controller{motor.GetPIDController()},
+        m_controller{controller},
         m_encoder{encoder},
         m_settings{pidSettings},
         m_pidController{
@@ -52,6 +52,7 @@ class PidMotorController {
     if (m_absolutePositionEnabled) {
       auto effort =
           m_pidController.Calculate(GetEncoderPosition(), m_absoluteTarget);
+      double ffEffort = 0;
       double totalEffort = ffEffort + effort;
       Set(units::volt_t(totalEffort));
 
@@ -115,7 +116,7 @@ class PidMotorController {
     m_motor.Set(0);
   }
 
-  const PidSettings &GetPidSettings() const { return m_settings; }
+  PidSettings GetPidSettings() { return m_settings; }
 
   void UpdatePidSettings(PidSettings settings) {
     if (settings.p != m_settings.p) {
@@ -213,8 +214,8 @@ class PidMotorControllerTuner {
   }
 
  private:
-  PidMotorController<typename TMotor, typename TController,
-                     typename TRelativeEncoder, typename TAbsoluteEncoder>
+  PidMotorController<TMotor, TController,
+                     TRelativeEncoder, TAbsoluteEncoder>
       &m_controller;
 };
 

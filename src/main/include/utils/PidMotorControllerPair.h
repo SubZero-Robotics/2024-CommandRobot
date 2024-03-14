@@ -8,7 +8,8 @@
 #include "utils/ConsoleLogger.h"
 #include "utils/PidMotorController.h"
 
-template <typename TController, typename TEncoder>
+template <typename TMotor, typename TController, typename TRelativeEncoder,
+          typename TAbsoluteEncoder>
 class PidMotorControllerPair {
  public:
   /// @brief
@@ -16,8 +17,11 @@ class PidMotorControllerPair {
   /// @param first First controller
   /// @param second Second controller
   explicit PidMotorControllerPair(
-      std::string prefix, PidMotorController<TController, TEncoder> &first,
-      PidMotorController<TController, TEncoder> &second)
+      std::string prefix,
+      PidMotorController<TMotor, TController, TRelativeEncoder,
+                         TAbsoluteEncoder> &first,
+      PidMotorController<TMotor, TController, TRelativeEncoder,
+                         TAbsoluteEncoder> &second)
       : m_shuffleboardPrefix{prefix},
         m_controllerFirst{first},
         m_controllerSecond{second} {}
@@ -57,16 +61,20 @@ class PidMotorControllerPair {
   const std::string m_shuffleboardPrefix;
 
  private:
-  PidMotorController<TController, TEncoder> &m_controllerFirst;
-  PidMotorController<TController, TEncoder> &m_controllerSecond;
+  PidMotorController<TMotor, TController, TRelativeEncoder, TAbsoluteEncoder>
+      &m_controllerFirst;
+  PidMotorController<TMotor, TController, TRelativeEncoder, TAbsoluteEncoder>
+      &m_controllerSecond;
   PidSettings m_pidSettings;
 };
 
-template <typename TController, typename TEncoder>
+template <typename TMotor, typename TController, typename TRelativeEncoder,
+          typename TAbsoluteEncoder>
 class PidMotorControllerPairTuner {
  public:
   explicit PidMotorControllerPairTuner(
-      PidMotorControllerPair<TController, TEncoder> &controllerPair)
+      PidMotorControllerPair<TMotor, TController, TRelativeEncoder,
+                             TAbsoluteEncoder> &controllerPair)
       : m_controllerPair{controllerPair} {
     frc::SmartDashboard::PutNumber(
         m_controllerPair.m_shuffleboardPrefix + " P Gain",
@@ -108,5 +116,6 @@ class PidMotorControllerPairTuner {
   }
 
  private:
-  PidMotorControllerPair<TController, TEncoder> &m_controllerPair;
+  PidMotorControllerPair<TMotor, TController, TRelativeEncoder,
+                         TAbsoluteEncoder> &m_controllerPair;
 };

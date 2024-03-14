@@ -53,7 +53,7 @@ class WristSubsystem
   PidSettings armPidSettings = {.p = 1, .i = 0, .d = 0, .iZone = 0, .ff = 0};
   PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      upperController{"Arm",          m_SpinnyBoi, m_enc,
+      upperController{"Arm",          m_SpinnyBoi, m_enc, m_PidController,
                       armPidSettings, &m_absEnc,   kMaxSpinRpm};
   PidMotorControllerTuner<rev::CANSparkMax, rev::SparkPIDController,
                           rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
