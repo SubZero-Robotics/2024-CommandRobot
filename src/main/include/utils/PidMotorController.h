@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc/controller/PIDController.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/CANSparkBase.h>
 #include <units/angle.h>
@@ -11,7 +12,9 @@ struct PidSettings {
   double p, i, d, iZone, ff;
 };
 
-template <typename TController, typename TEncoder>
+// TODO: Group into a single, combined typename
+template <typename TMotor, typename TController, typename TRelativeEncoder,
+          typename TAbsoluteEncoder>
 class PidMotorController {
  public:
   /// @brief
@@ -20,23 +23,50 @@ class PidMotorController {
   /// @param encoder
   /// @param pidSettings The PidSettings
   /// @param maxRpm The maximum RPM of the motor
-  explicit PidMotorController(std::string name, TController &controller,
-                              TEncoder &encoder, PidSettings pidSettings,
+  explicit PidMotorController(std::string name, TMotor &motor,
+                              TRelativeEncoder &encoder,
+                              PidSettings pidSettings,
+                              std::optional<TAbsoluteEncoder *> absEncoder,
                               units::revolutions_per_minute_t maxRpm)
       : m_shuffleboardName{name},
-        m_controller{controller},
+        m_motor{motor},
+        m_controller{motor.GetPIDController()},
         m_encoder{encoder},
         m_settings{pidSettings},
+        m_pidController{
+            frc::PIDController{pidSettings.p, pidSettings.i, pidSettings.d}},
         m_maxRpm{maxRpm} {
-    m_controller.SetFeedbackDevice(m_encoder);
-    m_encoder.SetPositionConversionFactor(360);
     // Doing it here so the PID controllers themselves get updated
     UpdatePidSettings(pidSettings);
+
+    // TODO: constant
+    m_pidController.SetTolerance(1.5);
+  }
+
+  void Set(double percentage) { m_motor.Set(percentage); }
+
+  void Set(units::volt_t volts) { m_motor.SetVoltage(volts); }
+
+  /// @brief Call this every loop in Periodic
+  void Update() {
+    if (m_absolutePositionEnabled) {
+      auto effort =
+          m_pidController.Calculate(GetEncoderPosition(), m_absoluteTarget);
+      double totalEffort = ffEffort + effort;
+      Set(units::volt_t(totalEffort));
+
+      if (m_pidController.AtSetpoint()) {
+        m_pidController.Reset();
+        m_absolutePositionEnabled = false;
+        Stop();
+      }
+    }
   }
 
   /// @brief
   /// @param rpm The desired RPM
   void RunWithVelocity(units::revolutions_per_minute_t rpm) {
+    m_absolutePositionEnabled = false;
     m_controller.SetReference(rpm.value(),
                               rev::CANSparkBase::ControlType::kVelocity);
   }
@@ -57,19 +87,33 @@ class PidMotorController {
   }
 
   void RunToPosition(double rotations) {
-    rotations *= 360;
-    ConsoleLogger::getInstance().logVerbose(m_shuffleboardName, "Setting rotations %0.3f", rotations);
-    m_controller.SetReference(rotations,
-                              rev::CANSparkBase::ControlType::kPosition);
+    ConsoleLogger::getInstance().logVerbose(
+        m_shuffleboardName, "Setting rotations %0.3f", rotations);
+    Stop();
+    m_absolutePositionEnabled = true;
+    m_absoluteTarget = rotations;
+    // m_controller.SetReference(rotations,
+    //                           rev::CANSparkBase::ControlType::kPosition);
   }
 
-  virtual void ResetEncoders() = 0;
+  virtual void ResetEncoder() { m_encoder.SetPosition(0); }
 
   double GetEncoderPosition() { return m_encoder.GetPosition(); }
 
+  std::optional<double> GetAbsoluteEncoderPosition() {
+    if (m_absEncoder.has_value() && m_absEncoder.value()) {
+      return m_absEncoder.value()->GetPosition();
+    }
+
+    return std::nullopt;
+  }
+
   /// @brief Stop the motor
   // TODO: USE MOTOR HERE, THIS IS BAD AND SHOULD NOT BE EMPTY
-  void Stop() {}
+  void Stop() {
+    m_absolutePositionEnabled = false;
+    m_motor.Set(0);
+  }
 
   const PidSettings &GetPidSettings() const { return m_settings; }
 
@@ -115,48 +159,24 @@ class PidMotorController {
   const std::string m_shuffleboardName;
 
  protected:
+  TMotor &m_motor;
   TController &m_controller;
-  TEncoder &m_encoder;
+  TRelativeEncoder &m_encoder;
+  std::optional<TAbsoluteEncoder *> m_absEncoder;
   PidSettings m_settings;
+  frc::PIDController m_pidController;
+  bool m_absolutePositionEnabled = false;
+  double m_absoluteTarget = 0;
   const units::revolutions_per_minute_t m_maxRpm;
 };
 
-template <typename TController>
-class RevAbsolutePidController
-    : public PidMotorController<TController, rev::SparkAbsoluteEncoder> {
- public:
-  RevAbsolutePidController(std::string name, TController &controller,
-                           rev::SparkAbsoluteEncoder &encoder,
-                           PidSettings pidSettings,
-                           units::revolutions_per_minute_t maxRpm)
-      : PidMotorController<TController, rev::SparkAbsoluteEncoder>{
-            name, controller, encoder, pidSettings, maxRpm} {}
-
-  void ResetEncoders() override {}
-};
-
-template <typename TController>
-class RevRelativePidController
-    : public PidMotorController<TController, rev::SparkRelativeEncoder> {
- public:
-  RevRelativePidController(std::string name, TController &controller,
-                           rev::SparkRelativeEncoder &encoder,
-                           PidSettings pidSettings,
-                           units::revolutions_per_minute_t maxRpm)
-      : PidMotorController<TController, rev::SparkRelativeEncoder>{
-            name, controller, encoder, pidSettings, maxRpm} {}
-
-  void ResetEncoders() override {
-    PidMotorController<TController, rev::SparkRelativeEncoder>::m_encoder
-        .SetPosition(0);
-  }
-};
-
-template <typename TController, typename TEncoder>
+template <typename TMotor, typename TController, typename TRelativeEncoder,
+          typename TAbsoluteEncoder>
 class PidMotorControllerTuner {
  public:
   explicit PidMotorControllerTuner(
-      PidMotorController<TController, TEncoder> &controller)
+      PidMotorController<TMotor, TController, TRelativeEncoder,
+                         TAbsoluteEncoder> &controller)
       : m_controller{controller} {
     frc::SmartDashboard::PutNumber(m_controller.m_shuffleboardName + " P Gain",
                                    m_controller.GetPidSettings().p);
@@ -193,10 +213,12 @@ class PidMotorControllerTuner {
   }
 
  private:
-  PidMotorController<TController, TEncoder> &m_controller;
+  PidMotorController<typename TMotor, typename TController,
+                     typename TRelativeEncoder, typename TAbsoluteEncoder>
+      &m_controller;
 };
 
-template <typename TController, typename TEncoder>
 class RevPidMotorController
-    : public PidMotorController<rev::SparkPIDController, rev::RelativeEncoder> {
-};
+    : public PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
+                                rev::SparkRelativeEncoder,
+                                rev::SparkAbsoluteEncoder> {};

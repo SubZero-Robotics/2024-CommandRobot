@@ -24,7 +24,8 @@
 #include "utils/PidMotorController.h"
 #include "utils/ShuffleboardLogger.h"
 
-template <typename TController, typename TEncoder, typename TDistance>
+template <typename TMotor, typename TController, typename TRelativeEncoder,
+          typename TAbsoluteEncoder, typename TDistance>
 class BaseSingleAxisSubsystem2
     : public ISingleAxisSubsystem2<TDistance>,
       public frc2::TrapezoidProfileSubsystem<TDistance> {
@@ -75,7 +76,10 @@ class BaseSingleAxisSubsystem2
 
  public:
   BaseSingleAxisSubsystem2(
-      std::string name, PidMotorController<TController, TEncoder> &controller,
+      std::string name,
+      PidMotorController<typename TMotor, typename TController,
+                         typename TRelativeEncoder, typename TAbsoluteEncoder>
+          &controller,
       ISingleAxisSubsystem2<TDistance>::SingleAxisConfig2 config)
       : frc2::TrapezoidProfileSubsystem<
             TDistance>{AutoConstants::kSingleAxisConstraints},
@@ -90,7 +94,7 @@ class BaseSingleAxisSubsystem2
 
   void Periodic() override {
     frc2::TrapezoidProfileSubsystem<TDistance>::Periodic();
-    
+
     GetCurrentPosition();
 
     if (!m_pidEnabled && !IsMovementAllowed(m_latestSpeed)) {
@@ -107,8 +111,8 @@ class BaseSingleAxisSubsystem2
 
   void UseState(PidState setpoint) override {
     // if (IsMovementAllowed()) {
-      m_controller.RunToPosition(setpoint.position /
-                                 m_config.distancePerRevolution);
+    m_controller.RunToPosition(setpoint.position /
+                               m_config.distancePerRevolution);
     // } else {
     //   ConsoleLogger::getInstance().logVerbose(
     //       m_name, "PID Trying to move out of limits! %s", "");
@@ -238,7 +242,8 @@ class BaseSingleAxisSubsystem2
  protected:
   std::optional<frc::DigitalInput *> m_minLimitSwitch;
   std::optional<frc::DigitalInput *> m_maxLimitSwitch;
-  PidMotorController<TController, TEncoder> &m_controller;
+  PidMotorController<TMotor, TController, TRelativeEncoder, TAbsoluteEncoder>
+      &m_controller;
   ISingleAxisSubsystem2<TDistance>::SingleAxisConfig2 m_config;
   std::string m_name;
   Distance_t m_goalPosition;
@@ -247,29 +252,37 @@ class BaseSingleAxisSubsystem2
   double m_latestSpeed;
 };
 
-template <typename TController, typename TEncoder>
+template <typename TMotor, typename TController, typename TRelativeEncoder,
+          typename TAbsoluteEncoder>
 class RotationalSingleAxisSubsystem
-    : public BaseSingleAxisSubsystem2<TController, TEncoder, units::degree> {
+    : public BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                                      TAbsoluteEncoder, units::degree> {
  public:
   RotationalSingleAxisSubsystem(
-      std::string name, PidMotorController<TController, TEncoder> &controller,
+      std::string name,
+      PidMotorController<TMotor, TController, TRelativeEncoder,
+                         TAbsoluteEncoder> &controller,
       ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 config,
       units::meter_t armatureLength)
-      : BaseSingleAxisSubsystem2<TController, TEncoder,
-                                 units::degree>{name, controller, config},
+      : BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                                 TAbsoluteEncoder, units::degree>{name,
+                                                                  controller,
+                                                                  config},
         m_armatureLength{armatureLength} {}
 
   void RunMotorVelocity(units::degrees_per_second_t speed,
                         bool ignoreEncoder = false) override {
-    if (!BaseSingleAxisSubsystem2<TController, TEncoder, units::degree>::
-            IsMovementAllowed(speed.value(), ignoreEncoder)) {
+    if (!BaseSingleAxisSubsystem2<
+            TMotor, TController, TRelativeEncoder, TAbsoluteEncoder,
+            units::degree>::IsMovementAllowed(speed.value(), ignoreEncoder)) {
       return;
     }
 
-    BaseSingleAxisSubsystem2<TController, TEncoder,
-                             units::degree>::DisablePid();
+    BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                             TAbsoluteEncoder, units::degree>::DisablePid();
 
-    BaseSingleAxisSubsystem2<TController, TEncoder, units::degree>::m_controller
+    BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                             TAbsoluteEncoder, units::degree>::m_controller
         .RunWithVelocity(speed);
   }
 
@@ -277,19 +290,25 @@ class RotationalSingleAxisSubsystem
   units::meter_t m_armatureLength;
 };
 
-template <typename TController, typename TEncoder>
+template <typename TMotor, typename TController, typename TRelativeEncoder,
+          typename TAbsoluteEncoder>
 class LinearSingleAxisSubsystem
-    : public BaseSingleAxisSubsystem2<TController, TEncoder, units::meter> {
+    : public BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                                      TAbsoluteEncoder, units::meter> {
  public:
   LinearSingleAxisSubsystem(
-      std::string name, PidMotorController<TController, TEncoder> &controller,
+      std::string name,
+      PidMotorController<TMotor, TController, TRelativeEncoder,
+                         TAbsoluteEncoder> &controller,
       ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 config)
-      : BaseSingleAxisSubsystem2<TController, TEncoder, units::meter>{
+      : BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                                 TAbsoluteEncoder, units::meter>{
             name, controller, config} {}
 
   void RunMotorVelocity(units::meters_per_second_t speed,
                         bool ignoreEncoder = false) override {
-    BaseSingleAxisSubsystem2<TController, TEncoder, units::meter>::DisablePid();
+    BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                             TAbsoluteEncoder, units::meter>::DisablePid();
   }
 };
 

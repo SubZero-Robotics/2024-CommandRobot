@@ -6,23 +6,31 @@ using namespace ScoringConstants;
 
 // TODO: CHANGE THIS; FOR TESTING PURPOSES ONLY
 class WristSubsystem
-    : public RotationalSingleAxisSubsystem<rev::SparkPIDController,
-                                           rev::SparkAbsoluteEncoder> {
+    : public RotationalSingleAxisSubsystem<
+          rev::CANSparkMax, rev::SparkPIDController, rev::SparkRelativeEncoder,
+          rev::SparkAbsoluteEncoder> {
  public:
   WristSubsystem()
-      : RotationalSingleAxisSubsystem<rev::SparkPIDController,
+      : RotationalSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
+                                      rev::SparkRelativeEncoder,
                                       rev::SparkAbsoluteEncoder>{
             "Wrist",
             upperController,
-            {frc::PIDController{1, 0, 0}, 40_deg, 130_deg, 360_deg,
-             10_deg_per_s, 1.0, std::nullopt, std::nullopt, false},
-            0.2_m} {}
+            {frc::PIDController{1, 0, 0}, 40_deg, 130_deg, 1_deg, 10_deg_per_s,
+             1.0, std::nullopt, std::nullopt, false},
+            0.2_m} {
+    m_SpinnyBoi.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
+    m_enc.SetPositionConversionFactor(360);
+    m_absEnc.SetPositionConversionFactor(360);
+    m_SpinnyBoi.BurnFlash();
+  }
 
   void Periodic() override {
-    RotationalSingleAxisSubsystem<rev::SparkPIDController,
+    RotationalSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
+                                  rev::SparkRelativeEncoder,
                                   rev::SparkAbsoluteEncoder>::Periodic();
 
-    // armTuner.UpdateFromShuffleboard();
+    armTuner.UpdateFromShuffleboard();
   }
 
  private:
@@ -40,11 +48,14 @@ class WristSubsystem
   rev::CANSparkMax m_SpinnyBoi{CANSparkMaxConstants::kWristSpinnyBoiId,
                                rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::SparkPIDController m_PidController = m_SpinnyBoi.GetPIDController();
-  rev::SparkAbsoluteEncoder m_enc = m_SpinnyBoi.GetAbsoluteEncoder();
-  PidSettings speakerPidSettings = {
-      .p = 0.00000000001, .i = 0, .d = 0, .iZone = 0, .ff = 0};
-  RevAbsolutePidController<rev::SparkPIDController> upperController{
-      "Arm", m_PidController, m_enc, speakerPidSettings, kMaxSpinRpm};
-  //    PidMotorControllerTuner<rev::SparkPIDController,
-  //    rev::SparkAbsoluteEncoder> armTuner{upperController};
+  rev::SparkRelativeEncoder m_enc = m_SpinnyBoi.GetEncoder();
+  rev::SparkAbsoluteEncoder m_absEnc = m_SpinnyBoi.GetAbsoluteEncoder();
+  PidSettings armPidSettings = {.p = 1, .i = 0, .d = 0, .iZone = 0, .ff = 0};
+  PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
+                     rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
+      upperController{"Arm",          m_SpinnyBoi, m_enc,
+                      armPidSettings, &m_absEnc,   kMaxSpinRpm};
+  PidMotorControllerTuner<rev::CANSparkMax, rev::SparkPIDController,
+                          rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
+      armTuner{upperController};
 };
