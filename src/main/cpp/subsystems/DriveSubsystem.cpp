@@ -116,6 +116,8 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   if (dif > 30_ms) {
     ConsoleLogger::getInstance().logVerbose(
         "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
+    ConsoleLogger::getInstance().logVerbose(
+        "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
   }
 
   auto states =
@@ -262,6 +264,6 @@ frc::Pose2d DriveSubsystem::GetPose() {
 
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
   m_lastGoodPosition = pose;
-  poseEstimator.ResetPosition(GetHeading(), GetModulePositions(), pose);
+  poseEstimator.ResetPosition(GetRotation(), GetModulePositions(), pose);
   // ResetEncoders();
 }
