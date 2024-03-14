@@ -297,24 +297,3 @@ void RobotContainer::StartIdling() {
 void RobotContainer::ResetPose() {
   m_drive.ResetOdometry(frc::Pose2d{0_m, 0_m, 0_rad});
 }
-
-// I have NO idea if this works since sim is broken for rotation currently :(
-void RobotContainer::ResetFieldHeadingFromAlliance() {
-  auto alliance = frc::DriverStation::GetAlliance();
-  units::degree_t allianceDegreeOffset = 0_deg;
-  if (alliance.has_value() &&
-      alliance.value() == frc::DriverStation::Alliance::kRed) {
-    allianceDegreeOffset = 180_deg;
-    m_joystickFlipMultiplier = -1.0;
-  }
-
-  auto ppInitialPose =
-      pathplanner::PathPlannerAuto::getStartingPoseFromAutoFile(
-          m_chooser.GetSelected());
-  auto rotationOffset = ppInitialPose.Rotation();
-  ConsoleLogger::getInstance().logInfo("RobotContainer",
-                                       "Offsetting field heading to %f deg",
-                                       rotationOffset.Degrees().value());
-
-  m_drive.SetRotationOffset(rotationOffset.Degrees() + allianceDegreeOffset);
-}

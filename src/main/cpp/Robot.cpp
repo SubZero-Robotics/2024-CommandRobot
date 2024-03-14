@@ -75,7 +75,6 @@ void Robot::TeleopInit() {
     m_autonomousCommand = nullptr;
   }
 
-  m_container.ResetFieldHeadingFromAlliance();
   // m_container.StartIdling();
   // m_container.ResetPose();
 }

@@ -203,7 +203,5 @@ class DriveSubsystem : public frc2::SubsystemBase {
   frc::Field2d m_field;
   frc::Pose2d m_lastGoodPosition;
 
-  frc::Transform2d m_rotationOffset = frc::Transform2d{0_m, 0_m, 0_deg};
-
   Vision* m_vision;
 };

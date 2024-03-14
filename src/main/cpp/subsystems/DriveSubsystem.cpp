@@ -217,14 +217,10 @@ wpi::array<frc::SwerveModulePosition, 4U> DriveSubsystem::GetModulePositions()
 }
 
 frc::Rotation2d DriveSubsystem::GetRotation() {
-  return m_gyro.GetRotation2d() + m_rotationOffset.Rotation();
+  return m_gyro.GetRotation2d();
 }
 
 void DriveSubsystem::ZeroHeading() { m_gyro.Reset(); }
-
-void DriveSubsystem::SetRotationOffset(units::degree_t offset) {
-  m_rotationOffset = frc::Transform2d{0_m, 0_m, offset};
-}
 
 double DriveSubsystem::GetTurnRate() { return m_gyro.GetRate(); }
 
