@@ -24,6 +24,7 @@
   - [Competition](#competition)
 - [Subsystems](#subsystems)
 - [CAN IDs](#can-ids)
+- [Digital Input Ports](#digital-input-ports)
 - [Network Map](#network-map)
 - [State](#state)
 - [Commands](#commands)
@@ -73,7 +74,7 @@ Following the WPILib command based structure we have broken our robot up into a 
 | [Scoring](src/main/include/subsystems/ScoringSubsystem.h) | Scores Notes                                              |
 | [LED](src/main/include/subsystems/LedSubsystem.h)         | Wrapper for the ConnectorX moduledriver, reads from State |
 | [Climb](src/main/include/subsystems/ClimbSubsystem.h)     | Climbs on the Stage                                       |
-| [State](src/main/include/subsystems/StateSubsystem.h)     | Finite state machine for the robot during teleop |
+| [State](src/main/include/subsystems/StateSubsystem.h)     | Finite state machine for the robot during teleop          |
 
 ## CAN IDs
 
@@ -96,8 +97,20 @@ Following the WPILib command based structure we have broken our robot up into a 
 |    Speaker Upper    |   19   |     SparkFlex     |    0     |
 |    Left Climber     |   10   |     SparkMax      |    9     |
 |    Right Climber    |   11   |     SparkMax      |    10    |
+|    First Pigeon     |   9    |        N/A        |    22    |
+|    Second Pigeon    |   13   |        N/A        |    23    |
 
 \* = Inverted
+
+## Digital Input Ports
+
+| Port  |            Device            |
+| :---: | :--------------------------: |
+|   2   | Lower Podium Side Beam Break |
+|   3   |       Center Beam Break      |
+|   4   |   Lower Amp Side Beam Break  |
+|   5   |   Upper Amp Side Beam Break  |
+|   6   | Upper Podium Side Beam Break |
 
 ## Network Map
 
@@ -159,7 +172,7 @@ State actions are composed of underlying commands that are also called by the fi
 |        Score        |           Shuffles the note down while running `FlywheelRampCommand`, runs `FeedCommand`, finally runs `ShootCommand`. If there is not a note present it exits immediately            | 5 Seconds  |
 |       Intake        | Runs `IntakeInInitialCommand`, waits a predefined delay, runs `IntakeInSecondaryCommand`, waits a predefined delay, stops the motors. If there is a note present it exits immediately | 5 seconds  |
 | FeedUntilNotPresent |                                                     Runs `FeedCommand` until the top beam break is not broken; stops the motors.                                                      |    N/A     |
-| OuttakeUntilPresent |                                                       Outakes the note until the bottom beam break is broken; stops the motors.                                                        |    N/A     |
+| OuttakeUntilPresent |                                                       Outakes the note until the bottom beam break is broken; stops the motors.                                                       |    N/A     |
 |        Funni        |                                                                                     Does a Funni                                                                                      | 20 seconds |
 
 ## Factory Commands
@@ -189,19 +202,19 @@ All robot states begin by calling `ShowFromState` with the `RobotState` on the L
 
 ## LED Commands
 
-| Method | Purpose |
-| :-: | :-: |
-| ShowFromState | Returns a CommandPtr to set the LEDs based on a `StateGetter` |
-| Intaking | Sets left and right zones to red and a chase pattern, sets the front and back zones to red and a sine roll pattern |
-| ScoringSpeaker | Sets left and right and front zones to solid yellow, sets back zone to purple and a blink |
-| ScoringAmp | Sets left right and back zones to solid yellow, sets front zone to purple and a blink |
-| Loaded | Sets all zones to blink green |
-| Idling | Sets all zones to breathe blue |
-| Climb | Sets left and right zones to a blue sine roll, front and back zones to a yellow sine roll |
-| Error | Sets all zones to red and a blink |
-| setZoneColorPattern | Helper to set a zone to a color and pattern |
-| createZones | Helper to create a std::vector of zones |
-| syncAllZones | Helper to sync all zones |
+|       Method        |                                                      Purpose                                                       |
+| :-----------------: | :----------------------------------------------------------------------------------------------------------------: |
+|    ShowFromState    |                           Returns a CommandPtr to set the LEDs based on a `StateGetter`                            |
+|      Intaking       | Sets left and right zones to red and a chase pattern, sets the front and back zones to red and a sine roll pattern |
+|   ScoringSpeaker    |             Sets left and right and front zones to solid yellow, sets back zone to purple and a blink              |
+|     ScoringAmp      |               Sets left right and back zones to solid yellow, sets front zone to purple and a blink                |
+|       Loaded        |                                           Sets all zones to blink green                                            |
+|       Idling        |                                           Sets all zones to breathe blue                                           |
+|        Climb        |             Sets left and right zones to a blue sine roll, front and back zones to a yellow sine roll              |
+|        Error        |                                         Sets all zones to red and a blink                                          |
+| setZoneColorPattern |                                    Helper to set a zone to a color and pattern                                     |
+|     createZones     |                                      Helper to create a std::vector of zones                                       |
+|    syncAllZones     |                                              Helper to sync all zones                                              |
 
 ## Getting started
 

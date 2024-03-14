@@ -59,7 +59,7 @@ class RobotContainer {
   LedSubsystem m_leds;
 
   // The chooser for the autonomous routines
-  frc::SendableChooser<std::string> m_chooser;
+  frc::SendableChooser<AutoConstants::AutoType> m_chooser;
 
 #ifdef TEST_SWERVE_BOT
 
