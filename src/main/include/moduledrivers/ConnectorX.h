@@ -486,7 +486,7 @@ class ConnectorXBoard : public frc2::SubsystemBase {
                                  bool expectResponse = false);
 
   void delaySeconds(units::second_t delaySeconds) {
-    // std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2));
   }
 
   std::unique_ptr<frc::I2C> _i2c;

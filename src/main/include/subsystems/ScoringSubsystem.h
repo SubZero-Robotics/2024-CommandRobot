@@ -108,16 +108,30 @@ class ScoringSubsystem : public frc2::SubsystemBase {
                                 .iZone = ScoringPID::kAmpIZone,
                                 .ff = ScoringPID::kAmpFF};
 
-  PidMotorControllerPair speakerSideMotors{
-      "SpeakerSide", m_speakerUpperPidController, m_speakerLowerPidController,
-      speakerPidSettings, kMaxSpinRpm};
+  PidMotorController speakerUpperController{"Speaker Upper",
+                                            m_speakerUpperPidController,
+                                            speakerPidSettings, kMaxSpinRpm};
 
-  PidMotorControllerPair ampSideMotors{"AmpSide", m_ampUpperPidController,
-                                       m_ampLowerPidController, ampPidSettings,
-                                       kMaxSpinRpm};
+  PidMotorController speakerLowerController{"Speaker Lower",
+                                            m_speakerLowerPidController,
+                                            speakerPidSettings, kMaxSpinRpm};
+
+  PidMotorController ampUpperController{"Amp Upper", m_ampUpperPidController,
+                                        ampPidSettings, kMaxSpinRpm};
+
+  PidMotorController ampLowerController{"Amp Lower", m_ampLowerPidController,
+                                        ampPidSettings, kMaxSpinRpm};
+
+//   PidMotorControllerPair speakerPidPair{"Speaker", speakerUpperController,
+//                                         speakerLowerController};
+
+  //   PidMotorControllerPair ampPidPair{"Amp", ampUpperController,
+  //                                     ampLowerController};
 
   // PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
-  PidMotorControllerPairTuner ampTuner{ampSideMotors};
+  //   PidMotorControllerPairTuner speakerTuner{speakerPidPair};
+  //   PidMotorControllerPairTuner ampTuner{ampPidPair};
+  //   PidMotorControllerTuner speakerUpperTuner{speakerUpperController};
 
   double m_ampUpperVelocity;
   double m_ampLowerVelocity;

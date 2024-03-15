@@ -6,22 +6,16 @@
 #include <units/angular_velocity.h>
 
 #include "utils/ConsoleLogger.h"
-
-struct PidSettings {
-  double p, i, d, iZone, ff;
-};
+#include "utils/PidMotorController.h"
 
 class PidMotorControllerPair {
  public:
   /// @brief
-  /// @param name Name of the pair
-  /// @param controllerFirst First controller
-  /// @param controllerSecond Second controller
-  /// @param pidSettings
-  /// @param maxRpm The maximum RPM of the motors
-  explicit PidMotorControllerPair(std::string, rev::SparkPIDController &,
-                                  rev::SparkPIDController &, PidSettings,
-                                  units::revolutions_per_minute_t);
+  /// @param prefix Name prefix in shuffleboard
+  /// @param first First controller
+  /// @param second Second controller
+  explicit PidMotorControllerPair(std::string, PidMotorController &,
+                                  PidMotorController &);
 
   /// @brief
   /// @param rpmFirst RPM of the first motor
@@ -41,13 +35,12 @@ class PidMotorControllerPair {
 
   void UpdatePidSettings(PidSettings);
 
-  const std::string m_shuffleboardName;
+  const std::string m_shuffleboardPrefix;
 
  private:
-  rev::SparkPIDController &m_controllerFirst;
-  rev::SparkPIDController &m_controllerSecond;
+  PidMotorController &m_controllerFirst;
+  PidMotorController &m_controllerSecond;
   PidSettings m_pidSettings;
-  const units::revolutions_per_minute_t m_maxRpm;
 };
 
 class PidMotorControllerPairTuner {

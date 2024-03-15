@@ -24,6 +24,7 @@
 #include <utility>
 
 #include "Constants.h"
+#include "autos/AutoFactory.h"
 #include "commands/ExtendClimbCommand.h"
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
@@ -49,7 +50,8 @@ RobotContainer::RobotContainer() {
   m_drive.SetDefaultCommand(frc2::RunCommand(
       [this] {
         InputUtils::DeadzoneAxes axes = InputUtils::CalculateCircularDeadzone(
-            m_driverController.GetLeftX(), m_driverController.GetLeftY(),
+            m_driverController.GetLeftX(),
+            m_driverController.GetLeftY(), 
             OIConstants::kDriveDeadband);
         m_drive.Drive(
             -units::meters_per_second_t{axes.y},
@@ -78,15 +80,14 @@ void RobotContainer::RegisterAutos() {
       })
           .ToPtr()
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
-
+  using namespace AutoConstants;
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
-                             AutoConstants::kDefaultAutoName);
-  // m_chooser.AddOption("3 in Amp", "3 in Amp");
-  // m_chooser.AddOption("2 Note Auto", "2 Note Auto");
-  m_chooser.AddOption("4 Note Auto", "4 Note Auto");
-  m_chooser.AddOption("Place and leave", "Place and leave");
-  m_chooser.AddOption("3 Note Auto", "3 Note Auto");
-  m_chooser.AddOption("2 Note and Center Line", "2 Note Starting Away From Speaker");
+                             AutoType::LeaveWing);
+  m_chooser.AddOption("4 Note Auto", AutoType::FourNoteAuto);
+  m_chooser.AddOption("Place and leave", AutoType::PlaceAndLeave);
+  m_chooser.AddOption("3 Note Auto", AutoType::ThreeNoteAuto);
+  m_chooser.AddOption("2 Note and Center Line", AutoType::TwoNoteAuto);
+  m_chooser.AddOption("Empty Auto", AutoType::EmptyAuto);
 
   ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
@@ -117,13 +118,14 @@ void RobotContainer::ConfigureButtonBindings() {
               .ToPtr()));
 
   m_driverController.B().OnTrue(
-      // IntakingCommands::Intake(&m_intake, &m_scoring));
       m_leds.Intaking()
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
-          .AndThen(m_leds.Loaded()));
+          .AndThen(
+              m_leds.Loaded().Unless([this] { return !m_intake.NotePresent(); })));
 
-  m_driverController.X().OnTrue(IntakingCommands::OuttakeUntilPresent(
-      &m_intake, &m_scoring, ScoringDirection::SpeakerSide));
+  m_driverController.X().OnTrue(
+      m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
+          [] { return ScoringDirection::SpeakerSide; }, &m_scoring, &m_intake)));
 
   m_driverController.A().OnTrue(
       m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
@@ -278,8 +280,8 @@ void RobotContainer::ConfigureAutoBindings() {
 #endif
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
-  std::string autoName = m_chooser.GetSelected();
-  autoCommand = PathPlannerAuto(autoName).ToPtr();
+  auto autoType = m_chooser.GetSelected();
+  autoCommand = AutoFactory::GetAuto(autoType);
   return autoCommand.get();
 }
 
