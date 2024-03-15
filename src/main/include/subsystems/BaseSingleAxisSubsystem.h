@@ -97,6 +97,9 @@ class BaseSingleAxisSubsystem2
     if (!resetOccurred &&
         m_controller.GetAbsoluteEncoderPosition().has_value()) {
       // TODO: handle when no value
+      // ConsoleLogger::getInstance().logVerbose(
+      //     m_name, "Absolute encoder=%0.3f, relative=%0.3f",
+      //     m_controller.GetAbsoluteEncoderPosition().value(), m_controller.GetEncoderPosition());
       if (std::abs(m_controller.GetAbsoluteEncoderPosition().value()) <= 5) {
         ConsoleLogger::getInstance().logVerbose(
             m_name, "RESETTING ENCODER AAAAA %s", "");
@@ -104,6 +107,9 @@ class BaseSingleAxisSubsystem2
         resetOccurred = true;
       }
     } else if (m_controller.GetAbsoluteEncoderPosition().has_value()) {
+      // ConsoleLogger::getInstance().logVerbose(
+      //     m_name, "Absolute encoder=%0.3f, relative=%0.3f",
+      //     m_controller.GetAbsoluteEncoderPosition().value(), m_controller.GetEncoderPosition());
       if (std::abs(m_controller.GetAbsoluteEncoderPosition().value()) > 5) {
         resetOccurred = false;
       }
@@ -127,8 +133,7 @@ class BaseSingleAxisSubsystem2
 
   void UseState(PidState setpoint) override {
     // if (IsMovementAllowed()) {
-    m_controller.RunToPosition(setpoint.position /
-                               m_config.distancePerRevolution);
+    m_controller.RunToPosition(setpoint.position.value());
     // } else {
     //   ConsoleLogger::getInstance().logVerbose(
     //       m_name, "PID Trying to move out of limits %s", "");
@@ -157,11 +162,11 @@ class BaseSingleAxisSubsystem2
   Distance_t GetCurrentPosition() override {
     auto multiplied =
         m_config.distancePerRevolution * m_controller.GetEncoderPosition();
-    ConsoleLogger::getInstance().logVerbose(
-        m_name,
-        "distance per rev %0.3f encoder position %0.3f, multiplied %0.3f",
-        m_config.distancePerRevolution.value(),
-        m_controller.GetEncoderPosition(), multiplied.value());
+    // ConsoleLogger::getInstance().logVerbose(
+    //     m_name,
+    //     "distance per rev %0.3f encoder position %0.3f, multiplied %0.3f",
+    //     m_config.distancePerRevolution.value(),
+    //     m_controller.GetEncoderPosition(), multiplied.value());
     return multiplied;
   }
 
@@ -203,24 +208,26 @@ class BaseSingleAxisSubsystem2
   }
 
   frc2::CommandPtr MoveToPositionAbsolute(Distance_t position) override {
-    if (position < m_config.minDistance || position > m_config.maxDistance) {
-      ConsoleLogger::getInstance().logWarning(
-          m_name, "Attempting to move to position %f outside of boundary",
-          position.value());
-      return frc2::InstantCommand([] {}).ToPtr();
-    }
+    return frc2::InstantCommand(
+               [this, position] {
+                 if (position < m_config.minDistance ||
+                     position > m_config.maxDistance) {
+                   ConsoleLogger::getInstance().logWarning(
+                       m_name,
+                       "Attempting to move to position %f outside of boundary",
+                       position.value());
+                   return;
+                 }
+                 ConsoleLogger::getInstance().logVerbose(
+                     m_name, "Moving to absolute position %f",
+                     position.value());
 
-    ConsoleLogger::getInstance().logVerbose(
-        m_name, "Moving to absolute position %f", position.value());
-
-    m_goalPosition = position;
-    EnablePid();
-
-    return frc2::cmd::RunOnce(
-        [this, position] {
-          frc2::TrapezoidProfileSubsystem<TDistance>::SetGoal(position);
-        },
-        {this});
+                 m_goalPosition = position;
+                 EnablePid();
+                 frc2::TrapezoidProfileSubsystem<TDistance>::SetGoal(position);
+               },
+               {this})
+        .ToPtr();
   }
 
   frc2::CommandPtr MoveToPositionRelative(Distance_t position) override {

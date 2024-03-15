@@ -26,12 +26,13 @@ class PidMotorController {
   explicit PidMotorController(std::string name, TMotor &motor,
                               TRelativeEncoder &encoder,
                               TController &controller, PidSettings pidSettings,
-                              std::optional<TAbsoluteEncoder *> absEncoder,
+                              TAbsoluteEncoder *absEncoder,
                               units::revolutions_per_minute_t maxRpm)
       : m_shuffleboardName{name},
         m_motor{motor},
         m_controller{controller},
         m_encoder{encoder},
+        m_absEncoder{absEncoder},
         m_settings{pidSettings},
         m_pidController{
             frc::PIDController{pidSettings.p, pidSettings.i, pidSettings.d}},
@@ -55,8 +56,10 @@ class PidMotorController {
 
     if (m_absolutePositionEnabled) {
       ConsoleLogger::getInstance().logVerbose(
-          m_shuffleboardName, "relative position %0.3f, absolute targer %0.3f",
-          GetEncoderPosition(), m_absoluteTarget);
+          m_shuffleboardName,
+          "relative position %0.3f, absolute position %0.3f, absolute target "
+          "%0.3f",
+          GetEncoderPosition(), GetAbsoluteEncoderPosition(), m_absoluteTarget);
       auto effort =
           m_pidController.Calculate(GetEncoderPosition(), m_absoluteTarget);
       double ffEffort = 0;
@@ -97,7 +100,7 @@ class PidMotorController {
   void RunToPosition(double rotations) {
     ConsoleLogger::getInstance().logVerbose(
         m_shuffleboardName, "Setting rotations %0.3f", rotations);
-    // Stop();
+    Stop();
     m_absolutePositionEnabled = true;
     m_absoluteTarget = rotations;
     // m_controller.SetReference(rotations,
@@ -113,8 +116,8 @@ class PidMotorController {
   double GetEncoderPosition() { return m_encoder.GetPosition(); }
 
   std::optional<double> GetAbsoluteEncoderPosition() {
-    if (m_absEncoder.has_value() && m_absEncoder.value()) {
-      return m_absEncoder.value()->GetPosition();
+    if (m_absEncoder) {
+      return m_absEncoder->GetPosition();
     }
 
     return std::nullopt;
@@ -174,7 +177,7 @@ class PidMotorController {
   TMotor &m_motor;
   TController &m_controller;
   TRelativeEncoder &m_encoder;
-  std::optional<TAbsoluteEncoder *> m_absEncoder;
+  TAbsoluteEncoder *m_absEncoder;
   PidSettings m_settings;
   frc::PIDController m_pidController;
   bool m_absolutePositionEnabled = false;

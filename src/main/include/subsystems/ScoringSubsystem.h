@@ -133,28 +133,28 @@ class ScoringSubsystem : public frc2::SubsystemBase {
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
       speakerUpperController{"Speaker Upper",    m_speakerUpperSpinnyBoi,
                              m_speakerUpperEnc,  m_speakerUpperPidController,
-                             speakerPidSettings, std::nullopt,
+                             speakerPidSettings, nullptr,
                              kMaxSpinRpm};
 
   PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
       speakerLowerController{"Speaker Lower",    m_speakerLowerSpinnyBoi,
                              m_speakerLowerEnc,  m_speakerLowerPidController,
-                             speakerPidSettings, std::nullopt,
+                             speakerPidSettings, nullptr,
                              kMaxSpinRpm};
 
   PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
       ampUpperController{"Amp Upper",    m_ampUpperSpinnyBoi,
                          m_ampUpperEnc,  m_ampUpperPidController,
-                         ampPidSettings, std::nullopt,
+                         ampPidSettings, nullptr,
                          kMaxSpinRpm};
 
   PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
       ampLowerController{"Amp Lower",    m_ampLowerSpinnyBoi,
                          m_ampLowerEnc,  m_ampLowerPidController,
-                         ampPidSettings, std::nullopt,
+                         ampPidSettings, nullptr,
                          kMaxSpinRpm};
 
   //   PidMotorControllerPair speakerPidPair{"Speaker", speakerUpperController,

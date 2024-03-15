@@ -20,7 +20,7 @@ class WristSubsystem
              10_deg_per_s, 1.0, std::nullopt, std::nullopt, false},
             0.2_m} {
     m_SpinnyBoi.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
-    m_enc.SetPositionConversionFactor(8.75);
+    m_enc.SetPositionConversionFactor(.13 * 360);
     m_absEnc.SetPositionConversionFactor(360);
     m_SpinnyBoi.BurnFlash();
   }
@@ -50,7 +50,8 @@ class WristSubsystem
   rev::SparkPIDController m_PidController = m_SpinnyBoi.GetPIDController();
   rev::SparkRelativeEncoder m_enc = m_SpinnyBoi.GetEncoder();
   rev::SparkAbsoluteEncoder m_absEnc = m_SpinnyBoi.GetAbsoluteEncoder();
-  PidSettings armPidSettings = {.p = 0.25, .i = 0, .d = 0, .iZone = 0, .ff = 0};
+  PidSettings armPidSettings = {
+      .p = 0.075, .i = 0, .d = 0, .iZone = 0, .ff = 0};
   PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
       upperController{"Arm",          m_SpinnyBoi, m_enc,      m_PidController,
