@@ -101,33 +101,27 @@ class BaseSingleAxisSubsystem2
   }
 
   void Periodic() override {
-    if (!resetOccurred &&
-        m_controller.GetAbsoluteEncoderPosition().has_value()) {
-      // TODO: handle when no value
+    if (m_controller.GetAbsoluteEncoderPosition().has_value()) {
+      Distance_t absEncValue = Distance_t(
+          std::abs(m_controller.GetAbsoluteEncoderPosition().value()));
+
       // ConsoleLogger::getInstance().logVerbose(
-      //     m_name, "Absolute encoder=%0.3f, relative=%0.3f",
+      //     m_name, "Absolute encoder=%0.3f | Relative encoder=%0.3f",
       //     m_controller.GetAbsoluteEncoderPosition().value(),
       //     m_controller.GetEncoderPosition());
-      if (std::abs(m_controller.GetAbsoluteEncoderPosition().value()) <=
-          m_config.tolerance.value()) {
-        ConsoleLogger::getInstance().logVerbose(m_name, "Reset encoder %s", "");
+
+      if (!resetOccurred && absEncValue <= m_config.tolerance) {
         m_controller.ResetEncoder();
         resetOccurred = true;
-      }
-    } else if (m_controller.GetAbsoluteEncoderPosition().has_value()) {
-      // ConsoleLogger::getInstance().logVerbose(
-      //     m_name, "Absolute encoder=%0.3f, relative=%0.3f",
-      //     m_controller.GetAbsoluteEncoderPosition().value(),
-      //     m_controller.GetEncoderPosition());
-      if (std::abs(m_controller.GetAbsoluteEncoderPosition().value()) >
-          m_config.tolerance.value()) {
+      } else if (resetOccurred && absEncValue > m_config.tolerance) {
         resetOccurred = false;
       }
     }
 
-    if (m_pidEnabled) frc2::TrapezoidProfileSubsystem<TDistance>::Periodic();
-
-    m_controller.Update();
+    if (m_pidEnabled) {
+      frc2::TrapezoidProfileSubsystem<TDistance>::Periodic();
+      m_controller.Update();
+    }
 
     if (!m_pidEnabled && !IsMovementAllowed(m_latestSpeed)) {
       ConsoleLogger::getInstance().logInfo(
@@ -171,11 +165,6 @@ class BaseSingleAxisSubsystem2
 
   Distance_t GetCurrentPosition() override {
     return Distance_t(m_controller.GetEncoderPosition());
-    // ConsoleLogger::getInstance().logVerbose(
-    //     m_name,
-    //     "distance per rev %0.3f encoder position %0.3f, multiplied %0.3f",
-    //     m_config.distancePerRevolution.value(),
-    //     m_controller.GetEncoderPosition(), multiplied.value());
   }
 
   void Stop() override {
@@ -226,6 +215,7 @@ class BaseSingleAxisSubsystem2
                        position.value());
                    return;
                  }
+
                  ConsoleLogger::getInstance().logVerbose(
                      m_name, "Moving to absolute position %f",
                      position.value());
