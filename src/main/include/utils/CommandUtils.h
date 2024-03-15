@@ -37,7 +37,17 @@ static frc2::CommandPtr ScoreRamp(std::function<ScoringDirection()> direction,
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose(
                              "Scoring Composition", "flywheel ramped %s", "");
-                       }).ToPtr()));
+                            }
+                          ).ToPtr())
+              .Unless([intake] { return !intake->NotePresent(); })
+              .WithTimeout(5_s)
+ // TODO: put after named command once they are made
+             // .FinallyDo([intake, scoring] {
+              // intake->Stop();
+               //scoring->Stop();
+                //             })
+                             );
+                             
 }
 
 static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
