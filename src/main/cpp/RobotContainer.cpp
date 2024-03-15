@@ -50,7 +50,8 @@ RobotContainer::RobotContainer() {
   m_drive.SetDefaultCommand(frc2::RunCommand(
       [this] {
         InputUtils::DeadzoneAxes axes = InputUtils::CalculateCircularDeadzone(
-            m_driverController.GetLeftX(), m_driverController.GetLeftY(),
+            m_driverController.GetLeftX(),
+            m_driverController.GetLeftY(), 
             OIConstants::kDriveDeadband);
         m_drive.Drive(
             -units::meters_per_second_t{axes.y},
