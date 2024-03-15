@@ -299,3 +299,5 @@ void RobotContainer::StartIdling() {
 void RobotContainer::ResetPose() {
   m_drive.ResetOdometry(frc::Pose2d{0_m, 0_m, 0_rad});
 }
+
+void RobotContainer::DisableSubsystems() { m_wrist.DisablePid(); }

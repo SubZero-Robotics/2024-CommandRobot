@@ -44,12 +44,13 @@ class ISingleAxisSubsystem2 {
 
   struct SingleAxisConfig2 {
     frc::PIDController pid;
-    // TODO: Make a velocity PID
     Distance_t minDistance;
     Distance_t maxDistance;
-    Distance_t distancePerRevolution;
+    Distance_t encoderDistancePerRevolution;
+    std::optional<Distance_t> absoluteEncoderDistancePerRevolution;
     Velocity_t defaultSpeed;
     double velocityScalar;
+    Distance_t tolerance;
     std::optional<frc::DigitalInput *> minLimitSwitch;
     std::optional<frc::DigitalInput *> maxLimitSwitch;
     bool reversed;
@@ -57,27 +58,33 @@ class ISingleAxisSubsystem2 {
     SingleAxisConfig2(const SingleAxisConfig2 &other) : pid{other.pid} {
       minDistance = other.minDistance;
       maxDistance = other.maxDistance;
-      distancePerRevolution = other.distancePerRevolution;
+      encoderDistancePerRevolution = other.encoderDistancePerRevolution;
+      absoluteEncoderDistancePerRevolution =
+          other.absoluteEncoderDistancePerRevolution;
       defaultSpeed = other.defaultSpeed;
       velocityScalar = other.velocityScalar;
+      tolerance = other.tolerance;
       minLimitSwitch = other.minLimitSwitch;
       maxLimitSwitch = other.maxLimitSwitch;
       reversed = other.reversed;
     }
 
-    SingleAxisConfig2(frc::PIDController _pid, Distance_t _minDistance,
-                      Distance_t _maxDistance,
-                      Distance_t _distancePerRevolution,
-                      Velocity_t _defaultSpeed, double _velocityScalar,
-                      std::optional<frc::DigitalInput *> _minLimitSwitch,
-                      std::optional<frc::DigitalInput *> _maxLimitSwitch,
-                      bool _reversed)
+    SingleAxisConfig2(
+        frc::PIDController _pid, Distance_t _minDistance,
+        Distance_t _maxDistance, Distance_t _encoderDistancePerRevolution,
+        std::optional<Distance_t> _absoluteEncoderDistancePerRevolution,
+        Velocity_t _defaultSpeed, double _velocityScalar, Distance_t _tolerance,
+        std::optional<frc::DigitalInput *> _minLimitSwitch,
+        std::optional<frc::DigitalInput *> _maxLimitSwitch, bool _reversed)
         : pid{_pid},
           minDistance{_minDistance},
           maxDistance{_maxDistance},
-          distancePerRevolution{_distancePerRevolution},
+          encoderDistancePerRevolution{_encoderDistancePerRevolution},
+          absoluteEncoderDistancePerRevolution{
+              _absoluteEncoderDistancePerRevolution},
           defaultSpeed{_defaultSpeed},
           velocityScalar{_velocityScalar},
+          tolerance{_tolerance},
           minLimitSwitch{_minLimitSwitch},
           maxLimitSwitch{_maxLimitSwitch},
           reversed{_reversed} {}

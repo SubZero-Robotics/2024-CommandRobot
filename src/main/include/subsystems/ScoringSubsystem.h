@@ -113,22 +113,6 @@ class ScoringSubsystem : public frc2::SubsystemBase {
                                 .iZone = ScoringPID::kAmpIZone,
                                 .ff = ScoringPID::kAmpFF};
 
-  //   RevRelativePidController<rev::SparkPIDController> speakerUpperController{
-  //       "Speaker Upper", m_speakerUpperPidController, m_speakerUpperEnc,
-  //       speakerPidSettings, kMaxSpinRpm};
-
-  //   RevRelativePidController<rev::SparkPIDController> speakerLowerController{
-  //       "Speaker Lower", m_speakerLowerPidController, m_speakerLowerEnc,
-  //       speakerPidSettings, kMaxSpinRpm};
-
-  //   RevRelativePidController<rev::SparkPIDController> ampUpperController{
-  //       "Amp Upper", m_ampUpperPidController, m_ampUpperEnc, ampPidSettings,
-  //       kMaxSpinRpm};
-
-  //   RevRelativePidController<rev::SparkPIDController> ampLowerController{
-  //       "Amp Lower", m_ampLowerPidController, m_ampLowerEnc, ampPidSettings,
-  //       kMaxSpinRpm};
-
   PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
       speakerUpperController{"Speaker Upper",    m_speakerUpperSpinnyBoi,

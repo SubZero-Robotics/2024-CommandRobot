@@ -7,6 +7,7 @@
 #include <units/angular_velocity.h>
 
 #include "utils/ConsoleLogger.h"
+#include "utils/ShuffleboardLogger.h"
 
 struct PidSettings {
   double p, i, d, iZone, ff;
@@ -28,7 +29,7 @@ class PidMotorController {
                               TController &controller, PidSettings pidSettings,
                               TAbsoluteEncoder *absEncoder,
                               units::revolutions_per_minute_t maxRpm)
-      : m_shuffleboardName{name},
+      : m_name{name},
         m_motor{motor},
         m_controller{controller},
         m_encoder{encoder},
@@ -39,31 +40,30 @@ class PidMotorController {
         m_maxRpm{maxRpm} {
     // Doing it here so the PID controllers themselves get updated
     UpdatePidSettings(pidSettings);
-
-    // TODO: constant
-    m_pidController.SetTolerance(1.5);
   }
 
   void Set(double percentage) { m_motor.Set(percentage); }
 
   void Set(units::volt_t volts) { m_motor.SetVoltage(volts); }
 
+  void SetPidTolerance(double tolerance) {
+    m_pidController.SetTolerance(tolerance);
+  }
+
   /// @brief Call this every loop in Periodic
 
   void Update() {
-    // TODO: Make this a constant
-    // TODO: Handle wrap around at max
-
     if (m_absolutePositionEnabled) {
-      ConsoleLogger::getInstance().logVerbose(
-          m_shuffleboardName,
-          "relative position %0.3f, absolute position %0.3f, absolute target "
-          "%0.3f",
-          GetEncoderPosition(), GetAbsoluteEncoderPosition(), m_absoluteTarget);
+      // ConsoleLogger::getInstance().logVerbose(
+      //     m_name,
+      //     "relative position %0.3f, absolute position %0.3f, absolute target
+      //     "
+      //     "%0.3f",
+      //     GetEncoderPosition(), GetAbsoluteEncoderPosition(),
+      //     m_absoluteTarget);
       auto effort =
           m_pidController.Calculate(GetEncoderPosition(), m_absoluteTarget);
-      double ffEffort = 0;
-      double totalEffort = ffEffort + effort;
+      double totalEffort = effort;
       Set(units::volt_t(totalEffort));
 
       if (m_pidController.AtSetpoint()) {
@@ -89,7 +89,7 @@ class PidMotorController {
       ConsoleLogger::getInstance().logError(
           "PidMotorController",
           "Incorrect percentages for motor %s: Value=%.4f ",
-          m_shuffleboardName.c_str(), percentage);
+          m_name.c_str(), percentage);
       return;
     }
     auto rpm = units::revolutions_per_minute_t(m_maxRpm) * percentage;
@@ -97,20 +97,19 @@ class PidMotorController {
     RunWithVelocity(rpm);
   }
 
-  void RunToPosition(double rotations) {
-    ConsoleLogger::getInstance().logVerbose(
-        m_shuffleboardName, "Setting rotations %0.3f", rotations);
+  void RunToPosition(double position) {
+    ShuffleboardLogger::getInstance().logVerbose(
+        m_name + " Target position", position);
     Stop();
+    m_pidController.Reset();
     m_absolutePositionEnabled = true;
-    m_absoluteTarget = rotations;
-    // m_controller.SetReference(rotations,
-    //                           rev::CANSparkBase::ControlType::kPosition);
+    m_absoluteTarget = position;
   }
 
   virtual void ResetEncoder() {
     m_encoder.SetPosition(0);
-    ConsoleLogger::getInstance().logInfo(m_shuffleboardName + " PID Controller",
-                                         "Reset encoder.%s", "");
+    ConsoleLogger::getInstance().logInfo(m_name + " PID Controller",
+                                         "Reset encoder%s", "");
   }
 
   double GetEncoderPosition() { return m_encoder.GetPosition(); }
@@ -121,6 +120,16 @@ class PidMotorController {
     }
 
     return std::nullopt;
+  }
+
+  void SetEncoderConversionFactor(double factor) {
+    m_encoder.SetPositionConversionFactor(factor);
+  }
+
+  void SetAbsoluteEncoderConversionFactor(double factor) {
+    if (m_absEncoder) {
+      m_absEncoder->SetPositionConversionFactor(factor);
+    }
   }
 
   /// @brief Stop the motor
@@ -136,42 +145,42 @@ class PidMotorController {
     if (settings.p != m_settings.p) {
       ConsoleLogger::getInstance().logInfo(
           "PidMotorController", "Setting P to %.6f for %s", settings.p,
-          m_shuffleboardName.c_str());
+          m_name.c_str());
       m_controller.SetP(settings.p);
     }
 
     if (settings.i != m_settings.i) {
       ConsoleLogger::getInstance().logInfo(
           "PidMotorController", "Setting I to %.6f for %s", settings.i,
-          m_shuffleboardName.c_str());
+          m_name.c_str());
       m_controller.SetI(settings.i);
     }
 
     if (settings.d != m_settings.d) {
       ConsoleLogger::getInstance().logInfo(
           "PidMotorController", "Setting D to %.6f for %s", settings.d,
-          m_shuffleboardName.c_str());
+          m_name.c_str());
       m_controller.SetD(settings.d);
     }
 
     if (settings.iZone != m_settings.iZone) {
       ConsoleLogger::getInstance().logInfo(
           "PidMotorController", "Setting IZone to %.6f for %s", settings.iZone,
-          m_shuffleboardName.c_str());
+          m_name.c_str());
       m_controller.SetIZone(settings.iZone);
     }
 
     if (settings.ff != m_settings.ff) {
       ConsoleLogger::getInstance().logInfo(
           "PidMotorController", "Setting FF to %.6f for %s", settings.ff,
-          m_shuffleboardName.c_str());
+          m_name.c_str());
       m_controller.SetFF(settings.ff);
     }
 
     m_settings = settings;
   }
 
-  const std::string m_shuffleboardName;
+  const std::string m_name;
 
  protected:
   TMotor &m_motor;
@@ -193,34 +202,34 @@ class PidMotorControllerTuner {
       PidMotorController<TMotor, TController, TRelativeEncoder,
                          TAbsoluteEncoder> &controller)
       : m_controller{controller} {
-    frc::SmartDashboard::PutNumber(m_controller.m_shuffleboardName + " P Gain",
+    frc::SmartDashboard::PutNumber(m_controller.m_name + " P Gain",
                                    m_controller.GetPidSettings().p);
-    frc::SmartDashboard::PutNumber(m_controller.m_shuffleboardName + " I Gain",
+    frc::SmartDashboard::PutNumber(m_controller.m_name + " I Gain",
                                    m_controller.GetPidSettings().i);
-    frc::SmartDashboard::PutNumber(m_controller.m_shuffleboardName + " D Gain",
+    frc::SmartDashboard::PutNumber(m_controller.m_name + " D Gain",
                                    m_controller.GetPidSettings().d);
-    frc::SmartDashboard::PutNumber(m_controller.m_shuffleboardName + " IZone",
+    frc::SmartDashboard::PutNumber(m_controller.m_name + " IZone",
                                    m_controller.GetPidSettings().iZone);
     frc::SmartDashboard::PutNumber(
-        m_controller.m_shuffleboardName + " Feed Forward",
+        m_controller.m_name + " Feed Forward",
         m_controller.GetPidSettings().ff);
   }
   /// @brief Call this within the Periodic method of the encapsulating subsystem
   void UpdateFromShuffleboard() {
     double tP = frc::SmartDashboard::GetNumber(
-        m_controller.m_shuffleboardName + " P Gain",
+        m_controller.m_name + " P Gain",
         m_controller.GetPidSettings().p);
     double tI = frc::SmartDashboard::GetNumber(
-        m_controller.m_shuffleboardName + " I Gain",
+        m_controller.m_name + " I Gain",
         m_controller.GetPidSettings().i);
     double tD = frc::SmartDashboard::GetNumber(
-        m_controller.m_shuffleboardName + " D Gain",
+        m_controller.m_name + " D Gain",
         m_controller.GetPidSettings().d);
     double tIZone = frc::SmartDashboard::GetNumber(
-        m_controller.m_shuffleboardName + " IZone",
+        m_controller.m_name + " IZone",
         m_controller.GetPidSettings().iZone);
     double tFeedForward = frc::SmartDashboard::GetNumber(
-        m_controller.m_shuffleboardName + " Feed Forward",
+        m_controller.m_name + " Feed Forward",
         m_controller.GetPidSettings().ff);
 
     m_controller.UpdatePidSettings(
