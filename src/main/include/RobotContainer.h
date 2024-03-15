@@ -16,6 +16,7 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <subsystems/ArmSubsystem.h>
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
@@ -83,6 +84,8 @@ class RobotContainer {
 
   StateSubsystem m_state{m_subsystems, m_driverController,
                          m_operatorController};
+
+  ArmSubsystem m_armSubsystem;
 
   void ConfigureAutoBindings();
 #endif

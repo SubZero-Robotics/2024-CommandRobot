@@ -284,7 +284,7 @@ constexpr units::second_t kConnectorXDelay = 0.002_s;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
-constexpr int kRightIntakeSpinnyBoiId = 23;
+constexpr int kRightIntakeSpinnyBoiId = 62;
 constexpr int kLeftIntakeSpinnyBoiId = 20;
 constexpr int kVectorSpinnyBoiId = 22;
 constexpr int kAmpLowerSpinnyBoiId = 24;
@@ -292,6 +292,7 @@ constexpr int kAmpUpperSpinnyBoiId = 21;
 constexpr int kSpeakerLowerSpinnyBoiId = 25;
 constexpr int kSpeakerUpperSpinnyBoiId = 19;
 constexpr int kPigeonCanId = 9;
+constexpr int kArmRotationMotorID = 17;
 
 constexpr int kTicksPerMotorRotation = 42;
 }  // namespace CANSparkMaxConstants

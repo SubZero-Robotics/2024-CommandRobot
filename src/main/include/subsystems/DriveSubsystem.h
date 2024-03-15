@@ -162,7 +162,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // The gyro sensor
   // AHRS m_gyro{frc::SPI::Port::kMXP};
   //   frc::ADXRS450_Gyro m_gyro;
-  ctre::phoenix6::hardware::Pigeon2 m_gyro{CANSparkMaxConstants::kPigeonCanId, "rio"};
+  ctre::phoenix6::hardware::Pigeon2 m_gyro{CANSparkMaxConstants::kPigeonCanId,
+                                           "rio"};
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
@@ -193,8 +194,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
       frc::Pose2d{0_m, 0_m, 0_rad},
       {0.3, 0.3, 0.3},
-      {1.0, 1.0, 3.0}
-      };
+      {1.0, 1.0, 3.0}};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing

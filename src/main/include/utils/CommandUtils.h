@@ -1,5 +1,7 @@
-#pragma once
+#ifndef COMMAND_UTIL_H
+#define COMMAND_UTIL_H
 
+#include <frc2/command/FunctionalCommand.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/WaitCommand.h>
 #include <frc2/command/button/CommandXboxController.h>
@@ -12,6 +14,7 @@
 #include "commands/NoteShuffle.h"
 #include "commands/ShootCommand.h"
 #include "commands/TurnToAngleCommand.h"
+#include "subsystems/ArmSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 
@@ -165,7 +168,8 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
                          intakeSubsystem->Stop();
                          scoring->Stop();
                        }).ToPtr())
-              .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring, ScoringDirection::SpeakerSide))
+              .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
+                                           ScoringDirection::SpeakerSide))
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose(
                              "Intake Subsystem", "Intake completed normally%s",
@@ -276,3 +280,24 @@ static frc2::CommandPtr Funni(IntakeSubsystem* intake,
       });
 }
 }  // namespace FunniCommands
+
+namespace ArmCommand {
+frc2::CommandPtr RotateWrist(ArmSubsystem* intake) {
+  // return frc2::FunctionalCommand(
+  //            // onInit
+  //            [subsystem] { subsystem->MoveToPosition(95); },
+  //            // onExecute
+  //            [subsystem] {},
+  //            // onEnd
+  //            [subsystem](bool interrupted) { subsystem->StopMovement(); },
+  //            // is finished
+  //            [subsystem] { return !subsystem->GetIsMovingToPosition(); },
+  //            //
+  //            {subsystem})
+  //     .ToPtr();
+
+  return frc2::InstantCommand([] {}).ToPtr();
+}
+};  // namespace ArmCommand
+
+#endif

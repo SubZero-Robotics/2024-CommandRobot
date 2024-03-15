@@ -122,8 +122,7 @@ void RobotContainer::ConfigureButtonBindings() {
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
           .AndThen(m_leds.Loaded()));
 
-  m_driverController.X().OnTrue(IntakingCommands::OuttakeUntilPresent(
-      &m_intake, &m_scoring, ScoringDirection::SpeakerSide));
+  // m_driverController.X().OnTrue(ArmCommand::RotateWrist(&m_armSubsystem));
 
   m_driverController.A().OnTrue(
       m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
