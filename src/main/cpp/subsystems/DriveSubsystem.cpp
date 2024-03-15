@@ -99,6 +99,10 @@ void DriveSubsystem::Periodic() {
     //     "DriveSubsystem PoseEstimator final pose", updatedPose);
     m_lastGoodPosition = updatedPose;
     m_field.SetRobotPose(updatedPose);
+
+    ConsoleLogger::getInstance().logVerbose(
+        "gyro pitch", "%f",
+        (m_gyro.GetPitch().GetValue().value() * 180.0 / M_PI));
   };
 }
 

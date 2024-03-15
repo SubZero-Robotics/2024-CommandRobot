@@ -1,16 +1,16 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 0.67,
+      "y": 6.59
+    },
+    "rotation": -120.0
+  },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Start to Speaker"
-          }
-        },
         {
           "type": "named",
           "data": {
@@ -20,7 +20,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Speaker to Note 1"
+            "pathName": "Speaker side to note 1"
           }
         },
         {
@@ -32,13 +32,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Note 1 to Speaker"
+            "pathName": "Note 1 to Speaker Side"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Shoot Subwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Speaker Side to center note 1"
           }
         }
       ]
