@@ -264,6 +264,6 @@ frc::Pose2d DriveSubsystem::GetPose() {
 
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
   m_lastGoodPosition = pose;
-  poseEstimator.ResetPosition(GetRotation(), GetModulePositions(), pose);
+  poseEstimator.ResetPosition(GetHeading(), GetModulePositions(), pose);
   // ResetEncoders();
 }
