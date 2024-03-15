@@ -94,9 +94,12 @@ class BaseSingleAxisSubsystem2
   }
 
   void Periodic() override {
-    if (!resetOccurred && m_controller.GetAbsoluteEncoderPosition().has_value()) {
+    if (!resetOccurred &&
+        m_controller.GetAbsoluteEncoderPosition().has_value()) {
       // TODO: handle when no value
       if (std::abs(m_controller.GetAbsoluteEncoderPosition().value()) <= 5) {
+        ConsoleLogger::getInstance().logVerbose(
+            m_name, "RESETTING ENCODER AAAAA %s", "");
         m_controller.ResetEncoder();
         resetOccurred = true;
       }
@@ -106,9 +109,7 @@ class BaseSingleAxisSubsystem2
       }
     }
 
-    frc2::TrapezoidProfileSubsystem<TDistance>::Periodic();
-
-    GetCurrentPosition();
+    if (m_pidEnabled) frc2::TrapezoidProfileSubsystem<TDistance>::Periodic();
 
     m_controller.Update();
 
@@ -126,8 +127,8 @@ class BaseSingleAxisSubsystem2
 
   void UseState(PidState setpoint) override {
     // if (IsMovementAllowed()) {
-      m_controller.RunToPosition(setpoint.position /
-                                 m_config.distancePerRevolution);
+    m_controller.RunToPosition(setpoint.position /
+                               m_config.distancePerRevolution);
     // } else {
     //   ConsoleLogger::getInstance().logVerbose(
     //       m_name, "PID Trying to move out of limits %s", "");

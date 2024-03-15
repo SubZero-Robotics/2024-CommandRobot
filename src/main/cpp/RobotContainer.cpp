@@ -130,8 +130,7 @@ void RobotContainer::ConfigureButtonBindings() {
   //     m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
   //         [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake)));
 
-
-  m_driverController.A().OnTrue(m_wrist.MoveToPositionAbsolute(95_deg));
+  // m_driverController.A().OnTrue(m_wrist.MoveToPositionAbsolute(95_deg));
 
   m_driverController.Y().OnTrue(
       m_leds.ScoringSubwoofer().AndThen(ScoringCommands::Score(

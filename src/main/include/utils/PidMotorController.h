@@ -54,6 +54,9 @@ class PidMotorController {
     // TODO: Handle wrap around at max
 
     if (m_absolutePositionEnabled) {
+      ConsoleLogger::getInstance().logVerbose(
+          m_shuffleboardName, "relative position %0.3f, absolute targer %0.3f",
+          GetEncoderPosition(), m_absoluteTarget);
       auto effort =
           m_pidController.Calculate(GetEncoderPosition(), m_absoluteTarget);
       double ffEffort = 0;
@@ -94,14 +97,18 @@ class PidMotorController {
   void RunToPosition(double rotations) {
     ConsoleLogger::getInstance().logVerbose(
         m_shuffleboardName, "Setting rotations %0.3f", rotations);
-    Stop();
+    // Stop();
     m_absolutePositionEnabled = true;
     m_absoluteTarget = rotations;
     // m_controller.SetReference(rotations,
     //                           rev::CANSparkBase::ControlType::kPosition);
   }
 
-  virtual void ResetEncoder() { m_encoder.SetPosition(0); }
+  virtual void ResetEncoder() {
+    m_encoder.SetPosition(0);
+    ConsoleLogger::getInstance().logInfo(m_shuffleboardName + " PID Controller",
+                                         "Reset encoder.%s", "");
+  }
 
   double GetEncoderPosition() { return m_encoder.GetPosition(); }
 
