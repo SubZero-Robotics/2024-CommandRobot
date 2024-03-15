@@ -48,7 +48,11 @@ class PidMotorController {
   void Set(units::volt_t volts) { m_motor.SetVoltage(volts); }
 
   /// @brief Call this every loop in Periodic
+
   void Update() {
+    // TODO: Make this a constant
+    // TODO: Handle wrap around at max
+
     if (m_absolutePositionEnabled) {
       auto effort =
           m_pidController.Calculate(GetEncoderPosition(), m_absoluteTarget);
@@ -214,8 +218,7 @@ class PidMotorControllerTuner {
   }
 
  private:
-  PidMotorController<TMotor, TController,
-                     TRelativeEncoder, TAbsoluteEncoder>
+  PidMotorController<TMotor, TController, TRelativeEncoder, TAbsoluteEncoder>
       &m_controller;
 };
 

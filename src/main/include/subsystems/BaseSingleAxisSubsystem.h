@@ -77,9 +77,8 @@ class BaseSingleAxisSubsystem2
  public:
   BaseSingleAxisSubsystem2(
       std::string name,
-      PidMotorController<TMotor, TController,
-                         TRelativeEncoder, TAbsoluteEncoder>
-          &controller,
+      PidMotorController<TMotor, TController, TRelativeEncoder,
+                         TAbsoluteEncoder> &controller,
       ISingleAxisSubsystem2<TDistance>::SingleAxisConfig2 config)
       : frc2::TrapezoidProfileSubsystem<
             TDistance>{AutoConstants::kSingleAxisConstraints},
@@ -90,12 +89,28 @@ class BaseSingleAxisSubsystem2
         m_name{name},
         m_pidEnabled{false} {
     m_config = config;
+    m_pidEnabled = false;
+    frc2::TrapezoidProfileSubsystem<TDistance>::Disable();
   }
 
   void Periodic() override {
+    if (!resetOccurred && m_controller.GetAbsoluteEncoderPosition().has_value()) {
+      // TODO: handle when no value
+      if (std::abs(m_controller.GetAbsoluteEncoderPosition().value()) <= 5) {
+        m_controller.ResetEncoder();
+        resetOccurred = true;
+      }
+    } else if (m_controller.GetAbsoluteEncoderPosition().has_value()) {
+      if (std::abs(m_controller.GetAbsoluteEncoderPosition().value()) > 5) {
+        resetOccurred = false;
+      }
+    }
+
     frc2::TrapezoidProfileSubsystem<TDistance>::Periodic();
 
     GetCurrentPosition();
+
+    m_controller.Update();
 
     if (!m_pidEnabled && !IsMovementAllowed(m_latestSpeed)) {
       ConsoleLogger::getInstance().logInfo(
@@ -111,11 +126,11 @@ class BaseSingleAxisSubsystem2
 
   void UseState(PidState setpoint) override {
     // if (IsMovementAllowed()) {
-    m_controller.RunToPosition(setpoint.position /
-                               m_config.distancePerRevolution);
+      m_controller.RunToPosition(setpoint.position /
+                                 m_config.distancePerRevolution);
     // } else {
     //   ConsoleLogger::getInstance().logVerbose(
-    //       m_name, "PID Trying to move out of limits! %s", "");
+    //       m_name, "PID Trying to move out of limits %s", "");
     //   Stop();
     // }
   }
@@ -191,6 +206,7 @@ class BaseSingleAxisSubsystem2
       ConsoleLogger::getInstance().logWarning(
           m_name, "Attempting to move to position %f outside of boundary",
           position.value());
+      return frc2::InstantCommand([] {}).ToPtr();
     }
 
     ConsoleLogger::getInstance().logVerbose(
@@ -249,6 +265,7 @@ class BaseSingleAxisSubsystem2
   Distance_t m_goalPosition;
   bool m_pidEnabled;
   bool m_home;
+  bool resetOccurred = false;
   double m_latestSpeed;
 };
 
