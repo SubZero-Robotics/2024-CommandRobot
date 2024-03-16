@@ -25,6 +25,7 @@
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 #include "subsystems/StateSubsystem.h"
+#include "subsystems/WristSubsystem.h"
 #include "utils/Vision.h"
 
 /**
@@ -43,6 +44,8 @@ class RobotContainer {
   void ClearCurrentStateCommand();
   void StartIdling();
   void ResetPose();
+  void DisableSubsystems();
+  void Initialize();
 
  private:
   // The driver's controller
@@ -68,6 +71,7 @@ class RobotContainer {
 #ifndef TEST_SWERVE_BOT
   LeftClimbSubsystem m_leftClimb;
   RightClimbSubsystem m_rightClimb;
+  WristSubsystem m_wrist;
   IntakeSubsystem m_intake;
   ScoringSubsystem m_scoring;
 
@@ -76,7 +80,8 @@ class RobotContainer {
                                .rightClimb = &m_rightClimb,
                                .intake = &m_intake,
                                .scoring = &m_scoring,
-                               .led = &m_leds};
+                               .led = &m_leds,
+                               .wrist = &m_wrist};
 
   frc2::CommandXboxController m_operatorController{
       OIConstants::kOperatorControllerPort};

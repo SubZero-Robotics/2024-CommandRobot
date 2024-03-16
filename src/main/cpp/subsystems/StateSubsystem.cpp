@@ -128,7 +128,7 @@ frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
       // ? TODO: Snap to angle first?
       .AndThen(
           ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
-                                 m_subsystems.scoring, m_subsystems.intake))
+                                 m_subsystems.scoring, m_subsystems.intake, m_subsystems.wrist))
       .WithTimeout(20_s);
 }
 
@@ -145,7 +145,7 @@ frc2::CommandPtr StateSubsystem::StartScoringAmp() {
       // ? TODO: Snap to angle first?
       .AndThen(ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
                                       m_subsystems.scoring,
-                                      m_subsystems.intake))
+                                      m_subsystems.intake, m_subsystems.wrist))
       .WithTimeout(20_s);
 }
 
@@ -162,7 +162,7 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
       // ? TODO: Snap to angle first?
       .AndThen(
           ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
-                                 m_subsystems.scoring, m_subsystems.intake))
+                                 m_subsystems.scoring, m_subsystems.intake, m_subsystems.wrist))
       .WithTimeout(20_s);
 }
 

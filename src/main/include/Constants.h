@@ -179,6 +179,9 @@ enum class AutoType {
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
+extern const frc::TrapezoidProfile<units::degree>::Constraints
+    kSingleAxisConstraints;
+
 const std::string kDefaultAutoName = "Leave Wing";
 
 const std::string kScoreSubwooferName = "Shoot Subwoofer";
@@ -293,7 +296,7 @@ constexpr units::second_t kConnectorXDelay = 0.002_s;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
-constexpr int kRightIntakeSpinnyBoiId = 23;
+constexpr int kWristSpinnyBoiId = 62;
 constexpr int kLeftIntakeSpinnyBoiId = 20;
 constexpr int kVectorSpinnyBoiId = 22;
 constexpr int kAmpLowerSpinnyBoiId = 24;
@@ -316,7 +319,6 @@ constexpr double kFeedSubwooferSpeed = 1;
 constexpr double kOutakeSpeed = -0.5;
 
 constexpr double kSecondaryIntakeOutSpeed = -0.05;
-
 
 constexpr uint8_t kCenterBeamBreakDigitalPort = 3;
 constexpr uint8_t kLowerPodiumBeamBreakDigitalPort = 2;
