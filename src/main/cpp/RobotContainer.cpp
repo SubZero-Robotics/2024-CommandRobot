@@ -50,7 +50,8 @@ RobotContainer::RobotContainer() {
   m_drive.SetDefaultCommand(frc2::RunCommand(
       [this] {
         InputUtils::DeadzoneAxes axes = InputUtils::CalculateCircularDeadzone(
-            m_driverController.GetLeftX(), m_driverController.GetLeftY(),
+            m_driverController.GetLeftX(),
+            m_driverController.GetLeftY(), 
             OIConstants::kDriveDeadband);
         m_drive.Drive(
             -units::meters_per_second_t{axes.y},
@@ -72,6 +73,10 @@ void RobotContainer::RegisterAutos() {
       AutoConstants::kScoreSubwooferName,
       ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
                              &m_scoring, &m_intake, &m_wrist));
+  pathplanner::NamedCommands::registerCommand(
+      "Spin up Speaker",
+      ScoringCommands::ScoreRamp([] { return ScoringDirection::Subwoofer; },
+                                 &m_scoring, &m_intake));
   pathplanner::NamedCommands::registerCommand(
       AutoConstants::kIntakeName,
       frc2::InstantCommand([this] {
@@ -125,10 +130,6 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.X().OnTrue(m_leds.ScoringAmp().AndThen(
       ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
                              &m_scoring, &m_intake, &m_wrist)));
-
-  // m_driverController.A().OnTrue(
-  //     m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
-  //         [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake)));
 
   m_driverController.A().OnTrue(m_leds.ScoringAmp().AndThen(
       ScoringCommands::Score([] { return ScoringDirection::AmpSide; },

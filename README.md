@@ -104,7 +104,8 @@ Following the WPILib command based structure we have broken our robot up into a 
 
 ## Digital Input Ports
 
-| Ports |            device            |
+| Port  |            Device            |
+| :---: | :--------------------------: |
 |   2   | Lower Podium Side Beam Break |
 |   3   |       Center Beam Break      |
 |   4   |   Lower Amp Side Beam Break  |

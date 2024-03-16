@@ -142,12 +142,12 @@ static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
                }).ToPtr())
       // .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
       //                              ScoringDirection::SpeakerSide))
-      .AndThen((NoteShuffle(intake).ToPtr())
-                   .AlongWith(frc2::InstantCommand(
-                                  [scoring] { scoring->SpinOutake(); })
-                                  .ToPtr()
-                                  .WithTimeout(2_s))
-                   .AndThen(frc2::WaitCommand(0.2_s).ToPtr()))
+      // .AndThen((NoteShuffle(intake).ToPtr())
+      //              .AlongWith(frc2::InstantCommand(
+      //                             [scoring] { scoring->SpinOutake(); })
+      //                             .ToPtr()
+      //                             .WithTimeout(2_s))
+      //              .AndThen(frc2::WaitCommand(0.2_s).ToPtr()))
       // .AndThen(frc2::WaitCommand(0_s).ToPtr())
       .AndThen(frc2::InstantCommand([intake, scoring] {
                  intake->Stop();
@@ -182,12 +182,11 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
                        }).ToPtr())
               // .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
               //                              ScoringDirection::SpeakerSide))
-              .AndThen((NoteShuffle(intakeSubsystem).ToPtr())
-                           .AlongWith(frc2::InstantCommand(
-                                          [scoring] { scoring->SpinOutake(); })
-                                          .ToPtr()
-                                          .WithTimeout(2_s))
-                           .AndThen(frc2::WaitCommand(0.2_s).ToPtr()))
+              // .AndThen((NoteShuffle(intakeSubsystem).ToPtr())
+              //              .AlongWith(frc2::InstantCommand(
+              //                             [scoring] { scoring->SpinOutake();
+              //                             }) .ToPtr() .WithTimeout(2_s))
+              //              .AndThen(frc2::WaitCommand(0.2_s).ToPtr()))
               // .AndThen(frc2::WaitCommand(0_s).ToPtr())
               .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
                          intakeSubsystem->Stop();
