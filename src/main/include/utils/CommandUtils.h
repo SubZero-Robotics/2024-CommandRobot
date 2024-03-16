@@ -12,9 +12,9 @@
 #include "commands/NoteShuffle.h"
 #include "commands/ShootCommand.h"
 #include "commands/TurnToAngleCommand.h"
+#include "subsystems/ArmSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
-#include "subsystems/ArmSubsystem.h"
 
 namespace ScoringCommands {
 using namespace ScoringConstants;
@@ -30,28 +30,33 @@ static frc2::CommandPtr OutakeUntilTopNotPresent(IntakeSubsystem* intake) {
       .FinallyDo([intake] { intake->Stop(); });
 }
 
+static frc2::CommandPtr ArmScoringGoal(
+    std::function<ScoringDirection()> direction, ArmSubsystem* arm) {
+  return frc2::DeferredCommand(
+             [direction, arm] {
+               if (direction() == ScoringDirection::AmpSide) {
+                 // TODO: MAKE THIS A CONSTANT
+                 return arm->MoveToPositionAbsolute(147_deg);
+               } else {
+                 return frc2::InstantCommand([] {}).ToPtr();
+               }
+             },
+             {arm})
+      .ToPtr();
+}
+
 static frc2::CommandPtr ScoreRamp(std::function<ScoringDirection()> direction,
                                   ScoringSubsystem* scoring,
                                   IntakeSubsystem* intake, ArmSubsystem* arm) {
-  return (FlywheelRamp(intake, scoring, direction)
-              .ToPtr()
-              .AndThen(frc2::InstantCommand([] {
-                         ConsoleLogger::getInstance().logVerbose(
-                             "Scoring Composition", "flywheel ramped %s", "");
-                       }).ToPtr())
-              .Unless([intake] { return !intake->NotePresent(); })
-              .WithTimeout(5_s))
-      .AlongWith(frc2::DeferredCommand(
-                     [direction, arm] {
-                       if (direction() == ScoringDirection::AmpSide) {
-                         // TODO: MAKE THIS A CONSTANT
-                         return arm->MoveToPositionAbsolute(147_deg);
-                       } else {
-                         return frc2::InstantCommand([] {}).ToPtr();
-                       }
-                     },
-                     {arm})
-                     .ToPtr())
+  return (ArmScoringGoal(direction, arm)
+              .AndThen(FlywheelRamp(intake, scoring, direction)
+                           .ToPtr()
+                           .AndThen(frc2::InstantCommand([] {
+                                      ConsoleLogger::getInstance().logVerbose(
+                                          "Scoring Composition",
+                                          "flywheel ramped %s", "");
+                                    }).ToPtr())))
+      .Unless([intake] { return !intake->NotePresent(); })
       .WithTimeout(5_s);
 }
 
@@ -82,8 +87,8 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                                 }
                               },
                               {arm})
-                              .ToPtr())
-                 .Unless([intake] { return !intake->NotePresent(); }))
+                              .ToPtr()))
+      .Unless([intake] { return !intake->NotePresent(); })
       .WithTimeout(5_s)
       .FinallyDo([intake, scoring] {
         intake->Stop();
