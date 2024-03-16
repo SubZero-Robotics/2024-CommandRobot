@@ -221,10 +221,12 @@ wpi::array<frc::SwerveModulePosition, 4U> DriveSubsystem::GetModulePositions()
 frc::Rotation2d DriveSubsystem::GetHeading() {
   auto gyro = GetGyro();
   if (!gyro) {
+    ConsoleLogger::getInstance().logVerbose("DriveSubsystem", "NO GYRO %s", "");
     return m_lastKnownRotation;
   }
   m_lastKnownRotation = gyro.value()->GetRotation();
-  return gyro.value()->GetRotation();
+  ConsoleLogger::getInstance().logVerbose("DriveSubsystem", "last known rotation %0.3f", m_lastKnownRotation.Degrees().value());
+  return m_lastKnownRotation;
 }
 
 void DriveSubsystem::ZeroHeading() {
@@ -260,6 +262,7 @@ std::optional<IGyroContainer*> DriveSubsystem::GetGyro() {
     }
 
     m_lastGoodGyroIndex = i;
+    ConsoleLogger::getInstance().logVerbose("DriveSubsystem", "Last good gyro %d", m_lastGoodGyroIndex);
     return gyro;
   }
 
