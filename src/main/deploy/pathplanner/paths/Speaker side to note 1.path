@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3769542042900886,
-        "y": 5.577308253853149
+        "x": 0.7294015605842922,
+        "y": 6.694858784119604
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3768018994464795,
-        "y": 5.594760660290432
+        "x": 0.8619139035224649,
+        "y": 7.656158161527519
       },
       "isLocked": false,
-      "linkedName": "Speaker"
+      "linkedName": "Speaker Side"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 7.008190708493376
       },
       "prevControl": {
-        "x": 1.5753960028542715,
-        "y": 7.028951100370099
+        "x": 1.8678408858089988,
+        "y": 6.966413118576873
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.75,
+      "waypointRelativePos": 0.65,
       "command": {
         "type": "parallel",
         "data": {
@@ -50,18 +50,21 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 1.5,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 180.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
   "useDefaultConstraints": false
 }

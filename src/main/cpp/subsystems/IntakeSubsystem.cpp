@@ -6,6 +6,7 @@ IntakeSubsystem::IntakeSubsystem() {
 
 void IntakeSubsystem::Periodic() {
   // intakeTuner.UpdateFromShuffleboard();
+  frc::SmartDashboard::PutBoolean("Has note", NotePresent());
 }
 
 void IntakeSubsystem::SimulationPeriodic() {}

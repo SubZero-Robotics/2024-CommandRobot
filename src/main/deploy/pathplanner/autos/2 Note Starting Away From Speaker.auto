@@ -1,14 +1,32 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 0.7294015605842922,
+      "y": 6.694858784119604
+    },
+    "rotation": -120.0
+  },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot Subwoofer"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Start to Speaker"
+            "pathName": "Speaker side to note 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 1 to Speaker Side"
           }
         },
         {
@@ -20,25 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Speaker to Note 1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Run Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Note 1 to Speaker"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Subwoofer"
+            "pathName": "Speaker Side to center note 1"
           }
         }
       ]
