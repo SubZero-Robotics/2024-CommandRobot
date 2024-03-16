@@ -179,6 +179,9 @@ enum class AutoType {
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
+extern const frc::TrapezoidProfile<units::degree>::Constraints
+    kSingleAxisConstraints;
+
 const std::string kDefaultAutoName = "Leave Wing";
 
 const std::string kScoreSubwooferName = "Shoot Subwoofer";
@@ -293,7 +296,7 @@ constexpr units::second_t kConnectorXDelay = 0.002_s;
 
 // Motor IDs
 namespace CANConstants {
-constexpr int kRightIntakeSpinnyBoiId = 23;
+constexpr int kArmSpinnyBoiId = 62;
 constexpr int kLeftIntakeSpinnyBoiId = 20;
 constexpr int kVectorSpinnyBoiId = 22;
 constexpr int kAmpLowerSpinnyBoiId = 24;
@@ -453,20 +456,18 @@ constexpr double kAntiGravityPercentage = -0.05;
 
 // Homing Speeds
 constexpr double kRotationHomingSpeed = .15;
-constexpr double kExtenderHomingSpeed = .66;
-constexpr double kWristHomingSpeed = .33;
 
-// Wrist Constants
-constexpr int kWristLimitSwitchPort = 0;
-constexpr int kWristGearRatio = 125;
-constexpr auto kWristDegreeLimit = 144;
-constexpr double kWristStepSize = 4;
+// Arm Constants
+constexpr int kArmGearRatio = 125;
+constexpr auto kArmDegreeLimit = 144;
+constexpr double kArmStepSize = 4;
 
-constexpr double kWristSetP = 0.0018386;
-constexpr double kWristSetI = 0.0075;
-constexpr double kWristSetD = 0.00062724;
-constexpr double kWristSetIZone = 0.01;
-constexpr double kWristSetFF = 0.000015;
+// These are currently wrong, pls fix
+constexpr double kArmSetP = 0.0018386;
+constexpr double kArmSetI = 0.0075;
+constexpr double kArmSetD = 0.00062724;
+constexpr double kArmSetIZone = 0.01;
+constexpr double kArmSetFF = 0.000015;
 }  // namespace ArmConstants
 
 // TODO: CREATE ACTUAL ROBOT VALUES FOR THESE

@@ -40,9 +40,6 @@ class IntakeSubsystem : public frc2::SubsystemBase {
   bool NotePresentLower();
 
  private:
-  rev::CANSparkMax m_rightIntakeSpinnyBoy{
-      CANConstants::kRightIntakeSpinnyBoiId,
-      rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::CANSparkMax m_leftIntakeSpinnyBoy{
       CANConstants::kLeftIntakeSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};

@@ -20,6 +20,7 @@
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/LedSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
+#include "subsystems/ArmSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
 
 typedef struct {
@@ -29,6 +30,7 @@ typedef struct {
   IntakeSubsystem *intake;
   ScoringSubsystem *scoring;
   LedSubsystem *led;
+  ArmSubsystem *arm;
 } Subsystems_t;
 
 class StateSubsystem : public frc2::SubsystemBase {
