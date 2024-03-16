@@ -43,7 +43,6 @@ class ISingleAxisSubsystem2 {
   using Acceleration_t = units::unit_t<Acceleration>;
 
   struct SingleAxisConfig2 {
-    frc::PIDController pid;
     Distance_t minDistance;
     Distance_t maxDistance;
     Distance_t encoderDistancePerRevolution;
@@ -55,7 +54,7 @@ class ISingleAxisSubsystem2 {
     std::optional<frc::DigitalInput *> maxLimitSwitch;
     bool reversed;
 
-    SingleAxisConfig2(const SingleAxisConfig2 &other) : pid{other.pid} {
+    SingleAxisConfig2(const SingleAxisConfig2 &other) {
       minDistance = other.minDistance;
       maxDistance = other.maxDistance;
       encoderDistancePerRevolution = other.encoderDistancePerRevolution;
@@ -70,14 +69,13 @@ class ISingleAxisSubsystem2 {
     }
 
     SingleAxisConfig2(
-        frc::PIDController _pid, Distance_t _minDistance,
-        Distance_t _maxDistance, Distance_t _encoderDistancePerRevolution,
+        Distance_t _minDistance, Distance_t _maxDistance,
+        Distance_t _encoderDistancePerRevolution,
         std::optional<Distance_t> _absoluteEncoderDistancePerRevolution,
         Velocity_t _defaultSpeed, double _velocityScalar, Distance_t _tolerance,
         std::optional<frc::DigitalInput *> _minLimitSwitch,
         std::optional<frc::DigitalInput *> _maxLimitSwitch, bool _reversed)
-        : pid{_pid},
-          minDistance{_minDistance},
+        : minDistance{_minDistance},
           maxDistance{_maxDistance},
           encoderDistancePerRevolution{_encoderDistancePerRevolution},
           absoluteEncoderDistancePerRevolution{

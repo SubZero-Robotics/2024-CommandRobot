@@ -15,10 +15,8 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
                                       rev::SparkRelativeEncoder,
                                       rev::SparkAbsoluteEncoder>{
             "Arm",
-            upperController,
-            {// PID Controller
-             frc::PIDController{1, 0, 0},
-             // Min distance
+            armController,
+            {// Min distance
              10_deg,
              // Max distance
              190_deg,
@@ -75,8 +73,8 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
                                 .ff = 0};
   PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      upperController{"Arm",          m_SpinnyBoi, m_enc,      m_PidController,
-                      armPidSettings, &m_absEnc,   kMaxSpinRpm};
+      armController{"Arm",          m_SpinnyBoi, m_enc,      m_PidController,
+                      armPidSettings, &m_absEnc,   kMaxRpm};
   // PidMotorControllerTuner<rev::CANSparkMax, rev::SparkPIDController,
   //                         rev::SparkRelativeEncoder,
   //                         rev::SparkAbsoluteEncoder>

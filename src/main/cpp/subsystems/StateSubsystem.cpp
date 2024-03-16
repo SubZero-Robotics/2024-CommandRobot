@@ -3,12 +3,10 @@
 #include "Constants.h"
 #include "autos/PathFactory.h"
 #include "commands/DriveVelocityCommand.h"
-#include "commands/ExtendAbsoluteCommand.h"
 #include "commands/ExtendClimbCommand.h"
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
-#include "commands/RetractClimbCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "utils/CommandUtils.h"
@@ -196,9 +194,6 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
               // ExtendAbsolute(m_subsystems.leftClimb, m_subsystems.rightClimb)
               //  .ToPtr()))
               ))
-      .AndThen(
-          RetractClimbCommand(m_subsystems.leftClimb, m_subsystems.rightClimb)
-              .ToPtr())
       .WithTimeout(20_s);
 }
 

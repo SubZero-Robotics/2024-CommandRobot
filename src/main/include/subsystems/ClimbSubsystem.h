@@ -2,33 +2,30 @@
 
 #include <frc/controller/PIDController.h>
 #include <rev/CANSparkMax.h>
-#include <subsystems/BaseSingleAxisSubsystem.h>
 
 #include <memory>
 
 #include "Constants.h"
+#include "subsystems/BaseSingleAxisSubsystem2.h"
 #include "utils/ConsoleLogger.h"
 
 class ClimbSubsystem
-    : public BaseSingleAxisSubsystem<rev::CANSparkMax,
-                                     rev::SparkRelativeEncoder> {
+    : public LinearSingleAxisSubsystem<
+          rev::CANSparkMax, rev::SparkPIDController, rev::SparkRelativeEncoder,
+          rev::SparkAbsoluteEncoder> {
  public:
-  ClimbSubsystem(SingleAxisConfig &config, rev::CANSparkMax &motor,
-                 rev::SparkRelativeEncoder &encoder, std::string name)
-      : BaseSingleAxisSubsystem(config, motor, encoder, nullptr, nullptr, name,
-                                false) {}
-
-  void ResetEncoder() override { _enc.SetPosition(0); }
-
-  double GetCurrentPosition() override {
-    auto curPosition = _enc.GetPosition() * _config.distancePerRevolution;
-    // ConsoleLogger::getInstance().logVerbose("Climbing Subsystem", "current position
-    // %f", curPosition);
-    return curPosition;
-  }
-
-  void MoveRelative(double delta) {
-    double newPosition = GetCurrentPosition() + delta;
-    MoveToPosition(newPosition);
+  ClimbSubsystem(std::string name,
+                 PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
+                                    rev::SparkRelativeEncoder,
+                                    rev::SparkAbsoluteEncoder> &controller,
+                 ISingleAxisSubsystem2<units::meter>::SingleAxisConfig2 config)
+      : LinearSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
+                                  rev::SparkRelativeEncoder,
+                                  rev::SparkAbsoluteEncoder>(name, controller,
+                                                             config) {}
+  void Periodic() override {
+    LinearSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
+                              rev::SparkRelativeEncoder,
+                              rev::SparkAbsoluteEncoder>::Periodic();
   }
 };
