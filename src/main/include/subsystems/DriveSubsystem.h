@@ -162,13 +162,13 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   uint8_t logCounter = 0;
 
-  ctre::phoenix6::hardware::Pigeon2 m_gyro1{CANSparkMaxConstants::kPigeonCanId1,
+  ctre::phoenix6::hardware::Pigeon2 m_gyro1{CANConstants::kPigeonCanId1,
                                             "rio"};
-  ctre::phoenix6::hardware::Pigeon2 m_gyro2{CANSparkMaxConstants::kPigeonCanId2,
-                                            "rio"};
+//   ctre::phoenix6::hardware::Pigeon2 m_gyro2{CANConstants::kPigeonCanId2,
+//                                             "rio"};
 
   // AHRS m_gyro{frc::SPI::Port::kMXP};
-  frc::ADXRS450_Gyro m_gyro3;
+//   frc::ADXRS450_Gyro m_gyro3;
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
@@ -197,9 +197,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
       GetHeading(),
       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
-      frc::Pose2d{0_m, 0_m, 0_rad},
-      {0.3, 0.3, 0.3},
-      {1.0, 1.0, 3.0}};
+      frc::Pose2d{0_m, 0_m, 0_rad}};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing

@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.280700937992206,
+        "y": 0.7519966184970535
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.280700937992206,
+        "y": 0.7519966184970536
+      },
+      "isLocked": false,
+      "linkedName": "Center Note 5"
+    },
+    {
+      "anchor": {
+        "x": 0.62,
+        "y": 4.49
+      },
+      "prevControl": {
+        "x": 1.11584426730447,
+        "y": 3.551095142904574
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Speaker Source Side"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 1.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 400.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 121.05437984422176,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

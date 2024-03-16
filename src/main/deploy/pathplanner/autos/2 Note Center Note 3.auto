@@ -5,7 +5,7 @@
       "x": 0.62,
       "y": 4.49
     },
-    "rotation": 120.0
+    "rotation": 120.68881857051673
   },
   "command": {
     "type": "sequential",
@@ -20,7 +20,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Source Side Speaker to Leave"
+            "pathName": "Source Side to Center Note 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Note 3 to Source Side"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Subwoofer"
           }
         }
       ]
