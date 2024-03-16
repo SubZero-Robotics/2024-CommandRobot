@@ -45,8 +45,8 @@ class BaseSingleAxisSubsystem2
     bool atMax = ignoreEncoder ? AtLimitSwitchMax() : AtMax();
 
     if (atMin) {
-      ConsoleLogger::getInstance().logVerbose(
-          m_name, "At minimum; movement allowed = %d", speed >= 0);
+      // ConsoleLogger::getInstance().logVerbose(
+      //     m_name, "At minimum; movement allowed = %d", speed >= 0);
       return speed >= 0;
     }
 

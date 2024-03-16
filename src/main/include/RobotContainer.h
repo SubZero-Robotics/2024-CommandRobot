@@ -80,7 +80,8 @@ class RobotContainer {
                                .rightClimb = &m_rightClimb,
                                .intake = &m_intake,
                                .scoring = &m_scoring,
-                               .led = &m_leds};
+                               .led = &m_leds,
+                               .wrist = &m_wrist};
 
   frc2::CommandXboxController m_operatorController{
       OIConstants::kOperatorControllerPort};

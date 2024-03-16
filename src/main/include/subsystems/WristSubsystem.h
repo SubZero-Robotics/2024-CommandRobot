@@ -1,10 +1,11 @@
+#pragma once
+
 #include "Constants.h"
 #include "subsystems/BaseSingleAxisSubsystem2.h"
 #include "utils/PidMotorController.h"
 
 using namespace ScoringConstants;
 
-// TODO: CHANGE THIS; FOR TESTING PURPOSES ONLY
 class WristSubsystem
     : public RotationalSingleAxisSubsystem<
           rev::CANSparkMax, rev::SparkPIDController, rev::SparkRelativeEncoder,
@@ -19,9 +20,9 @@ class WristSubsystem
             {// PID Controller
              frc::PIDController{1, 0, 0},
              // Min distance
-             40_deg,
+             10_deg,
              // Max distance
-             150_deg,
+             190_deg,
              // Distance per revolution of relative encoder
              (360_deg * (1 / 8.75)),
              // Distance per revolution of absolute encoder
@@ -68,7 +69,7 @@ class WristSubsystem
   rev::SparkRelativeEncoder m_enc = m_SpinnyBoi.GetEncoder();
   rev::SparkAbsoluteEncoder m_absEnc = m_SpinnyBoi.GetAbsoluteEncoder();
   PidSettings armPidSettings = {// TODO: Constants
-                                .p = 0.05,
+                                .p = 0.075,
                                 .i = 0,
                                 .d = 0,
                                 .iZone = 0,

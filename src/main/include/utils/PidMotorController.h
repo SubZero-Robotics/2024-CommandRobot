@@ -54,13 +54,11 @@ class PidMotorController {
 
   void Update() {
     if (m_absolutePositionEnabled) {
-      // ConsoleLogger::getInstance().logVerbose(
-      //     m_name,
-      //     "relative position %0.3f, absolute position %0.3f, absolute target
-      //     "
-      //     "%0.3f",
-      //     GetEncoderPosition(), GetAbsoluteEncoderPosition(),
-      //     m_absoluteTarget);
+      ConsoleLogger::getInstance().logVerbose(
+          m_name,
+          "relative position %0.3f, absolute position %0.3f, absolute target"
+          "%0.3f",
+          GetEncoderPosition(), GetAbsoluteEncoderPosition(), m_absoluteTarget);
       auto effort =
           m_pidController.Calculate(GetEncoderPosition(), m_absoluteTarget);
       double totalEffort = effort;
@@ -88,8 +86,8 @@ class PidMotorController {
     if (abs(percentage) > 1.0) {
       ConsoleLogger::getInstance().logError(
           "PidMotorController",
-          "Incorrect percentages for motor %s: Value=%.4f ",
-          m_name.c_str(), percentage);
+          "Incorrect percentages for motor %s: Value=%.4f ", m_name.c_str(),
+          percentage);
       return;
     }
     auto rpm = units::revolutions_per_minute_t(m_maxRpm) * percentage;
@@ -98,8 +96,8 @@ class PidMotorController {
   }
 
   void RunToPosition(double position) {
-    ShuffleboardLogger::getInstance().logVerbose(
-        m_name + " Target position", position);
+    ShuffleboardLogger::getInstance().logVerbose(m_name + " Target position",
+                                                 position);
     Stop();
     m_pidController.Reset();
     m_absolutePositionEnabled = true;
@@ -143,37 +141,37 @@ class PidMotorController {
 
   void UpdatePidSettings(PidSettings settings) {
     if (settings.p != m_settings.p) {
-      ConsoleLogger::getInstance().logInfo(
-          "PidMotorController", "Setting P to %.6f for %s", settings.p,
-          m_name.c_str());
+      ConsoleLogger::getInstance().logInfo("PidMotorController",
+                                           "Setting P to %.6f for %s",
+                                           settings.p, m_name.c_str());
       m_controller.SetP(settings.p);
     }
 
     if (settings.i != m_settings.i) {
-      ConsoleLogger::getInstance().logInfo(
-          "PidMotorController", "Setting I to %.6f for %s", settings.i,
-          m_name.c_str());
+      ConsoleLogger::getInstance().logInfo("PidMotorController",
+                                           "Setting I to %.6f for %s",
+                                           settings.i, m_name.c_str());
       m_controller.SetI(settings.i);
     }
 
     if (settings.d != m_settings.d) {
-      ConsoleLogger::getInstance().logInfo(
-          "PidMotorController", "Setting D to %.6f for %s", settings.d,
-          m_name.c_str());
+      ConsoleLogger::getInstance().logInfo("PidMotorController",
+                                           "Setting D to %.6f for %s",
+                                           settings.d, m_name.c_str());
       m_controller.SetD(settings.d);
     }
 
     if (settings.iZone != m_settings.iZone) {
-      ConsoleLogger::getInstance().logInfo(
-          "PidMotorController", "Setting IZone to %.6f for %s", settings.iZone,
-          m_name.c_str());
+      ConsoleLogger::getInstance().logInfo("PidMotorController",
+                                           "Setting IZone to %.6f for %s",
+                                           settings.iZone, m_name.c_str());
       m_controller.SetIZone(settings.iZone);
     }
 
     if (settings.ff != m_settings.ff) {
-      ConsoleLogger::getInstance().logInfo(
-          "PidMotorController", "Setting FF to %.6f for %s", settings.ff,
-          m_name.c_str());
+      ConsoleLogger::getInstance().logInfo("PidMotorController",
+                                           "Setting FF to %.6f for %s",
+                                           settings.ff, m_name.c_str());
       m_controller.SetFF(settings.ff);
     }
 
@@ -210,27 +208,22 @@ class PidMotorControllerTuner {
                                    m_controller.GetPidSettings().d);
     frc::SmartDashboard::PutNumber(m_controller.m_name + " IZone",
                                    m_controller.GetPidSettings().iZone);
-    frc::SmartDashboard::PutNumber(
-        m_controller.m_name + " Feed Forward",
-        m_controller.GetPidSettings().ff);
+    frc::SmartDashboard::PutNumber(m_controller.m_name + " Feed Forward",
+                                   m_controller.GetPidSettings().ff);
   }
   /// @brief Call this within the Periodic method of the encapsulating subsystem
   void UpdateFromShuffleboard() {
-    double tP = frc::SmartDashboard::GetNumber(
-        m_controller.m_name + " P Gain",
-        m_controller.GetPidSettings().p);
-    double tI = frc::SmartDashboard::GetNumber(
-        m_controller.m_name + " I Gain",
-        m_controller.GetPidSettings().i);
-    double tD = frc::SmartDashboard::GetNumber(
-        m_controller.m_name + " D Gain",
-        m_controller.GetPidSettings().d);
+    double tP = frc::SmartDashboard::GetNumber(m_controller.m_name + " P Gain",
+                                               m_controller.GetPidSettings().p);
+    double tI = frc::SmartDashboard::GetNumber(m_controller.m_name + " I Gain",
+                                               m_controller.GetPidSettings().i);
+    double tD = frc::SmartDashboard::GetNumber(m_controller.m_name + " D Gain",
+                                               m_controller.GetPidSettings().d);
     double tIZone = frc::SmartDashboard::GetNumber(
-        m_controller.m_name + " IZone",
-        m_controller.GetPidSettings().iZone);
-    double tFeedForward = frc::SmartDashboard::GetNumber(
-        m_controller.m_name + " Feed Forward",
-        m_controller.GetPidSettings().ff);
+        m_controller.m_name + " IZone", m_controller.GetPidSettings().iZone);
+    double tFeedForward =
+        frc::SmartDashboard::GetNumber(m_controller.m_name + " Feed Forward",
+                                       m_controller.GetPidSettings().ff);
 
     m_controller.UpdatePidSettings(
         {.p = tP, .i = tI, .d = tD, .iZone = tIZone, .ff = tFeedForward});

@@ -21,6 +21,7 @@
 #include "subsystems/LedSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
+#include "subsystems/WristSubsystem.h"
 
 typedef struct {
   DriveSubsystem *drive;
@@ -29,6 +30,7 @@ typedef struct {
   IntakeSubsystem *intake;
   ScoringSubsystem *scoring;
   LedSubsystem *led;
+  WristSubsystem *wrist;
 } Subsystems_t;
 
 class StateSubsystem : public frc2::SubsystemBase {
