@@ -68,7 +68,7 @@ class WristSubsystem
   rev::SparkRelativeEncoder m_enc = m_SpinnyBoi.GetEncoder();
   rev::SparkAbsoluteEncoder m_absEnc = m_SpinnyBoi.GetAbsoluteEncoder();
   PidSettings armPidSettings = {// TODO: Constants
-                                .p = 0.075,
+                                .p = 0.09,
                                 .i = 0,
                                 .d = 0,
                                 .iZone = 0,
