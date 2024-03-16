@@ -31,21 +31,29 @@ class IntakeSubsystem : public frc2::SubsystemBase {
   void Feed(ScoringDirection direction);
 
   bool NotePresent();
+  bool NotePresentUpperAmp();
+  bool NotePresentLowerPodium();
+  bool NotePresentLowerAmp();
+  bool NotePresentUpperPodium();
+  bool NotePresentCenter();
   bool NotePresentUpper();
   bool NotePresentLower();
 
  private:
-  rev::CANSparkMax m_rightIntakeSpinnyBoy{
-      CANSparkMaxConstants::kRightIntakeSpinnyBoiId,
-      rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::CANSparkMax m_leftIntakeSpinnyBoy{
       CANSparkMaxConstants::kLeftIntakeSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
 
-  frc::DigitalInput m_upperBeamBreak{
-      IntakingConstants::kUpperBeamBreakDigitalPort};
-  frc::DigitalInput m_lowerBeamBreak{
-      IntakingConstants::kLowerBeamBreakDigitalPort};
+  frc::DigitalInput m_centerBeamBreak{
+      IntakingConstants::kCenterBeamBreakDigitalPort};
+  frc::DigitalInput m_lowerPodiumBeamBreak{
+      IntakingConstants::kLowerPodiumBeamBreakDigitalPort};
+  frc::DigitalInput m_upperPodiumBeamBreak{
+      IntakingConstants::kUpperPodiumBeamBreakDigitalPort};
+  frc::DigitalInput m_upperAmpBeamBreak{
+      IntakingConstants::kUpperAmpBeamBreakDigitalPort};
+  frc::DigitalInput m_lowerAmpBeamBreak{
+      IntakingConstants::kLowerampBeamBreakDigitalPort};
 
   //   rev::SparkPIDController m_rightIntakeSpinnyBoyPID =
   //       m_rightIntakeSpinnyBoy.GetPIDController();

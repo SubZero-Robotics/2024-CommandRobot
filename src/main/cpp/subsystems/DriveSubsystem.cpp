@@ -112,6 +112,8 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   if (dif > 30_ms) {
     ConsoleLogger::getInstance().logVerbose(
         "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
+    ConsoleLogger::getInstance().logVerbose(
+        "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
   }
 
   auto states =

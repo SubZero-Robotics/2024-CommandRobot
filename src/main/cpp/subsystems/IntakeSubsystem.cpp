@@ -16,7 +16,6 @@ void IntakeSubsystem::Out(double outakeSpeed) {
 
   // intakeMotors.RunWithVelocity(outakeSpeed, outakeSpeed);
   m_leftIntakeSpinnyBoy.Set(outakeSpeed);
-  m_rightIntakeSpinnyBoy.Set(outakeSpeed);
 }
 
 void IntakeSubsystem::In(double intakeSpeed) {
@@ -24,7 +23,6 @@ void IntakeSubsystem::In(double intakeSpeed) {
   //                                         "");
   // intakeMotors.RunWithVelocity(intakeSpeed, intakeSpeed);
   m_leftIntakeSpinnyBoy.Set(intakeSpeed);
-  m_rightIntakeSpinnyBoy.Set(intakeSpeed);
 }
 
 void IntakeSubsystem::Stop() {
@@ -33,7 +31,6 @@ void IntakeSubsystem::Stop() {
   // intakeMotors.Stop();
 
   m_leftIntakeSpinnyBoy.Set(0);
-  m_rightIntakeSpinnyBoy.Set(0);
 }
 
 void IntakeSubsystem::Feed(ScoringDirection direction) {
@@ -53,10 +50,25 @@ void IntakeSubsystem::Feed(ScoringDirection direction) {
   }
 }
 
-bool IntakeSubsystem::NotePresentLower() { return !m_lowerBeamBreak.Get(); }
+bool IntakeSubsystem::NotePresentLowerPodium() {
+  return !m_lowerPodiumBeamBreak.Get();
+}
 
-bool IntakeSubsystem::NotePresentUpper() { return !m_upperBeamBreak.Get(); }
+bool IntakeSubsystem::NotePresentUpperAmp() { return !m_upperAmpBeamBreak.Get(); }
+
+bool IntakeSubsystem::NotePresentLowerAmp() { return !m_lowerAmpBeamBreak.Get(); }
+
+bool IntakeSubsystem::NotePresentUpperPodium() {
+  return !m_upperPodiumBeamBreak.Get();
+}
+
+bool IntakeSubsystem::NotePresentCenter() { return !m_centerBeamBreak.Get(); }
+
+bool IntakeSubsystem::NotePresentUpper() { return NotePresentUpperAmp() || NotePresentUpperPodium(); }
+
+bool IntakeSubsystem::NotePresentLower() { return NotePresentLowerAmp() || NotePresentLowerPodium(); }
 
 bool IntakeSubsystem::NotePresent() {
-  return NotePresentUpper() || NotePresentLower();
+  return NotePresentUpperAmp() || NotePresentLowerPodium() ||
+         NotePresentLowerAmp() || NotePresentUpperPodium() || NotePresentCenter();
 }

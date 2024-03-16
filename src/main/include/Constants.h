@@ -179,6 +179,9 @@ enum class AutoType {
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
+extern const frc::TrapezoidProfile<units::degree>::Constraints
+    kSingleAxisConstraints;
+
 const std::string kDefaultAutoName = "Leave Wing";
 
 const std::string kScoreSubwooferName = "Shoot Subwoofer";
@@ -293,7 +296,7 @@ constexpr units::second_t kConnectorXDelay = 0.002_s;
 
 // Motor IDs
 namespace CANSparkMaxConstants {
-constexpr int kRightIntakeSpinnyBoiId = 23;
+constexpr int kArmSpinnyBoiId = 62;
 constexpr int kLeftIntakeSpinnyBoiId = 20;
 constexpr int kVectorSpinnyBoiId = 22;
 constexpr int kAmpLowerSpinnyBoiId = 24;
@@ -308,17 +311,20 @@ constexpr int kTicksPerMotorRotation = 42;
 
 namespace IntakingConstants {
 // Change these to match actual values
-constexpr double kIntakeSpeed = -0.5;
-constexpr double kFeedAmpSpeed = -0.5;
-constexpr double kFeedSpeakerSpeed = -1;
-constexpr double kFeedSubwooferSpeed = -1;
+constexpr double kIntakeSpeed = 0.8;
+constexpr double kFeedAmpSpeed = 0.5;
+constexpr double kFeedSpeakerSpeed = 1;
+constexpr double kFeedSubwooferSpeed = 1;
 
-constexpr double kOutakeSpeed = 0.5;
+constexpr double kOutakeSpeed = -0.5;
 
-constexpr double kSecondaryIntakeOutSpeed = 0.05;
+constexpr double kSecondaryIntakeOutSpeed = -0.05;
 
-constexpr uint8_t kUpperBeamBreakDigitalPort = 3;
-constexpr uint8_t kLowerBeamBreakDigitalPort = 2;
+constexpr uint8_t kCenterBeamBreakDigitalPort = 3;
+constexpr uint8_t kLowerPodiumBeamBreakDigitalPort = 2;
+constexpr uint8_t kLowerampBeamBreakDigitalPort = 4;
+constexpr uint8_t kUpperPodiumBeamBreakDigitalPort = 6;
+constexpr uint8_t kUpperAmpBeamBreakDigitalPort = 5;
 
 constexpr units::revolutions_per_minute_t kMaxRpm = 5676_rpm;
 
@@ -340,24 +346,24 @@ constexpr units::revolutions_per_minute_t kMaxSpinRpm = 6784_rpm;
 constexpr double kShuffleSpeed = 0.05;
 
 // Positive = clockwise
-constexpr double kVectorSpeed = 0.1;
+constexpr double kVectorSpeed = -0.4;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kAmpLowerSpeed = 0.254 * 1.15;  //.264
-constexpr double kAmpUpperSpeed = 0.168 * 1.15;  //.278
+constexpr double kAmpLowerSpeed = -0.254 * 1.4;  //.264
+constexpr double kAmpUpperSpeed = -0.168 * 1.4;  //.278
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSpeakerLowerSpeed = -1;
+constexpr double kSpeakerLowerSpeed = 1;
 constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = 0.75;
+constexpr double kSubwooferLowerSpeed = -0.75;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
-constexpr double kScoringOutakeUpperSpeed = -0.2;
+constexpr double kScoringOutakeUpperSpeed = 0.2;
 constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
 
 enum class ScoreState {
@@ -450,20 +456,18 @@ constexpr double kAntiGravityPercentage = -0.05;
 
 // Homing Speeds
 constexpr double kRotationHomingSpeed = .15;
-constexpr double kExtenderHomingSpeed = .66;
-constexpr double kWristHomingSpeed = .33;
 
-// Wrist Constants
-constexpr int kWristLimitSwitchPort = 0;
-constexpr int kWristGearRatio = 125;
-constexpr auto kWristDegreeLimit = 144;
-constexpr double kWristStepSize = 4;
+// Arm Constants
+constexpr int kArmGearRatio = 125;
+constexpr auto kArmDegreeLimit = 144;
+constexpr double kArmStepSize = 4;
 
-constexpr double kWristSetP = 0.0018386;
-constexpr double kWristSetI = 0.0075;
-constexpr double kWristSetD = 0.00062724;
-constexpr double kWristSetIZone = 0.01;
-constexpr double kWristSetFF = 0.000015;
+// These are currently wrong, pls fix
+constexpr double kArmSetP = 0.0018386;
+constexpr double kArmSetI = 0.0075;
+constexpr double kArmSetD = 0.00062724;
+constexpr double kArmSetIZone = 0.01;
+constexpr double kArmSetFF = 0.000015;
 }  // namespace ArmConstants
 
 // TODO: CREATE ACTUAL ROBOT VALUES FOR THESE
@@ -471,11 +475,11 @@ namespace VisionConstants {
 static constexpr std::string_view kFrontCamera{"PhotonVision"};
 static constexpr std::string_view kRearCamera{"Photonvision2"};
 static const frc::Transform3d kRobotToCam{
-    frc::Translation3d{5.296_in, 0_in, 23.892_in},
-    frc::Rotation3d{0_deg, -52.541_deg, 0_deg}};
+    frc::Translation3d{2.147_in, 2.147_in, 23.369_in},
+    frc::Rotation3d{0_deg, -25_deg, 180_deg}};
 static const frc::Transform3d kRobotToCam2{
-    frc::Translation3d{2.651_in, 0_in, 23.252_in},
-    frc::Rotation3d{0_deg, -24.85_deg, 180_deg}};
+    frc::Translation3d{5.714_in, 0_in, 23.533_in},
+    frc::Rotation3d{0_deg, -25_deg, 0_deg}};
 constexpr photon::PoseStrategy kPoseStrategy =
     photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
 static const frc::AprilTagFieldLayout kTagLayout{

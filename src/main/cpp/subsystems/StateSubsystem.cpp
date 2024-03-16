@@ -126,9 +126,9 @@ frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Podium; }, m_subsystems.drive))
       // ? TODO: Snap to angle first?
-      .AndThen(
-          ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
-                                 m_subsystems.scoring, m_subsystems.intake))
+      .AndThen(ScoringCommands::Score(
+          [] { return ScoringDirection::SpeakerSide; }, m_subsystems.scoring,
+          m_subsystems.intake, m_subsystems.arm))
       .WithTimeout(20_s);
 }
 
@@ -144,8 +144,8 @@ frc2::CommandPtr StateSubsystem::StartScoringAmp() {
           [] { return FinalLocation::Amp; }, m_subsystems.drive))
       // ? TODO: Snap to angle first?
       .AndThen(ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
-                                      m_subsystems.scoring,
-                                      m_subsystems.intake))
+                                      m_subsystems.scoring, m_subsystems.intake,
+                                      m_subsystems.arm))
       .WithTimeout(20_s);
 }
 
@@ -160,9 +160,9 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
       .AndThen(PathFactory::GetPathFromFinalLocation(
           [] { return FinalLocation::Subwoofer; }, m_subsystems.drive))
       // ? TODO: Snap to angle first?
-      .AndThen(
-          ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
-                                 m_subsystems.scoring, m_subsystems.intake))
+      .AndThen(ScoringCommands::Score(
+          [] { return ScoringDirection::Subwoofer; }, m_subsystems.scoring,
+          m_subsystems.intake, m_subsystems.arm))
       .WithTimeout(20_s);
 }
 

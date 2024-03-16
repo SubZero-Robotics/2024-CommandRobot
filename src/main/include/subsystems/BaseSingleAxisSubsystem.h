@@ -5,6 +5,8 @@
 #include <frc/controller/PIDController.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/FunctionalCommand.h>
+#include <frc2/command/TrapezoidProfileSubsystem.h>
+#include <rev/CANSparkFlex.h>
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <units/acceleration.h>
@@ -19,6 +21,7 @@
 #include "Constants.h"
 #include "subsystems/ISingleAxisSubsystem.h"
 #include "utils/ConsoleLogger.h"
+#include "utils/PidMotorController.h"
 #include "utils/ShuffleboardLogger.h"
 
 template <typename Motor, typename Encoder>
@@ -211,8 +214,10 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
         return;
       }
 
-      ShuffleboardLogger::getInstance().logVerbose(_prefix, "amperage %f", _motor.GetOutputCurrent(), "");
-      ConsoleLogger::getInstance().logVerbose(_prefix, "amperage %f", _motor.GetOutputCurrent(), "");
+      ShuffleboardLogger::getInstance().logVerbose(
+          _prefix, "amperage %f", _motor.GetOutputCurrent(), "");
+      ConsoleLogger::getInstance().logVerbose(_prefix, "amperage %f",
+                                              _motor.GetOutputCurrent(), "");
 
       RunMotorSpeed(clampedRes);
     }

@@ -71,7 +71,11 @@ void RobotContainer::RegisterAutos() {
   pathplanner::NamedCommands::registerCommand(
       AutoConstants::kScoreSubwooferName,
       ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
-                             &m_scoring, &m_intake));
+                             &m_scoring, &m_intake, &m_arm));
+  pathplanner::NamedCommands::registerCommand(
+      "Spin up Speaker",
+      ScoringCommands::ScoreRamp([] { return ScoringDirection::Subwoofer; },
+                                 &m_scoring, &m_intake, &m_arm));
   pathplanner::NamedCommands::registerCommand(
       AutoConstants::kIntakeName,
       frc2::InstantCommand([this] {
@@ -119,23 +123,20 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.B().OnTrue(
       m_leds.Intaking()
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
-          .AndThen(
-              m_leds.Loaded().Unless([this] { return !m_intake.NotePresent(); })));
+          .AndThen(m_leds.Loaded().Unless(
+              [this] { return !m_intake.NotePresent(); })));
 
-  m_driverController.X().OnTrue(
-      m_leds.Outaking()
-          .AndThen(IntakingCommands::OuttakeUntilPresent(
-              &m_intake, &m_scoring, ScoringDirection::SpeakerSide))
-          .AndThen(
-              m_leds.Loaded().Unless([this] { return !m_intake.NotePresent(); })));
+  m_driverController.X().OnTrue(m_leds.ScoringAmp().AndThen(
+      ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
+                             &m_scoring, &m_intake, &m_arm)));
 
-  m_driverController.A().OnTrue(
-      m_leds.ScoringAmp().AndThen(ScoringCommands::Score(
-          [] { return ScoringDirection::AmpSide; }, &m_scoring, &m_intake)));
+  m_driverController.A().OnTrue(m_leds.ScoringAmp().AndThen(
+      ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
+                             &m_scoring, &m_intake, &m_arm)));
 
-  m_driverController.Y().OnTrue(
-      m_leds.ScoringSubwoofer().AndThen(ScoringCommands::Score(
-          [] { return ScoringDirection::Subwoofer; }, &m_scoring, &m_intake)));
+  m_driverController.Y().OnTrue(m_leds.ScoringSubwoofer().AndThen(
+      ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
+                             &m_scoring, &m_intake, &m_arm)));
 
   m_driverController.LeftBumper()
       .WhileTrue(m_leds.Climbing().AndThen(
@@ -300,3 +301,7 @@ void RobotContainer::StartIdling() {
 void RobotContainer::ResetPose() {
   m_drive.ResetOdometry(frc::Pose2d{0_m, 0_m, 0_rad});
 }
+
+void RobotContainer::DisableSubsystems() { m_arm.DisablePid(); }
+
+void RobotContainer::Initialize() { m_arm.OnInit(); };

@@ -24,6 +24,7 @@
   - [Competition](#competition)
 - [Subsystems](#subsystems)
 - [CAN IDs](#can-ids)
+- [Digital Input Ports](#digital-input-ports)
 - [Network Map](#network-map)
 - [State](#state)
 - [Commands](#commands)
@@ -100,6 +101,16 @@ Following the WPILib command based structure we have broken our robot up into a 
 |    Second Pigeon    |   13   |        N/A        |    23    |
 
 \* = Inverted
+
+## Digital Input Ports
+
+| Port  |            Device            |
+| :---: | :--------------------------: |
+|   2   | Lower Podium Side Beam Break |
+|   3   |       Center Beam Break      |
+|   4   |   Lower Amp Side Beam Break  |
+|   5   |   Upper Amp Side Beam Break  |
+|   6   | Upper Podium Side Beam Break |
 
 ## Network Map
 
