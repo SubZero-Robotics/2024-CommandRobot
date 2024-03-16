@@ -7,18 +7,18 @@ using namespace ScoringConstants;
 ScoringSubsystem::ScoringSubsystem() {
   // m_speakerLowerSpinnyBoi.Follow(m_speakerUpperSpinnyBoi, false);
 
-  m_ampUpperVelocity = ScoringConstants::kAmpUpperSpeed;
-  m_ampLowerVelocity = ScoringConstants::kAmpLowerSpeed;
+  // m_ampUpperVelocity = ScoringConstants::kAmpUpperSpeed;
+  // m_ampLowerVelocity = ScoringConstants::kAmpLowerSpeed;
 
-  frc::SmartDashboard::PutNumber("Amp Upper Velocity", m_ampUpperVelocity);
-  frc::SmartDashboard::PutNumber("Amp Lower Velocity", m_ampLowerVelocity);
+  // frc::SmartDashboard::PutNumber("Amp Upper Velocity", m_ampUpperVelocity);
+  // frc::SmartDashboard::PutNumber("Amp Lower Velocity", m_ampLowerVelocity);
 }
 
 void ScoringSubsystem::Periodic() {
   // speakerTuner.UpdateFromShuffleboard();
   // ampTuner.UpdateFromShuffleboard();
 
-  // speakerUpperTuner.UpdateFromShuffleboard();
+  speakerUpperTuner.UpdateFromShuffleboard();
 
   // double latestAmpUpperVelocity =
   //     frc::SmartDashboard::GetNumber("Amp Upper Velocity",
@@ -123,9 +123,9 @@ void ScoringSubsystem::SpinAmp(double upperPercentage, double lowerPercentage) {
 }
 
 void ScoringSubsystem::SpinSpeaker() {
-  // speakerPidPair.RunWithVelocity(kSpeakerUpperSpeed, kSpeakerLowerSpeed);
-  speakerUpperController.RunWithVelocity(-kSpeakerUpperSpeed);
-  speakerLowerController.RunWithVelocity(-kSpeakerLowerSpeed);
+  speakerPidPair.RunWithVelocity(kSpeakerUpperSpeed, kSpeakerLowerSpeed);
+  // speakerUpperController.RunWithVelocity(-kSpeakerUpperSpeed);
+  // speakerLowerController.RunWithVelocity(-kSpeakerLowerSpeed);
 }
 
 void ScoringSubsystem::SpinSubwoofer() {
