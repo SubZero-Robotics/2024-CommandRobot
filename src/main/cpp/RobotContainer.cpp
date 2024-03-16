@@ -301,3 +301,7 @@ void RobotContainer::ResetPose() {
 }
 
 void RobotContainer::DisableSubsystems() { m_wrist.DisablePid(); }
+
+void RobotContainer::Initialize() {
+  m_wrist.OnInit();
+};

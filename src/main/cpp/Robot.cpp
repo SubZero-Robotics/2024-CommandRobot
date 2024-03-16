@@ -27,6 +27,7 @@ void Robot::RobotInit() {
   // Logs joystick data without hogging NT bandwidth
   // *May* tax the rio, should be tested
   frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
+  m_container.Initialize();
 }
 
 /**

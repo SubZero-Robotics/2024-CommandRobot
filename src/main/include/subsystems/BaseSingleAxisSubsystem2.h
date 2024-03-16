@@ -89,13 +89,6 @@ class BaseSingleAxisSubsystem2
         m_name{name},
         m_pidEnabled{false} {
     m_pidEnabled = false;
-    controller.SetPidTolerance(config.tolerance.value());
-    controller.SetEncoderConversionFactor(
-        config.encoderDistancePerRevolution.value());
-
-    if (config.absoluteEncoderDistancePerRevolution.has_value())
-      controller.SetAbsoluteEncoderConversionFactor(
-          config.absoluteEncoderDistancePerRevolution.value().value());
 
     frc2::TrapezoidProfileSubsystem<TDistance>::Disable();
   }
@@ -259,6 +252,16 @@ class BaseSingleAxisSubsystem2
   void EnablePid() override {
     m_pidEnabled = true;
     frc2::TrapezoidProfileSubsystem<TDistance>::Enable();
+  }
+
+  void OnInit() {
+    m_controller.SetPidTolerance(m_config.tolerance.value());
+    m_controller.SetEncoderConversionFactor(
+        m_config.encoderDistancePerRevolution.value());
+
+    if (m_config.absoluteEncoderDistancePerRevolution.has_value())
+      m_controller.SetAbsoluteEncoderConversionFactor(
+          m_config.absoluteEncoderDistancePerRevolution.value().value());
   }
 
  protected:
