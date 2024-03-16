@@ -174,7 +174,8 @@ enum class AutoType {
   ThreeNoteAuto,
   TwoNoteAuto,
   LeaveWing,
-  
+  TwoNoteCenter,
+  TwoNoteSource,
 };
 
 extern const frc::TrapezoidProfile<units::radians>::Constraints
