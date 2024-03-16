@@ -6,16 +6,15 @@
 
 using namespace ScoringConstants;
 
-class WristSubsystem
-    : public RotationalSingleAxisSubsystem<
-          rev::CANSparkMax, rev::SparkPIDController, rev::SparkRelativeEncoder,
-          rev::SparkAbsoluteEncoder> {
+class ArmSubsystem : public RotationalSingleAxisSubsystem<
+                         rev::CANSparkMax, rev::SparkPIDController,
+                         rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder> {
  public:
-  WristSubsystem()
+  ArmSubsystem()
       : RotationalSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
                                       rev::SparkRelativeEncoder,
                                       rev::SparkAbsoluteEncoder>{
-            "Wrist",
+            "Arm",
             upperController,
             {// PID Controller
              frc::PIDController{1, 0, 0},
@@ -63,7 +62,7 @@ class WristSubsystem
   //       std::nullopt,
   //       std::nullopt,
   //       false};
-  rev::CANSparkMax m_SpinnyBoi{CANSparkMaxConstants::kWristSpinnyBoiId,
+  rev::CANSparkMax m_SpinnyBoi{CANSparkMaxConstants::kArmSpinnyBoiId,
                                rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::SparkPIDController m_PidController = m_SpinnyBoi.GetPIDController();
   rev::SparkRelativeEncoder m_enc = m_SpinnyBoi.GetEncoder();
