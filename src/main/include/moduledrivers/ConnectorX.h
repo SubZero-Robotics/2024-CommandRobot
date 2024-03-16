@@ -251,6 +251,7 @@ enum class PatternType {
   HappyEyes = 9,
   BlinkingEyes = 10,
   SurprisedEyes = 11,
+  Amogus = 12,
 };
 
 enum class PinMode {

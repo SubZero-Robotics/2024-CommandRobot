@@ -47,6 +47,7 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr HappyFace();
   frc2::CommandPtr BlinkingFace();
   frc2::CommandPtr SurprisedFace();
+  frc2::CommandPtr AmogusFace();
 
   void IdlingAsync();
   void ErrorAsync();
@@ -56,8 +57,6 @@ class LedSubsystem : public frc2::SubsystemBase {
     LeftClimber = 0,
     Back,
     RightClimber,
-    RightEye,
-    LeftEye,
   };
 
   enum class EyePattern {
@@ -65,6 +64,7 @@ class LedSubsystem : public frc2::SubsystemBase {
     Happy = 9,
     Blinking = 10,
     Surprised = 11,
+    Amogus = 12,
   };
 
   frc2::CommandPtr setZoneColorPattern(LedZone zone, LedPort port,
@@ -91,11 +91,11 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc::BuiltInAccelerometer m_accel;
 
   // TODO: make into a constant elsewhere
-  const uint16_t m_totalLeds = 41;
+  const uint16_t m_totalLeds = 67;
   std::vector<Commands::NewZone> m_ledZones0 = {
-      {.offset = 0, .count = 9},  {.offset = 9, .count = 15},
-      {.offset = 24, .count = 8}, {.offset = 32, .count = 5},
-      {.offset = 37, .count = 5},
+      {.offset = 0, .count = 18},
+      {.offset = 18, .count = 32},
+      {.offset = 50, .count = 17},
   };
   std::vector<Commands::NewZone> m_ledZones1 = {
       {.offset = 0, .count = 1},
