@@ -31,7 +31,7 @@ class WristSubsystem
              // Velocity scalar
              1.0,
              // Tolerance
-             1.5_deg,
+             2_deg,
              // Min limit switch
              std::nullopt,
              // Max limit switch
@@ -68,7 +68,7 @@ class WristSubsystem
   rev::SparkRelativeEncoder m_enc = m_SpinnyBoi.GetEncoder();
   rev::SparkAbsoluteEncoder m_absEnc = m_SpinnyBoi.GetAbsoluteEncoder();
   PidSettings armPidSettings = {// TODO: Constants
-                                .p = 0.09,
+                                .p = 0.05,
                                 .i = 0,
                                 .d = 0,
                                 .iZone = 0,
