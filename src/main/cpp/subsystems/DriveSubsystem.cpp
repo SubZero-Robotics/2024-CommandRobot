@@ -251,8 +251,11 @@ std::optional<IGyroContainer*> DriveSubsystem::GetGyro() {
     auto* gyro = m_gyros[i];
     if (gyro->HasError()) {
       ConsoleLogger::getInstance().logError(
-          "DriveSubsystem", "Gyro %s has had error '%s'.", gyro->GetName(),
-          gyro->GetStatusMessage());
+          "DriveSubsystem", "Gyro %s has had error '%s'.",
+          gyro->GetName().c_str(),
+          gyro->GetStatusMessage().has_value()
+              ? gyro->GetStatusMessage().value().c_str()
+              : "NULL");
       continue;
     }
 
