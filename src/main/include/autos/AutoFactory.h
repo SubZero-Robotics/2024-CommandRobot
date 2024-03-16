@@ -55,6 +55,10 @@ frc2::CommandPtr GetAuto(AutoType type) {
       return PathPlannerPathFromName("3 Note Auto");
     case AutoType::TwoNoteAuto:
       return PathPlannerPathFromName("2 Note Amp Side");
+    case AutoType::TwoNoteCenter:
+      return PathPlannerPathFromName("2 Note Center Note 3");
+    case AutoType::TwoNoteSource:
+      return PathPlannerPathFromName("2 Note Source Side");
     case AutoType::LeaveWing:
       return PathPlannerPathFromName(AutoConstants::kDefaultAutoName);
     default:
