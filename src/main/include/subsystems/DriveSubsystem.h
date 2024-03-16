@@ -90,7 +90,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
   void SetModuleStates(wpi::array<frc::SwerveModuleState, 4> desiredStates);
 
   /**
-   * Returns the heading of the robot.
+   * Returns the rotation of the robot.
    *
    * @return the robot's heading in degrees, from 180 to 180
    */
@@ -123,6 +123,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   void ResetOdometry(frc::Pose2d pose);
+
+  void SetRotationOffset(units::degree_t offset);
 
   frc::ChassisSpeeds getSpeed();
 
