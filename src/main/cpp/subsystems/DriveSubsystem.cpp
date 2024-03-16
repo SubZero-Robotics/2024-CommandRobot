@@ -247,15 +247,16 @@ void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
 }
 
 std::optional<IGyroContainer*> DriveSubsystem::GetGyro() {
-  for (int i = m_lastGoodGyroIndex; i < m_gyros.size(); i++) {
+  for (int i = 0; i < m_gyros.size(); i++) {
     auto* gyro = m_gyros[i];
     if (gyro->HasError()) {
       ConsoleLogger::getInstance().logError(
           "DriveSubsystem", "Gyro %s has had error '%s'.", gyro->GetName(),
           gyro->GetStatusMessage());
-      m_lastGoodGyroIndex++;
       continue;
     }
+
+    m_lastGoodGyroIndex = i;
     return gyro;
   }
 
