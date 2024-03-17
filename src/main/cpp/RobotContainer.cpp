@@ -82,7 +82,7 @@ void RobotContainer::RegisterAutos() {
         ConsoleLogger::getInstance().logVerbose("Autos", "Intaking %s", "");
       })
           .ToPtr()
-          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
+          .AndThen(IntakingCommands::Intake2(&m_intake, &m_scoring)));
   using namespace AutoConstants;
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoType::LeaveWing);
@@ -135,7 +135,7 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.B().OnTrue(
       m_leds.Intaking()
           .AndThen(m_leds.AngryFace())
-          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
+          .AndThen(IntakingCommands::Intake2(&m_intake, &m_scoring))
           .AndThen((m_leds.Loaded().AndThen(m_leds.HappyFace())).Unless([this] {
             return !m_intake.NotePresent();
           })));
@@ -143,7 +143,7 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.X().OnTrue(
       m_leds.ScoringAmp()
           .AndThen(ScoringCommands::Score(
-              [] { return ScoringDirection::SpeakerSide; }, &m_scoring,
+              [] { return ScoringDirection::PodiumSide; }, &m_scoring,
               &m_intake, &m_arm))
           .AndThen(m_leds.BlinkingFace())
           .AndThen(m_leds.Idling()));

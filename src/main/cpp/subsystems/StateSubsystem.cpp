@@ -127,7 +127,7 @@ frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
           [] { return FinalLocation::Podium; }, m_subsystems.drive))
       // ? TODO: Snap to angle first?
       .AndThen(ScoringCommands::Score(
-          [] { return ScoringDirection::SpeakerSide; }, m_subsystems.scoring,
+          [] { return ScoringDirection::PodiumSide; }, m_subsystems.scoring,
           m_subsystems.intake, m_subsystems.arm))
       .WithTimeout(20_s);
 }
