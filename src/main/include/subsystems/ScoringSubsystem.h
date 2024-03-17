@@ -17,7 +17,7 @@ enum class ScoringDirection {
   Subwoofer,
 };
 
-using namespace CANSparkMaxConstants;
+using namespace CANConstants;
 using namespace ScoringConstants;
 
 class ScoringSubsystem : public frc2::SubsystemBase {
@@ -65,26 +65,26 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   }
 
   rev::CANSparkMax m_vectorSpinnyBoi{
-      CANSparkMaxConstants::kVectorSpinnyBoiId,
+      CANConstants::kVectorSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::CANSparkFlex m_ampLowerSpinnyBoi{
-      CANSparkMaxConstants::kAmpLowerSpinnyBoiId,
+      CANConstants::kAmpLowerSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::SparkRelativeEncoder m_ampEncoder = m_ampLowerSpinnyBoi.GetEncoder(
       rev::SparkRelativeEncoder::Type::kHallSensor,
-      CANSparkMaxConstants::kTicksPerMotorRotation);
+      CANConstants::kTicksPerMotorRotation);
   rev::CANSparkFlex m_ampUpperSpinnyBoi{
-      CANSparkMaxConstants::kAmpUpperSpinnyBoiId,
+      CANConstants::kAmpUpperSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::CANSparkFlex m_speakerLowerSpinnyBoi{
-      CANSparkMaxConstants::kSpeakerLowerSpinnyBoiId,
+      CANConstants::kSpeakerLowerSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::SparkRelativeEncoder m_speakerEncoder =
       m_speakerLowerSpinnyBoi.GetEncoder(
           rev::SparkRelativeEncoder::Type::kHallSensor,
-          CANSparkMaxConstants::kTicksPerMotorRotation);
+          CANConstants::kTicksPerMotorRotation);
   rev::CANSparkFlex m_speakerUpperSpinnyBoi{
-      CANSparkMaxConstants::kSpeakerUpperSpinnyBoiId,
+      CANConstants::kSpeakerUpperSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
 
   rev::SparkPIDController m_speakerUpperPidController =

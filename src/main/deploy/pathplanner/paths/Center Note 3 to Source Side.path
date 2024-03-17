@@ -1,0 +1,92 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.259812143033956,
+        "y": 4.115092606775545
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.202265839646183,
+        "y": 4.282202966441556
+      },
+      "isLocked": false,
+      "linkedName": "Center Note 3"
+    },
+    {
+      "anchor": {
+        "x": 3.549388879948244,
+        "y": 3.081097256342096
+      },
+      "prevControl": {
+        "x": 4.666939410214697,
+        "y": 3.394429180715868
+      },
+      "nextControl": {
+        "x": 2.1190968788383424,
+        "y": 2.680080807432778
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.62,
+        "y": 4.49
+      },
+      "prevControl": {
+        "x": 1.2307326395823281,
+        "y": 3.5302063479445023
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Speaker Source Side"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.65,
+      "rotationDegrees": 121.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 1.25,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Spin up Speaker"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 1.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 400.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 121.3702803613812,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

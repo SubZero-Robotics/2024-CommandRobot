@@ -62,7 +62,7 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
   //       std::nullopt,
   //       std::nullopt,
   //       false};
-  rev::CANSparkMax m_SpinnyBoi{CANSparkMaxConstants::kArmSpinnyBoiId,
+  rev::CANSparkMax m_SpinnyBoi{CANConstants::kArmSpinnyBoiId,
                                rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::SparkPIDController m_PidController = m_SpinnyBoi.GetPIDController();
   rev::SparkRelativeEncoder m_enc = m_SpinnyBoi.GetEncoder();
