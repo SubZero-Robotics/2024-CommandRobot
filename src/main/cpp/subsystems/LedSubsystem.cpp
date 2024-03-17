@@ -319,9 +319,11 @@ frc2::CommandPtr LedSubsystem::SurprisedFace() {
 
 frc2::CommandPtr LedSubsystem::AmogusFace() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo(
-               "LedSubsystem", "Setting LEDs to %s", "Amogus");
-           showFace(EyePattern::Amogus);
+           ConsoleLogger::getInstance().logInfo("LedSubsystem",
+                                                "Setting LEDs to %s", "Amogus");
+           setZoneColorPatternAsync(LedZone::Back, LedPort::P1,
+                                    ColorConstants::kRed, PatternType::Amogus,
+                                    false, 125, false);
          })
       .ToPtr();
 }
