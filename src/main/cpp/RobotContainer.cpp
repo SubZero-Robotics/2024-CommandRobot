@@ -82,7 +82,7 @@ void RobotContainer::RegisterAutos() {
         ConsoleLogger::getInstance().logVerbose("Autos", "Intaking %s", "");
       })
           .ToPtr()
-          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
+          .AndThen(IntakingCommands::Intake2(&m_intake, &m_scoring)));
   using namespace AutoConstants;
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoType::LeaveWing);
