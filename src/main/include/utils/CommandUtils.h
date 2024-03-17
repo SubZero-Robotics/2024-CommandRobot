@@ -81,7 +81,7 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                  .AndThen(frc2::DeferredCommand(
                               [direction, arm] {
                                 if (direction() == ScoringDirection::AmpSide) {
-                                  return arm->MoveToPositionAbsolute(20_deg);
+                                  return arm->MoveToPositionAbsolute(10_deg);
                                 } else {
                                   return frc2::InstantCommand([] {}).ToPtr();
                                 }
