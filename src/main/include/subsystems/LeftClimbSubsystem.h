@@ -11,7 +11,7 @@ class LeftClimbSubsystem : public ClimbSubsystem {
                         // Max distance
                         40_in,
                         // Distance per revolution of relative encoder
-                        (1_in * (1 / 25)),
+                        (1_in * (1 / 80)),
                         // Distance per revolution of absolute encoder
                         0_in,
                         // Default velocity
@@ -34,8 +34,7 @@ class LeftClimbSubsystem : public ClimbSubsystem {
                            rev::CANSparkMax::MotorType::kBrushless};
   rev::SparkPIDController m_pidController = m_motor.GetPIDController();
   rev::SparkRelativeEncoder m_encoder =
-      m_motor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
-                         ClimbConstants::kTicksPerMotorRotation);
+      m_motor.GetEncoder();
   PidSettings m_climberPidSettings = {// TODO: Constants
                                       .p = 0.075,
                                       .i = 0,

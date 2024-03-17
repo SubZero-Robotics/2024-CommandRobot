@@ -110,8 +110,9 @@ void RobotContainer::ConfigureButtonBindings() {
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
       .WhileTrue(
-          m_leds.Climbing()
-              .AndThen(m_leds.AmogusFace())
+          m_leds
+              .Climbing()
+              // .AndThen(m_leds.AmogusFace())
               .AndThen(ExtendClimbCommand(
                            &m_leftClimb,
                            [this] {
@@ -122,15 +123,13 @@ void RobotContainer::ConfigureButtonBindings() {
 
   m_driverController.RightTrigger(OIConstants::kDriveDeadband)
       .WhileTrue(
-          m_leds.Climbing()
-              .AndThen(m_leds.AmogusFace())
-              .AndThen(ExtendClimbCommand(
-                           &m_rightClimb,
-                           [this] {
-                             return m_driverController.GetRightTriggerAxis();
-                           },
-                           [this] { return 0; })
-                           .ToPtr()));
+          // m_leds.Climbing()
+          // .AndThen(m_leds.AmogusFace())
+          ExtendClimbCommand(
+              &m_rightClimb,
+              [this] { return m_driverController.GetRightTriggerAxis(); },
+              [this] { return 0; })
+              .ToPtr());
 
   m_driverController.B().OnTrue(
       m_leds.Intaking()
@@ -165,16 +164,14 @@ void RobotContainer::ConfigureButtonBindings() {
           .AndThen(m_leds.Idling()));
 
   m_driverController.LeftBumper()
-      .WhileTrue(m_leds.Climbing().AndThen(
-          ExtendClimbCommand(
-              &m_leftClimb, [this] { return 0; },
-              [this] { return ClimbConstants::kCLimberExtendSpeed; })
-              .ToPtr()))
-      .WhileTrue(m_leds.Climbing().AndThen(
-          ExtendClimbCommand(
-              &m_rightClimb, [this] { return 0; },
-              [this] { return ClimbConstants::kCLimberExtendSpeed; })
-              .ToPtr()));
+      .WhileTrue(ExtendClimbCommand(
+                     &m_leftClimb, [this] { return 0; },
+                     [this] { return ClimbConstants::kCLimberExtendSpeed; })
+                     .ToPtr())
+      .WhileTrue(ExtendClimbCommand(
+                     &m_rightClimb, [this] { return 0; },
+                     [this] { return ClimbConstants::kCLimberExtendSpeed; })
+                     .ToPtr());
 
   m_driverController.RightBumper().WhileTrue(
       m_leds.Outaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
@@ -328,6 +325,14 @@ void RobotContainer::ResetPose() {
   m_drive.ResetOdometry(frc::Pose2d{0_m, 0_m, 0_rad});
 }
 
-void RobotContainer::DisableSubsystems() { m_arm.DisablePid(); }
+void RobotContainer::DisableSubsystems() {
+  m_arm.DisablePid();
+  m_leftClimb.DisablePid();
+  m_rightClimb.DisablePid();
+}
 
-void RobotContainer::Initialize() { m_arm.OnInit(); };
+void RobotContainer::Initialize() {
+  m_arm.OnInit();
+  m_leftClimb.OnInit();
+  m_rightClimb.OnInit();
+};
