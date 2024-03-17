@@ -109,20 +109,28 @@ void RobotContainer::ConfigureButtonBindings() {
 
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
-      .WhileTrue(m_leds.Climbing().AndThen(
-          ExtendClimbCommand(
-              &m_leftClimb,
-              [this] { return m_driverController.GetLeftTriggerAxis(); },
-              [this] { return 0; })
-              .ToPtr()));
+      .WhileTrue(
+          m_leds.Climbing()
+              .AndThen(m_leds.AmogusFace())
+              .AndThen(ExtendClimbCommand(
+                           &m_leftClimb,
+                           [this] {
+                             return m_driverController.GetLeftTriggerAxis();
+                           },
+                           [this] { return 0; })
+                           .ToPtr()));
 
   m_driverController.RightTrigger(OIConstants::kDriveDeadband)
-      .WhileTrue(m_leds.Climbing().AndThen(
-          ExtendClimbCommand(
-              &m_rightClimb,
-              [this] { return m_driverController.GetRightTriggerAxis(); },
-              [this] { return 0; })
-              .ToPtr()));
+      .WhileTrue(
+          m_leds.Climbing()
+              .AndThen(m_leds.AmogusFace())
+              .AndThen(ExtendClimbCommand(
+                           &m_rightClimb,
+                           [this] {
+                             return m_driverController.GetRightTriggerAxis();
+                           },
+                           [this] { return 0; })
+                           .ToPtr()));
 
   m_driverController.B().OnTrue(
       m_leds.Intaking()
