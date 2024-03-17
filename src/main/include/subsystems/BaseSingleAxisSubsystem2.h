@@ -247,7 +247,7 @@ class BaseSingleAxisSubsystem2
   }
 
   frc2::CommandPtr ResetRelativeEncoder() {
-    return frc2::InstantCommand([] { ResetEncoder(); }).ToPtr();
+    return frc2::InstantCommand([this] { ResetEncoder(); }).ToPtr();
   }
 
   bool IsEnabled() override { return m_pidEnabled; }
@@ -285,7 +285,7 @@ class BaseSingleAxisSubsystem2
   bool m_home;
   bool resetOccurred = false;
   double m_latestSpeed;
-  frc2::CommandPtr m_resetEncCmd = frc2::InstantCommand([] {});
+  frc2::CommandPtr m_resetEncCmd = frc2::InstantCommand([] {}).ToPtr();
 };
 
 template <typename TMotor, typename TController, typename TRelativeEncoder,
