@@ -71,19 +71,12 @@ class ScoringSubsystem : public frc2::SubsystemBase {
   rev::CANSparkFlex m_ampLowerSpinnyBoi{
       CANConstants::kAmpLowerSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
-  rev::SparkRelativeEncoder m_ampEncoder = m_ampLowerSpinnyBoi.GetEncoder(
-      rev::SparkRelativeEncoder::Type::kHallSensor,
-      CANConstants::kTicksPerMotorRotation);
   rev::CANSparkFlex m_ampUpperSpinnyBoi{
       CANConstants::kAmpUpperSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::CANSparkFlex m_speakerLowerSpinnyBoi{
       CANConstants::kSpeakerLowerSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
-  rev::SparkRelativeEncoder m_speakerEncoder =
-      m_speakerLowerSpinnyBoi.GetEncoder(
-          rev::SparkRelativeEncoder::Type::kHallSensor,
-          CANConstants::kTicksPerMotorRotation);
   rev::CANSparkFlex m_speakerUpperSpinnyBoi{
       CANConstants::kSpeakerUpperSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
@@ -94,13 +87,14 @@ class ScoringSubsystem : public frc2::SubsystemBase {
       m_speakerUpperSpinnyBoi.GetEncoder();
   rev::SparkPIDController m_speakerLowerPidController =
       m_speakerLowerSpinnyBoi.GetPIDController();
-  rev::SparkRelativeEncoder m_speakerLowerEnc = m_speakerEncoder;
+  rev::SparkRelativeEncoder m_speakerLowerEnc =
+      m_speakerLowerSpinnyBoi.GetEncoder();
   rev::SparkPIDController m_ampUpperPidController =
       m_ampUpperSpinnyBoi.GetPIDController();
   rev::SparkRelativeEncoder m_ampUpperEnc = m_ampUpperSpinnyBoi.GetEncoder();
   rev::SparkPIDController m_ampLowerPidController =
       m_ampLowerSpinnyBoi.GetPIDController();
-  rev::SparkRelativeEncoder m_ampLowerEnc = m_ampEncoder;
+  rev::SparkRelativeEncoder m_ampLowerEnc = m_ampLowerSpinnyBoi.GetEncoder();
 
   PidSettings speakerPidSettings = {.p = ScoringPID::kSpeakerP,
                                     .i = ScoringPID::kSpeakerI,
