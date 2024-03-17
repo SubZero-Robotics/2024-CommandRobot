@@ -219,36 +219,36 @@ wpi::array<frc::SwerveModulePosition, 4U> DriveSubsystem::GetModulePositions()
 }
 
 frc::Rotation2d DriveSubsystem::GetHeading() {
-  frc::Rotation2d rotation;
-  if (m_gyro1.GetFaultField().GetStatus() == ctre::phoenix::StatusCode::OK) {
-    rotation = m_gyro1.GetRotation2d();
-  } else if (m_gyro2.GetFaultField().GetStatus() ==
-             ctre::phoenix::StatusCode::OK) {
-    ConsoleLogger::getInstance().logError(
-        "Gyro",
-        "Pigeon Gyro 1 has experienced fault '%s', using second pigeon gyro "
-        "instead",
-        m_gyro1.GetFaultField().GetStatus().GetName());
-    rotation = m_gyro2.GetRotation2d();
-  } else {
-    ConsoleLogger::getInstance().logError(
-        "Gyro",
-        "Pigeon Gyro 1 has experienced fault '%s' and Pigeon Gyro 2 has "
-        "expierenced fault '%s', using ADXRS450 gyro instead",
-        m_gyro1.GetFaultField().GetStatus().GetName(),
-        m_gyro2.GetFaultField().GetStatus().GetName());
-    rotation = m_gyro3.GetRotation2d();
-  }
+  // frc::Rotation2d rotation = m_gyro1.GetRotation2d();
+  // if (m_gyro1.GetFaultField().GetStatus() == ctre::phoenix::StatusCode::OK) {
+  //   rotation = m_gyro1.GetRotation2d();
+  // } else if (m_gyro2.GetFaultField().GetStatus() ==
+  //            ctre::phoenix::StatusCode::OK) {
+  //   ConsoleLogger::getInstance().logError(
+  //       "Gyro",
+  //       "Pigeon Gyro 1 has experienced fault '%s', using second pigeon gyro "
+  //       "instead",
+  //       m_gyro1.GetFaultField().GetStatus().GetName());
+  //   rotation = m_gyro2.GetRotation2d();
+  // } else {
+  //   ConsoleLogger::getInstance().logError(
+  //       "Gyro",
+  //       "Pigeon Gyro 1 has experienced fault '%s' and Pigeon Gyro 2 has "
+  //       "expierenced fault '%s', using ADXRS450 gyro instead",
+  //       m_gyro1.GetFaultField().GetStatus().GetName(),
+  //       m_gyro2.GetFaultField().GetStatus().GetName());
+  //   rotation = m_gyro3.GetRotation2d();
+  // }
 
-  // ConsoleLogger::getInstance().logVerbose("Gyro", "Rotation: %f",
-  //                                         rotation.Degrees().value());
-  return rotation;
+  ConsoleLogger::getInstance().logVerbose("Gyro", "status name: %d",
+                                          m_gyro1.GetFaultField().IsAllGood());
+  return m_gyro1.GetRotation2d();
 }
 
 void DriveSubsystem::ZeroHeading() {
   m_gyro1.Reset();
-  m_gyro2.Reset();
-  m_gyro3.Reset();
+  // m_gyro2.Reset();
+  // m_gyro3.Reset();
 }
 
 // TODO: Return the rate of the currently used gyro

@@ -1,16 +1,16 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 0.62,
+      "y": 4.49
+    },
+    "rotation": 120.68881857051673
+  },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Start to Speaker"
-          }
-        },
         {
           "type": "named",
           "data": {
@@ -20,19 +20,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Speaker to Note 1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Run Intake"
+            "pathName": "Source Side to Center Note 3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Note 1 to Speaker"
+            "pathName": "Center Note 3 to Source Side"
           }
         },
         {

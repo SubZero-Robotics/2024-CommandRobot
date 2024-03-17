@@ -5,7 +5,7 @@
       "x": 0.62,
       "y": 4.49
     },
-    "rotation": 120.0
+    "rotation": 121.03983149035466
   },
   "command": {
     "type": "sequential",
@@ -20,7 +20,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Source Side Speaker to Leave"
+            "pathName": "Source Side Speaker to Center Note 5"
           }
         }
       ]

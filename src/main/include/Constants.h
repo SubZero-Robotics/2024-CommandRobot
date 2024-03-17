@@ -173,7 +173,9 @@ enum class AutoType {
   PlaceAndLeave,
   ThreeNoteAuto,
   TwoNoteAuto,
-  LeaveWing
+  LeaveWing,
+  TwoNoteCenter,
+  TwoNoteSource,
 };
 
 extern const frc::TrapezoidProfile<units::radians>::Constraints
@@ -295,7 +297,7 @@ constexpr uint8_t kLedAddress = 23;
 constexpr units::second_t kConnectorXDelay = 0.002_s;
 
 // Motor IDs
-namespace CANSparkMaxConstants {
+namespace CANConstants {
 constexpr int kArmSpinnyBoiId = 62;
 constexpr int kLeftIntakeSpinnyBoiId = 20;
 constexpr int kVectorSpinnyBoiId = 22;
@@ -307,7 +309,7 @@ constexpr int kPigeonCanId1 = 9;
 constexpr int kPigeonCanId2 = 13;
 
 constexpr int kTicksPerMotorRotation = 42;
-}  // namespace CANSparkMaxConstants
+}  // namespace CANConstants
 
 namespace IntakingConstants {
 // Change these to match actual values
@@ -479,7 +481,7 @@ static const frc::Transform3d kRobotToCam2{
     frc::Rotation3d{0_deg, -25_deg, 180_deg}};
 static const frc::Transform3d kRobotToCam{
     frc::Translation3d{5.714_in, 0_in, 23.533_in},
-    frc::Rotation3d{0_deg, -25_deg, 0_deg}};
+    frc::Rotation3d{0_deg, 180_deg - 25_deg, 180_deg}};
 constexpr photon::PoseStrategy kPoseStrategy =
     photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
 static const frc::AprilTagFieldLayout kTagLayout{

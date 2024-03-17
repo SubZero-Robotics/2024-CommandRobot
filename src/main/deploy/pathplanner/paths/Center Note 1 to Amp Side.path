@@ -3,32 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.62,
-        "y": 4.49
+        "x": 8.113590578320974,
+        "y": 7.446855402616658
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0586646941232816,
-        "y": 3.2575610974631615
+        "x": 6.4320425841869495,
+        "y": 6.778413963952611
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Center Note 1"
     },
     {
       "anchor": {
-        "x": 2.327394374890532,
-        "y": 2.3604338302824193
+        "x": 0.6458463807512864,
+        "y": 6.673969989161352
       },
       "prevControl": {
-        "x": 1.564953358914352,
-        "y": 2.8304317168430777
+        "x": 1.5858421538726035,
+        "y": 6.945524323618622
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Speaker Amp Side"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.75,
+      "rotationDegrees": -119.29000000000002,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -39,7 +45,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -119.29000000000002,
     "rotateFast": false
   },
   "reversed": false,
