@@ -125,7 +125,7 @@ void RobotContainer::ConfigureButtonBindings() {
 
   m_driverController.B().OnTrue(
       m_leds.Intaking()
-          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
+          .AndThen(IntakingCommands::Intake2(&m_intake, &m_scoring))
           .AndThen(m_leds.Loaded().Unless(
               [this] { return !m_intake.NotePresent(); })));
 

@@ -99,9 +99,15 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
 static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                               ScoringSubsystem* scoring,
                               IntakeSubsystem* intake, ArmSubsystem* arm) {
-  return (ScoreRamp(direction, scoring, intake, arm)
-              .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
-              .AndThen(ScoreShoot(direction, scoring, intake, arm)));
+  return (
+      // Downshuffle until either of the bottom two beam breaks is broken
+      ScoreRamp(direction, scoring, intake, arm)
+          .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
+          .AndThen(ScoreShoot(direction, scoring, intake, arm))
+      // Unless note isn't present
+      // timeout after 5 seconds
+      // finally stop everything
+  );
 }
 }  // namespace ScoringCommands
 
@@ -214,6 +220,97 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
       });
 }
 
+// static frc2::CommandPtr Intake2(IntakeSubsystem* intakeSubsystem,
+//                                 ScoringSubsystem* scoring) {
+//   static ScoringDirection intakeDirection = ScoringDirection::Unknown;
+//   static ScoringDirection* _intakeDirection = &intakeDirection;
+//   return (frc2::InstantCommand([] {
+//             ConsoleLogger::getInstance().logVerbose("Intake Subsystem",
+//                                                     "Intake start %s", "");
+//           })
+//               .ToPtr()
+//               .AndThen(IntakeInInitial(intakeSubsystem).ToPtr())
+//               .AlongWith(
+//                   frc2::FunctionalCommand(
+//                       [] {},
+//                       [intakeSubsystem] {
+//                         if (*_intakeDirection != ScoringDirection::Unknown) {
+//                           return;
+//                         }
+
+//                         if (intakeSubsystem->NotePresentLower()) {
+//                           if (intakeSubsystem->NotePresentLowerAmp()) {
+//                             *_intakeDirection =
+//                             ScoringDirection::SpeakerSide;
+//                           }
+//                           if (intakeSubsystem->NotePresentLowerPodium()) {
+//                             *_intakeDirection = ScoringDirection::AmpSide;
+//                           }
+//                         }
+//                       },
+//                       [](bool interrupted) {},
+//                       [] {
+//                         if (*_intakeDirection != ScoringDirection::Unknown) {
+//                           return true;
+//                         }
+//                         return false;
+//                       },
+//                       {})
+//                       .ToPtr()));
+// }
+
+static frc2::CommandPtr UnbiasNote(IntakeSubsystem* intk,
+                                   ScoringSubsystem* scoring) {
+  return frc2::FunctionalCommand(
+             [] {},
+             [scoring] {
+               scoring->SpinVectorSide(ScoringDirection::SpeakerSide);
+             },
+             [scoring](bool interruped) { scoring->Stop(); },
+             [intk] { return intk->NotePresentLower(); }, {intk, scoring})
+      .ToPtr();
+}
+
+static frc2::CommandPtr Intake2(IntakeSubsystem* intakeSubsystem,
+                                ScoringSubsystem* scoring) {
+  // Intake until top is broken biasing amp side
+  // stop intake
+  // downshuffle until either of the lower beam breaks is broken
+  // stop intake
+  // spin vector wheel to unbias the note
+  // stop vector wheel
+  // unless note is already present
+  // timeout after 5 seconds
+  // finally stop everything just in case something got canceled early
+
+  return (IntakeInInitial(intakeSubsystem)
+              .ToPtr()
+              .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
+                         intakeSubsystem->Stop();
+                         scoring->Stop();
+                       }).ToPtr())
+              .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
+                                           ScoringDirection::AmpSide))
+              .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
+                         intakeSubsystem->Out();
+                         scoring->SpinVectorSide(ScoringDirection::SpeakerSide);
+                       }).ToPtr())
+              .AndThen(frc2::WaitCommand(0.08_s).ToPtr())
+              .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
+                         intakeSubsystem->Stop();
+                         scoring->Stop();
+                       }).ToPtr())
+              .AndThen(UnbiasNote(intakeSubsystem, scoring))
+              .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
+                         intakeSubsystem->Stop();
+                       }).ToPtr()))
+      .Unless([intakeSubsystem] { return intakeSubsystem->NotePresent(); })
+      .WithTimeout(8_s)
+      .FinallyDo([intakeSubsystem, scoring] {
+        intakeSubsystem->Stop();
+        scoring->Stop();
+      });
+}
 }  // namespace IntakingCommands
 
 namespace DrivingCommands {

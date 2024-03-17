@@ -15,6 +15,7 @@ enum class ScoringDirection {
   AmpSide = 0,
   SpeakerSide,
   Subwoofer,
+  Unknown
 };
 
 using namespace CANConstants;

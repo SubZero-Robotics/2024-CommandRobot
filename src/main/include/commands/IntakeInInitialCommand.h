@@ -29,11 +29,11 @@ class IntakeInInitial
     isFinished = false;
   }
 
-  void Execute() override {
-    m_intake->In();
-  }
+  void Execute() override { m_intake->In(); }
 
-  bool IsFinished() override { return m_intake->NotePresentUpper() && !m_intake->NotePresentLower(); }
+  bool IsFinished() override {
+    return m_intake->NotePresentUpper() && !m_intake->NotePresentLower();
+  }
 
   void End(bool interrupted) {}
 
