@@ -100,6 +100,8 @@ class BaseSingleAxisSubsystem2
     frc::SmartDashboard::PutNumber(m_name + " Position",
                                    GetCurrentPosition().value());
 
+    bool allowed = IsMovementAllowed(0.5);
+
     if (m_controller.GetAbsoluteEncoderPosition().has_value())
       frc::SmartDashboard::PutNumber(
           m_name + " Absolute Position",

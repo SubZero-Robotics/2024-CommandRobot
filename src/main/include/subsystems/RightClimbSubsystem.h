@@ -7,7 +7,7 @@ class RightClimbSubsystem : public ClimbSubsystem {
   RightClimbSubsystem()
       : ClimbSubsystem("Right Climber", m_controller,
                        {// Min distance
-                        1_in,
+                        0_in,
                         // Max distance
                         40_in,
                         // Distance per revolution of relative encoder
