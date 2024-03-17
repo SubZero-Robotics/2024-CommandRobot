@@ -137,12 +137,12 @@ void ScoringSubsystem::SpinSubwoofer() {
 bool ScoringSubsystem::CheckAmpSpeed() {
   // TODO: Check range rather than exact equals
   ConsoleLogger::getInstance().logVerbose(
-      "Scoring Subsystem", "Amp Velocity %.3f", m_ampEncoder.GetVelocity());
+      "Scoring Subsystem", "Amp Velocity %.3f", m_ampLowerEnc.GetVelocity());
   ShuffleboardLogger::getInstance().logVerbose("Amp Ramp Speed",
-                                               m_ampEncoder.GetVelocity());
+                                               m_ampLowerEnc.GetVelocity());
   ShuffleboardLogger::getInstance().logVerbose("Amp Ramp Speed",
-                                               m_ampEncoder.GetVelocity());
-  return abs(m_ampEncoder.GetVelocity()) - 750 >=
+                                               m_ampLowerEnc.GetVelocity());
+  return abs(m_ampLowerEnc.GetVelocity()) - 750 >=
          abs(MaxSpeedToRpm(kAmpLowerSpeed));
 }
 
@@ -150,10 +150,10 @@ bool ScoringSubsystem::CheckSpeakerSpeed() {
   // TODO: Check range rather than exact equals
   ConsoleLogger::getInstance().logVerbose("Scoring Subsystem",
                                           "Speaker Velocity %.3f",
-                                          m_speakerEncoder.GetVelocity());
+                                          m_speakerLowerEnc.GetVelocity());
   ShuffleboardLogger::getInstance().logVerbose("Speaker Ramp Speed",
-                                               m_speakerEncoder.GetVelocity());
-  return abs(m_speakerEncoder.GetVelocity()) + 1000 >=
+                                               m_speakerLowerEnc.GetVelocity());
+  return abs(m_speakerLowerEnc.GetVelocity()) + 1000 >=
          abs(MaxSpeedToRpm(kSpeakerLowerSpeed));
 }
 
@@ -161,9 +161,9 @@ bool ScoringSubsystem::CheckSubwooferSpeed() {
   // TODO: Check range rather than exact equals
   ConsoleLogger::getInstance().logVerbose("Scoring Subsystem",
                                           "Subwoofer Velocity %.3f",
-                                          m_ampEncoder.GetVelocity());
+                                          m_ampLowerEnc.GetVelocity());
   ShuffleboardLogger::getInstance().logVerbose("Subwoofer Ramp Speed",
-                                               m_ampEncoder.GetVelocity());
-  return abs(m_ampEncoder.GetVelocity()) >=
+                                               m_ampLowerEnc.GetVelocity());
+  return abs(m_ampLowerEnc.GetVelocity()) >=
          abs(MaxSpeedToRpm(kSubwooferLowerSpeed));
 }
