@@ -82,7 +82,7 @@ void RobotContainer::RegisterAutos() {
         ConsoleLogger::getInstance().logVerbose("Autos", "Intaking %s", "");
       })
           .ToPtr()
-          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
+          .AndThen(IntakingCommands::Intake2(&m_intake, &m_scoring)));
   using namespace AutoConstants;
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoType::LeaveWing);
@@ -90,8 +90,9 @@ void RobotContainer::RegisterAutos() {
   m_chooser.AddOption("Place and leave", AutoType::PlaceAndLeave);
   m_chooser.AddOption("3 Note Auto", AutoType::ThreeNoteAuto);
   m_chooser.AddOption("2 Note and Center Line", AutoType::TwoNoteAuto);
-  m_chooser.AddOption("2 Note Center Note Under Stage", AutoType::TwoNoteCenter);
-  m_chooser.AddOption("2 Note Source Side",  AutoType::TwoNoteSource);
+  m_chooser.AddOption("2 Note Center Note Under Stage",
+                      AutoType::TwoNoteCenter);
+  m_chooser.AddOption("2 Note Source Side", AutoType::TwoNoteSource);
 
   m_chooser.AddOption("Empty Auto", AutoType::EmptyAuto);
 
@@ -108,38 +109,60 @@ void RobotContainer::ConfigureButtonBindings() {
 
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
-      .WhileTrue(m_leds.Climbing().AndThen(
-          ExtendClimbCommand(
-              &m_leftClimb,
-              [this] { return m_driverController.GetLeftTriggerAxis(); },
-              [this] { return 0; })
-              .ToPtr()));
+      .WhileTrue(
+          m_leds.Climbing()
+              .AndThen(m_leds.AmogusFace())
+              .AndThen(ExtendClimbCommand(
+                           &m_leftClimb,
+                           [this] {
+                             return m_driverController.GetLeftTriggerAxis();
+                           },
+                           [this] { return 0; })
+                           .ToPtr()));
 
   m_driverController.RightTrigger(OIConstants::kDriveDeadband)
-      .WhileTrue(m_leds.Climbing().AndThen(
-          ExtendClimbCommand(
-              &m_rightClimb,
-              [this] { return m_driverController.GetRightTriggerAxis(); },
-              [this] { return 0; })
-              .ToPtr()));
+      .WhileTrue(
+          m_leds.Climbing()
+              .AndThen(m_leds.AmogusFace())
+              .AndThen(ExtendClimbCommand(
+                           &m_rightClimb,
+                           [this] {
+                             return m_driverController.GetRightTriggerAxis();
+                           },
+                           [this] { return 0; })
+                           .ToPtr()));
 
   m_driverController.B().OnTrue(
       m_leds.Intaking()
-          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
-          .AndThen(m_leds.Loaded().Unless(
-              [this] { return !m_intake.NotePresent(); })));
+          .AndThen(m_leds.AngryFace())
+          .AndThen(IntakingCommands::Intake2(&m_intake, &m_scoring))
+          .AndThen((m_leds.Loaded().AndThen(m_leds.HappyFace())).Unless([this] {
+            return !m_intake.NotePresent();
+          })));
 
-  m_driverController.X().OnTrue(m_leds.ScoringAmp().AndThen(
-      ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
-                             &m_scoring, &m_intake, &m_arm)));
+  m_driverController.X().OnTrue(
+      m_leds.ScoringAmp()
+          .AndThen(ScoringCommands::Score(
+              [] { return ScoringDirection::PodiumSide; }, &m_scoring,
+              &m_intake, &m_arm))
+          .AndThen(m_leds.BlinkingFace())
+          .AndThen(m_leds.Idling()));
 
-  m_driverController.A().OnTrue(m_leds.ScoringAmp().AndThen(
-      ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
-                             &m_scoring, &m_intake, &m_arm)));
+  m_driverController.A().OnTrue(
+      m_leds.ScoringAmp()
+          .AndThen(
+              ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
+                                     &m_scoring, &m_intake, &m_arm))
+          .AndThen(m_leds.BlinkingFace())
+          .AndThen(m_leds.Idling()));
 
-  m_driverController.Y().OnTrue(m_leds.ScoringSubwoofer().AndThen(
-      ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
-                             &m_scoring, &m_intake, &m_arm)));
+  m_driverController.Y().OnTrue(
+      m_leds.ScoringSubwoofer()
+          .AndThen(
+              ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
+                                     &m_scoring, &m_intake, &m_arm))
+          .AndThen(m_leds.BlinkingFace())
+          .AndThen(m_leds.Idling()));
 
   m_driverController.LeftBumper()
       .WhileTrue(m_leds.Climbing().AndThen(

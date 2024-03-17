@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8897609229732395,
-        "y": 5.108219898237623
+        "x": 2.1268309203285076,
+        "y": 5.4322241977817285
       },
       "isLocked": false,
       "linkedName": "Note 3"
@@ -20,8 +20,8 @@
         "y": 5.577308253853149
       },
       "prevControl": {
-        "x": 2.120067411631074,
-        "y": 5.004425426202826
+        "x": 2.7567521801710275,
+        "y": 5.852171704343409
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,7 +30,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.3,
+      "waypointRelativePos": 0.2,
       "rotationDegrees": 180.0,
       "rotateFast": false
     }
@@ -58,7 +58,7 @@
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 360.0,
+    "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
