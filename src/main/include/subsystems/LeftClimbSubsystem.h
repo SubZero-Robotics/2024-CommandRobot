@@ -7,9 +7,9 @@ class LeftClimbSubsystem : public ClimbSubsystem {
   LeftClimbSubsystem()
       : ClimbSubsystem("Left Climber", m_controller,
                        {// Min distance
-                        0_in,
+                        1_in,
                         // Max distance
-                        30_in,
+                        40_in,
                         // Distance per revolution of relative encoder
                         (1_in * (1 / 25)),
                         // Distance per revolution of absolute encoder

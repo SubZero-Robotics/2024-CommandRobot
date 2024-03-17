@@ -89,6 +89,9 @@ class BaseSingleAxisSubsystem2
         m_pidEnabled{false} {
     m_pidEnabled = false;
 
+    m_resetEncCmd = ResetRelativeEncoder();
+    frc::SmartDashboard::PutData(m_name + " Reset Encoder",
+                                 m_resetEncCmd.get());
     frc2::TrapezoidProfileSubsystem<TDistance>::Disable();
   }
 
@@ -243,6 +246,10 @@ class BaseSingleAxisSubsystem2
         .ToPtr();
   }
 
+  frc2::CommandPtr ResetRelativeEncoder() {
+    return frc2::InstantCommand([] { ResetEncoder(); }).ToPtr();
+  }
+
   bool IsEnabled() override { return m_pidEnabled; }
 
   void DisablePid() override {
@@ -278,6 +285,7 @@ class BaseSingleAxisSubsystem2
   bool m_home;
   bool resetOccurred = false;
   double m_latestSpeed;
+  frc2::CommandPtr m_resetEncCmd = frc2::InstantCommand([] {});
 };
 
 template <typename TMotor, typename TController, typename TRelativeEncoder,
