@@ -240,8 +240,8 @@ frc::Rotation2d DriveSubsystem::GetHeading() {
   //   rotation = m_gyro3.GetRotation2d();
   // }
 
-  ConsoleLogger::getInstance().logVerbose("Gyro", "status name: %d",
-                                          m_gyro1.GetFaultField().IsAllGood());
+  // ConsoleLogger::getInstance().logVerbose("Gyro", "status name: %d",
+  //                                         m_gyro1.GetFaultField().IsAllGood());
   return m_gyro1.GetRotation2d();
 }
 
