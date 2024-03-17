@@ -11,7 +11,7 @@
 #include "Constants.h"
 #include "subsystems/ScoringSubsystem.h"
 
-using namespace CANSparkMaxConstants;
+using namespace CANConstants;
 using namespace IntakingConstants;
 
 class IntakeSubsystem : public frc2::SubsystemBase {
@@ -41,7 +41,7 @@ class IntakeSubsystem : public frc2::SubsystemBase {
 
  private:
   rev::CANSparkMax m_leftIntakeSpinnyBoy{
-      CANSparkMaxConstants::kLeftIntakeSpinnyBoiId,
+      CANConstants::kLeftIntakeSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
 
   frc::DigitalInput m_centerBeamBreak{
