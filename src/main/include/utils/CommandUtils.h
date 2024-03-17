@@ -136,7 +136,7 @@ static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
                                             ScoringSubsystem* scoring,
                                             ScoringDirection direction) {
   return frc2::InstantCommand([] {
-           ConsoleLogger::getInstance().logVerbose("Gamepiece Funni",
+           ConsoleLogger::getInstance().logVerbose("Outtake",
                                                    "Outtaking down%s", "");
          })
       .ToPtr()
@@ -154,7 +154,7 @@ static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
                  scoring->Stop();
                }).ToPtr())
       // .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
-      //                              ScoringDirection::SpeakerSide))
+      //                              ScoringDirection::PodiumSide))
       // .AndThen((NoteShuffle(intake).ToPtr())
       //              .AlongWith(frc2::InstantCommand(
       //                             [scoring] { scoring->SpinOutake(); })
@@ -194,7 +194,7 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
                          scoring->Stop();
                        }).ToPtr())
               // .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
-              //                              ScoringDirection::SpeakerSide))
+              //                              ScoringDirection::PodiumSide))
               // .AndThen((NoteShuffle(intakeSubsystem).ToPtr())
               //              .AlongWith(frc2::InstantCommand(
               //                             [scoring] { scoring->SpinOutake();
@@ -206,7 +206,7 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
                          scoring->Stop();
                        }).ToPtr())
               .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
-                                           ScoringDirection::SpeakerSide))
+                                           ScoringDirection::PodiumSide))
               .AndThen(frc2::InstantCommand([] {
                          ConsoleLogger::getInstance().logVerbose(
                              "Intake Subsystem", "Intake completed normally%s",
@@ -241,7 +241,7 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
 //                         if (intakeSubsystem->NotePresentLower()) {
 //                           if (intakeSubsystem->NotePresentLowerAmp()) {
 //                             *_intakeDirection =
-//                             ScoringDirection::SpeakerSide;
+//                             ScoringDirection::PodiumSide;
 //                           }
 //                           if (intakeSubsystem->NotePresentLowerPodium()) {
 //                             *_intakeDirection = ScoringDirection::AmpSide;
@@ -259,15 +259,15 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
 //                       .ToPtr()));
 // }
 
-static frc2::CommandPtr UnbiasNote(IntakeSubsystem* intk,
+static frc2::CommandPtr UnbiasNote(IntakeSubsystem* intake,
                                    ScoringSubsystem* scoring) {
   return frc2::FunctionalCommand(
              [] {},
              [scoring] {
-               scoring->SpinVectorSide(ScoringDirection::SpeakerSide);
+               scoring->SpinVectorSide(ScoringDirection::PodiumSide);
              },
              [scoring](bool interruped) { scoring->Stop(); },
-             [intk] { return intk->NotePresentLower(); }, {intk, scoring})
+             [intake] { return intake->NotePresentLower(); }, {intake, scoring})
       .ToPtr();
 }
 
@@ -293,7 +293,7 @@ static frc2::CommandPtr Intake2(IntakeSubsystem* intakeSubsystem,
                                            ScoringDirection::AmpSide))
               .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
                          intakeSubsystem->Out();
-                         scoring->SpinVectorSide(ScoringDirection::SpeakerSide);
+                         scoring->SpinVectorSide(ScoringDirection::PodiumSide);
                        }).ToPtr())
               .AndThen(frc2::WaitCommand(0.08_s).ToPtr())
               .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
@@ -394,9 +394,9 @@ static frc2::CommandPtr Funni(IntakeSubsystem* intake,
               .AndThen(IntakingCommands::FeedUntilNotPresent(
                   intake, scoring, ScoringDirection::AmpSide))
               .AndThen(IntakingCommands::OuttakeUntilPresent(
-                  intake, scoring, ScoringDirection::SpeakerSide))
+                  intake, scoring, ScoringDirection::PodiumSide))
               .AndThen(IntakingCommands::FeedUntilNotPresent(
-                  intake, scoring, ScoringDirection::SpeakerSide))
+                  intake, scoring, ScoringDirection::PodiumSide))
               .AndThen(IntakingCommands::OuttakeUntilPresent(
                   intake, scoring, ScoringDirection::AmpSide)))
       .Repeatedly()

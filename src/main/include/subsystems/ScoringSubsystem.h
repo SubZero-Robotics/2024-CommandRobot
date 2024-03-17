@@ -13,7 +13,7 @@
 
 enum class ScoringDirection {
   AmpSide = 0,
-  SpeakerSide,
+  PodiumSide,
   Subwoofer,
   Unknown
 };

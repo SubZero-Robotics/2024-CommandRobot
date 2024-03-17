@@ -90,8 +90,9 @@ void RobotContainer::RegisterAutos() {
   m_chooser.AddOption("Place and leave", AutoType::PlaceAndLeave);
   m_chooser.AddOption("3 Note Auto", AutoType::ThreeNoteAuto);
   m_chooser.AddOption("2 Note and Center Line", AutoType::TwoNoteAuto);
-  m_chooser.AddOption("2 Note Center Note Under Stage", AutoType::TwoNoteCenter);
-  m_chooser.AddOption("2 Note Source Side",  AutoType::TwoNoteSource);
+  m_chooser.AddOption("2 Note Center Note Under Stage",
+                      AutoType::TwoNoteCenter);
+  m_chooser.AddOption("2 Note Source Side", AutoType::TwoNoteSource);
 
   m_chooser.AddOption("Empty Auto", AutoType::EmptyAuto);
 
@@ -130,7 +131,7 @@ void RobotContainer::ConfigureButtonBindings() {
               [this] { return !m_intake.NotePresent(); })));
 
   m_driverController.X().OnTrue(m_leds.ScoringAmp().AndThen(
-      ScoringCommands::Score([] { return ScoringDirection::SpeakerSide; },
+      ScoringCommands::Score([] { return ScoringDirection::PodiumSide; },
                              &m_scoring, &m_intake, &m_arm)));
 
   m_driverController.A().OnTrue(m_leds.ScoringAmp().AndThen(
