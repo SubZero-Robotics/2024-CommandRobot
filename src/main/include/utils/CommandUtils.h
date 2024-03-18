@@ -36,7 +36,7 @@ static frc2::CommandPtr ArmScoringGoal(
              [direction, arm] {
                if (direction() == ScoringDirection::AmpSide) {
                  // TODO: MAKE THIS A CONSTANT
-                 return arm->MoveToPositionAbsolute(147_deg);
+                 return arm->MoveToPositionAbsolute(142_deg);
                } else {
                  return frc2::InstantCommand([] {}).ToPtr();
                }

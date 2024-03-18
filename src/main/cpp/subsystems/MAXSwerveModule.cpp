@@ -20,8 +20,10 @@ MAXSwerveModule::MAXSwerveModule(const int drivingCANId, const int turningCANId,
                         rev::CANSparkBase::MotorType::kBrushless) {
   // Factory reset, so we get the SPARKS MAX to a known state before configuring
   // them. This is useful in case a SPARK MAX is swapped out.
-  m_drivingSparkMax.RestoreFactoryDefaults();
-  m_turningSparkMax.RestoreFactoryDefaults();
+
+  // ! CAUSES BABY AUTO IF UNCOMMENTED >:(
+  // m_drivingSparkMax.RestoreFactoryDefaults();
+  // m_turningSparkMax.RestoreFactoryDefaults();
 
   // Apply position and velocity conversion factors for the driving encoder. The
   // native units for position and velocity are rotations and RPM, respectively,
