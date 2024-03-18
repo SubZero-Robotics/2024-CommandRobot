@@ -124,21 +124,26 @@ bool ScoringSubsystem::GetMotorFreeWheel(ScoringDirection direction) {
 
 void ScoringSubsystem::SpinAmp(double upperPercentage, double lowerPercentage) {
   // ampPidPair.RunWithVelocity(upperPercentage, lowerPercentage);
-  ampUpperController.RunWithVelocity(upperPercentage);
-  m_ampLowerPidController.SetReference(MaxSpeedToRpm(lowerPercentage), rev::CANSparkBase::ControlType::kVelocity);
+  m_ampLowerSpinnyBoi.Set(lowerPercentage);
+  m_ampUpperSpinnyBoi.Set(upperPercentage);
   frc::SmartDashboard::PutNumber("Amp lower target %", lowerPercentage);
 }
 
 void ScoringSubsystem::SpinSpeaker() {
-  speakerPidPair.RunWithVelocity(kSpeakerUpperSpeed, kSpeakerLowerSpeed);
+  // speakerPidPair.RunWithVelocity(kSpeakerUpperSpeed, kSpeakerLowerSpeed);
   // speakerUpperController.RunWithVelocity(-kSpeakerUpperSpeed);
   // speakerLowerController.RunWithVelocity(-kSpeakerLowerSpeed);
+  m_speakerLowerSpinnyBoi.Set(-kSpeakerLowerSpeed);
+  m_speakerUpperSpinnyBoi.Set(-kSpeakerUpperSpeed);
 }
 
 void ScoringSubsystem::SpinSubwoofer() {
   // ampPidPair.RunWithVelocity(kSubwooferUpperSpeed, kSubwooferLowerSpeed);
-  ampUpperController.RunWithVelocity(kSubwooferUpperSpeed);
-  m_ampLowerPidController.SetReference(MaxSpeedToRpm(kSubwooferLowerSpeed), rev::CANSparkBase::ControlType::kVelocity);
+  m_ampLowerSpinnyBoi.Set(kSubwooferLowerSpeed);
+  m_ampUpperSpinnyBoi.Set(kSubwooferUpperSpeed);
+  // ampUpperController.RunWithVelocity(kSubwooferUpperSpeed);
+  // m_ampLowerPidController.SetReference(MaxSpeedToRpm(kSubwooferLowerSpeed),
+  // rev::CANSparkBase::ControlType::kVelocity);
 }
 
 bool ScoringSubsystem::CheckAmpSpeed() {

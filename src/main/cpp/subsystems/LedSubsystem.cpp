@@ -11,7 +11,7 @@ constexpr double kAccelThreshold = 7;
 void LedSubsystem::Periodic() {
   if (abs(m_accel.GetX()) >= kAccelThreshold ||
       abs(m_accel.GetY()) >= kAccelThreshold) {
-    RunOnce([this] { showFace(EyePattern::Surprised); });
+    showFace(EyePattern::Surprised);
   }
 }
 
@@ -173,16 +173,18 @@ frc2::CommandPtr LedSubsystem::Loaded() {
            ConsoleLogger::getInstance().logInfo("LedSubsystem",
                                                 "Setting LEDs to %s", "Loaded");
            setZoneColorPatternAsync(
-               LedZone::LeftClimber, LedConstants::kIntakeLedPort,
-               ColorConstants::kGreen, PatternType::SetAll, true, -1, false);
+               LedZone::LeftClimber, LedConstants::kIdleLedPort,
+               ColorConstants::kGreen, PatternType::Breathe, false, 15, false);
            delaySeconds(kConnectorXDelay);
            setZoneColorPatternAsync(
-               LedZone::RightClimber, LedConstants::kIntakeLedPort,
-               ColorConstants::kGreen, PatternType::SetAll, true, -1, false);
+               LedZone::RightClimber, LedConstants::kIdleLedPort,
+               ColorConstants::kGreen, PatternType::Breathe, false, 15, false);
            delaySeconds(kConnectorXDelay);
-           setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
-                                    ColorConstants::kGreen, PatternType::SetAll,
-                                    true, -1, false);
+           setZoneColorPatternAsync(LedZone::Back, LedConstants::kIdleLedPort,
+                                    ColorConstants::kGreen,
+                                    PatternType::Breathe, false, 15, false);
+           delaySeconds(kConnectorXDelay);
+           syncAllZones();
          })
       .ToPtr();
 }

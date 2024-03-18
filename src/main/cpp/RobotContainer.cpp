@@ -109,22 +109,16 @@ void RobotContainer::ConfigureButtonBindings() {
 
 #ifndef TEST_SWERVE_BOT
   m_driverController.LeftTrigger(OIConstants::kDriveDeadband)
-      .WhileTrue(
-          m_leds
-              .Climbing()
-              // .AndThen(m_leds.AmogusFace())
-              .AndThen(ExtendClimbCommand(
-                           &m_leftClimb,
-                           [this] {
-                             return m_driverController.GetLeftTriggerAxis();
-                           },
-                           [this] { return 0; })
-                           .ToPtr()));
+      .OnTrue(m_leds.Climbing().AndThen(m_leds.AmogusFace()))
+      .WhileTrue(ExtendClimbCommand(
+                     &m_leftClimb,
+                     [this] { return m_driverController.GetLeftTriggerAxis(); },
+                     [this] { return 0; })
+                     .ToPtr());
 
   m_driverController.RightTrigger(OIConstants::kDriveDeadband)
+      .OnTrue(m_leds.Climbing().AndThen(m_leds.AmogusFace()))
       .WhileTrue(
-          // m_leds.Climbing()
-          // .AndThen(m_leds.AmogusFace())
           ExtendClimbCommand(
               &m_rightClimb,
               [this] { return m_driverController.GetRightTriggerAxis(); },
@@ -164,6 +158,7 @@ void RobotContainer::ConfigureButtonBindings() {
           .AndThen(m_leds.Idling()));
 
   m_driverController.LeftBumper()
+      .OnTrue(m_leds.Climbing().AndThen(m_leds.AmogusFace()))
       .WhileTrue(ExtendClimbCommand(
                      &m_leftClimb, [this] { return 0; },
                      [this] { return ClimbConstants::kCLimberExtendSpeed; })
