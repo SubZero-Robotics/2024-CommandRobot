@@ -77,7 +77,10 @@ class RobotContainer {
       (frc::MechanismObject2d*)m_mech.GetRoot("Climber Left", 0.5, 0)};
   RightClimbSubsystem m_rightClimb{
       (frc::MechanismObject2d*)m_mech.GetRoot("Climber Right", 0.5, 1)};
-  ArmSubsystem m_arm{(frc::MechanismObject2d*)m_mech.GetRoot("Arm", 0.25, 0.25)};
+  frc::MechanismRoot2d* armRoot = m_mech.GetRoot("Arm Root", 0.5, 0.5);
+  frc::MechanismLigament2d* armPost =
+      armRoot->Append<frc::MechanismLigament2d>("Arm Post", 0.4, 90_deg);
+  ArmSubsystem m_arm{(frc::MechanismObject2d*)armPost};
   IntakeSubsystem m_intake;
   ScoringSubsystem m_scoring;
 

@@ -37,7 +37,7 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
              // Reversed
              false,
              // Mechanism2d
-             {0.2_m, -20_deg, 6, ColorConstants::kBlue}},
+             {0.2_m, 110_deg, 6, ColorConstants::kBlue}},
             0.2_m,
             node} {
     m_SpinnyBoi.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
