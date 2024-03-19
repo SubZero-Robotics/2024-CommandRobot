@@ -4,7 +4,7 @@
 
 class RightClimbSubsystem : public ClimbSubsystem {
  public:
-  RightClimbSubsystem()
+  RightClimbSubsystem(frc::MechanismObject2d* node = nullptr)
       : ClimbSubsystem("Right Climber", m_controller,
                        {// Min distance
                         0_in,
@@ -25,7 +25,10 @@ class RightClimbSubsystem : public ClimbSubsystem {
                         // Max limit switch
                         std::nullopt,
                         // Reversed
-                        false}) {
+                        false,
+                        // Mechanism2d
+                        {24_in, 70_deg, 6, ColorConstants::kRed}},
+                       node) {
     m_motor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
   }
 
@@ -33,8 +36,7 @@ class RightClimbSubsystem : public ClimbSubsystem {
   rev::CANSparkMax m_motor{ClimbConstants::kClimberRightMotorId,
                            rev::CANSparkMax::MotorType::kBrushless};
   rev::SparkPIDController m_pidController = m_motor.GetPIDController();
-  rev::SparkRelativeEncoder m_encoder =
-      m_motor.GetEncoder();
+  rev::SparkRelativeEncoder m_encoder = m_motor.GetEncoder();
   PidSettings m_climberPidSettings = {// TODO: Constants
                                       .p = 0.075,
                                       .i = 0,

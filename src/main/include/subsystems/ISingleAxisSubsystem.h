@@ -9,6 +9,8 @@
 
 #include <memory>
 
+#include "ColorConstants.h"
+
 class ISingleAxisSubsystem : public frc2::SubsystemBase {
  public:
   // Need controller input
@@ -29,6 +31,13 @@ class ISingleAxisSubsystem : public frc2::SubsystemBase {
   virtual void JoystickMoveStep(double) = 0;
   virtual double IncrementTargetPosition(double) = 0;
   virtual frc2::CommandPtr GetHomeCommand() = 0;
+};
+
+struct SingleAxisMechanism {
+  units::meter_t minimumLength;
+  units::degree_t minimumAngle;
+  double lineWidth;
+  frc::Color8Bit color;
 };
 
 template <typename Distance>
@@ -53,20 +62,7 @@ class ISingleAxisSubsystem2 {
     std::optional<frc::DigitalInput *> minLimitSwitch;
     std::optional<frc::DigitalInput *> maxLimitSwitch;
     bool reversed;
-
-    SingleAxisConfig2(const SingleAxisConfig2 &other) {
-      minDistance = other.minDistance;
-      maxDistance = other.maxDistance;
-      encoderDistancePerRevolution = other.encoderDistancePerRevolution;
-      absoluteEncoderDistancePerRevolution =
-          other.absoluteEncoderDistancePerRevolution;
-      defaultSpeed = other.defaultSpeed;
-      velocityScalar = other.velocityScalar;
-      tolerance = other.tolerance;
-      minLimitSwitch = other.minLimitSwitch;
-      maxLimitSwitch = other.maxLimitSwitch;
-      reversed = other.reversed;
-    }
+    SingleAxisMechanism mechanismConfig;
 
     SingleAxisConfig2(
         Distance_t _minDistance, Distance_t _maxDistance,
@@ -74,7 +70,8 @@ class ISingleAxisSubsystem2 {
         std::optional<Distance_t> _absoluteEncoderDistancePerRevolution,
         Velocity_t _defaultSpeed, double _velocityScalar, Distance_t _tolerance,
         std::optional<frc::DigitalInput *> _minLimitSwitch,
-        std::optional<frc::DigitalInput *> _maxLimitSwitch, bool _reversed)
+        std::optional<frc::DigitalInput *> _maxLimitSwitch, bool _reversed,
+        SingleAxisMechanism _mechanismConfig)
         : minDistance{_minDistance},
           maxDistance{_maxDistance},
           encoderDistancePerRevolution{_encoderDistancePerRevolution},
@@ -85,7 +82,8 @@ class ISingleAxisSubsystem2 {
           tolerance{_tolerance},
           minLimitSwitch{_minLimitSwitch},
           maxLimitSwitch{_maxLimitSwitch},
-          reversed{_reversed} {}
+          reversed{_reversed},
+          mechanismConfig{_mechanismConfig} {}
   };
 
   // Will disable position-based movements when called

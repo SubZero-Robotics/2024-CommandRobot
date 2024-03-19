@@ -7,6 +7,7 @@
 #include <AHRS.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
+#include <frc/smartdashboard/Mechanism2d.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/InstantCommand.h>
@@ -18,6 +19,7 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 #include "Constants.h"
+#include "subsystems/ArmSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/LedSubsystem.h"
@@ -25,7 +27,6 @@
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 #include "subsystems/StateSubsystem.h"
-#include "subsystems/ArmSubsystem.h"
 #include "utils/Vision.h"
 
 /**
@@ -46,8 +47,11 @@ class RobotContainer {
   void ResetPose();
   void DisableSubsystems();
   void Initialize();
+  void Periodic();
 
  private:
+  frc::Mechanism2d m_mech{1, 1};
+
   // The driver's controller
   frc2::CommandXboxController m_driverController{
       OIConstants::kDriverControllerPort};
@@ -69,9 +73,11 @@ class RobotContainer {
 #endif
 
 #ifndef TEST_SWERVE_BOT
-  LeftClimbSubsystem m_leftClimb;
-  RightClimbSubsystem m_rightClimb;
-  ArmSubsystem m_arm;
+  LeftClimbSubsystem m_leftClimb{
+      (frc::MechanismObject2d*)m_mech.GetRoot("Climber Left", 0.5, 0)};
+  RightClimbSubsystem m_rightClimb{
+      (frc::MechanismObject2d*)m_mech.GetRoot("Climber Right", 0.5, 1)};
+  ArmSubsystem m_arm{(frc::MechanismObject2d*)m_mech.GetRoot("Arm", 0.25, 0.25)};
   IntakeSubsystem m_intake;
   ScoringSubsystem m_scoring;
 

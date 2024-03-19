@@ -3,6 +3,8 @@
 #include <frc/DigitalInput.h>
 #include <frc/DutyCycleEncoder.h>
 #include <frc/controller/PIDController.h>
+#include <frc/smartdashboard/MechanismLigament2d.h>
+#include <frc/smartdashboard/MechanismRoot2d.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/FunctionalCommand.h>
 #include <frc2/command/TrapezoidProfileSubsystem.h>
@@ -79,7 +81,8 @@ class BaseSingleAxisSubsystem2
       PidMotorController<TMotor, TController, TRelativeEncoder,
                          TAbsoluteEncoder> &controller,
       ISingleAxisSubsystem2<TDistance>::SingleAxisConfig2 config,
-      frc::TrapezoidProfile<TDistance>::Constraints profileConstraints)
+      frc::TrapezoidProfile<TDistance>::Constraints profileConstraints,
+      frc::MechanismObject2d *mechanismNode = nullptr)
       : frc2::TrapezoidProfileSubsystem<TDistance>{profileConstraints},
         m_minLimitSwitch{config.minLimitSwitch},
         m_maxLimitSwitch{config.maxLimitSwitch},
@@ -89,13 +92,20 @@ class BaseSingleAxisSubsystem2
         m_pidEnabled{false} {
     m_pidEnabled = false;
 
+    if (mechanismNode) {
+      m_ligament2d = mechanismNode->Append<frc::MechanismLigament2d>(
+          name, config.mechanismConfig.minimumLength.value(),
+          config.mechanismConfig.minimumAngle, config.mechanismConfig.lineWidth,
+          config.mechanismConfig.color);
+    }
+
     m_resetEncCmd = ResetRelativeEncoder();
     frc::SmartDashboard::PutData(m_name + " Reset Encoder",
                                  m_resetEncCmd.get());
     frc2::TrapezoidProfileSubsystem<TDistance>::Disable();
   }
 
-  void Periodic() override {
+  virtual void Periodic() override {
     frc::SmartDashboard::PutBoolean(m_name + " Pid Enabled", m_pidEnabled);
     frc::SmartDashboard::PutNumber(m_name + " Position",
                                    GetCurrentPosition().value());
@@ -250,6 +260,8 @@ class BaseSingleAxisSubsystem2
     return frc2::InstantCommand([this] { ResetEncoder(); }).ToPtr();
   }
 
+  frc::MechanismLigament2d *GetLigament() { return m_ligament2d; }
+
   bool IsEnabled() override { return m_pidEnabled; }
 
   void DisablePid() override {
@@ -286,6 +298,7 @@ class BaseSingleAxisSubsystem2
   bool resetOccurred = false;
   double m_latestSpeed;
   frc2::CommandPtr m_resetEncCmd = frc2::InstantCommand([] {}).ToPtr();
+  frc::MechanismLigament2d *m_ligament2d;
 };
 
 template <typename TMotor, typename TController, typename TRelativeEncoder,
@@ -299,12 +312,38 @@ class RotationalSingleAxisSubsystem
       PidMotorController<TMotor, TController, TRelativeEncoder,
                          TAbsoluteEncoder> &controller,
       ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 config,
-      units::meter_t armatureLength)
+      units::meter_t armatureLength, frc::MechanismObject2d *node = nullptr)
       : BaseSingleAxisSubsystem2<
             TMotor, TController, TRelativeEncoder, TAbsoluteEncoder,
             units::degree>{name, controller, config,
-                           AutoConstants::kRotationalAxisConstraints},
+                           AutoConstants::kRotationalAxisConstraints, node},
         m_armatureLength{armatureLength} {}
+
+  void Periodic() override {
+    BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                             TAbsoluteEncoder, units::degree>::Periodic();
+
+    if (BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                                 TAbsoluteEncoder,
+                                 units::degree>::m_ligament2d) {
+      BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                               TAbsoluteEncoder, units::degree>::m_ligament2d
+          ->SetAngle(
+              (BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                                        TAbsoluteEncoder,
+                                        units::degree>::m_config.reversed
+                   ? -BaseSingleAxisSubsystem2<
+                         TMotor, TController, TRelativeEncoder,
+                         TAbsoluteEncoder, units::degree>::GetCurrentPosition()
+                   : BaseSingleAxisSubsystem2<
+                         TMotor, TController, TRelativeEncoder,
+                         TAbsoluteEncoder,
+                         units::degree>::GetCurrentPosition()) +
+              BaseSingleAxisSubsystem2<
+                  TMotor, TController, TRelativeEncoder, TAbsoluteEncoder,
+                  units::degree>::m_config.mechanismConfig.minimumAngle);
+    }
+  }
 
   void RunMotorVelocity(units::degrees_per_second_t speed,
                         bool ignoreEncoder = false) override {
@@ -336,10 +375,38 @@ class LinearSingleAxisSubsystem
       std::string name,
       PidMotorController<TMotor, TController, TRelativeEncoder,
                          TAbsoluteEncoder> &controller,
-      ISingleAxisSubsystem2<units::meter>::SingleAxisConfig2 config)
+      ISingleAxisSubsystem2<units::meter>::SingleAxisConfig2 config,
+      frc::MechanismObject2d *node = nullptr)
       : BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
                                  TAbsoluteEncoder, units::meter>{
-            name, controller, config, AutoConstants::kLinearAxisConstraints} {}
+            name, controller, config, AutoConstants::kLinearAxisConstraints,
+            node} {}
+
+  void Periodic() override {
+    BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                             TAbsoluteEncoder, units::meter>::Periodic();
+
+    if (BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                                 TAbsoluteEncoder,
+                                 units::meter>::m_ligament2d) {
+      BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                               TAbsoluteEncoder, units::meter>::m_ligament2d
+          ->SetLength((
+              (BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                                        TAbsoluteEncoder,
+                                        units::meter>::m_config.reversed
+                   ? -(BaseSingleAxisSubsystem2<
+                           TMotor, TController, TRelativeEncoder,
+                           TAbsoluteEncoder,
+                           units::meter>::GetCurrentPosition())
+                   : BaseSingleAxisSubsystem2<
+                         TMotor, TController, TRelativeEncoder,
+                         TAbsoluteEncoder, units::meter>::GetCurrentPosition()) +
+              BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
+                                       TAbsoluteEncoder, units::meter>::m_config
+                  .mechanismConfig.minimumLength).value());
+    }
+  }
 
   void RunMotorVelocity(units::meters_per_second_t speed,
                         bool ignoreEncoder = false) override {

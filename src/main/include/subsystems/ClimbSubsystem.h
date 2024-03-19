@@ -17,12 +17,13 @@ class ClimbSubsystem
   ClimbSubsystem(std::string name,
                  PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                                     rev::SparkRelativeEncoder,
-                                    rev::SparkAbsoluteEncoder> &controller,
-                 ISingleAxisSubsystem2<units::meter>::SingleAxisConfig2 config)
+                                    rev::SparkAbsoluteEncoder>& controller,
+                 ISingleAxisSubsystem2<units::meter>::SingleAxisConfig2 config,
+                 frc::MechanismObject2d* node = nullptr)
       : LinearSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
                                   rev::SparkRelativeEncoder,
-                                  rev::SparkAbsoluteEncoder>(name, controller,
-                                                             config) {}
+                                  rev::SparkAbsoluteEncoder>(
+            name, controller, config, node) {}
   void Periodic() override {
     LinearSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
                               rev::SparkRelativeEncoder,

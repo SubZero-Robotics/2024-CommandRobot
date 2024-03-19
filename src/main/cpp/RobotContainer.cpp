@@ -331,3 +331,7 @@ void RobotContainer::Initialize() {
   m_leftClimb.OnInit();
   m_rightClimb.OnInit();
 };
+
+void RobotContainer::Periodic() {
+  frc::SmartDashboard::PutData("Robot2d", &m_mech);
+}
