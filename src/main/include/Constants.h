@@ -182,7 +182,10 @@ extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
 extern const frc::TrapezoidProfile<units::degree>::Constraints
-    kSingleAxisConstraints;
+    kRotationalAxisConstraints;
+
+extern const frc::TrapezoidProfile<units::meter>::Constraints
+    kLinearAxisConstraints;
 
 const std::string kDefaultAutoName = "Leave Wing";
 

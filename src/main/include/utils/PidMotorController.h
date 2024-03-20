@@ -137,7 +137,7 @@ class PidMotorController {
     m_motor.Set(0);
   }
 
-  PidSettings GetPidSettings() { return m_settings; }
+  const PidSettings &GetPidSettings() { return m_settings; }
 
   void UpdatePidSettings(PidSettings settings) {
     if (settings.p != m_settings.p) {

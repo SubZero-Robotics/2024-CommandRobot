@@ -10,15 +10,13 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
                          rev::CANSparkMax, rev::SparkPIDController,
                          rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder> {
  public:
-  ArmSubsystem()
+  ArmSubsystem(frc::MechanismObject2d* node = nullptr)
       : RotationalSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
                                       rev::SparkRelativeEncoder,
                                       rev::SparkAbsoluteEncoder>{
             "Arm",
-            upperController,
-            {// PID Controller
-             frc::PIDController{1, 0, 0},
-             // Min distance
+            armController,
+            {// Min distance
              10_deg,
              // Max distance
              190_deg,
@@ -37,8 +35,11 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
              // Max limit switch
              std::nullopt,
              // Reversed
-             false},
-            0.2_m} {
+             false,
+             // Mechanism2d
+             {0.2_m, 110_deg, 6, ColorConstants::kBlue}},
+            0.2_m,
+            node} {
     m_SpinnyBoi.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
   }
 
@@ -75,8 +76,8 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
                                 .ff = 0};
   PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      upperController{"Arm",          m_SpinnyBoi, m_enc,      m_PidController,
-                      armPidSettings, &m_absEnc,   kMaxSpinRpm};
+      armController{"Arm",          m_SpinnyBoi, m_enc,  m_PidController,
+                    armPidSettings, &m_absEnc,   IntakingConstants::kMaxRpm};
   // PidMotorControllerTuner<rev::CANSparkMax, rev::SparkPIDController,
   //                         rev::SparkRelativeEncoder,
   //                         rev::SparkAbsoluteEncoder>

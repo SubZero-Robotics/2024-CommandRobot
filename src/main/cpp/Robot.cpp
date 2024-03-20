@@ -15,13 +15,13 @@
 #include "wpi/DataLog.h"
 
 void Robot::RobotInit() {
-  if (RobotBase::IsReal()) {
-    if (frc::RobotController::GetSerialNumber() !=
-        RobotConstants::kRoborioSerialNumber) {
-      std::cout << "Error: wrong robot\n";
-      throw wpi::uv::Error(108);
-    }
-  }
+  // if (RobotBase::IsReal()) {
+  //   if (frc::RobotController::GetSerialNumber() !=
+  //       RobotConstants::kRoborioSerialNumber) {
+  //     std::cout << "Error: wrong robot\n";
+  //     throw wpi::uv::Error(108);
+  //   }
+  // }
   frc::DataLogManager::Start();
 
   // Logs joystick data without hogging NT bandwidth
@@ -38,7 +38,7 @@ void Robot::RobotInit() {
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() { frc2::CommandScheduler::GetInstance().Run(); }
+void Robot::RobotPeriodic() { frc2::CommandScheduler::GetInstance().Run(); m_container.Periodic(); }
 
 /**
  * This function is called once each time the robot enters Disabled mode. You

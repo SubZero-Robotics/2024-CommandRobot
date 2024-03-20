@@ -320,6 +320,18 @@ void RobotContainer::ResetPose() {
   m_drive.ResetOdometry(frc::Pose2d{0_m, 0_m, 0_rad});
 }
 
-void RobotContainer::DisableSubsystems() { m_arm.DisablePid(); }
+void RobotContainer::DisableSubsystems() {
+  m_arm.DisablePid();
+  m_leftClimb.DisablePid();
+  m_rightClimb.DisablePid();
+}
 
-void RobotContainer::Initialize() { m_arm.OnInit(); };
+void RobotContainer::Initialize() {
+  m_arm.OnInit();
+  m_leftClimb.OnInit();
+  m_rightClimb.OnInit();
+};
+
+void RobotContainer::Periodic() {
+  frc::SmartDashboard::PutData("Robot2d", &m_mech);
+}

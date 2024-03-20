@@ -24,12 +24,12 @@ class ExtendClimbCommand
     auto in = m_inExtend();
 
     auto extend = out >= in ? out : -in;
-    ConsoleLogger::getInstance().logVerbose("ExtendCommand", "Extend Speed %f", extend);
-    // ! THIS IS BAD THE ENCODERS ARE BEING IGNORED
-    m_climbSubsystem->RunMotorExternal(extend, true);
+    ConsoleLogger::getInstance().logVerbose("ExtendCommand", "Extend Speed %f",
+                                            extend);
+    m_climbSubsystem->RunMotorPercentage(extend);
   }
 
-  void End(bool interrupted) override { m_climbSubsystem->StopMovement(); }
+  void End(bool interrupted) override { m_climbSubsystem->Stop(); }
 
  private:
   bool isFinished;
