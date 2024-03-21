@@ -60,6 +60,38 @@ static frc2::CommandPtr ScoreRamp(std::function<ScoringDirection()> direction,
       .WithTimeout(5_s);
 }
 
+static frc2::CommandPtr PreScoreShuffle(
+    std::function<ScoringDirection()> direction, ScoringSubsystem* scoring,
+    IntakeSubsystem* intake) {
+  return frc2::InstantCommand([] {
+           ConsoleLogger::getInstance().logInfo("Scoring", "Pre Score Shuffle");
+         })
+      .ToPtr()
+      .AndThen((frc2::InstantCommand([scoring, intake, direction] {
+                  scoring->SpinVectorSide(direction());
+                  intake->Out();
+                }).ToPtr())
+                   .Until([intake, direction] {
+                     switch (direction()) {
+                       case ScoringDirection::AmpSide:
+                         return !(intake->NotePresentUpperCenter() ||
+                                  intake->NotePresentUpperAmp());
+                       case ScoringDirection::PodiumSide:
+                         return !(intake->NotePresentUpperCenter() ||
+                                  intake->NotePresentUpperPodium());
+                     }
+                   }))
+      .AndThen(frc2::InstantCommand([intake, scoring] {
+                 intake->Stop();
+                 scoring->Stop();
+               }).ToPtr())
+      .WithTimeout(1_s)
+      .FinallyDo([intake, scoring] {
+        intake->Stop();
+        scoring->Stop();
+      });
+}
+
 static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                                    ScoringSubsystem* scoring,
                                    IntakeSubsystem* intake, ArmSubsystem* arm) {
@@ -73,6 +105,7 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                                 "Scoring Composition", "fed %s", "");
                           }).ToPtr())
                  .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
+                 .AndThen(PreScoreShuffle(direction, scoring, intake))
                  .AndThen(Shoot(intake, scoring, direction).ToPtr())
                  .AndThen(frc2::InstantCommand([] {
                             ConsoleLogger::getInstance().logVerbose(

@@ -66,7 +66,17 @@ bool IntakeSubsystem::NotePresentUpperPodium() {
   return !m_upperPodiumBeamBreak.Get();
 }
 
-bool IntakeSubsystem::NotePresentCenter() { return !m_centerBeamBreak.Get(); }
+bool IntakeSubsystem::NotePresentUpperCenter() {
+  return !m_centerUpperBeamBreak.Get();
+}
+
+bool IntakeSubsystem::NotePresentLowerCenter() {
+  return !m_centerLowerBeamBreak.Get();
+}
+
+bool IntakeSubsystem::NotePresentCenter() {
+  return NotePresentLowerCenter() || NotePresentUpperCenter();
+}
 
 bool IntakeSubsystem::NotePresentUpper() {
   return NotePresentUpperAmp() || NotePresentUpperPodium();

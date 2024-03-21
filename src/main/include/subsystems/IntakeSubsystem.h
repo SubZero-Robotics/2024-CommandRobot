@@ -36,6 +36,8 @@ class IntakeSubsystem : public frc2::SubsystemBase {
   bool NotePresentLowerAmp();
   bool NotePresentUpperPodium();
   bool NotePresentCenter();
+  bool NotePresentUpperCenter();
+  bool NotePresentLowerCenter();
   bool NotePresentUpper();
   bool NotePresentLower();
 
@@ -44,8 +46,10 @@ class IntakeSubsystem : public frc2::SubsystemBase {
       CANConstants::kLeftIntakeSpinnyBoiId,
       rev::CANSparkLowLevel::MotorType::kBrushless};
 
-  frc::DigitalInput m_centerBeamBreak{
-      IntakingConstants::kCenterBeamBreakDigitalPort};
+  frc::DigitalInput m_centerLowerBeamBreak{
+      IntakingConstants::kCenterLowerBeamBreakDigitalPort};
+  frc::DigitalInput m_centerUpperBeamBreak{
+      IntakingConstants::kCenterUpperBeamBreakDigitalPort};
   frc::DigitalInput m_lowerPodiumBeamBreak{
       IntakingConstants::kLowerPodiumBeamBreakDigitalPort};
   frc::DigitalInput m_upperPodiumBeamBreak{
