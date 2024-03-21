@@ -6,6 +6,7 @@ IntakeSubsystem::IntakeSubsystem() {
 
 void IntakeSubsystem::Periodic() {
   // intakeTuner.UpdateFromShuffleboard();
+  ShuffleboardLogger::getInstance().logVerbose("Has Note", NotePresent());
 }
 
 void IntakeSubsystem::SimulationPeriodic() {}
