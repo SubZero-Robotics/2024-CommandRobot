@@ -60,6 +60,19 @@ static frc2::CommandPtr ScoreRamp(std::function<ScoringDirection()> direction,
       .WithTimeout(5_s);
 }
 
+static bool IsNoteTopSide(IntakeSubsystem* intake, ScoringDirection direction) {
+  switch (direction) {
+    case ScoringDirection::AmpSide:
+    case ScoringDirection::Subwoofer:
+    case ScoringDirection::Unknown:
+      return !intake->NotePresentUpperAmp() &&
+             !intake->NotePresentUpperCenter();
+    case ScoringDirection::PodiumSide:
+      return !intake->NotePresentUpperPodium() &&
+             !intake->NotePresentUpperCenter();
+  }
+}
+
 static frc2::CommandPtr PreScoreShuffle(
     std::function<ScoringDirection()> direction, ScoringSubsystem* scoring,
     IntakeSubsystem* intake) {
@@ -72,14 +85,7 @@ static frc2::CommandPtr PreScoreShuffle(
                   intake->Out();
                 }).ToPtr())
                    .Until([intake, direction] {
-                     switch (direction()) {
-                       case ScoringDirection::AmpSide:
-                         return !(intake->NotePresentUpperCenter() ||
-                                  intake->NotePresentUpperAmp());
-                       case ScoringDirection::PodiumSide:
-                         return !(intake->NotePresentUpperCenter() ||
-                                  intake->NotePresentUpperPodium());
-                     }
+                     return IsNoteTopSide(intake, direction());
                    }))
       .AndThen(frc2::InstantCommand([intake, scoring] {
                  intake->Stop();
