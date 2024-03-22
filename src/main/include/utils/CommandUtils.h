@@ -65,11 +65,9 @@ static bool IsNoteTopSide(IntakeSubsystem* intake, ScoringDirection direction) {
     case ScoringDirection::AmpSide:
     case ScoringDirection::Subwoofer:
     case ScoringDirection::Unknown:
-      return !intake->NotePresentUpperAmp() &&
-             !intake->NotePresentUpperCenter();
+      return intake->NotePresentUpperAmp();
     case ScoringDirection::PodiumSide:
-      return !intake->NotePresentUpperPodium() &&
-             !intake->NotePresentUpperCenter();
+      return intake->NotePresentUpperPodium();
   }
 }
 
@@ -84,13 +82,14 @@ static frc2::CommandPtr PreScoreShuffle(
                   scoring->SpinVectorSide(direction());
                   intake->Out();
                 }).ToPtr())
+                   .Repeatedly()
                    .Until([intake, direction] {
-                     return IsNoteTopSide(intake, direction());
-                   }))
-      .AndThen(frc2::InstantCommand([intake, scoring] {
-                 intake->Stop();
-                 scoring->Stop();
-               }).ToPtr())
+                     return !IsNoteTopSide(intake, direction());
+                   })
+                   .AndThen(frc2::InstantCommand([intake, scoring] {
+                              intake->Stop();
+                              scoring->Stop();
+                            }).ToPtr()))
       .WithTimeout(1_s)
       .FinallyDo([intake, scoring] {
         intake->Stop();
