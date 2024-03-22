@@ -110,7 +110,7 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                                 "Scoring Composition", "fed %s", "");
                           }).ToPtr())
                  .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
-                 .AndThen(PreScoreShuffle(direction, scoring, intake))
+                  // .AndThen(PreScoreShuffle(direction, scoring, intake))
                  .AndThen(Shoot(intake, scoring, direction).ToPtr())
                  .AndThen(frc2::InstantCommand([] {
                             ConsoleLogger::getInstance().logVerbose(
