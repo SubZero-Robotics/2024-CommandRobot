@@ -6,7 +6,7 @@ IntakeSubsystem::IntakeSubsystem() {
 
 void IntakeSubsystem::Periodic() {
   // intakeTuner.UpdateFromShuffleboard();
-  ShuffleboardLogger::getInstance().logVerbose("Has Note", NotePresent());
+  ShuffleboardLogger::getInstance().logVerbose("Has Note", NotePresentCenter());
 }
 
 void IntakeSubsystem::SimulationPeriodic() {}
@@ -84,8 +84,7 @@ bool IntakeSubsystem::NotePresentUpper() {
 }
 
 bool IntakeSubsystem::NotePresentLower() {
-  return NotePresentLowerAmp() || NotePresentLowerPodium() ||
-         NotePresentCenter();
+  return NotePresentLowerAmp() || NotePresentLowerPodium();
 }
 
 bool IntakeSubsystem::NotePresent() {
