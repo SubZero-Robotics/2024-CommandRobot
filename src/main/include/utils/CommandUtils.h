@@ -38,6 +38,9 @@ static frc2::CommandPtr ArmScoringGoal(
                  // TODO: MAKE THIS A CONSTANT
                  return arm->MoveToPositionAbsolute(142_deg);
                } else {
+                 // // In case it got stuck up, make it go down when not
+                 // shooting
+                 //  return arm->MoveToPositionAbsolute(10_deg);
                  return frc2::InstantCommand([] {}).ToPtr();
                }
              },
@@ -51,13 +54,51 @@ static frc2::CommandPtr ScoreRamp(std::function<ScoringDirection()> direction,
   return (ArmScoringGoal(direction, arm)
               .AndThen(FlywheelRamp(intake, scoring, direction)
                            .ToPtr()
+                           .WithTimeout(2_s)
                            .AndThen(frc2::InstantCommand([] {
                                       ConsoleLogger::getInstance().logVerbose(
                                           "Scoring Composition",
                                           "flywheel ramped %s", "");
                                     }).ToPtr())))
       .Unless([intake] { return !intake->NotePresent(); })
-      .WithTimeout(5_s);
+      .WithTimeout(3_s);
+}
+
+static bool IsNoteTopSide(IntakeSubsystem* intake, ScoringDirection direction) {
+  switch (direction) {
+    case ScoringDirection::AmpSide:
+    case ScoringDirection::Subwoofer:
+    case ScoringDirection::Unknown:
+      return intake->NotePresentUpperAmp();
+    case ScoringDirection::PodiumSide:
+      return intake->NotePresentUpperPodium();
+  }
+}
+
+static frc2::CommandPtr PreScoreShuffle(
+    std::function<ScoringDirection()> direction, ScoringSubsystem* scoring,
+    IntakeSubsystem* intake) {
+  return frc2::InstantCommand([] {
+           ConsoleLogger::getInstance().logInfo("Scoring", "Pre Score Shuffle");
+         })
+      .ToPtr()
+      .AndThen((frc2::InstantCommand([scoring, intake, direction] {
+                  scoring->SpinVectorSide(direction());
+                  intake->Out();
+                }).ToPtr())
+                   .Repeatedly()
+                   .Until([intake, direction] {
+                     return !IsNoteTopSide(intake, direction());
+                   })
+                   .AndThen(frc2::InstantCommand([intake, scoring] {
+                              intake->Stop();
+                              scoring->Stop();
+                            }).ToPtr()))
+      .WithTimeout(1_s)
+      .FinallyDo([intake, scoring] {
+        intake->Stop();
+        scoring->Stop();
+      });
 }
 
 static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
@@ -73,7 +114,9 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                                 "Scoring Composition", "fed %s", "");
                           }).ToPtr())
                  .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
-                 .AndThen(Shoot(intake, scoring, direction).ToPtr())
+                 // .AndThen(PreScoreShuffle(direction, scoring, intake))
+                 .AndThen(
+                     Shoot(intake, scoring, direction).ToPtr().WithTimeout(1_s))
                  .AndThen(frc2::InstantCommand([] {
                             ConsoleLogger::getInstance().logVerbose(
                                 "Scoring Composition", "shot %s", "");
@@ -89,7 +132,7 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                               {arm})
                               .ToPtr()))
       .Unless([intake] { return !intake->NotePresent(); })
-      .WithTimeout(5_s)
+      .WithTimeout(3_s)
       .FinallyDo([intake, scoring] {
         intake->Stop();
         scoring->Stop();
@@ -100,14 +143,15 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                               ScoringSubsystem* scoring,
                               IntakeSubsystem* intake, ArmSubsystem* arm) {
   return (
-      // Downshuffle until either of the bottom two beam breaks is broken
-      ScoreRamp(direction, scoring, intake, arm)
-          .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
-          .AndThen(ScoreShoot(direction, scoring, intake, arm))
-      // Unless note isn't present
-      // timeout after 5 seconds
-      // finally stop everything
-  );
+             // Downshuffle until either of the bottom two beam breaks is broken
+             ScoreRamp(direction, scoring, intake, arm)
+                 .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
+                 .AndThen(ScoreShoot(direction, scoring, intake, arm))
+             // Unless note isn't present
+             // timeout after 3 seconds
+             // finally stop everything
+             )
+      .WithTimeout(3_s);
 }
 }  // namespace ScoringCommands
 
@@ -118,59 +162,68 @@ static frc2::CommandPtr FeedUntilNotPresent(IntakeSubsystem* intake,
                                             ScoringSubsystem* scoring,
                                             ScoringDirection direction) {
   return frc2::InstantCommand([] {
-           ConsoleLogger::getInstance().logVerbose("Gamepiece Funni",
+           ConsoleLogger::getInstance().logVerbose("FeedUntilNotPresent",
                                                    "Feeding to top%s", "");
          })
       .ToPtr()
-      .AndThen(Feed(intake, scoring, [direction] { return direction; })
-                   .ToPtr()
-                   .AlongWith(frc2::InstantCommand([scoring] {
-                                scoring->SpinAmp(kShuffleSpeed, kShuffleSpeed);
-                              }).ToPtr())
-                   .WithTimeout(2_s))
+      .AndThen(
+          Feed(intake, scoring, [direction] { return direction; })
+              .ToPtr()
+              //  .AlongWith(frc2::InstantCommand([scoring] {
+              //               scoring->SpinAmp(kShuffleSpeed, kShuffleSpeed);
+              //             }).ToPtr())
+              .Until([intake] { return intake->NotePresentUpper(); })
+              .WithTimeout(2_s))
       // Might need to be time-based instead
-      .WithTimeout(4_s)
-      .Until([intake] { return !intake->NotePresentUpper(); });
+      .WithTimeout(4_s);
 }
+
 static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
                                             ScoringSubsystem* scoring,
                                             ScoringDirection direction) {
-  return frc2::InstantCommand([] {
-           ConsoleLogger::getInstance().logVerbose("Outtake",
-                                                   "Outtaking down%s", "");
-         })
-      .ToPtr()
-      .AndThen(frc2::InstantCommand([intake, scoring, direction] {
-                 intake->Out(0.3);
-                 scoring->SpinVectorSide(direction);
-                 scoring->SpinOutake();
-               })
-                   .ToPtr()
-                   .Until([intake] { return intake->NotePresentLower(); }))
-      .AndThen(FeedUntilNotPresent(intake, scoring, ScoringDirection::AmpSide))
-      .AndThen(frc2::WaitCommand(0.1_s).ToPtr())
-      .AndThen(frc2::InstantCommand([intake, scoring] {
-                 intake->Stop();
-                 scoring->Stop();
-               }).ToPtr())
-      // .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
-      //                              ScoringDirection::PodiumSide))
-      // .AndThen((NoteShuffle(intake).ToPtr())
-      //              .AlongWith(frc2::InstantCommand(
-      //                             [scoring] { scoring->SpinOutake(); })
-      //                             .ToPtr()
-      //                             .WithTimeout(2_s))
-      //              .AndThen(frc2::WaitCommand(0.2_s).ToPtr()))
-      // .AndThen(frc2::WaitCommand(0_s).ToPtr())
-      .AndThen(frc2::InstantCommand([intake, scoring] {
-                 intake->Stop();
-                 scoring->Stop();
-               }).ToPtr())
-      .AndThen(frc2::InstantCommand([] {
-                 ConsoleLogger::getInstance().logVerbose(
-                     "Intake Subsystem", "Intake completed normally%s", "");
-               }).ToPtr())
-      .WithTimeout(8_s)
+  return (frc2::InstantCommand([] {
+            ConsoleLogger::getInstance().logVerbose("Outtake",
+                                                    "Outtaking down%s", "");
+          })
+              .ToPtr()
+              .AndThen(
+                  frc2::InstantCommand([intake, scoring, direction] {
+                    intake->Out(0.3);
+                    scoring->SpinVectorSide(direction);
+                    scoring->SpinOutake();
+                  })
+                      .ToPtr()
+                      .Repeatedly()
+                      .Until([intake] { return intake->NotePresentLower(); })
+                      .FinallyDo([intake, scoring] {
+                        intake->Stop();
+                        scoring->Stop();
+                      }))
+              .AndThen(FeedUntilNotPresent(intake, scoring,
+                                           ScoringDirection::AmpSide))
+              .AndThen(frc2::WaitCommand(0.1_s).ToPtr())
+              .AndThen(frc2::InstantCommand([intake, scoring] {
+                         intake->Stop();
+                         scoring->Stop();
+                       }).ToPtr())
+              // .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
+              //                              ScoringDirection::PodiumSide))
+              // .AndThen((NoteShuffle(intake).ToPtr())
+              //              .AlongWith(frc2::InstantCommand(
+              //                             [scoring] { scoring->SpinOutake();
+              //                             }) .ToPtr() .WithTimeout(2_s))
+              //              .AndThen(frc2::WaitCommand(0.2_s).ToPtr()))
+              // .AndThen(frc2::WaitCommand(0_s).ToPtr())
+              // .AndThen(frc2::InstantCommand([intake, scoring] {
+              //            intake->Stop();
+              //            scoring->Stop();
+              //          }).ToPtr())
+              .AndThen(frc2::InstantCommand([] {
+                         ConsoleLogger::getInstance().logVerbose(
+                             "Intake Subsystem", "Intake completed normally%s",
+                             "");
+                       }).ToPtr()))
+      .WithTimeout(2_s)
       .FinallyDo([intake, scoring] {
         intake->Stop();
         scoring->Stop();
@@ -285,24 +338,34 @@ static frc2::CommandPtr Intake2(IntakeSubsystem* intakeSubsystem,
 
   return (IntakeInInitial(intakeSubsystem)
               .ToPtr()
+              .AlongWith(frc2::InstantCommand([scoring] {
+                           scoring->SpinVectorSide(ScoringDirection::AmpSide);
+                         }).ToPtr())
+              .WithTimeout(8_s)
               .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
                          intakeSubsystem->Stop();
                          scoring->Stop();
                        }).ToPtr())
-              .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
-                                           ScoringDirection::AmpSide))
+              // .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
+              //                              ScoringDirection::AmpSide))
               .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
                          intakeSubsystem->Out();
                          scoring->SpinVectorSide(ScoringDirection::PodiumSide);
                        }).ToPtr())
-              .AndThen(frc2::WaitCommand(0.08_s).ToPtr())
+              .AndThen(frc2::WaitCommand(0.05_s).ToPtr())
+              // .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
+              //            intakeSubsystem->Stop();
+              //            scoring->Stop();
+              //          }).ToPtr())
+              // .AndThen(UnbiasNote(intakeSubsystem, scoring)
+              //              .RaceWith(
+              //                  frc2::InstantCommand([intakeSubsystem,
+              //                  scoring] {
+              //                    intakeSubsystem->Out();
+              //                  }).ToPtr()))
               .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
                          intakeSubsystem->Stop();
                          scoring->Stop();
-                       }).ToPtr())
-              .AndThen(UnbiasNote(intakeSubsystem, scoring))
-              .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
-                         intakeSubsystem->Stop();
                        }).ToPtr()))
       .Unless([intakeSubsystem] { return intakeSubsystem->NotePresent(); })
       .WithTimeout(8_s)

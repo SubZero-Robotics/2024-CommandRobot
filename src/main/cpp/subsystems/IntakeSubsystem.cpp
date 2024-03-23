@@ -6,6 +6,7 @@ IntakeSubsystem::IntakeSubsystem() {
 
 void IntakeSubsystem::Periodic() {
   // intakeTuner.UpdateFromShuffleboard();
+  ShuffleboardLogger::getInstance().logVerbose("Has Note", NotePresentCenter());
 }
 
 void IntakeSubsystem::SimulationPeriodic() {}
@@ -66,15 +67,24 @@ bool IntakeSubsystem::NotePresentUpperPodium() {
   return !m_upperPodiumBeamBreak.Get();
 }
 
-bool IntakeSubsystem::NotePresentCenter() { return !m_centerBeamBreak.Get(); }
+bool IntakeSubsystem::NotePresentUpperCenter() {
+  return !m_centerUpperBeamBreak.Get();
+}
+
+bool IntakeSubsystem::NotePresentLowerCenter() {
+  return !m_centerLowerBeamBreak.Get();
+}
+
+bool IntakeSubsystem::NotePresentCenter() {
+  return NotePresentLowerCenter() || NotePresentUpperCenter();
+}
 
 bool IntakeSubsystem::NotePresentUpper() {
   return NotePresentUpperAmp() || NotePresentUpperPodium();
 }
 
 bool IntakeSubsystem::NotePresentLower() {
-  return NotePresentLowerAmp() || NotePresentLowerPodium() ||
-         NotePresentCenter();
+  return NotePresentLowerAmp() || NotePresentLowerPodium();
 }
 
 bool IntakeSubsystem::NotePresent() {

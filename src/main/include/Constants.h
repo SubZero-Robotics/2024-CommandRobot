@@ -322,7 +322,8 @@ constexpr double kOutakeSpeed = -0.5;
 
 constexpr double kSecondaryIntakeOutSpeed = -0.05;
 
-constexpr uint8_t kCenterBeamBreakDigitalPort = 3;
+constexpr uint8_t kCenterLowerBeamBreakDigitalPort = 3;
+constexpr uint8_t kCenterUpperBeamBreakDigitalPort = 1;
 constexpr uint8_t kLowerPodiumBeamBreakDigitalPort = 2;
 constexpr uint8_t kLowerampBeamBreakDigitalPort = 4;
 constexpr uint8_t kUpperPodiumBeamBreakDigitalPort = 6;
@@ -362,7 +363,7 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = -0.75;
+constexpr double kSubwooferLowerSpeed = -1;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
 constexpr double kScoringOutakeUpperSpeed = 0.2;
