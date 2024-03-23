@@ -192,7 +192,12 @@ static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
                     scoring->SpinOutake();
                   })
                       .ToPtr()
-                      .Until([intake] { return intake->NotePresentLower(); }))
+                      .Repeatedly()
+                      .Until([intake] { return intake->NotePresentLower(); })
+                      .FinallyDo([intake, scoring] {
+                        intake->Stop();
+                        scoring->Stop();
+                      }))
               .AndThen(FeedUntilNotPresent(intake, scoring,
                                            ScoringDirection::AmpSide))
               .AndThen(frc2::WaitCommand(0.1_s).ToPtr())
