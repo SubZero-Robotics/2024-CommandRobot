@@ -177,6 +177,7 @@ static frc2::CommandPtr FeedUntilNotPresent(IntakeSubsystem* intake,
       // Might need to be time-based instead
       .WithTimeout(4_s);
 }
+
 static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
                                             ScoringSubsystem* scoring,
                                             ScoringDirection direction) {
@@ -345,8 +346,8 @@ static frc2::CommandPtr Intake2(IntakeSubsystem* intakeSubsystem,
                          intakeSubsystem->Stop();
                          scoring->Stop();
                        }).ToPtr())
-              .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
-                                           ScoringDirection::AmpSide))
+              // .AndThen(OuttakeUntilPresent(intakeSubsystem, scoring,
+              //                              ScoringDirection::AmpSide))
               .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
                          intakeSubsystem->Out();
                          scoring->SpinVectorSide(ScoringDirection::PodiumSide);
