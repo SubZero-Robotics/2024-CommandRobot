@@ -211,7 +211,7 @@ static frc2::CommandPtr OuttakeUntilPresent(IntakeSubsystem* intake,
                  ConsoleLogger::getInstance().logVerbose(
                      "Intake Subsystem", "Intake completed normally%s", "");
                }).ToPtr())
-      .WithTimeout(8_s)
+      .WithTimeout(2_s)
       .FinallyDo([intake, scoring] {
         intake->Stop();
         scoring->Stop();
