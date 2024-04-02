@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc2/command/FunctionalCommand.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/WaitCommand.h>
 #include <frc2/command/button/CommandXboxController.h>
@@ -373,6 +374,47 @@ static frc2::CommandPtr Intake2(IntakeSubsystem* intakeSubsystem,
         intakeSubsystem->Stop();
         scoring->Stop();
       });
+}
+
+static frc2::CommandPtr Intake3(IntakeSubsystem* intake,
+                                ScoringSubsystem* scoring) {
+  return frc2::FunctionalCommand(
+             // onInit
+             [] {},
+             // onExecute
+             [intake, scoring] {
+               //  intake->In(IntakingConstants::kIntakeAutoSpeed);
+               intake->In();
+               scoring->SpinVectorSide(ScoringDirection::AmpSide);
+             },
+             // onEnd
+             [intake, scoring](bool interupted) {
+               intake->Stop();
+               scoring->Stop();
+             },
+             // isFinished
+             [intake, scoring] { return intake->NotePresentUpperCenter(); },
+             // req
+             {intake, scoring})
+      .ToPtr()
+      .AndThen(frc2::FunctionalCommand(
+                   // onInit
+                   [] {},
+                   // onExecute
+                   [intake, scoring] {
+                     intake->Out();
+                     scoring->SpinVectorSide(ScoringDirection::PodiumSide);
+                   },
+                   // onEnd
+                   [intake, scoring](bool interupted) {
+                     intake->Stop();
+                     scoring->Stop();
+                   },
+                   // isFinished
+                   [intake, scoring] { return intake->NotePresentLower(); },
+                   // req
+                   {intake, scoring})
+                   .ToPtr());
 }
 }  // namespace IntakingCommands
 

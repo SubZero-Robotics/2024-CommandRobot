@@ -7,6 +7,19 @@ IntakeSubsystem::IntakeSubsystem() {
 void IntakeSubsystem::Periodic() {
   // intakeTuner.UpdateFromShuffleboard();
   ShuffleboardLogger::getInstance().logVerbose("Has Note", NotePresentCenter());
+
+  frc::SmartDashboard::PutBoolean("Note present Lower center ",
+                                  NotePresentLowerCenter());
+  frc::SmartDashboard::PutBoolean("Note present upper center ",
+                                  NotePresentUpperCenter());
+  frc::SmartDashboard::PutBoolean("Note present lower amp ",
+                                  NotePresentLowerAmp());
+  frc::SmartDashboard::PutBoolean("Note present upper amp ",
+                                  NotePresentUpperAmp());
+  frc::SmartDashboard::PutBoolean("Note present lower podium ",
+                                  NotePresentLowerPodium());
+  frc::SmartDashboard::PutBoolean("Note present upper podium ",
+                                  NotePresentUpperPodium());
 }
 
 void IntakeSubsystem::SimulationPeriodic() {}

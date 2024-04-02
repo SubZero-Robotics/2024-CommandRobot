@@ -314,6 +314,8 @@ constexpr int kTicksPerMotorRotation = 42;
 namespace IntakingConstants {
 // Change these to match actual values
 constexpr double kIntakeSpeed = 0.8;
+// Make er' hover!
+constexpr double kIntakeAutoSpeed = 0.58;
 constexpr double kFeedAmpSpeed = 0.5;
 constexpr double kFeedSpeakerSpeed = 1;
 constexpr double kFeedSubwooferSpeed = 1;
@@ -363,7 +365,7 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kSubwooferLowerSpeed = -1;
+constexpr double kSubwooferLowerSpeed = -0.95;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
 constexpr double kScoringOutakeUpperSpeed = 0.2;
