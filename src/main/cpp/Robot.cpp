@@ -78,6 +78,7 @@ void Robot::TeleopInit() {
   }
 
   m_container.StartIdling();
+  m_container.StopMotors();
   // m_container.ResetPose();
 }
 

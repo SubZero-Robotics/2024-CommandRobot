@@ -119,7 +119,7 @@ bool ScoringSubsystem::CheckSpeakerSpeed() {
                                           m_speakerLowerEnc.GetVelocity());
   ShuffleboardLogger::getInstance().logVerbose("Speaker Ramp Speed",
                                                m_speakerLowerEnc.GetVelocity());
-  return abs(m_speakerLowerEnc.GetVelocity()) + 1000 >=
+  return abs(m_speakerLowerEnc.GetVelocity()) >=
          abs(MaxSpeedToRpm(kSpeakerLowerSpeed));
 }
 

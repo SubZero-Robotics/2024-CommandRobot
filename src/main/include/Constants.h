@@ -186,14 +186,15 @@ extern const frc::TrapezoidProfile<units::degree>::Constraints
 
 const std::string kDefaultAutoName = "Leave Wing";
 
-const std::string kScoreSubwooferName = "Shoot Subwoofer";
+const std::string kScoreSubwooferName = "Score Subwoofer";
+const std::string kShootSubwooferName = "Shoot Subwoofer";
 const std::string kIntakeName = "Run Intake";
 const std::string kLedFunniName = "LedFunni";
 
 const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
-    pathplanner::PIDConstants(0.9, 0.0,
+    pathplanner::PIDConstants(3.14, 0.0,
                               0.0),            // Translation PID constants
-    pathplanner::PIDConstants(0.8, 0.0, 0.0),  // Rotation PID constants
+    pathplanner::PIDConstants(M_PI, 0.0, 0.0),  // Rotation PID constants
     3.0_mps,                                   // Max module speed, in m/s
 #ifdef TEST_SWERVE_BOT
     0.4579874_m,  // Drive base radius in meters. Distance from robot center to
@@ -277,7 +278,7 @@ const std::vector<FixtureLocation> BlueFixtureLocations{
     {.location = frc::Pose2d(2.73_m, 4.11_m, frc::Rotation2d(0_deg)),
      .desiredRotation = -32_deg},
     // Amp (ScoreAmp)
-    {.location = frc::Pose2d(1.83_m, 7.85_m, frc::Rotation2d(0_deg)),
+    {.location = frc::Pose2d(1.88_m, 7.85_m, frc::Rotation2d(0_deg)),
      .desiredRotation = 90_deg},
     // Speaker (ScoreSubwoofer)
     {.location = frc::Pose2d(1.19_m, 5.57_m, frc::Rotation2d(0_deg)),
@@ -385,7 +386,7 @@ enum class ScoreState {
   Shooting,
 };
 
-constexpr units::second_t kFlywheelRampDelay = 1_s;
+constexpr units::second_t kFlywheelRampDelay = 0.75_s;
 
 namespace ScoringPID {
 constexpr double kSpeakerP = 6e-5;

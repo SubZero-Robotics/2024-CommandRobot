@@ -82,6 +82,10 @@ bool IntakeSubsystem::NotePresentUpper() {
   return NotePresentUpperAmp() || NotePresentUpperPodium();
 }
 
+bool IntakeSubsystem::NotePresentUpperAll() {
+  return NotePresentUpper() || NotePresentUpperCenter();
+}
+
 bool IntakeSubsystem::NotePresentLower() {
   return NotePresentLowerAmp() || NotePresentLowerPodium();
 }

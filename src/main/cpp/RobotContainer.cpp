@@ -68,6 +68,10 @@ void RobotContainer::RegisterAutos() {
   pathplanner::NamedCommands::registerCommand(AutoConstants::kLedFunniName,
                                               m_leds.Intaking());
   pathplanner::NamedCommands::registerCommand(
+      AutoConstants::kShootSubwooferName,
+      ScoringCommands::ScoreShoot([] { return ScoringDirection::Subwoofer; },
+                             &m_scoring, &m_intake, &m_arm));
+  pathplanner::NamedCommands::registerCommand(
       AutoConstants::kScoreSubwooferName,
       ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
                              &m_scoring, &m_intake, &m_arm));
@@ -317,6 +321,11 @@ void RobotContainer::StartIdling() {
 
 void RobotContainer::ResetPose() {
   m_drive.ResetOdometry(frc::Pose2d{0_m, 0_m, 0_rad});
+}
+
+void RobotContainer::StopMotors() {
+  m_intake.Stop();
+  m_scoring.Stop();
 }
 
 void RobotContainer::DisableSubsystems() { m_arm.DisablePid(); }
