@@ -385,7 +385,7 @@ enum class ScoreState {
   Shooting,
 };
 
-constexpr units::second_t kFlywheelRampDelay = 0.75_s;
+constexpr units::second_t kFlywheelRampDelay = 0.5_s;
 
 namespace ScoringPID {
 constexpr double kSpeakerP = 6e-5;
@@ -468,7 +468,7 @@ constexpr int kArmGearRatio = 125;
 constexpr auto kArmDegreeLimit = 144;
 constexpr double kArmStepSize = 4;
 constexpr units::degree_t AmpRotation = 142_deg;
-constexpr units::degree_t HomeRotation = 142_deg;
+constexpr units::degree_t HomeRotation = 10_deg;
 
 constexpr double kArmP = 0.075;
 constexpr double kArmI = 0;
@@ -481,17 +481,17 @@ namespace VisionConstants {
 static constexpr std::string_view kFrontCamera{"PhotonVision"};
 static constexpr std::string_view kRearCamera{"Photonvision2"};
 static const frc::Transform3d kRobotToCam2{
-    frc::Translation3d{2.147_in, 2.147_in, 23.369_in},
-    frc::Rotation3d{0_deg, -25_deg, 180_deg}};
+    frc::Translation3d{2.147_in, 0_in, 23.369_in},
+    frc::Rotation3d{0_deg, -23.461_deg, 180_deg}};
 static const frc::Transform3d kRobotToCam{
     frc::Translation3d{5.714_in, 0_in, 23.533_in},
-    frc::Rotation3d{0_deg, 180_deg - 25_deg, 180_deg}};
+    frc::Rotation3d{0_deg, -23.461_deg, 0_deg}};
 constexpr photon::PoseStrategy kPoseStrategy =
-    photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
+    photon::PoseStrategy::MULTI_TAG_PNP_ON_RIO;
 static const frc::AprilTagFieldLayout kTagLayout{
     frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo)};
 static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
-static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
+static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{1.5, 1.5, 3};
 }  // namespace VisionConstants
 
 namespace ClimbConstants {
