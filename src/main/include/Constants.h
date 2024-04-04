@@ -386,7 +386,7 @@ enum class ScoreState {
   Shooting,
 };
 
-constexpr units::second_t kFlywheelRampDelay = 0.75_s;
+constexpr units::second_t kFlywheelRampDelay = 0.5_s;
 
 namespace ScoringPID {
 constexpr double kSpeakerP = 6e-5;
@@ -488,11 +488,11 @@ static const frc::Transform3d kRobotToCam{
     frc::Translation3d{5.714_in, 0_in, 23.533_in},
     frc::Rotation3d{0_deg, 180_deg - 25_deg, 180_deg}};
 constexpr photon::PoseStrategy kPoseStrategy =
-    photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
+    photon::PoseStrategy::MULTI_TAG_PNP_ON_RIO;
 static const frc::AprilTagFieldLayout kTagLayout{
     frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo)};
 static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
-static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
+static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{1.5, 1.5, 3};
 }  // namespace VisionConstants
 
 namespace ClimbConstants {
