@@ -6,8 +6,6 @@
 #include "Constants.h"
 #include "utils/ConsoleLogger.h"
 
-// TODO: Move to Constants.h
-
 void LedSubsystem::Periodic() {
   if (abs(m_accel.GetX()) >= kAccelThreshold ||
       abs(m_accel.GetY()) >= kAccelThreshold) {

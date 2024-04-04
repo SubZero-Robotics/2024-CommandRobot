@@ -16,8 +16,6 @@ using namespace IntakingConstants;
 
 class IntakeSubsystem : public frc2::SubsystemBase {
  public:
-  IntakeSubsystem();
-
   void Periodic() override;
 
   void SimulationPeriodic() override;

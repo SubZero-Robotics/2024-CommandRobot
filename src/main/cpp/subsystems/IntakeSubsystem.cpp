@@ -1,7 +1,5 @@
 #include <subsystems/IntakeSubsystem.h>
 
-IntakeSubsystem::IntakeSubsystem() {}
-
 void IntakeSubsystem::Periodic() {
   ShuffleboardLogger::getInstance().logVerbose("Has Note", NotePresentCenter());
 

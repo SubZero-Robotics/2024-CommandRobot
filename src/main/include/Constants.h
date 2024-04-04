@@ -447,6 +447,7 @@ constexpr int kArmGearRatio = 125;
 constexpr auto kArmDegreeLimit = 144;
 constexpr double kArmStepSize = 4;
 constexpr units::degree_t AmpRotation = 142_deg;
+constexpr units::degree_t HomeRotation = 142_deg;
 
 constexpr double kArmP = 0.075;
 constexpr double kArmI = 0;
@@ -455,7 +456,6 @@ constexpr double kArmIZone = 0;
 constexpr double kArmFF = 0;
 }  // namespace ArmConstants
 
-// TODO: CREATE ACTUAL ROBOT VALUES FOR THESE
 namespace VisionConstants {
 static constexpr std::string_view kFrontCamera{"PhotonVision"};
 static constexpr std::string_view kRearCamera{"Photonvision2"};
@@ -474,7 +474,6 @@ static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
 }  // namespace VisionConstants
 
 namespace ClimbConstants {
-// These are placeholder values, these all will be changed
 constexpr int kClimberLeftMotorId = 10;
 constexpr int kClimberRightMotorId = 11;
 

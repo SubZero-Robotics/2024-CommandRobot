@@ -11,7 +11,7 @@
 #include "Constants.h"
 #include "utils/PidMotorControllerPair.h"
 
-enum class ScoringDirection { AmpSide = 0, PodiumSide, Subwoofer, Unknown };
+enum class ScoringDirection { AmpSide = 0, PodiumSide, Subwoofer };
 
 using namespace CANConstants;
 using namespace ScoringConstants;

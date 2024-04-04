@@ -164,8 +164,8 @@ void MAXSwerveModule::SetDesiredState(
 void MAXSwerveModule::simUpdateDrivePosition(
     const frc::SwerveModuleState& desiredState) {
   m_simDriveEncoderVelocity = desiredState.speed;
-  m_simDriveEncoderPosition +=
-      units::meter_t{m_simDriveEncoderVelocity.value() / DriveConstants::kLoopsPerSecond};
+  m_simDriveEncoderPosition += units::meter_t{
+      m_simDriveEncoderVelocity.value() / DriveConstants::kLoopsPerSecond};
 }
 
 void MAXSwerveModule::ResetEncoders() { m_drivingEncoder.SetPosition(0); }

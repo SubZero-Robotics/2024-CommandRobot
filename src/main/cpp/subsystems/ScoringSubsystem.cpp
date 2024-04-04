@@ -22,8 +22,7 @@ void ScoringSubsystem::Periodic() {
 void ScoringSubsystem::SimulationPeriodic() {}
 
 void ScoringSubsystem::SpinOutake() {
-  ampUpperController.RunWithVelocity(
-      ScoringConstants::kScoringOutakeUpperSpeed);
+  m_ampUpperSpinnyBoi.Set(kScoringOutakeUpperSpeed);
   m_ampLowerSpinnyBoi.Set(kScoringOutakeLowerSpeed);
 };
 

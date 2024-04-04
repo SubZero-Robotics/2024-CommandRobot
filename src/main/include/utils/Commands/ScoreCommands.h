@@ -69,7 +69,6 @@ static bool IsNoteTopSide(IntakeSubsystem* intake, ScoringDirection direction) {
   switch (direction) {
     case ScoringDirection::AmpSide:
     case ScoringDirection::Subwoofer:
-    case ScoringDirection::Unknown:
       return intake->NotePresentUpperAmp();
     case ScoringDirection::PodiumSide:
       return intake->NotePresentUpperPodium();
@@ -131,7 +130,8 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
       .AndThen(frc2::DeferredCommand(
                    [direction, arm] {
                      if (direction() == ScoringDirection::AmpSide) {
-                       return arm->MoveToPositionAbsolute(10_deg);
+                       return arm->MoveToPositionAbsolute(
+                           ArmConstants::AmpRotation);
                      } else {
                        return frc2::InstantCommand([] {}).ToPtr();
                      }
@@ -154,4 +154,4 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
              )
       .WithTimeout(3_s);
 }
-}
+}  // namespace ScoringCommands
