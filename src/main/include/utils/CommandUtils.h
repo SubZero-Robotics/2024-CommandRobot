@@ -383,7 +383,6 @@ static frc2::CommandPtr Intake3(IntakeSubsystem* intake,
              [] {},
              // onExecute
              [intake, scoring] {
-               //  intake->In(IntakingConstants::kIntakeAutoSpeed);
                intake->In();
                scoring->SpinVectorSide(ScoringDirection::AmpSide);
              },

@@ -40,6 +40,7 @@ class IntakeSubsystem : public frc2::SubsystemBase {
   bool NotePresentLowerCenter();
   bool NotePresentUpper();
   bool NotePresentLower();
+  bool NotePresentUpperAll();
 
  private:
   rev::CANSparkMax m_leftIntakeSpinnyBoy{

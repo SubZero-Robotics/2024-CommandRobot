@@ -69,6 +69,10 @@ void RobotContainer::RegisterAutos() {
   pathplanner::NamedCommands::registerCommand(AutoConstants::kLedFunniName,
                                               m_leds.Intaking());
   pathplanner::NamedCommands::registerCommand(
+      AutoConstants::kShootSubwooferName,
+      ScoringCommands::ScoreShoot([] { return ScoringDirection::Subwoofer; },
+                             &m_scoring, &m_intake, &m_arm));
+  pathplanner::NamedCommands::registerCommand(
       AutoConstants::kScoreSubwooferName,
       ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
                              &m_scoring, &m_intake, &m_arm));

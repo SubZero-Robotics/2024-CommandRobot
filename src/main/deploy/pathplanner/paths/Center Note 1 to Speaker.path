@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.113590578320974,
-        "y": 7.446855402616658
+        "x": 8.5,
+        "y": 7.3
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.995556589571079,
-        "y": 7.446855402616658
+        "x": 7.381966011250105,
+        "y": 7.3
       },
       "isLocked": false,
       "linkedName": "Center Note 1"
