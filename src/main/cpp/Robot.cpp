@@ -48,7 +48,6 @@ void Robot::RobotPeriodic() { frc2::CommandScheduler::GetInstance().Run(); }
 void Robot::DisabledInit() {
   m_container.ClearCurrentStateCommand();
   m_container.DisableSubsystems();
-  // m_container.ResetPose();
 }
 
 void Robot::DisabledPeriodic() {}
@@ -79,7 +78,6 @@ void Robot::TeleopInit() {
 
   m_container.StartIdling();
   m_container.StopMotors();
-  // m_container.ResetPose();
 }
 
 /**
