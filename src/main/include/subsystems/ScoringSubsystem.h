@@ -11,12 +11,7 @@
 #include "Constants.h"
 #include "utils/PidMotorControllerPair.h"
 
-enum class ScoringDirection {
-  AmpSide = 0,
-  PodiumSide,
-  Subwoofer,
-  Unknown
-};
+enum class ScoringDirection { AmpSide = 0, PodiumSide, Subwoofer, Unknown };
 
 using namespace CANConstants;
 using namespace ScoringConstants;
@@ -135,17 +130,6 @@ class ScoringSubsystem : public frc2::SubsystemBase {
                          m_ampLowerEnc,  m_ampLowerPidController,
                          ampPidSettings, nullptr,
                          kMaxSpinRpm};
-
-  //   PidMotorControllerPair speakerPidPair{"Speaker", speakerUpperController,
-  //                                         speakerLowerController};
-
-  //   PidMotorControllerPair ampPidPair{"Amp", ampUpperController,
-  //                                     ampLowerController};
-
-  // PidMotorControllerPairTuner speakerTuner{speakerSideMotors};
-  //   PidMotorControllerPairTuner speakerTuner{speakerPidPair};
-  //   PidMotorControllerPairTuner ampTuner{ampPidPair};
-  //   PidMotorControllerTuner speakerUpperTuner{speakerUpperController};
 
   double m_ampUpperVelocity;
   double m_ampLowerVelocity;

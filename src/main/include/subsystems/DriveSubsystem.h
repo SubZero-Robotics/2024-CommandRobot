@@ -125,8 +125,6 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::ChassisSpeeds getSpeed();
 
-  //   frc::ADXRS450_Gyro* getGyro() { return &m_gyro; }
-  //   AHRS* getGyro() { return &m_gyro; }
   ctre::phoenix6::hardware::Pigeon2* getGyro() { return &m_gyro1; }
 
   wpi::array<frc::SwerveModulePosition, 4U> GetModulePositions() const;
@@ -162,13 +160,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   uint8_t logCounter = 0;
 
-  ctre::phoenix6::hardware::Pigeon2 m_gyro1{CANConstants::kPigeonCanId1,
-                                            "rio"};
-//   ctre::phoenix6::hardware::Pigeon2 m_gyro2{CANConstants::kPigeonCanId2,
-//                                             "rio"};
-
-  // AHRS m_gyro{frc::SPI::Port::kMXP};
-//   frc::ADXRS450_Gyro m_gyro3;
+  ctre::phoenix6::hardware::Pigeon2 m_gyro1{CANConstants::kPigeonCanId1, "rio"};
 
   HAL_SimDeviceHandle m_gyroSimHandle =
       HALSIM_GetSimDeviceHandle("navX-Sensor[4]");

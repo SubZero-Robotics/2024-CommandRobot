@@ -172,7 +172,7 @@ State actions are composed of underlying commands that are also called by the fi
 |        Score        |           Shuffles the note down while running `FlywheelRampCommand`, runs `FeedCommand`, finally runs `ShootCommand`. If there is not a note present it exits immediately            | 5 Seconds  |
 |       Intake        | Runs `IntakeInInitialCommand`, waits a predefined delay, runs `IntakeInSecondaryCommand`, waits a predefined delay, stops the motors. If there is a note present it exits immediately | 5 seconds  |
 | FeedUntilNotPresent |                                                     Runs `FeedCommand` until the top beam break is not broken; stops the motors.                                                      |    N/A     |
-| OuttakeUntilPresent |                                                       Outakes the note until the bottom beam break is broken; stops the motors.                                                       |    N/A     |
+| DowntakeUntilPresent |                                                       Downtakes the note until the bottom beam break is broken; stops the motors.                                                       |    N/A     |
 |        Funni        |                                                                                     Does a Funni                                                                                      | 20 seconds |
 
 ## Factory Commands

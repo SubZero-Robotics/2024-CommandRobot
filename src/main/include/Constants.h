@@ -293,8 +293,14 @@ constexpr double kDriveDeadband = 0.05;
 constexpr double kVibrationIntensity = 1;
 }  // namespace OIConstants
 
+// LED Constants
 constexpr uint8_t kLedAddress = 23;
 constexpr units::second_t kConnectorXDelay = 0.002_s;
+constexpr double kAccelThreshold = 7;
+
+// BaseSingleAxisSubsystem Constants
+constexpr double kMotorDeadSpeedRange = 0.05;
+constexpr double kMaxRotPosition = 350;
 
 // Motor IDs
 namespace CANConstants {
@@ -332,6 +338,8 @@ constexpr uint8_t kUpperPodiumBeamBreakDigitalPort = 6;
 constexpr uint8_t kUpperAmpBeamBreakDigitalPort = 5;
 
 constexpr units::revolutions_per_minute_t kMaxRpm = 5676_rpm;
+
+constexpr double kDowntakeSpeed = 0.4;
 
 namespace IntakingPID {
 constexpr double kIntakingP = 6e-5;
@@ -386,39 +394,11 @@ constexpr double kSpeakerD = 0;
 constexpr double kSpeakerIZone = 0;
 constexpr double kSpeakerFF = 0.000015;
 
-// constexpr double kSpeakerLowerP = 6e-5;
-// constexpr double kSpeakerLowerI = 1e-6;
-// constexpr double kSpeakerLowerD = 0;
-// constexpr double kSpeakerLowerIZone = 0;
-// constexpr double kSpeakerLowerFF = 0.000015;
-// constexpr double kSpeakerLowerVelocity = -1;
-
 constexpr double kAmpP = 6e-5;
 constexpr double kAmpI = 1e-6;
 constexpr double kAmpD = 0.000000;
 constexpr double kAmpIZone = 0;
 constexpr double kAmpFF = 0.000015;
-
-// constexpr double kAmpLowerP = 6e-5;
-// constexpr double kAmpLowerI = 1e-6;
-// constexpr double kAmpLowerD = 0;
-// constexpr double kAmpLowerIZone = 0;
-// constexpr double kAmpLowerFF = 0.000015;
-// constexpr double kAmpLowerVelocity = 0.254;
-
-// constexpr double kSubwooferUpperP = 6e-5;
-// constexpr double kSubwooferUpperI = 1e-6;
-// constexpr double kSubwooferUpperD = 0;
-// constexpr double kSubwooferUpperIZone = 0;
-// constexpr double kSubwooferUpperFF = 0.000015;
-// constexpr double kSubwooferUpperVelocity = 0.75;
-
-// constexpr double kSubwooferLowerP = 6e-5;
-// constexpr double kSubwooferLowerI = 1e-6;
-// constexpr double kSubwooferLowerD = 0;
-// constexpr double kSubwooferLowerIZone = 0;
-// constexpr double kSubwooferLowerFF = 0.000015;
-// constexpr double kSubwooferLowerVelocity = 0.75;
 
 const std::string kSpeakerUpperName = "Speaker Upper";
 const std::string kSpeakerLowerName = "Speaker Lower";
@@ -466,13 +446,13 @@ constexpr double kRotationHomingSpeed = .15;
 constexpr int kArmGearRatio = 125;
 constexpr auto kArmDegreeLimit = 144;
 constexpr double kArmStepSize = 4;
+constexpr units::degree_t AmpRotation = 142_deg;
 
-// These are currently wrong, pls fix
-constexpr double kArmSetP = 0.0018386;
-constexpr double kArmSetI = 0.0075;
-constexpr double kArmSetD = 0.00062724;
-constexpr double kArmSetIZone = 0.01;
-constexpr double kArmSetFF = 0.000015;
+constexpr double kArmP = 0.075;
+constexpr double kArmI = 0;
+constexpr double kArmD = 0;
+constexpr double kArmIZone = 0;
+constexpr double kArmFF = 0;
 }  // namespace ArmConstants
 
 // TODO: CREATE ACTUAL ROBOT VALUES FOR THESE
