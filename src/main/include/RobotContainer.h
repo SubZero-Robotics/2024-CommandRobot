@@ -18,6 +18,7 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 #include "Constants.h"
+#include "subsystems/ArmSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/LedSubsystem.h"
@@ -25,7 +26,10 @@
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 #include "subsystems/StateSubsystem.h"
-#include "subsystems/ArmSubsystem.h"
+#include "utils/Commands/DriveCommands.h"
+#include "utils/Commands/FunniCommands.h"
+#include "utils/Commands/IntakeCommands.h"
+#include "utils/Commands/ScoreCommands.h"
 #include "utils/Vision.h"
 
 /**
@@ -52,8 +56,6 @@ class RobotContainer {
   // The driver's controller
   frc2::CommandXboxController m_driverController{
       OIConstants::kDriverControllerPort};
-  // frc::XboxController
-  // m_operatorController{OIConstants::kOperatorControllerPort};
 
   // The robot's subsystems and commands are defined here...
 

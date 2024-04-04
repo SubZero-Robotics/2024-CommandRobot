@@ -193,9 +193,9 @@ const std::string kLedFunniName = "LedFunni";
 
 const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
     pathplanner::PIDConstants(3.14, 0.0,
-                              0.0),            // Translation PID constants
-    pathplanner::PIDConstants(M_PI, 0.0, 0.0),  // Rotation PID constants
-    3.0_mps,                                   // Max module speed, in m/s
+                              0.0),             // Translation PID constants
+    pathplanner::PIDConstants(3.14, 0.0, 0.0),  // Rotation PID constants
+    3.0_mps,                                    // Max module speed, in m/s
 #ifdef TEST_SWERVE_BOT
     0.4579874_m,  // Drive base radius in meters. Distance from robot center to
 #endif
@@ -294,8 +294,14 @@ constexpr double kDriveDeadband = 0.05;
 constexpr double kVibrationIntensity = 1;
 }  // namespace OIConstants
 
+// LED Constants
 constexpr uint8_t kLedAddress = 23;
 constexpr units::second_t kConnectorXDelay = 0.002_s;
+constexpr double kAccelThreshold = 7;
+
+// BaseSingleAxisSubsystem Constants
+constexpr double kMotorDeadSpeedRange = 0.05;
+constexpr double kMaxRotPosition = 350;
 
 // Motor IDs
 namespace CANConstants {
@@ -333,6 +339,8 @@ constexpr uint8_t kUpperPodiumBeamBreakDigitalPort = 6;
 constexpr uint8_t kUpperAmpBeamBreakDigitalPort = 5;
 
 constexpr units::revolutions_per_minute_t kMaxRpm = 5676_rpm;
+
+constexpr double kDowntakeSpeed = 0.4;
 
 namespace IntakingPID {
 constexpr double kIntakingP = 6e-5;
@@ -386,13 +394,6 @@ constexpr double kSpeakerI = 1e-6;
 constexpr double kSpeakerD = 0;
 constexpr double kSpeakerIZone = 0;
 constexpr double kSpeakerFF = 0.000015;
-
-// constexpr double kSpeakerLowerP = 6e-5;
-// constexpr double kSpeakerLowerI = 1e-6;
-// constexpr double kSpeakerLowerD = 0;
-// constexpr double kSpeakerLowerIZone = 0;
-// constexpr double kSpeakerLowerFF = 0.000015;
-// constexpr double kSpeakerLowerVelocity = -1;
 
 constexpr double kAmpP = 6e-5;
 constexpr double kAmpI = 1e-6;
@@ -467,16 +468,16 @@ constexpr double kRotationHomingSpeed = .15;
 constexpr int kArmGearRatio = 125;
 constexpr auto kArmDegreeLimit = 144;
 constexpr double kArmStepSize = 4;
+constexpr units::degree_t AmpRotation = 142_deg;
+constexpr units::degree_t HomeRotation = 142_deg;
 
-// These are currently wrong, pls fix
-constexpr double kArmSetP = 0.0018386;
-constexpr double kArmSetI = 0.0075;
-constexpr double kArmSetD = 0.00062724;
-constexpr double kArmSetIZone = 0.01;
-constexpr double kArmSetFF = 0.000015;
+constexpr double kArmP = 0.075;
+constexpr double kArmI = 0;
+constexpr double kArmD = 0;
+constexpr double kArmIZone = 0;
+constexpr double kArmFF = 0;
 }  // namespace ArmConstants
 
-// TODO: CREATE ACTUAL ROBOT VALUES FOR THESE
 namespace VisionConstants {
 static constexpr std::string_view kFrontCamera{"PhotonVision"};
 static constexpr std::string_view kRearCamera{"Photonvision2"};
@@ -495,7 +496,6 @@ static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
 }  // namespace VisionConstants
 
 namespace ClimbConstants {
-// These are placeholder values, these all will be changed
 constexpr int kClimberLeftMotorId = 10;
 constexpr int kClimberRightMotorId = 11;
 

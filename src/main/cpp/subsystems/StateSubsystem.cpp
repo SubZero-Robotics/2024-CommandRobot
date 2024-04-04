@@ -11,7 +11,6 @@
 #include "commands/RetractClimbCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
-#include "utils/CommandUtils.h"
 #include "utils/ShuffleboardLogger.h"
 
 using namespace AutoConstants::Locations;
@@ -192,10 +191,7 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
       .AndThen(
           // TODO: method to get the stage location
           PathFactory::GetPathFromFinalLocation(
-              [this] { return GetFinalFromState(); }, m_subsystems.drive
-              // ExtendAbsolute(m_subsystems.leftClimb, m_subsystems.rightClimb)
-              //  .ToPtr()))
-              ))
+              [this] { return GetFinalFromState(); }, m_subsystems.drive))
       .AndThen(
           RetractClimbCommand(m_subsystems.leftClimb, m_subsystems.rightClimb)
               .ToPtr())
@@ -240,7 +236,7 @@ frc2::CommandPtr StateSubsystem::StartFunni() {
 
 frc2::CommandPtr StateSubsystem::MoveToSourceAndIntake() {
   return StartSource().AndThen(
-      IntakingCommands::OuttakeUntilPresent(
+      IntakingCommands::DowntakeUntilPresent(
           m_subsystems.intake, m_subsystems.scoring, ScoringDirection::AmpSide)
           // TODO: REMOVE THIS; ONLY FOR TESTING PURPOSES
           .WithTimeout(5_s));

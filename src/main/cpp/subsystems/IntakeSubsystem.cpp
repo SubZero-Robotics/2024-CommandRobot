@@ -1,11 +1,6 @@
 #include <subsystems/IntakeSubsystem.h>
 
-IntakeSubsystem::IntakeSubsystem() {
-  // m_rightIntakeSpinnyBoy.Follow(m_leftIntakeSpinnyBoy, false);
-}
-
 void IntakeSubsystem::Periodic() {
-  // intakeTuner.UpdateFromShuffleboard();
   ShuffleboardLogger::getInstance().logVerbose("Has Note", NotePresentCenter());
 
   frc::SmartDashboard::PutBoolean("Note present Lower center ",
@@ -25,25 +20,16 @@ void IntakeSubsystem::Periodic() {
 void IntakeSubsystem::SimulationPeriodic() {}
 
 void IntakeSubsystem::Out(double outakeSpeed) {
-  // ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Outaking %s",
-  //                                         "");
-
-  // intakeMotors.RunWithVelocity(outakeSpeed, outakeSpeed);
   m_leftIntakeSpinnyBoy.Set(outakeSpeed);
 }
 
 void IntakeSubsystem::In(double intakeSpeed) {
-  // ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Intaking %s",
-  //                                         "");
-  // intakeMotors.RunWithVelocity(intakeSpeed, intakeSpeed);
   m_leftIntakeSpinnyBoy.Set(intakeSpeed);
 }
 
 void IntakeSubsystem::Stop() {
   ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Stopping %s",
                                           "");
-  // intakeMotors.Stop();
-
   m_leftIntakeSpinnyBoy.Set(0);
 }
 

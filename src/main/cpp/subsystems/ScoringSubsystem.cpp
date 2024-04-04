@@ -5,8 +5,6 @@
 using namespace ScoringConstants;
 
 ScoringSubsystem::ScoringSubsystem() {
-  // m_speakerLowerSpinnyBoi.Follow(m_speakerUpperSpinnyBoi, false);
-
   m_ampUpperVelocity = ScoringConstants::kAmpUpperSpeed;
   m_ampLowerVelocity = ScoringConstants::kAmpLowerSpeed;
 
@@ -15,28 +13,6 @@ ScoringSubsystem::ScoringSubsystem() {
 }
 
 void ScoringSubsystem::Periodic() {
-  // speakerTuner.UpdateFromShuffleboard();
-  // ampTuner.UpdateFromShuffleboard();
-
-  // speakerUpperTuner.UpdateFromShuffleboard();
-
-  // double latestAmpUpperVelocity =
-  //     frc::SmartDashboard::GetNumber("Amp Upper Velocity",
-  //     m_ampUpperVelocity);
-  // double latestAmpLowerVelocity =
-  //     frc::SmartDashboard::GetNumber("Amp Lower Velocity",
-  //     m_ampLowerVelocity);
-
-  // if (latestAmpUpperVelocity != m_ampUpperVelocity) {
-  //   m_ampUpperVelocity = latestAmpUpperVelocity;
-  //   ConsoleLogger::getInstance().logVerbose(
-  //       "ScoringSubsystem", "Setting amp UPPER to %f", m_ampUpperVelocity);
-  // } else if (latestAmpLowerVelocity != m_ampLowerVelocity) {
-  //   m_ampLowerVelocity = latestAmpLowerVelocity;
-  //   ConsoleLogger::getInstance().logVerbose(
-  //       "ScoringSubsystem", "Setting amp UPPER to %f", m_ampLowerVelocity);
-  // }
-
   frc::SmartDashboard::PutNumber("Amp upper velocity",
                                  m_ampUpperEnc.GetVelocity());
   frc::SmartDashboard::PutNumber("Amp lower velocity",
@@ -46,14 +22,7 @@ void ScoringSubsystem::Periodic() {
 void ScoringSubsystem::SimulationPeriodic() {}
 
 void ScoringSubsystem::SpinOutake() {
-  // speakerPidPair.RunWithVelocity(ScoringConstants::kScoringOutakeUpperSpeed,
-  //                                ScoringConstants::kScoringOutakeLowerSpeed);
-  // ampPidPair.RunWithVelocity(ScoringConstants::kScoringOutakeUpperSpeed,
-  //                            ScoringConstants::kScoringOutakeLowerSpeed);
-  ampUpperController.RunWithVelocity(
-      ScoringConstants::kScoringOutakeUpperSpeed);
-  // ampLowerController.RunWithVelocity(
-  //     ScoringConstants::kScoringOutakeLowerSpeed);
+  m_ampUpperSpinnyBoi.Set(kScoringOutakeUpperSpeed);
   m_ampLowerSpinnyBoi.Set(kScoringOutakeLowerSpeed);
 };
 
@@ -123,38 +92,28 @@ bool ScoringSubsystem::GetMotorFreeWheel(ScoringDirection direction) {
 }
 
 void ScoringSubsystem::SpinAmp(double upperPercentage, double lowerPercentage) {
-  // ampPidPair.RunWithVelocity(upperPercentage, lowerPercentage);
   m_ampLowerSpinnyBoi.Set(lowerPercentage);
   m_ampUpperSpinnyBoi.Set(upperPercentage);
   frc::SmartDashboard::PutNumber("Amp lower target %", lowerPercentage);
 }
 
 void ScoringSubsystem::SpinSpeaker() {
-  // speakerPidPair.RunWithVelocity(kSpeakerUpperSpeed, kSpeakerLowerSpeed);
-  // speakerUpperController.RunWithVelocity(-kSpeakerUpperSpeed);
-  // speakerLowerController.RunWithVelocity(-kSpeakerLowerSpeed);
   m_speakerLowerSpinnyBoi.Set(-kSpeakerLowerSpeed);
   m_speakerUpperSpinnyBoi.Set(-kSpeakerUpperSpeed);
 }
 
 void ScoringSubsystem::SpinSubwoofer() {
-  // ampPidPair.RunWithVelocity(kSubwooferUpperSpeed, kSubwooferLowerSpeed);
   m_ampLowerSpinnyBoi.Set(kSubwooferLowerSpeed);
   m_ampUpperSpinnyBoi.Set(kSubwooferUpperSpeed);
-  // ampUpperController.RunWithVelocity(kSubwooferUpperSpeed);
-  // m_ampLowerPidController.SetReference(MaxSpeedToRpm(kSubwooferLowerSpeed),
-  // rev::CANSparkBase::ControlType::kVelocity);
 }
 
 bool ScoringSubsystem::CheckAmpSpeed() {
-  // TODO: Check range rather than exact equals
   ConsoleLogger::getInstance().logVerbose("Amp Ramp Speed",
                                           m_ampLowerEnc.GetVelocity());
   return abs(m_ampLowerEnc.GetVelocity()) >= abs(MaxSpeedToRpm(kAmpLowerSpeed));
 }
 
 bool ScoringSubsystem::CheckSpeakerSpeed() {
-  // TODO: Check range rather than exact equals
   ConsoleLogger::getInstance().logVerbose("Scoring Subsystem",
                                           "Speaker Velocity %.3f",
                                           m_speakerLowerEnc.GetVelocity());
@@ -165,7 +124,6 @@ bool ScoringSubsystem::CheckSpeakerSpeed() {
 }
 
 bool ScoringSubsystem::CheckSubwooferSpeed() {
-  // TODO: Check range rather than exact equals
   ConsoleLogger::getInstance().logVerbose("Scoring Subsystem",
                                           "Subwoofer Velocity %.3f",
                                           m_ampLowerEnc.GetVelocity());
