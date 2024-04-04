@@ -131,7 +131,7 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                    [direction, arm] {
                      if (direction() == ScoringDirection::AmpSide) {
                        return arm->MoveToPositionAbsolute(
-                           ArmConstants::AmpRotation);
+                           ArmConstants::HomeRotation);
                      } else {
                        return frc2::InstantCommand([] {}).ToPtr();
                      }
