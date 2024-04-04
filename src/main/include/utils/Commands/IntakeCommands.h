@@ -77,94 +77,8 @@ static frc2::CommandPtr DowntakeUntilPresent(IntakeSubsystem* intake,
       });
 }
 
-static frc2::CommandPtr Intake(IntakeSubsystem* intakeSubsystem,
+static frc2::CommandPtr Intake(IntakeSubsystem* intake,
                                ScoringSubsystem* scoring) {
-  return (frc2::InstantCommand([] {
-            ConsoleLogger::getInstance().logVerbose("Intake Subsystem",
-                                                    "Intake start %s", "");
-          })
-              .ToPtr()
-              .AndThen(IntakeInInitial(intakeSubsystem).ToPtr())
-              .AndThen(frc2::WaitCommand(0.05_s).ToPtr())
-              .AndThen(FeedUntilNotPresent(intakeSubsystem, scoring,
-                                           ScoringDirection::AmpSide))
-              .AndThen(frc2::WaitCommand(0.2_s).ToPtr())
-              .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
-                         intakeSubsystem->Stop();
-                         scoring->Stop();
-                       }).ToPtr())
-              .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
-                         intakeSubsystem->Stop();
-                         scoring->Stop();
-                       }).ToPtr())
-              .AndThen(DowntakeUntilPresent(intakeSubsystem, scoring,
-                                            ScoringDirection::PodiumSide))
-              .AndThen(frc2::InstantCommand([] {
-                         ConsoleLogger::getInstance().logVerbose(
-                             "Intake Subsystem", "Intake completed normally%s",
-                             "");
-                       }).ToPtr()))
-      .Unless([intakeSubsystem] { return intakeSubsystem->NotePresent(); })
-      .WithTimeout(8_s)
-      .FinallyDo([intakeSubsystem, scoring] {
-        intakeSubsystem->Stop();
-        scoring->Stop();
-      });
-}
-
-static frc2::CommandPtr UnbiasNote(IntakeSubsystem* intake,
-                                   ScoringSubsystem* scoring) {
-  return frc2::FunctionalCommand(
-             [] {},
-             [scoring] {
-               scoring->SpinVectorSide(ScoringDirection::PodiumSide);
-             },
-             [scoring](bool interruped) { scoring->Stop(); },
-             [intake] { return intake->NotePresentLower(); }, {intake, scoring})
-      .ToPtr();
-}
-
-static frc2::CommandPtr Intake2(IntakeSubsystem* intakeSubsystem,
-                                ScoringSubsystem* scoring) {
-  // Intake until top is broken biasing amp side
-  // stop intake
-  // downshuffle until either of the lower beam breaks is broken
-  // stop intake
-  // spin vector wheel to unbias the note
-  // stop vector wheel
-  // unless note is already present
-  // timeout after 5 seconds
-  // finally stop everything just in case something got canceled early
-
-  return (IntakeInInitial(intakeSubsystem)
-              .ToPtr()
-              .AlongWith(frc2::InstantCommand([scoring] {
-                           scoring->SpinVectorSide(ScoringDirection::AmpSide);
-                         }).ToPtr())
-              .WithTimeout(8_s)
-              .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
-                         intakeSubsystem->Stop();
-                         scoring->Stop();
-                       }).ToPtr())
-              .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
-                         intakeSubsystem->Out();
-                         scoring->SpinVectorSide(ScoringDirection::PodiumSide);
-                       }).ToPtr())
-              .AndThen(frc2::WaitCommand(0.05_s).ToPtr())
-              .AndThen(frc2::InstantCommand([intakeSubsystem, scoring] {
-                         intakeSubsystem->Stop();
-                         scoring->Stop();
-                       }).ToPtr()))
-      .Unless([intakeSubsystem] { return intakeSubsystem->NotePresent(); })
-      .WithTimeout(8_s)
-      .FinallyDo([intakeSubsystem, scoring] {
-        intakeSubsystem->Stop();
-        scoring->Stop();
-      });
-}
-
-static frc2::CommandPtr Intake3(IntakeSubsystem* intake,
-                                ScoringSubsystem* scoring) {
   return frc2::FunctionalCommand(
              // onInit
              [] {},
@@ -203,4 +117,4 @@ static frc2::CommandPtr Intake3(IntakeSubsystem* intake,
                    {intake, scoring})
                    .ToPtr());
 }
-}
+}  // namespace IntakingCommands

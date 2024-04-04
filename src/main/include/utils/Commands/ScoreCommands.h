@@ -41,7 +41,6 @@ static frc2::CommandPtr ArmScoringGoal(
                } else {
                  // // In case it got stuck up, make it go down when not
                  // shooting
-                 //  return arm->MoveToPositionAbsolute(10_deg);
                  return frc2::InstantCommand([] {}).ToPtr();
                }
              },
@@ -82,18 +81,26 @@ static frc2::CommandPtr PreScoreShuffle(
            ConsoleLogger::getInstance().logInfo("Scoring", "Pre Score Shuffle");
          })
       .ToPtr()
-      .AndThen((frc2::InstantCommand([scoring, intake, direction] {
-                  scoring->SpinVectorSide(direction());
-                  intake->Out();
-                }).ToPtr())
-                   .Repeatedly()
-                   .Until([intake, direction] {
+      .AndThen(frc2::FunctionalCommand(
+                   // on init
+                   [scoring, intake, direction] {
+                     scoring->SpinVectorSide(direction());
+                     intake->Out();
+                   },
+                   // on execute
+                   [] {},
+                   // on end
+                   [scoring, intake](bool interupted) {
+                     scoring->Stop();
+                     intake->Stop();
+                   },
+                   // is finished
+                   [intake, direction] {
                      return !IsNoteTopSide(intake, direction());
-                   })
-                   .AndThen(frc2::InstantCommand([intake, scoring] {
-                              intake->Stop();
-                              scoring->Stop();
-                            }).ToPtr()))
+                   },
+                   // reqs
+                   {intake, scoring})
+                   .ToPtr())
       .WithTimeout(1_s)
       .FinallyDo([intake, scoring] {
         intake->Stop();

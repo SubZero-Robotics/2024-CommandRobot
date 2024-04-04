@@ -68,9 +68,9 @@ void RobotContainer::RegisterAutos() {
   pathplanner::NamedCommands::registerCommand(AutoConstants::kLedFunniName,
                                               m_leds.Intaking());
   pathplanner::NamedCommands::registerCommand(
-      AutoConstants::kShootSubwooferName,
+      AutoConstants::kScoreSubwooferName,
       ScoringCommands::ScoreShoot([] { return ScoringDirection::Subwoofer; },
-                             &m_scoring, &m_intake, &m_arm));
+                                  &m_scoring, &m_intake, &m_arm));
   pathplanner::NamedCommands::registerCommand(
       AutoConstants::kScoreSubwooferName,
       ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
@@ -85,7 +85,7 @@ void RobotContainer::RegisterAutos() {
         ConsoleLogger::getInstance().logVerbose("Autos", "Intaking %s", "");
       })
           .ToPtr()
-          .AndThen(IntakingCommands::Intake3(&m_intake, &m_scoring)));
+          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
   using namespace AutoConstants;
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoType::LeaveWing);
@@ -131,7 +131,7 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.B().OnTrue(
       m_leds.Intaking()
           .AndThen(m_leds.AngryFace())
-          .AndThen(IntakingCommands::Intake3(&m_intake, &m_scoring))
+          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
           .AndThen((m_leds.Loaded().AndThen(m_leds.HappyFace())).Unless([this] {
             return !m_intake.NotePresent();
           })));
