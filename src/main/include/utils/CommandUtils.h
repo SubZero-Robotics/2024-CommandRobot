@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc2/command/DeferredCommand.h>
 #include <frc2/command/FunctionalCommand.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/WaitCommand.h>
@@ -121,23 +122,23 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                  .AndThen(frc2::InstantCommand([] {
                             ConsoleLogger::getInstance().logVerbose(
                                 "Scoring Composition", "shot %s", "");
-                          }).ToPtr())
-                 .AndThen(frc2::DeferredCommand(
-                              [direction, arm] {
-                                if (direction() == ScoringDirection::AmpSide) {
-                                  return arm->MoveToPositionAbsolute(10_deg);
-                                } else {
-                                  return frc2::InstantCommand([] {}).ToPtr();
-                                }
-                              },
-                              {arm})
-                              .ToPtr()))
+                          }).ToPtr()))
       .Unless([intake] { return !intake->NotePresent(); })
       .WithTimeout(3_s)
       .FinallyDo([intake, scoring] {
         intake->Stop();
         scoring->Stop();
-      });
+      })
+      .AndThen(frc2::DeferredCommand(
+                   [direction, arm] {
+                     if (direction() == ScoringDirection::AmpSide) {
+                       return arm->MoveToPositionAbsolute(10_deg);
+                     } else {
+                       return frc2::InstantCommand([] {}).ToPtr();
+                     }
+                   },
+                   {arm})
+                   .ToPtr());
 }
 
 static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
