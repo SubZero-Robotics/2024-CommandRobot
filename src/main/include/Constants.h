@@ -193,9 +193,9 @@ const std::string kLedFunniName = "LedFunni";
 
 const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
     pathplanner::PIDConstants(3.14, 0.0,
-                              0.0),            // Translation PID constants
+                              0.0),             // Translation PID constants
     pathplanner::PIDConstants(M_PI, 0.0, 0.0),  // Rotation PID constants
-    3.0_mps,                                   // Max module speed, in m/s
+    3.0_mps,                                    // Max module speed, in m/s
 #ifdef TEST_SWERVE_BOT
     0.4579874_m,  // Drive base radius in meters. Distance from robot center to
 #endif
@@ -400,6 +400,27 @@ constexpr double kAmpI = 1e-6;
 constexpr double kAmpD = 0.000000;
 constexpr double kAmpIZone = 0;
 constexpr double kAmpFF = 0.000015;
+
+// constexpr double kAmpLowerP = 6e-5;
+// constexpr double kAmpLowerI = 1e-6;
+// constexpr double kAmpLowerD = 0;
+// constexpr double kAmpLowerIZone = 0;
+// constexpr double kAmpLowerFF = 0.000015;
+// constexpr double kAmpLowerVelocity = 0.254;
+
+// constexpr double kSubwooferUpperP = 6e-5;
+// constexpr double kSubwooferUpperI = 1e-6;
+// constexpr double kSubwooferUpperD = 0;
+// constexpr double kSubwooferUpperIZone = 0;
+// constexpr double kSubwooferUpperFF = 0.000015;
+// constexpr double kSubwooferUpperVelocity = 0.75;
+
+// constexpr double kSubwooferLowerP = 6e-5;
+// constexpr double kSubwooferLowerI = 1e-6;
+// constexpr double kSubwooferLowerD = 0;
+// constexpr double kSubwooferLowerIZone = 0;
+// constexpr double kSubwooferLowerFF = 0.000015;
+// constexpr double kSubwooferLowerVelocity = 0.75;
 
 const std::string kSpeakerUpperName = "Speaker Upper";
 const std::string kSpeakerLowerName = "Speaker Lower";
