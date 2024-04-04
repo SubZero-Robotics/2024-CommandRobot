@@ -46,6 +46,7 @@ class RobotContainer {
   void ResetPose();
   void DisableSubsystems();
   void Initialize();
+  void StopMotors();
 
  private:
   // The driver's controller
