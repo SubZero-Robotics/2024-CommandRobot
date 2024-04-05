@@ -188,6 +188,7 @@ extern const frc::TrapezoidProfile<units::degree>::Constraints
 const std::string kDefaultAutoName = "Leave Wing";
 
 const std::string kScoreSubwooferName = "Score Subwoofer";
+const std::string kShootSubwooferName = "Shoot Subwoofer";
 const std::string kIntakeName = "Run Intake";
 const std::string kLedFunniName = "LedFunni";
 
