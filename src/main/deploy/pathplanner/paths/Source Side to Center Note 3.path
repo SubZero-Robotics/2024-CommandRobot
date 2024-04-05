@@ -44,18 +44,12 @@
       "linkedName": "Center Note 3"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.75,
-      "rotationDegrees": 0.0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 1.8,
+      "waypointRelativePos": 1.45,
       "command": {
         "type": "parallel",
         "data": {
@@ -72,8 +66,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 400.0
   },
@@ -88,5 +82,5 @@
     "rotation": 122.15680691986114,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

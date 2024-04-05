@@ -176,6 +176,7 @@ enum class AutoType {
   LeaveWing,
   TwoNoteCenter,
   TwoNoteSource,
+  ThreeNoteCenter,
 };
 
 extern const frc::TrapezoidProfile<units::radians>::Constraints
