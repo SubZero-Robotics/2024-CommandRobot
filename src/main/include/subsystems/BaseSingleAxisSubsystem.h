@@ -158,7 +158,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
    * @param speed Percentage speed
    */
   void RunMotorExternal(double speed, bool ignoreEncoder = false) override {
-    if (abs(speed) <= kMotorDeadSpeedRange) {
+    if (abs(speed) <= BaseSingleAxisSubsystemConstants::kMotorDeadSpeedRange) {
       if (_isMovingToPosition)
         return;  // Don't set the motor and overwrite a potential
                  // automated movement
@@ -239,7 +239,8 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
 
     // TODO: Constant wrap-around value
     if (GetCurrentPosition() <= _config.minDistance ||
-        GetCurrentPosition() >= kMaxRotPosition) {
+        GetCurrentPosition() >=
+            BaseSingleAxisSubsystemConstants::kMaxRotPosition) {
       if (_log)
         ConsoleLogger::getInstance().logInfo(_prefix, "AT HOME ENCODER %s", "");
       return true;
