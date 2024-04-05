@@ -96,6 +96,7 @@ void RobotContainer::RegisterAutos() {
   m_chooser.AddOption("2 Note Center Note Under Stage",
                       AutoType::TwoNoteCenter);
   m_chooser.AddOption("2 Note Source Side", AutoType::TwoNoteSource);
+  m_chooser.AddOption("3 Note Center Note 3 + 4", AutoType::ThreeNoteCenter);
 
   m_chooser.AddOption("Empty Auto", AutoType::EmptyAuto);
 

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.5,
-        "y": 4.115092606775545
+        "x": 8.385144912783465,
+        "y": 2.36
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.442453696612227,
-        "y": 4.282202966441556
+        "x": 7.1318172152883745,
+        "y": 1.9735572932723469
       },
       "isLocked": false,
-      "linkedName": "Center Note 3"
+      "linkedName": "Center Note 4"
     },
     {
       "anchor": {
-        "x": 3.549388879948244,
-        "y": 3.081097256342096
+        "x": 3.9462759841550223,
+        "y": 1.5039932369941083
       },
       "prevControl": {
-        "x": 4.666939410214697,
-        "y": 3.394429180715868
+        "x": 5.477342838801453,
+        "y": 1.080410546498575
       },
       "nextControl": {
-        "x": 2.1190968788383424,
-        "y": 2.680080807432778
+        "x": 2.4152091295085905,
+        "y": 1.927575927489642
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 4.49
       },
       "prevControl": {
-        "x": 1.2307326395823281,
-        "y": 3.5302063479445023
+        "x": 1.2516214345405796,
+        "y": 3.8122050798808975
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,8 +46,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.65,
-      "rotationDegrees": 121.0,
+      "waypointRelativePos": 1.5,
+      "rotationDegrees": 119.0,
       "rotateFast": false
     }
   ],
@@ -55,7 +55,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 1.25,
+      "waypointRelativePos": 1.4,
       "command": {
         "type": "parallel",
         "data": {
@@ -79,7 +79,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 121.37,
+    "rotation": 119.0,
     "rotateFast": false
   },
   "reversed": false,

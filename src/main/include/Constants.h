@@ -176,6 +176,7 @@ enum class AutoType {
   LeaveWing,
   TwoNoteCenter,
   TwoNoteSource,
+  ThreeNoteCenter,
 };
 
 extern const frc::TrapezoidProfile<units::radians>::Constraints
@@ -386,7 +387,7 @@ enum class ScoreState {
   Shooting,
 };
 
-constexpr units::second_t kFlywheelRampDelay = 0.75_s;
+constexpr units::second_t kFlywheelRampDelay = 0.5_s;
 
 namespace ScoringPID {
 constexpr double kSpeakerP = 6e-5;
