@@ -32,7 +32,7 @@ class Vision {
  public:
   Vision() {
     photonEstimator.SetMultiTagFallbackStrategy(
-        photon::PoseStrategy::CLOSEST_TO_LAST_POSE);
+        photon::PoseStrategy::LOWEST_AMBIGUITY);
     photonEstimator2.SetMultiTagFallbackStrategy(
         photon::PoseStrategy::LOWEST_AMBIGUITY);
   }

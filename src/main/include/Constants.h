@@ -469,11 +469,11 @@ static const frc::Transform3d kRobotToCam{
     frc::Translation3d{5.714_in, 0_in, 23.533_in},
     frc::Rotation3d{0_deg, -23.461_deg, 0_deg}};
 constexpr photon::PoseStrategy kPoseStrategy =
-    photon::PoseStrategy::MULTI_TAG_PNP_ON_RIO;
+    photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR;
 static const frc::AprilTagFieldLayout kTagLayout{
     frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo)};
 static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
-static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{1.5, 1.5, 3};
+static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
 }  // namespace VisionConstants
 
 namespace ClimbConstants {
