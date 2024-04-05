@@ -18,6 +18,7 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 #include "Constants.h"
+#include "subsystems/ArmSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/LedSubsystem.h"
@@ -25,7 +26,7 @@
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 #include "subsystems/StateSubsystem.h"
-#include "subsystems/ArmSubsystem.h"
+#include "utils/TargetTracker.h"
 #include "utils/Vision.h"
 
 /**
@@ -89,12 +90,16 @@ class RobotContainer {
   StateSubsystem m_state{m_subsystems, m_driverController,
                          m_operatorController};
 
+  TargetTracker tracker{-25_deg, 24_in, 0.6, &m_intake, &m_scoring, &m_drive};
+
   void ConfigureAutoBindings();
 #endif
 
   Vision m_vision;
 
   void RegisterAutos();
+
+  void Periodic();
 
   void ConfigureButtonBindings();
 

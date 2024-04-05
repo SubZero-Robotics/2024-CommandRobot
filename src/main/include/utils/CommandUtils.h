@@ -1,5 +1,7 @@
 #pragma once
 
+#include <frc/DriverStation.h>
+#include <frc2/command/DeferredCommand.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/WaitCommand.h>
 #include <frc2/command/button/CommandXboxController.h>
@@ -14,6 +16,7 @@
 #include "commands/TurnToAngleCommand.h"
 #include "subsystems/ArmSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
+#include "subsystems/LedSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 
 namespace ScoringCommands {

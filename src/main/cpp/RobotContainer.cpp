@@ -287,13 +287,15 @@ void RobotContainer::ConfigureAutoBindings() {
                                            }
                                          }).ToPtr());
 
-  m_operatorController.Button(18).OnTrue(frc2::InstantCommand([this] {
-                                           if (!m_state.m_active) {
-                                             m_state.m_currentState =
-                                                 RobotState::Funni;
-                                             m_state.SetDesiredState();
-                                           }
-                                         }).ToPtr());
+  // m_operatorController.Button(18).OnTrue(frc2::InstantCommand([this] {
+  //                                          if (!m_state.m_active) {
+  //                                            m_state.m_currentState =
+  //                                                RobotState::Funni;
+  //                                            m_state.SetDesiredState();
+  //                                          }
+  //                                        }).ToPtr());
+
+  m_operatorController.Button(18).OnTrue(tracker.IntakeTarget());
 
   m_operatorController.Button(20).OnTrue(
       frc2::InstantCommand([this] { m_drive.ZeroHeading(); }).ToPtr());
@@ -323,3 +325,7 @@ void RobotContainer::ResetPose() {
 void RobotContainer::DisableSubsystems() { m_arm.DisablePid(); }
 
 void RobotContainer::Initialize() { m_arm.OnInit(); };
+
+void RobotContainer::Periodic() {
+  frc::SmartDashboard::PutBoolean("HAS TARGET LOCK", tracker.HasTargetLock());
+}
