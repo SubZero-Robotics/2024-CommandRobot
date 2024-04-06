@@ -76,7 +76,7 @@ void DriveSubsystem::SimulationPeriodic() {
   poseEstimator.Update(-GetHeading().Degrees(), GetModulePositions());
 
   m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
-};
+}
 
 void DriveSubsystem::Periodic() {
   // Implementation of subsystem periodic method goes here.
@@ -91,7 +91,7 @@ void DriveSubsystem::Periodic() {
     // https://github.com/Hemlock5712/2023-Robot/blob/dd5ac64587a3839492cfdb0a28d21677d465584a/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java#L149
     m_lastGoodPosition = updatedPose;
     m_field.SetRobotPose(updatedPose);
-  };
+  }
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,

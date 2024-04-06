@@ -147,8 +147,9 @@ void MAXSwerveModule::SetDesiredState(
       frc::SwerveModuleState::Optimize(correctedDesiredState, GetRotation())};
 
   // Command driving and turning SPARKS MAX towards their respective setpoints.
-  m_drivingPIDController.SetReference((double)optimizedDesiredState.speed,
-                                      rev::CANSparkMax::ControlType::kVelocity);
+  m_drivingPIDController.SetReference(
+      static_cast<double>(optimizedDesiredState.speed),
+      rev::CANSparkMax::ControlType::kVelocity);
   m_turningPIDController.SetReference(
       optimizedDesiredState.angle.Radians().value(),
       rev::CANSparkMax::ControlType::kPosition);

@@ -147,9 +147,11 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
     }
 
     else {
-      if (_log)
+      if (_log) {
         ConsoleLogger::getInstance().logVerbose(
             _prefix, "SETTING SPEED TO: %.2f", speed);
+      }
+
       _motor.Set(speed);
     }
   }
