@@ -13,3 +13,7 @@ modifiableFileExclude {
    gradle/
    \.png$
 }
+
+generatedFileExclude {
+   \.json$
+}
