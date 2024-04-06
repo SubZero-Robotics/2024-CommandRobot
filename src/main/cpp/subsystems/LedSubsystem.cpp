@@ -3,10 +3,8 @@
 #include <frc/Timer.h>
 
 #include "ColorConstants.h"
+#include "Constants.h"
 #include "utils/ConsoleLogger.h"
-
-// TODO: Move to Constants.h
-constexpr double kAccelThreshold = 7;
 
 void LedSubsystem::Periodic() {
   if (abs(m_accel.GetX()) >= kAccelThreshold ||

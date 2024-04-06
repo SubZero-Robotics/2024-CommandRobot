@@ -3,53 +3,59 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.62,
-        "y": 4.49
+        "x": 8.385144912783465,
+        "y": 2.36
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3769542042900886,
-        "y": 3.7182055025687664
+        "x": 7.1318172152883745,
+        "y": 1.9735572932723469
       },
       "isLocked": false,
-      "linkedName": "Speaker Source Side"
+      "linkedName": "Center Note 4"
     },
     {
       "anchor": {
-        "x": 3.3091677379283513,
-        "y": 3.007986473988215
+        "x": 3.9462759841550223,
+        "y": 1.5039932369941083
       },
       "prevControl": {
-        "x": 1.9616935872532613,
-        "y": 2.5824683211434496
+        "x": 5.477342838801453,
+        "y": 1.080410546498575
       },
       "nextControl": {
-        "x": 4.301385498445298,
-        "y": 3.321318398361988
+        "x": 2.4152091295085905,
+        "y": 1.927575927489642
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.5,
-        "y": 4.115092606775545
+        "x": 0.62,
+        "y": 4.49
       },
       "prevControl": {
-        "x": 6.327565324341844,
-        "y": 4.219536581566802
+        "x": 1.2516214345405796,
+        "y": 3.8122050798808975
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Note 3"
+      "linkedName": "Speaker Source Side"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.5,
+      "rotationDegrees": 119.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 1.45,
+      "waypointRelativePos": 1.4,
       "command": {
         "type": "parallel",
         "data": {
@@ -57,7 +63,7 @@
             {
               "type": "named",
               "data": {
-                "name": "Run Intake"
+                "name": "Spin up Speaker"
               }
             }
           ]
@@ -66,20 +72,20 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.8,
+    "maxVelocity": 4.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0,
+    "rotation": 119.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 122.15680691986114,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": false

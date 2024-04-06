@@ -1,35 +1,35 @@
 #include <subsystems/IntakeSubsystem.h>
 
-IntakeSubsystem::IntakeSubsystem() {
-  // m_rightIntakeSpinnyBoy.Follow(m_leftIntakeSpinnyBoy, false);
-}
-
 void IntakeSubsystem::Periodic() {
-  // intakeTuner.UpdateFromShuffleboard();
+  ShuffleboardLogger::getInstance().logVerbose("Has Note", NotePresentCenter());
+
+  frc::SmartDashboard::PutBoolean("Note present Lower center ",
+                                  NotePresentLowerCenter());
+  frc::SmartDashboard::PutBoolean("Note present upper center ",
+                                  NotePresentUpperCenter());
+  frc::SmartDashboard::PutBoolean("Note present lower amp ",
+                                  NotePresentLowerAmp());
+  frc::SmartDashboard::PutBoolean("Note present upper amp ",
+                                  NotePresentUpperAmp());
+  frc::SmartDashboard::PutBoolean("Note present lower podium ",
+                                  NotePresentLowerPodium());
+  frc::SmartDashboard::PutBoolean("Note present upper podium ",
+                                  NotePresentUpperPodium());
 }
 
 void IntakeSubsystem::SimulationPeriodic() {}
 
 void IntakeSubsystem::Out(double outakeSpeed) {
-  // ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Outaking %s",
-  //                                         "");
-
-  // intakeMotors.RunWithVelocity(outakeSpeed, outakeSpeed);
   m_leftIntakeSpinnyBoy.Set(outakeSpeed);
 }
 
 void IntakeSubsystem::In(double intakeSpeed) {
-  // ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Intaking %s",
-  //                                         "");
-  // intakeMotors.RunWithVelocity(intakeSpeed, intakeSpeed);
   m_leftIntakeSpinnyBoy.Set(intakeSpeed);
 }
 
 void IntakeSubsystem::Stop() {
   ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Stopping %s",
                                           "");
-  // intakeMotors.Stop();
-
   m_leftIntakeSpinnyBoy.Set(0);
 }
 
@@ -66,15 +66,28 @@ bool IntakeSubsystem::NotePresentUpperPodium() {
   return !m_upperPodiumBeamBreak.Get();
 }
 
-bool IntakeSubsystem::NotePresentCenter() { return !m_centerBeamBreak.Get(); }
+bool IntakeSubsystem::NotePresentUpperCenter() {
+  return !m_centerUpperBeamBreak.Get();
+}
+
+bool IntakeSubsystem::NotePresentLowerCenter() {
+  return !m_centerLowerBeamBreak.Get();
+}
+
+bool IntakeSubsystem::NotePresentCenter() {
+  return NotePresentLowerCenter() || NotePresentUpperCenter();
+}
 
 bool IntakeSubsystem::NotePresentUpper() {
   return NotePresentUpperAmp() || NotePresentUpperPodium();
 }
 
+bool IntakeSubsystem::NotePresentUpperAll() {
+  return NotePresentUpper() || NotePresentUpperCenter();
+}
+
 bool IntakeSubsystem::NotePresentLower() {
-  return NotePresentLowerAmp() || NotePresentLowerPodium() ||
-         NotePresentCenter();
+  return NotePresentLowerAmp() || NotePresentLowerPodium();
 }
 
 bool IntakeSubsystem::NotePresent() {

@@ -15,12 +15,16 @@
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
+#include "subsystems/ArmSubsystem.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/LedSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
-#include "subsystems/ArmSubsystem.h"
+#include "utils/Commands/DriveCommands.h"
+#include "utils/Commands/FunniCommands.h"
+#include "utils/Commands/IntakeCommands.h"
+#include "utils/Commands/ScoreCommands.h"
 #include "utils/ShuffleboardLogger.h"
 
 typedef struct {

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6458463807512864,
-      "y": 6.673969989161352
+      "x": 0.62,
+      "y": 4.49
     },
-    "rotation": -119.29000000000002
+    "rotation": 120.68881857051673
   },
   "command": {
     "type": "sequential",
@@ -20,13 +20,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Amp Side to Note 1"
+            "pathName": "Source Side to Center Note 3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Note 1 to Amp Side"
+            "pathName": "Center Note 3 to Source Side"
           }
         },
         {
@@ -38,13 +38,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Amp Side to Center Note 1"
+            "pathName": "Source Side To Center Note 4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Center Note 1 to Amp Side"
+            "pathName": "Center Note 4 To Source Side"
           }
         },
         {
