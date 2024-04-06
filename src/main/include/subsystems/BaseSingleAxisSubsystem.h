@@ -122,9 +122,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
 
       _motor.Set(0);
       return;
-    }
-
-    else if (AtMax()) {
+    } else if (AtMax()) {
       if (_log) ConsoleLogger::getInstance().logInfo(_prefix, "AT MAX %s", "");
 
       if (speed > 0) {
@@ -144,9 +142,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
 
       _motor.Set(0);
       return;
-    }
-
-    else {
+    } else {
       if (_log) {
         ConsoleLogger::getInstance().logVerbose(
             _prefix, "SETTING SPEED TO: %.2f", speed);
