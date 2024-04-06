@@ -47,7 +47,7 @@ class StateSubsystem : public frc2::SubsystemBase {
                [this, newState] {
                  ConsoleLogger::getInstance().logVerbose(
                      "StateSubsystem", "Setting new state to %u",
-                     (uint8_t)newState);
+                     static_cast<uint8_t>(newState));
                  m_currentState = newState;
                },
                {this})
@@ -61,8 +61,9 @@ class StateSubsystem : public frc2::SubsystemBase {
   }
 
   void SetDesiredState() {
-    ConsoleLogger::getInstance().logInfo(
-        "StateSubsystem", "Running with state %u", (uint8_t)m_currentState);
+    ConsoleLogger::getInstance().logInfo("StateSubsystem",
+                                         "Running with state %u",
+                                         static_cast<uint8_t>(m_currentState));
     frc2::CommandScheduler::GetInstance().Cancel(m_cmd);
     m_cmd = RunState();
     frc2::CommandScheduler::GetInstance().Schedule(m_cmd);
@@ -103,7 +104,9 @@ class StateSubsystem : public frc2::SubsystemBase {
 
   frc2::CommandPtr MoveToSourceAndIntake();
 
-  inline FinalLocation GetFinalFromState() {
+  inline AutoConstants::Locations::FinalLocation GetFinalFromState() {
+    using namespace AutoConstants::Locations;
+
     switch (m_currentState) {
       case RobotState::ClimbStageLeft:
         return FinalLocation::StageLeft;

@@ -331,4 +331,4 @@ void RobotContainer::StopMotors() {
 
 void RobotContainer::DisableSubsystems() { m_arm.DisablePid(); }
 
-void RobotContainer::Initialize() { m_arm.OnInit(); };
+void RobotContainer::Initialize() { m_arm.OnInit(); }

@@ -11,9 +11,6 @@
 #include "Constants.h"
 #include "subsystems/ScoringSubsystem.h"
 
-using namespace CANConstants;
-using namespace IntakingConstants;
-
 class IntakeSubsystem : public frc2::SubsystemBase {
  public:
   void Periodic() override;

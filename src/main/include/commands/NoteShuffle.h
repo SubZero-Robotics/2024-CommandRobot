@@ -8,21 +8,18 @@
 
 class NoteShuffle : public frc2::CommandHelper<frc2::Command, NoteShuffle> {
  public:
-  NoteShuffle(IntakeSubsystem* intake) : isFinished{false}, m_intake{intake} {
+  explicit NoteShuffle(IntakeSubsystem* intake)
+      : isFinished{false}, m_intake{intake} {
     AddRequirements(m_intake);
   }
 
-  void Initialize() override {
-    isFinished = false;
-  }
+  void Initialize() override { isFinished = false; }
 
-  void Execute() override { 
-    m_intake->Out(ScoringConstants::kShuffleSpeed);
-  }
+  void Execute() override { m_intake->Out(ScoringConstants::kShuffleSpeed); }
 
   bool IsFinished() override { return m_intake->NotePresentLower(); }
 
-  void End() { }
+  void End() {}
 
  private:
   bool isFinished;
