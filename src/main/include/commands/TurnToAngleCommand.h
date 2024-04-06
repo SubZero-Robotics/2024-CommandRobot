@@ -15,8 +15,6 @@
 
 #include "subsystems/DriveSubsystem.h"
 
-using namespace AutoConstants;
-
 class TurnToAngle : public frc2::CommandHelper<frc2::Command, TurnToAngle> {
  public:
   explicit TurnToAngle(DriveSubsystem *drive,
@@ -26,6 +24,8 @@ class TurnToAngle : public frc2::CommandHelper<frc2::Command, TurnToAngle> {
         m_drive{drive},
         m_relative{relative},
         m_goalAngle{angle} {
+    using namespace AutoConstants;
+
     AddRequirements(drive);
 
     // Don't need constants for these since we're only rotating

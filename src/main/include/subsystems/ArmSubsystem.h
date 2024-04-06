@@ -4,8 +4,6 @@
 #include "subsystems/BaseSingleAxisSubsystem2.h"
 #include "utils/PidMotorController.h"
 
-using namespace ScoringConstants;
-
 class ArmSubsystem : public RotationalSingleAxisSubsystem<
                          rev::CANSparkMax, rev::SparkPIDController,
                          rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder> {
@@ -59,6 +57,11 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
                                 ArmConstants::kArmFF};
   PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      upperController{"Arm",          m_SpinnyBoi, m_enc,      m_PidController,
-                      armPidSettings, &m_absEnc,   kMaxSpinRpm};
+      upperController{"Arm",
+                      m_SpinnyBoi,
+                      m_enc,
+                      m_PidController,
+                      armPidSettings,
+                      &m_absEnc,
+                      ScoringConstants::kMaxSpinRpm};
 };

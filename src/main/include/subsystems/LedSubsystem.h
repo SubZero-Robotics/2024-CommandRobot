@@ -14,14 +14,12 @@
 #include "Constants.h"
 #include "moduledrivers/ConnectorX.h"
 
-using namespace ConnectorX;
-
 class LedSubsystem : public frc2::SubsystemBase {
  public:
-  LedSubsystem() : m_connectorX(ConnectorXBoard(kLedAddress)) {
+  LedSubsystem() : m_connectorX(ConnectorX::ConnectorXBoard(kLedAddress)) {
     ConsoleLogger::getInstance().logVerbose("LedSubsystem", "LEDs init%s", "");
-    createZones(LedPort::P0, std::move(m_ledZones0));
-    createZones(LedPort::P1, std::move(m_ledZones1));
+    createZones(ConnectorX::LedPort::P0, std::move(m_ledZones0));
+    createZones(ConnectorX::LedPort::P1, std::move(m_ledZones1));
     m_connectorX.setOn();
   }
 
@@ -67,14 +65,15 @@ class LedSubsystem : public frc2::SubsystemBase {
     Amogus = 12,
   };
 
-  frc2::CommandPtr setZoneColorPattern(LedZone zone, LedPort port,
+  frc2::CommandPtr setZoneColorPattern(LedZone zone, ConnectorX::LedPort port,
                                        frc::Color8Bit color,
-                                       PatternType pattern,
+                                       ConnectorX::PatternType pattern,
                                        bool oneShot = false, int16_t delay = -1,
                                        bool reversed = false);
 
-  void setZoneColorPatternAsync(LedZone zone, LedPort port,
-                                frc::Color8Bit color, PatternType pattern,
+  void setZoneColorPatternAsync(LedZone zone, ConnectorX::LedPort port,
+                                frc::Color8Bit color,
+                                ConnectorX::PatternType pattern,
                                 bool oneShot = false, int16_t delay = -1,
                                 bool reversed = false);
 
@@ -82,22 +81,23 @@ class LedSubsystem : public frc2::SubsystemBase {
 
   void showFace(EyePattern pattern);
 
-  void createZones(LedPort port, std::vector<Commands::NewZone> &&zones);
+  void createZones(ConnectorX::LedPort port,
+                   std::vector<ConnectorX::Commands::NewZone> &&zones);
 
   void syncAllZones();
 
-  ConnectorXBoard m_connectorX;
+  ConnectorX::ConnectorXBoard m_connectorX;
 
   frc::BuiltInAccelerometer m_accel;
 
   // TODO: make into a constant elsewhere
   const uint16_t m_totalLeds = 67;
-  std::vector<Commands::NewZone> m_ledZones0 = {
+  std::vector<ConnectorX::Commands::NewZone> m_ledZones0 = {
       {.offset = 0, .count = 18},
       {.offset = 18, .count = 32},
       {.offset = 50, .count = 17},
   };
-  std::vector<Commands::NewZone> m_ledZones1 = {
+  std::vector<ConnectorX::Commands::NewZone> m_ledZones1 = {
       {.offset = 0, .count = 1},
       {.offset = 1, .count = 256},
   };

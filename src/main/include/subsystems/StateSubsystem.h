@@ -103,7 +103,9 @@ class StateSubsystem : public frc2::SubsystemBase {
 
   frc2::CommandPtr MoveToSourceAndIntake();
 
-  inline FinalLocation GetFinalFromState() {
+  inline AutoConstants::Locations::FinalLocation GetFinalFromState() {
+    using namespace AutoConstants::Locations;
+
     switch (m_currentState) {
       case RobotState::ClimbStageLeft:
         return FinalLocation::StageLeft;

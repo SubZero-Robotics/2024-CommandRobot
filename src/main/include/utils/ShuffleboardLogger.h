@@ -4,8 +4,6 @@
 
 #include "ILogger.h"
 
-using namespace Logging;
-
 class ShuffleboardLogger : ILogger {
  public:
   static ShuffleboardLogger& getInstance() {
@@ -53,7 +51,7 @@ class ShuffleboardLogger : ILogger {
  private:
   ShuffleboardLogger();
 
-  std::string formatToShuffleboardString(LogLevel level,
+  std::string formatToShuffleboardString(Logging::LogLevel level,
                                          const std::string format, ...) {
     va_list args;
     va_start(args, format);
