@@ -6,6 +6,8 @@
 #include <frc2/command/WaitCommand.h>
 #include <frc2/command/button/CommandXboxController.h>
 
+#include <functional>
+
 #include "Constants.h"
 #include "commands/FeedCommand.h"
 #include "commands/FlywheelRampCommand.h"

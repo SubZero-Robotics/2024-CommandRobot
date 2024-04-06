@@ -30,6 +30,8 @@
 #include <functional>
 #include <map>
 #include <numbers>
+#include <string>
+#include <vector>
 
 #pragma once
 
@@ -367,8 +369,8 @@ constexpr double kVectorSpeed = -0.4;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kAmpLowerSpeed = -0.254 * 1.4;  //.264
-constexpr double kAmpUpperSpeed = -0.168 * 1.4;  //.278
+constexpr double kAmpLowerSpeed = -0.254 * 1.4;  // .264
+constexpr double kAmpUpperSpeed = -0.168 * 1.4;  // .278
 
 // These should match
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT

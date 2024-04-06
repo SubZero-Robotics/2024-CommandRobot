@@ -2,6 +2,7 @@
 #define CONSOLE_LOGGER_H
 
 #include <iostream>
+#include <string>
 
 #include "ILogger.h"
 

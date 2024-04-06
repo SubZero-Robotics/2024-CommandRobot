@@ -5,6 +5,7 @@
 #include <pathplanner/lib/commands/FollowPathHolonomic.h>
 
 #include <functional>
+#include <utility>
 
 #include "Constants.h"
 #include "OnTheFlyFactory.h"
@@ -18,7 +19,7 @@ class PathFactory {
     return GetApproxCommand(locationGetter())
         .AndThen(std::move(prepCommand))
         .AndThen(GetFinalApproachCommand(locationGetter(), drive));
-  };
+  }
 
   static frc2::CommandPtr GetPathFromFinalLocation(
       std::function<AutoConstants::Locations::FinalLocation()> locationGetter,

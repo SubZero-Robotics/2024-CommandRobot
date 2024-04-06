@@ -109,11 +109,12 @@ frc2::CommandPtr LedSubsystem::ScoringSpeaker() {
                                     ColorConstants::kRed, PatternType::SineRoll,
                                     false, 40, false);
            delaySeconds(kConnectorXDelay);
-           m_connectorX.syncZones(LedConstants::kIntakeLedPort,
-                                  {
-                                      (uint8_t)LedZone::LeftClimber,
-                                      (uint8_t)LedZone::RightClimber,
-                                  });
+           m_connectorX.syncZones(
+               LedConstants::kIntakeLedPort,
+               {
+                   static_cast<uint8_t>(LedZone::LeftClimber),
+                   static_cast<uint8_t>(LedZone::RightClimber),
+               });
          })
       .ToPtr();
 }
@@ -134,11 +135,12 @@ frc2::CommandPtr LedSubsystem::ScoringAmp() {
                                     ColorConstants::kBlack, PatternType::SetAll,
                                     true, -1, false);
            delaySeconds(kConnectorXDelay);
-           m_connectorX.syncZones(LedConstants::kIntakeLedPort,
-                                  {
-                                      (uint8_t)LedZone::LeftClimber,
-                                      (uint8_t)LedZone::RightClimber,
-                                  });
+           m_connectorX.syncZones(
+               LedConstants::kIntakeLedPort,
+               {
+                   static_cast<uint8_t>(LedZone::LeftClimber),
+                   static_cast<uint8_t>(LedZone::RightClimber),
+               });
          })
       .ToPtr();
 }
@@ -159,11 +161,12 @@ frc2::CommandPtr LedSubsystem::ScoringSubwoofer() {
                                     ColorConstants::kBlack, PatternType::SetAll,
                                     true, -1, false);
            delaySeconds(kConnectorXDelay);
-           m_connectorX.syncZones(LedConstants::kIntakeLedPort,
-                                  {
-                                      (uint8_t)LedZone::LeftClimber,
-                                      (uint8_t)LedZone::RightClimber,
-                                  });
+           m_connectorX.syncZones(
+               LedConstants::kIntakeLedPort,
+               {
+                   static_cast<uint8_t>(LedZone::LeftClimber),
+                   static_cast<uint8_t>(LedZone::RightClimber),
+               });
          })
       .ToPtr();
 }
@@ -227,11 +230,12 @@ frc2::CommandPtr LedSubsystem::Climbing() {
                                     ColorConstants::kGreen,
                                     PatternType::SineRoll, false, 50, false);
            delaySeconds(kConnectorXDelay);
-           m_connectorX.syncZones(LedConstants::kIntakeLedPort,
-                                  {
-                                      (uint8_t)LedZone::LeftClimber,
-                                      (uint8_t)LedZone::RightClimber,
-                                  });
+           m_connectorX.syncZones(
+               LedConstants::kIntakeLedPort,
+               {
+                   static_cast<uint8_t>(LedZone::LeftClimber),
+                   static_cast<uint8_t>(LedZone::RightClimber),
+               });
          })
       .ToPtr();
 }
@@ -278,8 +282,8 @@ void LedSubsystem::ErrorAsync() {
   delaySeconds(kConnectorXDelay);
   m_connectorX.syncZones(LedConstants::kIntakeLedPort,
                          {
-                             (uint8_t)LedZone::LeftClimber,
-                             (uint8_t)LedZone::RightClimber,
+                             static_cast<uint8_t>(LedZone::LeftClimber),
+                             static_cast<uint8_t>(LedZone::RightClimber),
                          });
 }
 
@@ -342,8 +346,9 @@ frc2::CommandPtr LedSubsystem::setZoneColorPattern(LedZone zone, LedPort port,
                    "ConnectorX",
                    "Attempting to set port %u zone %u to color=%s pattern=%u "
                    "reversed=%u",
-                   (uint8_t)port, zoneIndex, color.HexString().c_str(),
-                   (uint8_t)pattern, reversed);
+                   static_cast<uint8_t>(port), zoneIndex,
+                   color.HexString().c_str(), static_cast<uint8_t>(pattern),
+                   reversed);
                return frc2::InstantCommand(
                           [this, port, color, zoneIndex] {
                             m_connectorX.setColor(port, color, zoneIndex);
@@ -374,8 +379,8 @@ void LedSubsystem::setZoneColorPatternAsync(LedZone zone, LedPort port,
       "ConnectorX",
       "Attempting to set port %u zone %u to color=%s pattern=%u "
       "reversed=%u",
-      (uint8_t)port, zoneIndex, color.HexString().c_str(), (uint8_t)pattern,
-      reversed);
+      static_cast<uint8_t>(port), zoneIndex, color.HexString().c_str(),
+      static_cast<uint8_t>(pattern), reversed);
 
   m_connectorX.setPattern(port, pattern, oneShot, delay, zoneIndex, reversed);
   delaySeconds(kConnectorXDelay);
@@ -401,6 +406,7 @@ void LedSubsystem::syncAllZones() {
   ConsoleLogger::getInstance().logInfo("LedSubsystem", "Syncing all zones %s",
                                        "");
   m_connectorX.syncZones(LedConstants::kIntakeLedPort,
-                         {(uint8_t)LedZone::LeftClimber, (uint8_t)LedZone::Back,
-                          (uint8_t)LedZone::RightClimber});
+                         {static_cast<uint8_t>(LedZone::LeftClimber),
+                          static_cast<uint8_t>(LedZone::Back),
+                          static_cast<uint8_t>(LedZone::RightClimber)});
 }

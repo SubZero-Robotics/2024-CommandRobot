@@ -9,6 +9,8 @@
 
 #include <filesystem>
 #include <functional>
+#include <memory>
+#include <string>
 
 #include "Constants.h"
 #include "utils/ConsoleLogger.h"

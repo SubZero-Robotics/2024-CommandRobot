@@ -292,7 +292,7 @@ struct CachedZone {
            std::string("\tReversed: ") + std::to_string(reversed) + "\n" +
            std::string("\tColor: ") + std::string(color.HexString().c_str()) +
            "\n" + std::string("\tPattern: ") +
-           std::to_string((uint8_t)pattern) + "\n";
+           std::to_string(static_cast<uint8_t>(pattern)) + "\n";
   }
 };
 
@@ -332,7 +332,7 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    * @return PatternType
    */
   inline PatternType lastPattern(LedPort port, uint8_t zoneIndex = 0) const {
-    return m_device.ports[(uint8_t)port].zones[zoneIndex].pattern;
+    return m_device.ports[static_cast<uint8_t>(port)].zones[zoneIndex].pattern;
   }
 
   /**
@@ -401,7 +401,8 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    */
   void setColor(LedPort port, frc::Color8Bit color, uint8_t zoneIndex = 0) {
     setColor(port, color.red, color.green, color.blue, zoneIndex);
-  };
+  }
+
   /**
    * @brief Set the color; must also call a pattern to see it
    *
@@ -416,7 +417,7 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    * @brief Get the current on-board Color, not the cached one
    */
   frc::Color8Bit getCurrentColor(LedPort port, uint8_t zoneIndex = 0) {
-    return m_device.ports[(uint8_t)port].zones[zoneIndex].color;
+    return m_device.ports[static_cast<uint8_t>(port)].zones[zoneIndex].color;
   }
 
   /**
@@ -459,7 +460,9 @@ class ConnectorXBoard : public frc2::SubsystemBase {
    *
    * @return LedPort
    */
-  LedPort getCurrentLedPort() { return (LedPort)m_device.currentPort; }
+  LedPort getCurrentLedPort() {
+    return static_cast<LedPort>(m_device.currentPort);
+  }
 
   CachedPort& getCurrentCachedPort() {
     return m_device.ports[m_device.currentPort];

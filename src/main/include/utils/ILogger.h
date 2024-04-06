@@ -71,7 +71,7 @@ class ILogger {
         return "FATAL";
       default:
         return "INVALID LOG LEVEL";
-    };
+    }
   }
 
   std::string formatString(const std::string format, va_list ap) {
@@ -89,6 +89,6 @@ class ILogger {
   }
 
   inline bool shouldLog(Logging::LogLevel level) {
-    return (int)level >= (int)Logging::kMinLogLevel;
+    return static_cast<int>(level) >= static_cast<int>(Logging::kMinLogLevel);
   }
 };

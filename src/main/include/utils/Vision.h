@@ -8,6 +8,8 @@
 
 #include <limits>
 #include <memory>
+#include <vector>
+#include <utility>
 
 #include "Constants.h"
 

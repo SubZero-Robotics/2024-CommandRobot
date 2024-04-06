@@ -6,6 +6,9 @@
 #include <frc2/command/WaitCommand.h>
 #include <frc2/command/button/CommandXboxController.h>
 
+#include <algorithm>
+#include <vector>
+
 #include "Constants.h"
 #include "commands/FeedCommand.h"
 #include "commands/FlywheelRampCommand.h"
@@ -17,7 +20,6 @@
 #include "subsystems/ArmSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
-
 
 namespace DrivingCommands {
 using namespace AutoConstants;
@@ -73,4 +75,4 @@ static frc2::CommandPtr SnapToAngle(DriveSubsystem* drive) {
         drive->Drive(chassisSpeeds);
       });
 }
-}
+}  // namespace DrivingCommands
