@@ -398,11 +398,39 @@ constexpr double kSpeakerD = 0;
 constexpr double kSpeakerIZone = 0;
 constexpr double kSpeakerFF = 0.000015;
 
+// constexpr double kSpeakerLowerP = 6e-5;
+// constexpr double kSpeakerLowerI = 1e-6;
+// constexpr double kSpeakerLowerD = 0;
+// constexpr double kSpeakerLowerIZone = 0;
+// constexpr double kSpeakerLowerFF = 0.000015;
+// constexpr double kSpeakerLowerVelocity = -1;
+
 constexpr double kAmpP = 6e-5;
 constexpr double kAmpI = 1e-6;
 constexpr double kAmpD = 0.000000;
 constexpr double kAmpIZone = 0;
 constexpr double kAmpFF = 0.000015;
+
+// constexpr double kAmpLowerP = 6e-5;
+// constexpr double kAmpLowerI = 1e-6;
+// constexpr double kAmpLowerD = 0;
+// constexpr double kAmpLowerIZone = 0;
+// constexpr double kAmpLowerFF = 0.000015;
+// constexpr double kAmpLowerVelocity = 0.254;
+
+// constexpr double kSubwooferUpperP = 6e-5;
+// constexpr double kSubwooferUpperI = 1e-6;
+// constexpr double kSubwooferUpperD = 0;
+// constexpr double kSubwooferUpperIZone = 0;
+// constexpr double kSubwooferUpperFF = 0.000015;
+// constexpr double kSubwooferUpperVelocity = 0.75;
+
+// constexpr double kSubwooferLowerP = 6e-5;
+// constexpr double kSubwooferLowerI = 1e-6;
+// constexpr double kSubwooferLowerD = 0;
+// constexpr double kSubwooferLowerIZone = 0;
+// constexpr double kSubwooferLowerFF = 0.000015;
+// constexpr double kSubwooferLowerVelocity = 0.75;
 
 const std::string kSpeakerUpperName = "Speaker Upper";
 const std::string kSpeakerLowerName = "Speaker Lower";
