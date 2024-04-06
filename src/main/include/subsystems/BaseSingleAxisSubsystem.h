@@ -17,6 +17,7 @@
 #include <units/velocity.h>
 
 #include <memory>
+#include <string>
 
 #include "Constants.h"
 #include "subsystems/ISingleAxisSubsystem.h"
@@ -125,20 +126,27 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
 
     else if (AtMax()) {
       if (_log) ConsoleLogger::getInstance().logInfo(_prefix, "AT MAX %s", "");
+
       if (speed > 0) {
-        if (_log)
+        if (_log) {
           ConsoleLogger::getInstance().logVerbose(
               _prefix, "SETTING SPEED TO: %.2f", speed);
+        }
+
         _motor.Set(speed);
         return;
       }
 
-      if (_log)
+      if (_log) {
         ConsoleLogger::getInstance().logVerbose(
             _prefix, "NOT MOVING; AT MAX; speed=%.2f", speed);
+      }
+
       _motor.Set(0);
       return;
-    } else {
+    }
+
+    else {
       if (_log)
         ConsoleLogger::getInstance().logVerbose(
             _prefix, "SETTING SPEED TO: %.2f", speed);

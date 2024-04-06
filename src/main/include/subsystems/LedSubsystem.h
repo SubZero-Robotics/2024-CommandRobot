@@ -9,7 +9,10 @@
 #include <frc2/command/WaitCommand.h>
 
 #include <chrono>
+#include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
 #include "Constants.h"
 #include "moduledrivers/ConnectorX.h"

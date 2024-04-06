@@ -5,6 +5,7 @@
 #include <subsystems/BaseSingleAxisSubsystem.h>
 
 #include <memory>
+#include <string>
 
 #include "Constants.h"
 #include "utils/ConsoleLogger.h"

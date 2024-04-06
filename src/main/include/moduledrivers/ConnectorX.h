@@ -11,7 +11,9 @@
 
 #include <chrono>
 #include <memory>
+#include <string>
 #include <thread>
+#include <vector>
 
 #include "Constants.h"
 #include "utils/ConsoleLogger.h"
@@ -278,7 +280,7 @@ struct CachedZone {
   frc::Color8Bit color;
   PatternType pattern;
 
-  CachedZone(Commands::NewZone zone) {
+  explicit CachedZone(Commands::NewZone zone) {
     offset = zone.offset;
     count = zone.count;
     reversed = false;
@@ -309,7 +311,8 @@ struct CachedDevice {
 
 class ConnectorXBoard : public frc2::SubsystemBase {
  public:
-  ConnectorXBoard(uint8_t slaveAddress, frc::I2C::Port port = frc::I2C::kMXP);
+  explicit ConnectorXBoard(uint8_t slaveAddress,
+                           frc::I2C::Port port = frc::I2C::kMXP);
 
   /**
    * @brief Start communication with the controller

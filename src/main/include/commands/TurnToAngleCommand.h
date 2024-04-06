@@ -13,6 +13,9 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 
+#include <functional>
+#include <memory>
+
 #include "subsystems/DriveSubsystem.h"
 
 class TurnToAngle : public frc2::CommandHelper<frc2::Command, TurnToAngle> {
