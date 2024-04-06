@@ -16,4 +16,6 @@ modifiableFileExclude {
 
 generatedFileExclude {
    \.json$
+   \.auto$
+   \.path$
 }
