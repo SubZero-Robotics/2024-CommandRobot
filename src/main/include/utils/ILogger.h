@@ -1,16 +1,14 @@
 #pragma once
 
+#include <fmt/format.h>
 #include <frc/geometry/Pose2d.h>
 #include <wpi/json.h>
 #include <wpi/sendable/Sendable.h>
 
 #include <cstdarg>
 #include <string>
-#include <fmt/format.h>
 
 #include "UtilConstants.h"
-
-using namespace Logging;
 
 class ILogger {
  public:
@@ -57,7 +55,9 @@ class ILogger {
   virtual void logFatal(std::string key, wpi::Sendable* val) = 0;
 
  protected:
-  std::string levelToString(LogLevel level) const {
+  std::string levelToString(Logging::LogLevel level) const {
+    using namespace Logging;
+
     switch (level) {
       case LogLevel::VERBOSE:
         return "VERBOSE";
@@ -71,7 +71,7 @@ class ILogger {
         return "FATAL";
       default:
         return "INVALID LOG LEVEL";
-    };
+    }
   }
 
   std::string formatString(const std::string format, va_list ap) {
@@ -88,7 +88,7 @@ class ILogger {
     return json.dump();
   }
 
-  inline bool shouldLog(LogLevel level) {
-    return (int)level >= (int)kMinLogLevel;
+  inline bool shouldLog(Logging::LogLevel level) {
+    return static_cast<int>(level) >= static_cast<int>(Logging::kMinLogLevel);
   }
 };

@@ -147,8 +147,9 @@ void MAXSwerveModule::SetDesiredState(
       frc::SwerveModuleState::Optimize(correctedDesiredState, GetRotation())};
 
   // Command driving and turning SPARKS MAX towards their respective setpoints.
-  m_drivingPIDController.SetReference((double)optimizedDesiredState.speed,
-                                      rev::CANSparkMax::ControlType::kVelocity);
+  m_drivingPIDController.SetReference(
+      static_cast<double>(optimizedDesiredState.speed),
+      rev::CANSparkMax::ControlType::kVelocity);
   m_turningPIDController.SetReference(
       optimizedDesiredState.angle.Radians().value(),
       rev::CANSparkMax::ControlType::kPosition);
@@ -164,8 +165,8 @@ void MAXSwerveModule::SetDesiredState(
 void MAXSwerveModule::simUpdateDrivePosition(
     const frc::SwerveModuleState& desiredState) {
   m_simDriveEncoderVelocity = desiredState.speed;
-  m_simDriveEncoderPosition +=
-      units::meter_t{m_simDriveEncoderVelocity.value() / DriveConstants::kLoopsPerSecond};
+  m_simDriveEncoderPosition += units::meter_t{
+      m_simDriveEncoderVelocity.value() / DriveConstants::kLoopsPerSecond};
 }
 
 void MAXSwerveModule::ResetEncoders() { m_drivingEncoder.SetPosition(0); }

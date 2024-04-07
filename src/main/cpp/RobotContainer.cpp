@@ -31,7 +31,6 @@
 #include "commands/IntakeOutCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
-#include "utils/CommandUtils.h"
 #include "utils/InputUtils.h"
 #include "utils/ShuffleboardLogger.h"
 
@@ -69,6 +68,10 @@ void RobotContainer::RegisterAutos() {
   pathplanner::NamedCommands::registerCommand(AutoConstants::kLedFunniName,
                                               m_leds.Intaking());
   pathplanner::NamedCommands::registerCommand(
+      AutoConstants::kShootSubwooferName,
+      ScoringCommands::ScoreShoot([] { return ScoringDirection::Subwoofer; },
+                                  &m_scoring, &m_intake, &m_arm));
+  pathplanner::NamedCommands::registerCommand(
       AutoConstants::kScoreSubwooferName,
       ScoringCommands::Score([] { return ScoringDirection::Subwoofer; },
                              &m_scoring, &m_intake, &m_arm));
@@ -82,7 +85,7 @@ void RobotContainer::RegisterAutos() {
         ConsoleLogger::getInstance().logVerbose("Autos", "Intaking %s", "");
       })
           .ToPtr()
-          .AndThen(IntakingCommands::Intake2(&m_intake, &m_scoring)));
+          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
   using namespace AutoConstants;
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoType::LeaveWing);
@@ -93,6 +96,7 @@ void RobotContainer::RegisterAutos() {
   m_chooser.AddOption("2 Note Center Note Under Stage",
                       AutoType::TwoNoteCenter);
   m_chooser.AddOption("2 Note Source Side", AutoType::TwoNoteSource);
+  m_chooser.AddOption("3 Note Center Note 3 + 4", AutoType::ThreeNoteCenter);
 
   m_chooser.AddOption("Empty Auto", AutoType::EmptyAuto);
 
@@ -128,7 +132,7 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.B().OnTrue(
       m_leds.Intaking()
           .AndThen(m_leds.AngryFace())
-          .AndThen(IntakingCommands::Intake2(&m_intake, &m_scoring))
+          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
           .AndThen((m_leds.Loaded().AndThen(m_leds.HappyFace())).Unless([this] {
             return !m_intake.NotePresent();
           })));
@@ -322,9 +326,14 @@ void RobotContainer::ResetPose() {
   m_drive.ResetOdometry(frc::Pose2d{0_m, 0_m, 0_rad});
 }
 
+void RobotContainer::StopMotors() {
+  m_intake.Stop();
+  m_scoring.Stop();
+}
+
 void RobotContainer::DisableSubsystems() { m_arm.DisablePid(); }
 
-void RobotContainer::Initialize() { m_arm.OnInit(); };
+void RobotContainer::Initialize() { m_arm.OnInit(); }
 
 void RobotContainer::Periodic() {
   frc::SmartDashboard::PutBoolean("HAS TARGET LOCK", tracker.HasTargetLock());

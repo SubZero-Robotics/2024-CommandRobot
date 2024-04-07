@@ -5,6 +5,7 @@
 #include <subsystems/BaseSingleAxisSubsystem.h>
 
 #include <memory>
+#include <string>
 
 #include "Constants.h"
 #include "utils/ConsoleLogger.h"
@@ -22,8 +23,6 @@ class ClimbSubsystem
 
   double GetCurrentPosition() override {
     auto curPosition = _enc.GetPosition() * _config.distancePerRevolution;
-    // ConsoleLogger::getInstance().logVerbose("Climbing Subsystem", "current position
-    // %f", curPosition);
     return curPosition;
   }
 

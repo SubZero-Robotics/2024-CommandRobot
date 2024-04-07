@@ -6,6 +6,8 @@
 #include <units/angle.h>
 #include <units/angular_velocity.h>
 
+#include <string>
+
 #include "utils/ConsoleLogger.h"
 #include "utils/ShuffleboardLogger.h"
 

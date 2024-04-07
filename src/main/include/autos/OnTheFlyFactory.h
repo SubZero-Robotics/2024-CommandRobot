@@ -4,13 +4,13 @@
 
 #include "Constants.h"
 
-using namespace AutoConstants::Locations;
-
 class OnTheFlyFactory {
  public:
   // Method to take in a final location
   // and return a approx location Pose2d
-  static const frc::Pose2d& GetApproxLocation(FinalLocation location) {
+  static const frc::Pose2d& GetApproxLocation(AutoConstants::Locations::FinalLocation location) {
+    using namespace AutoConstants::Locations;
+
     switch (location) {
       case FinalLocation::Subwoofer:
       case FinalLocation::Amp:

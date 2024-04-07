@@ -37,8 +37,8 @@ void ConnectorX::ConnectorXBoard::configureDigitalPin(DigitalPort port,
                                                       PinMode mode) {
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::DigitalSetup;
-  cmd.commandData.commandDigitalSetup = {.port = (uint8_t)port,
-                                         .mode = (uint8_t)mode};
+  cmd.commandData.commandDigitalSetup = {.port = static_cast<uint8_t>(port),
+                                         .mode = static_cast<uint8_t>(mode)};
 
   sendCommand(cmd);
 }
@@ -47,8 +47,8 @@ void ConnectorX::ConnectorXBoard::writeDigitalPin(DigitalPort port,
                                                   bool value) {
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::DigitalWrite;
-  cmd.commandData.commandDigitalWrite = {.port = (uint8_t)port,
-                                         .value = (uint8_t)value};
+  cmd.commandData.commandDigitalWrite = {.port = static_cast<uint8_t>(port),
+                                         .value = static_cast<uint8_t>(value)};
 
   sendCommand(cmd);
 }
@@ -56,7 +56,7 @@ void ConnectorX::ConnectorXBoard::writeDigitalPin(DigitalPort port,
 bool ConnectorX::ConnectorXBoard::readDigitalPin(DigitalPort port) {
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::DigitalRead;
-  cmd.commandData.commandDigitalRead = {.port = (uint8_t)port};
+  cmd.commandData.commandDigitalRead = {.port = static_cast<uint8_t>(port)};
 
   Commands::Response res = sendCommand(cmd, true);
   return res.responseData.responseDigitalRead.value;
@@ -65,7 +65,7 @@ bool ConnectorX::ConnectorXBoard::readDigitalPin(DigitalPort port) {
 uint16_t ConnectorX::ConnectorXBoard::readAnalogPin(AnalogPort port) {
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::ReadAnalog;
-  cmd.commandData.commandReadAnalog = {.port = (uint8_t)port};
+  cmd.commandData.commandReadAnalog = {.port = static_cast<uint8_t>(port)};
 
   Commands::Response res = sendCommand(cmd, true);
   return res.responseData.responseReadAnalog.value;
@@ -158,13 +158,13 @@ void ConnectorX::ConnectorXBoard::createZones(
 }
 
 void ConnectorX::ConnectorXBoard::setLedPort(LedPort port) {
-  if ((uint8_t)port != m_device.currentPort) {
+  if (static_cast<uint8_t>(port) != m_device.currentPort) {
     ConsoleLogger::getInstance().logVerbose(
-        "ConnectorX", "Setting new LED port to %u", (uint8_t)port);
-    m_device.currentPort = (uint8_t)port;
+        "ConnectorX", "Setting new LED port to %u", static_cast<uint8_t>(port));
+    m_device.currentPort = static_cast<uint8_t>(port);
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::SetLedPort;
-    cmd.commandData.commandSetLedPort.port = (uint8_t)port;
+    cmd.commandData.commandSetLedPort.port = static_cast<uint8_t>(port);
     sendCommand(cmd);
   }
 }
@@ -235,13 +235,14 @@ void ConnectorX::ConnectorXBoard::setPattern(LedPort port, PatternType pattern,
   delaySeconds(kConnectorXDelay);
 
   if (zone.pattern != pattern) {
-    ConsoleLogger::getInstance().logVerbose(
-        "ConnectorX", "Setting new pattern to %u", (uint8_t)pattern);
+    ConsoleLogger::getInstance().logVerbose("ConnectorX",
+                                            "Setting new pattern to %u",
+                                            static_cast<uint8_t>(pattern));
     zone.pattern = pattern;
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::Pattern;
-    cmd.commandData.commandPattern.pattern = (uint8_t)pattern;
-    cmd.commandData.commandPattern.oneShot = (uint8_t)oneShot;
+    cmd.commandData.commandPattern.pattern = static_cast<uint8_t>(pattern);
+    cmd.commandData.commandPattern.oneShot = static_cast<uint8_t>(oneShot);
     cmd.commandData.commandPattern.delay = delay;
     sendCommand(cmd);
   }
@@ -334,7 +335,7 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
   response.commandType = command.commandType;
 
   uint8_t sendBuf[sizeof(CommandData) + 1];
-  sendBuf[0] = (uint8_t)command.commandType;
+  sendBuf[0] = static_cast<uint8_t>(command.commandType);
 
   switch (command.commandType) {
     case CommandType::On:
@@ -420,7 +421,7 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
     // _i2c->WriteBulk(sendBuf, sendLen + 1);
     // bool failure = _i2c->WriteBulk(sendBuf, sendLen + 1);
 
-// int result;
+    // int result;
     int result =
         HAL_WriteI2C(HAL_I2C_kMXP, _slaveAddress, sendBuf, sendLen + 1);
 
@@ -440,7 +441,8 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
 
   ConsoleLogger::getInstance().logVerbose("ConnectorX", "UNREACHABLE %s", "");
 
-  _i2c->Transaction(sendBuf, sendLen + 1, (uint8_t*)&response.responseData,
+  _i2c->Transaction(sendBuf, sendLen + 1,
+                    reinterpret_cast<uint8_t*>(&response.responseData),
                     recSize);
   return response;
 }

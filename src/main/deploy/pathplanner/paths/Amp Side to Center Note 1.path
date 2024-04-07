@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 8.113590578320974,
-        "y": 7.446855402616658
+        "x": 8.5,
+        "y": 7.3
       },
       "prevControl": {
-        "x": 7.113590578320974,
-        "y": 7.446855402616658
+        "x": 7.5,
+        "y": 7.3
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,7 +39,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.85,
+      "waypointRelativePos": 0.7,
       "command": {
         "type": "parallel",
         "data": {

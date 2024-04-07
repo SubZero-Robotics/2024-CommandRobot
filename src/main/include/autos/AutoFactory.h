@@ -9,11 +9,11 @@
 
 #include <filesystem>
 #include <functional>
+#include <memory>
+#include <string>
 
 #include "Constants.h"
 #include "utils/ConsoleLogger.h"
-
-using namespace AutoConstants;
 
 namespace AutoFactory {
 frc2::CommandPtr GetEmptyCommand() { return frc2::WaitCommand(15_s).ToPtr(); }
@@ -43,7 +43,9 @@ frc2::CommandPtr PathPlannerPathFromName(std::string autoName) {
   return pathplanner::PathPlannerAuto(autoName).ToPtr();
 }
 
-frc2::CommandPtr GetAuto(AutoType type) {
+frc2::CommandPtr GetAuto(AutoConstants::AutoType type) {
+  using namespace AutoConstants;
+
   switch (type) {
     case AutoType::EmptyAuto:
       return GetEmptyCommand();
@@ -59,6 +61,8 @@ frc2::CommandPtr GetAuto(AutoType type) {
       return PathPlannerPathFromName("2 Note Center Note 3");
     case AutoType::TwoNoteSource:
       return PathPlannerPathFromName("2 Note Source Side");
+    case AutoType::ThreeNoteCenter:
+      return PathPlannerPathFromName("3 Note Center Note 3 + 4");
     case AutoType::LeaveWing:
       return PathPlannerPathFromName(AutoConstants::kDefaultAutoName);
     default:

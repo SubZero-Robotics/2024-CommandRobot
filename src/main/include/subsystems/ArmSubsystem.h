@@ -4,8 +4,6 @@
 #include "subsystems/BaseSingleAxisSubsystem2.h"
 #include "utils/PidMotorController.h"
 
-using namespace ScoringConstants;
-
 class ArmSubsystem : public RotationalSingleAxisSubsystem<
                          rev::CANSparkMax, rev::SparkPIDController,
                          rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder> {
@@ -46,39 +44,24 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
     RotationalSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
                                   rev::SparkRelativeEncoder,
                                   rev::SparkAbsoluteEncoder>::Periodic();
-
-    // armTuner.UpdateFromShuffleboard();
   }
 
  private:
-  // :((((
-  //   ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 m_config{
-  //       frc::PIDController{1, 0, 0},
-  //       -107_deg,
-  //       263_deg,
-  //       360_deg,
-  //       10_deg_per_s,
-  //       1.0,
-  //       std::nullopt,
-  //       std::nullopt,
-  //       false};
   rev::CANSparkMax m_SpinnyBoi{CANConstants::kArmSpinnyBoiId,
                                rev::CANSparkLowLevel::MotorType::kBrushless};
   rev::SparkPIDController m_PidController = m_SpinnyBoi.GetPIDController();
   rev::SparkRelativeEncoder m_enc = m_SpinnyBoi.GetEncoder();
   rev::SparkAbsoluteEncoder m_absEnc = m_SpinnyBoi.GetAbsoluteEncoder();
-  PidSettings armPidSettings = {// TODO: Constants
-                                .p = 0.075,
-                                .i = 0,
-                                .d = 0,
-                                .iZone = 0,
-                                .ff = 0};
+  PidSettings armPidSettings = {ArmConstants::kArmP, ArmConstants::kArmI,
+                                ArmConstants::kArmD, ArmConstants::kArmIZone,
+                                ArmConstants::kArmFF};
   PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      upperController{"Arm",          m_SpinnyBoi, m_enc,      m_PidController,
-                      armPidSettings, &m_absEnc,   kMaxSpinRpm};
-  // PidMotorControllerTuner<rev::CANSparkMax, rev::SparkPIDController,
-  //                         rev::SparkRelativeEncoder,
-  //                         rev::SparkAbsoluteEncoder>
-  // armTuner{upperController};
+      upperController{"Arm",
+                      m_SpinnyBoi,
+                      m_enc,
+                      m_PidController,
+                      armPidSettings,
+                      &m_absEnc,
+                      ScoringConstants::kMaxSpinRpm};
 };
