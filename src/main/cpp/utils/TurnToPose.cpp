@@ -1,5 +1,7 @@
 #include "utils/TurnToPose.h"
 
+#include <frc/smartdashboard/SmartDashboard.h>
+
 TurnToPose::TurnToPose(std::function<frc::Pose2d()> poseGetter)
     : m_poseGetter{poseGetter} {
   using namespace AutoConstants;
@@ -8,9 +10,9 @@ TurnToPose::TurnToPose(std::function<frc::Pose2d()> poseGetter)
   auto xController = frc::PIDController(1, 0, 0);
   auto yController = frc::PIDController(1, 0, 0);
   auto profile = frc::TrapezoidProfile<units::radians>::Constraints(
-      AutoConstants::kMaxAngularSpeed, AutoConstants::kMaxAngularAcceleration);
-  auto profiledController = frc::ProfiledPIDController<units::radians>(
-      kSnapToAngleP, kSnapToAngleI, kSnapToAngleD, profile);
+      960_deg_per_s, 1200_deg_per_s_sq);
+  auto profiledController =
+      frc::ProfiledPIDController<units::radians>(4, 0, kSnapToAngleD, profile);
 
   // TODO: use constants
   m_driveController = std::make_unique<frc::HolonomicDriveController>(
@@ -21,8 +23,23 @@ TurnToPose::TurnToPose(std::function<frc::Pose2d()> poseGetter)
 
 void TurnToPose::Update() {
   auto currentPose = m_poseGetter();
-  m_speeds = m_driveController->Calculate(currentPose, m_targetPose, 0_mps,
-                                          m_targetPose.Rotation());
+  auto diff = currentPose.Translation() - m_targetPose.Translation();
+
+  // double ratio = diff.X().value() / diff.Y().value();
+  auto newDegree = units::radian_t(atan2(diff.Y().value(), diff.X().value()))
+                       .convert<units::degree>();
+
+  frc::SmartDashboard::PutNumber("newDegree deg", newDegree.value());
+
+  auto angleOffset = m_targetPose.Rotation().Degrees() + newDegree;
+
+  frc::SmartDashboard::PutNumber("target deg", angleOffset.value());
+
+  frc::Pose2d newTargetPose(m_targetPose.Translation(),
+                            frc::Rotation2d(angleOffset));
+
+  m_speeds = m_driveController->Calculate(currentPose, newTargetPose, 0_mps,
+                                          newTargetPose.Rotation());
 }
 
 void TurnToPose::SetTargetPose(frc::Pose2d pose) {
@@ -37,8 +54,8 @@ frc::ChassisSpeeds TurnToPose::BlendWithInput(const frc::ChassisSpeeds& other,
   frc::ChassisSpeeds speeds{
       .vx = other.vx, .vy = other.vy, .omega = other.omega};
 
-  speeds.omega =
-      (speeds.omega * (1 - correctionFactor)) + (m_speeds.omega * correctionFactor);
+  speeds.omega = (speeds.omega * (1 - correctionFactor)) +
+                 (m_speeds.omega * correctionFactor);
 
   return speeds;
 }

@@ -53,7 +53,7 @@ RobotContainer::RobotContainer() {
             OIConstants::kDriveDeadband);
 
         // TODO: toggle mode instead of always true
-        TurnToPose* turnToPose = false ? &m_turnToPose : nullptr;
+        TurnToPose* turnToPose = true ? &m_turnToPose : nullptr;
 
         m_drive.Drive(
             -units::meters_per_second_t{axes.y},

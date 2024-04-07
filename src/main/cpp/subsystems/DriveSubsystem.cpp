@@ -116,7 +116,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
 
   if (turnToPose) {
     // TODO: use constant
-    joystickSpeeds = turnToPose->BlendWithInput(joystickSpeeds, 0.5);
+    joystickSpeeds = turnToPose->BlendWithInput(joystickSpeeds, 0.33);
   }
 
   auto states = m_driveKinematics.ToSwerveModuleStates(
