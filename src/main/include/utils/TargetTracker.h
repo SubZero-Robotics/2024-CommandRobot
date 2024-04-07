@@ -8,8 +8,6 @@
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 
-using namespace pathplanner;
-
 const pathplanner::PathConstraints kMovementConstraints{
     3.0_mps, 1.5_mps_sq, 540_deg_per_s, 720_deg_per_s_sq};
 const std::string kLimelightName = "limelight";
