@@ -121,6 +121,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
    */
   frc::Pose2d GetPose();
 
+  frc::Field2d* GetField() { return &m_field; }
+
   /**
    * Resets the odometry to the specified pose.
    *
@@ -179,9 +181,9 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // hal::SimDouble m_gyroSimAngle =
   //     HALSIM_GetSimValueHandle(m_gyroSimHandle, "Yaw");
 
-   ctre::phoenix6::sim::Pigeon2SimState &m_gyro1Sim = m_gyro1.GetSimState();
+  ctre::phoenix6::sim::Pigeon2SimState& m_gyro1Sim = m_gyro1.GetSimState();
 
-    // time last loop took, "deltatime"
+  // time last loop took, "deltatime"
   units::second_t driveLoopTime = DriveConstants::kLoopTime;
 
   // Slew rate filter variables for controlling lateral acceleration

@@ -1,9 +1,12 @@
 #include "utils/TurnToPose.h"
 
+#include <frc/smartdashboard/Field2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/trajectory/TrajectoryGenerator.h>
 
-TurnToPose::TurnToPose(std::function<frc::Pose2d()> poseGetter)
-    : m_poseGetter{poseGetter} {
+TurnToPose::TurnToPose(std::function<frc::Pose2d()> poseGetter,
+                       std::function<frc::Field2d*()> fieldGetter)
+    : m_poseGetter{poseGetter}, m_fieldGetter{fieldGetter} {
   using namespace AutoConstants;
 
   // TODO: use constants
@@ -12,7 +15,7 @@ TurnToPose::TurnToPose(std::function<frc::Pose2d()> poseGetter)
   auto profile = frc::TrapezoidProfile<units::radians>::Constraints(
       960_deg_per_s, 1200_deg_per_s_sq);
   auto profiledController =
-      frc::ProfiledPIDController<units::radians>(4, 0, kSnapToAngleD, profile);
+      frc::ProfiledPIDController<units::radians>(5, 0, kSnapToAngleD, profile);
 
   // TODO: use constants
   m_driveController = std::make_unique<frc::HolonomicDriveController>(
@@ -37,6 +40,9 @@ void TurnToPose::Update() {
 
   frc::Pose2d newTargetPose(m_targetPose.Translation(),
                             frc::Rotation2d(angleOffset));
+
+  auto* field = m_fieldGetter();
+  field->GetObject("pose_target")->SetPose(m_targetPose);
 
   m_speeds = m_driveController->Calculate(currentPose, newTargetPose, 0_mps,
                                           newTargetPose.Rotation());

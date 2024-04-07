@@ -95,7 +95,8 @@ class RobotContainer {
                          m_operatorController};
 
   TargetTracker tracker{-25_deg, 24_in, 0.6, &m_intake, &m_scoring, &m_drive};
-  TurnToPose m_turnToPose{[this] { return m_drive.GetPose(); }};
+  TurnToPose m_turnToPose{[this] { return m_drive.GetPose(); },
+                          [this] { return m_drive.GetField(); }};
 
   void ConfigureAutoBindings();
 #endif

@@ -7,6 +7,7 @@
 #include <frc/geometry/Rotation2d.h>
 #include <frc/kinematics/ChassisSpeeds.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
+#include <frc/smartdashboard/Field2d.h>
 
 #include <functional>
 #include <memory>
@@ -15,7 +16,8 @@
 
 class TurnToPose {
  public:
-  explicit TurnToPose(std::function<frc::Pose2d()> poseGetter);
+  explicit TurnToPose(std::function<frc::Pose2d()> poseGetter,
+                      std::function<frc::Field2d*()> fieldGetter);
 
   void Update();
 
@@ -35,6 +37,7 @@ class TurnToPose {
 
  private:
   std::function<frc::Pose2d()> m_poseGetter;
+  std::function<frc::Field2d*()> m_fieldGetter;
   std::unique_ptr<frc::HolonomicDriveController> m_driveController;
   frc::Pose2d m_startPose;
   frc::Pose2d m_targetPose;
