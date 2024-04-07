@@ -3,6 +3,7 @@
 #include <frc2/command/DeferredCommand.h>
 
 #include "commands/DriveVelocityCommand.h"
+#include "utils/Commands/IntakeCommands.h"
 
 TargetTracker::TargetTracker(units::degree_t cameraAngle,
                              units::inch_t cameraLensHeight,
@@ -84,7 +85,7 @@ frc2::CommandPtr TargetTracker::IntakeTarget() {
                return (MoveToIntakeStaging().AndThen(
                            DriveVelocity(0_deg, 2_mps, m_drive)
                                .ToPtr()
-                               .AlongWith(IntakingCommands::Intake2(m_intake,
+                               .AlongWith(IntakingCommands::Intake(m_intake,
                                                                     m_scoring))
                                .WithTimeout(5_s)))
                    .WithTimeout(20_s)
@@ -110,8 +111,7 @@ std::optional<frc::Pose2d> TargetTracker::GetTargetStagingPose() {
   units::degree_t verticalDelta = targetOffsetVertical - m_cameraAngle;
   units::inch_t heightDelta = -m_cameraHeight;
   units::radian_t verticalAngle = verticalDelta.convert<units::radian>();
-  units::radian_t horizontalAngle =
-      bestTarget.centerX.convert<units::radian>();
+  units::radian_t horizontalAngle = bestTarget.centerX.convert<units::radian>();
   units::inch_t distance = heightDelta / (tan(verticalAngle.value()));
   distance -= kDistanceGap;
 

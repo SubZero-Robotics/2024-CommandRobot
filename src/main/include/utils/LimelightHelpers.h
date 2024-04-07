@@ -29,6 +29,10 @@
 #include <iostream>
 #include <vector>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 namespace LimelightHelpers {
 inline std::string sanitizeName(const std::string &name) {
   if (name == "") {

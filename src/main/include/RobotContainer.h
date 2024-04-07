@@ -31,6 +31,7 @@
 #include "utils/Commands/IntakeCommands.h"
 #include "utils/Commands/ScoreCommands.h"
 #include "utils/Vision.h"
+#include "utils/TargetTracker.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
