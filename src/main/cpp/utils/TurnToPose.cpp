@@ -34,10 +34,11 @@ frc::ChassisSpeeds TurnToPose::GetSpeedCorrection() { return m_speeds; }
 
 frc::ChassisSpeeds TurnToPose::BlendWithInput(const frc::ChassisSpeeds& other,
                                               double correctionFactor) {
-  frc::ChassisSpeeds speeds{other};
+  frc::ChassisSpeeds speeds{
+      .vx = other.vx, .vy = other.vy, .omega = other.omega};
 
   speeds.omega =
-      speeds.omega * (1 - correctionFactor) + m_speeds.omega * correctionFactor;
+      (speeds.omega * (1 - correctionFactor)) + (m_speeds.omega * correctionFactor);
 
   return speeds;
 }
