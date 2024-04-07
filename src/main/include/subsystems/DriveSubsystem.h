@@ -19,6 +19,7 @@
 #include <networktables/StructArrayTopic.h>
 
 #include <ctre/phoenix6/Pigeon2.hpp>
+#include <ctre/phoenix6/sim/Pigeon2SimState.hpp>
 #include <string>
 
 #include "Constants.h"
@@ -173,12 +174,14 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   ctre::phoenix6::hardware::Pigeon2 m_gyro1{CANConstants::kPigeonCanId1, "rio"};
 
-  HAL_SimDeviceHandle m_gyroSimHandle =
-      HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
-  hal::SimDouble m_gyroSimAngle =
-      HALSIM_GetSimValueHandle(m_gyroSimHandle, "Yaw");
+  // HAL_SimDeviceHandle m_gyroSimHandle =
+  //     HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
+  // hal::SimDouble m_gyroSimAngle =
+  //     HALSIM_GetSimValueHandle(m_gyroSimHandle, "Yaw");
 
-  // time last loop took, "deltatime"
+   ctre::phoenix6::sim::Pigeon2SimState &m_gyro1Sim = m_gyro1.GetSimState();
+
+    // time last loop took, "deltatime"
   units::second_t driveLoopTime = DriveConstants::kLoopTime;
 
   // Slew rate filter variables for controlling lateral acceleration

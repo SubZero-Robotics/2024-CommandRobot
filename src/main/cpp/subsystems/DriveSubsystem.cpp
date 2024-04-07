@@ -67,14 +67,18 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
 
 void DriveSubsystem::SimulationPeriodic() {
   logDrivebase();
+
   frc::ChassisSpeeds chassisSpeeds = m_driveKinematics.ToChassisSpeeds(
       m_frontLeft.GetState(), m_frontRight.GetState(), m_rearLeft.GetState(),
       m_rearRight.GetState());
-  m_gyroSimAngle.Set(m_gyro1.GetAngle() +
-                     (chassisSpeeds.omega.convert<units::deg_per_s>().value() *
-                      DriveConstants::kLoopTime.value()));
-  poseEstimator.Update(-GetHeading().Degrees(), GetModulePositions());
 
+  m_gyro1Sim.SetSupplyVoltage(frc::RobotController::GetBatteryVoltage());
+  m_gyro1Sim.SetRawYaw(
+      GetHeading().Degrees() +
+      units::degree_t(chassisSpeeds.omega.convert<units::deg_per_s>().value() *
+                      DriveConstants::kLoopTime.value()));
+
+  poseEstimator.Update(GetHeading().Degrees(), GetModulePositions());
   m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
 }
 
