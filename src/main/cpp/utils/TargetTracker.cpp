@@ -117,7 +117,7 @@ std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose() {
   frc::Rotation2d rotDelta = frc::Rotation2d(bestTarget.centerX);
 
   auto xTransformation = distance * cos(horizontalAngle.value());
-  auto yTransformation = distance * sin(verticalAngle.value());
+  auto yTransformation = distance * sin(horizontalAngle.value());
   frc::Transform2d transformDelta =
       frc::Transform2d(xTransformation, yTransformation, rotDelta);
 
