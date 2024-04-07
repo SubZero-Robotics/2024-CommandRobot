@@ -348,14 +348,11 @@ void RobotContainer::Periodic() {
   if (m_intake.NotePresent()) {
     // Note is present, get ready to score it
 
-    auto currentPose = m_drive.GetPose();
-    auto targetRotation = DrivingCommands::RotationFromProximity(currentPose);
-    auto targetPose =
-        frc::Pose2d(currentPose.Translation(), frc::Rotation2d(targetRotation));
+    auto targetPose = DrivingCommands::FixtureFromProximity(m_drive.GetPose());
     m_turnToPose.SetTargetPose(targetPose);
 
     frc::SmartDashboard::PutNumber("TURN TO POSE TARGET deg",
-                                   targetRotation.value());
+                                   targetPose.Rotation().Degrees().value());
   } else {
     auto targetPose = tracker.GetBestTargetPose();
 

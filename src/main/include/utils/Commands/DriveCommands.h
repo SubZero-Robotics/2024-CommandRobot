@@ -26,13 +26,15 @@ using namespace AutoConstants;
 struct RelativeLocation {
   units::meter_t hypotDistance;
   units::degree_t desiredRotation;
+  frc::Pose2d location;
 };
 
-static units::degree_t RotationFromProximity(frc::Pose2d currentPose) {
+static std::vector<RelativeLocation> GetDistancesToFixtures(
+    frc::Pose2d currentPose) {
   std::vector<RelativeLocation> locationDistances;
   auto alliance = frc::DriverStation::GetAlliance();
   if (!alliance) {
-    return 0_deg;
+    return {};
   }
   auto side = alliance.value();
   auto& fixureLocations = side == frc::DriverStation::Alliance::kRed
@@ -46,14 +48,34 @@ static units::degree_t RotationFromProximity(frc::Pose2d currentPose) {
                    auto distance = std::hypot(dif.X().value(), dif.Y().value());
                    return RelativeLocation{
                        .hypotDistance = units::meter_t(distance),
-                       .desiredRotation = loc.desiredRotation};
+                       .desiredRotation = loc.desiredRotation,
+                       .location = loc.location};
                  });
+
+  return locationDistances;
+}
+
+static RelativeLocation GetClosestFixture(
+    std::vector<RelativeLocation>& locationDistances) {
   auto it = std::min_element(
       locationDistances.begin(), locationDistances.end(),
       [](const RelativeLocation& a, const RelativeLocation& b) {
         return a.hypotDistance < b.hypotDistance;
       });
-  return it->desiredRotation;
+
+  return *it;
+}
+
+static frc::Pose2d FixtureFromProximity(frc::Pose2d currentPose) {
+  auto locationDistances = GetDistancesToFixtures(currentPose);
+
+  return GetClosestFixture(locationDistances).location;
+}
+
+static units::degree_t RotationFromProximity(frc::Pose2d currentPose) {
+  auto locationDistances = GetDistancesToFixtures(currentPose);
+
+  return GetClosestFixture(locationDistances).desiredRotation;
 }
 
 static frc2::CommandPtr SnapToAngle(DriveSubsystem* drive) {
