@@ -52,10 +52,10 @@ bool TargetTracker::HasTargetLock() {
   return bestTarget && bestTarget.value().confidence >= m_confidenceThreshold;
 }
 
-frc2::CommandPtr TargetTracker::MoveToIntakeStaging() {
+frc2::CommandPtr TargetTracker::MoveToIntakePose() {
   return frc2::DeferredCommand(
              [this] {
-               auto targetPose = GetTargetStagingPose();
+               auto targetPose = GetBestTargetPose();
 
                if (!targetPose) {
                  return frc2::InstantCommand([] {}).ToPtr();
@@ -82,12 +82,10 @@ frc2::CommandPtr TargetTracker::IntakeTarget() {
                  return frc2::InstantCommand([] {}).ToPtr();
                }
 
-               return (MoveToIntakeStaging().AndThen(
-                           DriveVelocity(0_deg, 2_mps, m_drive)
-                               .ToPtr()
-                               .AlongWith(IntakingCommands::Intake(m_intake,
-                                                                    m_scoring))
-                               .WithTimeout(5_s)))
+               return (MoveToIntakePose()
+                           .AlongWith(
+                               IntakingCommands::Intake(m_intake, m_scoring))
+                           .WithTimeout(5_s))
                    .WithTimeout(20_s)
                    .FinallyDo([this] {
                      auto chassisSpeeds = frc::ChassisSpeeds::Discretize(
@@ -100,7 +98,7 @@ frc2::CommandPtr TargetTracker::IntakeTarget() {
       .ToPtr();
 }
 
-std::optional<frc::Pose2d> TargetTracker::GetTargetStagingPose() {
+std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose() {
   if (!HasTargetLock()) {
     return std::nullopt;
   }
@@ -123,5 +121,6 @@ std::optional<frc::Pose2d> TargetTracker::GetTargetStagingPose() {
   frc::Transform2d transformDelta =
       frc::Transform2d(xTransformation, yTransformation, rotDelta);
 
-  return currentPose.TransformBy(transformDelta);
+  return currentPose.TransformBy(transformDelta)
+      .RotateBy(m_drive->GetHeading());
 }

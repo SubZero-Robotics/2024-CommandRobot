@@ -30,8 +30,8 @@
 #include "utils/Commands/FunniCommands.h"
 #include "utils/Commands/IntakeCommands.h"
 #include "utils/Commands/ScoreCommands.h"
-#include "utils/Vision.h"
 #include "utils/TargetTracker.h"
+#include "utils/Vision.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -52,6 +52,7 @@ class RobotContainer {
   void DisableSubsystems();
   void Initialize();
   void StopMotors();
+  void Periodic();
 
  private:
   // The driver's controller
@@ -94,6 +95,7 @@ class RobotContainer {
                          m_operatorController};
 
   TargetTracker tracker{-25_deg, 24_in, 0.6, &m_intake, &m_scoring, &m_drive};
+  TurnToPose m_turnToPose{[this] { return m_drive.GetPose(); }};
 
   void ConfigureAutoBindings();
 #endif
@@ -101,8 +103,6 @@ class RobotContainer {
   Vision m_vision;
 
   void RegisterAutos();
-
-  void Periodic();
 
   void ConfigureButtonBindings();
 

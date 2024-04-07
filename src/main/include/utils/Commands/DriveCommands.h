@@ -28,8 +28,7 @@ struct RelativeLocation {
   units::degree_t desiredRotation;
 };
 
-static units::degree_t RotationFromProximity(DriveSubsystem* drive) {
-  auto currentPose = drive->GetPose();
+static units::degree_t RotationFromProximity(frc::Pose2d currentPose) {
   std::vector<RelativeLocation> locationDistances;
   auto alliance = frc::DriverStation::GetAlliance();
   if (!alliance) {
@@ -65,7 +64,9 @@ static frc2::CommandPtr SnapToAngle(DriveSubsystem* drive) {
               .ToPtr()
               .AndThen(TurnToAngle(
                            drive,
-                           [drive] { return RotationFromProximity(drive); },
+                           [drive] {
+                             return RotationFromProximity(drive->GetPose());
+                           },
                            false)
                            .ToPtr()))
       .WithTimeout(2_s)

@@ -97,26 +97,26 @@ void DriveSubsystem::Periodic() {
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
                            units::meters_per_second_t ySpeed,
                            units::radians_per_second_t rot, bool fieldRelative,
-                           bool rateLimit, units::second_t periodSeconds) {
+                           bool rateLimit, units::second_t periodSeconds,
+                           TurnToPose* turnToPose) {
   auto now = frc::Timer::GetFPGATimestamp();
   auto dif = now - driveLoopTime;
 
   if (dif > 30_ms) {
     ConsoleLogger::getInstance().logVerbose(
         "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
-    ConsoleLogger::getInstance().logVerbose(
-        "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
   }
 
-  auto states =
-      m_driveKinematics.ToSwerveModuleStates(frc::ChassisSpeeds::Discretize(
-          fieldRelative ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-                              xSpeed * DriveConstants::kMaxSpeed.value(),
-                              ySpeed * DriveConstants::kMaxSpeed.value(),
-                              rot * DriveConstants::kMaxAngularSpeed.value(),
-                              GetHeading())
-                        : frc::ChassisSpeeds{xSpeed, ySpeed, rot},
-          dif));
+  auto joystickSpeeds =
+      GetSpeedsFromJoystick(xSpeed, ySpeed, rot, fieldRelative);
+
+  if (turnToPose) {
+    // TODO: use constant
+    joystickSpeeds = turnToPose->BlendWithInput(joystickSpeeds, 0.5);
+  }
+
+  auto states = m_driveKinematics.ToSwerveModuleStates(
+      frc::ChassisSpeeds::Discretize(joystickSpeeds, dif));
 
   driveLoopTime = now;
 
@@ -138,6 +138,17 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
 void DriveSubsystem::Drive(frc::ChassisSpeeds speeds) {
   DriveSubsystem::SetModuleStates(
       m_driveKinematics.ToSwerveModuleStates(speeds));
+}
+
+frc::ChassisSpeeds DriveSubsystem::GetSpeedsFromJoystick(
+    units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
+    units::radians_per_second_t rot, bool fieldRelative) {
+  return fieldRelative
+             ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                   xSpeed * DriveConstants::kMaxSpeed.value(),
+                   ySpeed * DriveConstants::kMaxSpeed.value(),
+                   rot * DriveConstants::kMaxAngularSpeed.value(), GetHeading())
+             : frc::ChassisSpeeds{xSpeed, ySpeed, rot};
 }
 
 frc::ChassisSpeeds DriveSubsystem::getSpeed() {

@@ -14,7 +14,7 @@ const pathplanner::PathConstraints kMovementConstraints{
     3.0_mps, 1.5_mps_sq, 540_deg_per_s, 720_deg_per_s_sq};
 const std::string kLimelightName = "limelight";
 // The distance to stop short of the target
-constexpr units::inch_t kDistanceGap = 12_in;
+constexpr units::inch_t kDistanceGap = 0_in;
 
 struct DetectedObject {
   uint8_t classId;
@@ -43,12 +43,11 @@ class TargetTracker {
   std::vector<DetectedObject> GetTargets();
   std::optional<DetectedObject> GetBestTarget();
   bool HasTargetLock();
-  frc2::CommandPtr MoveToIntakeStaging();
+  frc2::CommandPtr MoveToIntakePose();
   frc2::CommandPtr IntakeTarget();
+  std::optional<frc::Pose2d> GetBestTargetPose();
 
  private:
-  std::optional<frc::Pose2d> GetTargetStagingPose();
-
   units::degree_t m_cameraAngle;
   units::inch_t m_cameraHeight;
   double m_confidenceThreshold;

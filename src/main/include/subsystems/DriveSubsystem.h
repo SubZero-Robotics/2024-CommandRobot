@@ -24,6 +24,7 @@
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 #include "utils/ConsoleLogger.h"
+#include "utils/TurnToPose.h"
 #include "utils/Vision.h"
 
 // For sim to work
@@ -56,10 +57,14 @@ class DriveSubsystem : public frc2::SubsystemBase {
    * @param rateLimit     Whether to enable rate limiting for smoother control.
    *
    * @param periodSeconds Time between periodic loops
+   *
+   * @param turnToPose Will apply a correction based on the PID's desired
+   * state
    */
   void Drive(units::meters_per_second_t xSpeed,
              units::meters_per_second_t ySpeed, units::radians_per_second_t rot,
-             bool fieldRelative, bool rateLimit, units::second_t periodSeconds);
+             bool fieldRelative, bool rateLimit, units::second_t periodSeconds,
+             TurnToPose* turnToPose = nullptr);
 
   /**
    * Drives the robot based on a ChassisSpeeds
@@ -153,6 +158,11 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // declared private and exposed only through public methods.
 
   void logMotorState(MAXSwerveModule& motor, std::string key);
+
+  frc::ChassisSpeeds GetSpeedsFromJoystick(units::meters_per_second_t xSpeed,
+                                           units::meters_per_second_t ySpeed,
+                                           units::radians_per_second_t rot,
+                                           bool fieldRelative);
 
   MAXSwerveModule m_frontLeft;
   MAXSwerveModule m_rearLeft;

@@ -51,12 +51,16 @@ RobotContainer::RobotContainer() {
         InputUtils::DeadzoneAxes axes = InputUtils::CalculateCircularDeadzone(
             m_driverController.GetLeftX(), m_driverController.GetLeftY(),
             OIConstants::kDriveDeadband);
+
+        // TODO: toggle mode instead of always true
+        TurnToPose* turnToPose = true ? &m_turnToPose : nullptr;
+
         m_drive.Drive(
             -units::meters_per_second_t{axes.y},
             -units::meters_per_second_t{axes.x},
             -units::radians_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-            true, true, kLoopTime);
+            true, true, kLoopTime, turnToPose);
       },
       {&m_drive}));
 #ifndef TEST_SWERVE_BOT
@@ -337,4 +341,30 @@ void RobotContainer::Initialize() { m_arm.OnInit(); }
 
 void RobotContainer::Periodic() {
   frc::SmartDashboard::PutBoolean("HAS TARGET LOCK", tracker.HasTargetLock());
+  frc::SmartDashboard::PutBoolean("TURN TO POSE AT GOAL",
+                                  m_turnToPose.AtGoal());
+  m_turnToPose.Update();
+
+  if (m_intake.NotePresent()) {
+    // Note is present, get ready to score it
+
+    auto currentPose = m_drive.GetPose();
+    auto targetRotation = DrivingCommands::RotationFromProximity(currentPose);
+    auto targetPose =
+        frc::Pose2d(currentPose.Translation(), frc::Rotation2d(targetRotation));
+    m_turnToPose.SetTargetPose(targetPose);
+
+    frc::SmartDashboard::PutNumber("TURN TO POSE TARGET deg",
+                                   targetRotation.value());
+  } else {
+    auto targetPose = tracker.GetBestTargetPose();
+
+    if (targetPose) {
+      m_turnToPose.SetTargetPose(targetPose.value());
+
+      frc::SmartDashboard::PutNumber(
+          "TURN TO POSE TARGET deg",
+          targetPose.value().Rotation().Degrees().value());
+    }
+  }
 }
