@@ -267,13 +267,13 @@ struct FixtureLocation {
 
 const std::vector<FixtureLocation> RedFixtureLocations{
     // Podium (ScoreSpeaker)
-    {.location = frc::Pose2d(13.8_m, 4.12_m, frc::Rotation2d(-148_deg)),
-     .desiredRotation = -148_deg},
+    // {.location = frc::Pose2d(13.8_m, 4.12_m, frc::Rotation2d(-148_deg)),
+    //  .desiredRotation = -148_deg},
     // Amp (ScoreAmp)
-    {.location = frc::Pose2d(14.72_m, 7.85_m, frc::Rotation2d(90_deg)),
+    {.location = frc::Pose2d(14.64_m, 8.5_m, frc::Rotation2d(0_deg)),
      .desiredRotation = 90_deg},
     // Speaker (ScoreSubwoofer)
-    {.location = frc::Pose2d(15.39_m, 5.59_m, frc::Rotation2d(0_deg)),
+    {.location = frc::Pose2d(16.34_m, 5.6_m, frc::Rotation2d(0_deg)),
      .desiredRotation = 0_deg},
 };
 const std::vector<FixtureLocation> BlueFixtureLocations{
@@ -281,7 +281,7 @@ const std::vector<FixtureLocation> BlueFixtureLocations{
     // {.location = frc::Pose2d(0.158_m, 5.6_m, frc::Rotation2d(-32_deg)),
     //  .desiredRotation = -32_deg},
     // Amp (ScoreAmp)
-    {.location = frc::Pose2d(1.82_m, 8.22_m, frc::Rotation2d(0_deg)),
+    {.location = frc::Pose2d(1.82_m, 8.5_m, frc::Rotation2d(0_deg)),
      .desiredRotation = 90_deg},
     // Speaker (ScoreSubwoofer)
     {.location = frc::Pose2d(0.158_m, 5.6_m, frc::Rotation2d(0_deg)),
