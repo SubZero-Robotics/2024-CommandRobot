@@ -262,6 +262,8 @@ const std::map<FinalLocation, std::string> PoseToPath{
 
 struct FixtureLocation {
   frc::Pose2d location;
+  // TODO: Make this a desired Pose2d so we can track that pose instead based on
+  // the location
   units::degree_t desiredRotation;
 };
 
