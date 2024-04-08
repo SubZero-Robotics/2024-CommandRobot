@@ -1,5 +1,6 @@
 #include "utils/TargetTracker.h"
 
+#include <frc/RobotBase.h>
 #include <frc2/command/DeferredCommand.h>
 
 #include "commands/DriveVelocityCommand.h"
@@ -99,6 +100,10 @@ frc2::CommandPtr TargetTracker::IntakeTarget() {
 }
 
 std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose() {
+  if (!frc::RobotBase::IsReal()) {
+    return frc::Pose2d(7_m, 4_m, frc::Rotation2d(0_deg));
+  }
+
   if (!HasTargetLock()) {
     return std::nullopt;
   }

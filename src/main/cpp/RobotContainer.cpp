@@ -345,7 +345,7 @@ void RobotContainer::Periodic() {
                                   m_turnToPose.AtGoal());
   m_turnToPose.Update();
 
-  if (!m_intake.NotePresent()) {
+  if (m_intake.NotePresent()) {
     // Note is present, get ready to score it
 
     auto targetPose = DrivingCommands::FixtureFromProximity(m_drive.GetPose());

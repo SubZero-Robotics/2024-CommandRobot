@@ -28,7 +28,6 @@ void TurnToPose::Update() {
   auto currentPose = m_poseGetter();
   auto diff = currentPose.Translation() - m_targetPose.Translation();
 
-  // double ratio = diff.X().value() / diff.Y().value();
   auto newDegree = units::radian_t(atan2(diff.Y().value(), diff.X().value()))
                        .convert<units::degree>();
 
