@@ -110,6 +110,7 @@ class RobotContainer {
   frc2::CommandPtr autoCommand = frc2::InstantCommand([] {}).ToPtr();
 
   bool m_aimbotEnabled = false;
-
   void ToggleAimbot();
+  bool m_shouldAim = false;
+  bool IsWithinRange();
 };

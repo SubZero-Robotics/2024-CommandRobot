@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc/DriverStation.h>
 #include <frc2/command/DeferredCommand.h>
 #include <frc2/command/FunctionalCommand.h>
 #include <frc2/command/InstantCommand.h>
@@ -32,16 +33,9 @@ struct RelativeLocation {
 static std::vector<RelativeLocation> GetDistancesToFixtures(
     frc::Pose2d currentPose) {
   std::vector<RelativeLocation> locationDistances;
-  auto alliance = frc::DriverStation::GetAlliance();
-  if (!alliance) {
-    return {};
-  }
-  auto side = alliance.value();
-  auto& fixureLocations = side == frc::DriverStation::Alliance::kRed
-                              ? Locations::RedFixtureLocations
-                              : Locations::BlueFixtureLocations;
-  locationDistances.reserve(fixureLocations.size());
-  std::transform(fixureLocations.begin(), fixureLocations.end(),
+  auto fixtureLocations = GetFixtureLocations();
+  locationDistances.reserve(fixtureLocations.size());
+  std::transform(fixtureLocations.begin(), fixtureLocations.end(),
                  std::back_inserter(locationDistances),
                  [currentPose](const Locations::FixtureLocation& loc) {
                    auto dif = currentPose - loc.fixtureLocation;
@@ -55,21 +49,47 @@ static std::vector<RelativeLocation> GetDistancesToFixtures(
   return locationDistances;
 }
 
-static RelativeLocation GetClosestFixture(
+static Locations::FixtureLocation GetClosestFixture(
     std::vector<RelativeLocation>& locationDistances) {
+  auto fixtureLocations = GetFixtureLocations();
   auto it = std::min_element(
       locationDistances.begin(), locationDistances.end(),
       [](const RelativeLocation& a, const RelativeLocation& b) {
         return a.hypotDistance < b.hypotDistance;
       });
 
-  return *it;
+  auto index = std::distance(locationDistances.begin(), it);
+  return fixtureLocations[index];  // or BlueFixtureLocations depending on the
+                                   // alliance
 }
 
 static RelativeLocation LocationFromProximity(frc::Pose2d currentPose) {
   auto locationDistances = GetDistancesToFixtures(currentPose);
 
-  return GetClosestFixture(locationDistances);
+  auto closestFixture = GetClosestFixture(locationDistances);
+
+  auto dif = currentPose - closestFixture.fixtureLocation;
+  auto distanceToClosest =
+      (units::meter)std::hypot(dif.X().value(), dif.Y().value());
+
+  if (distanceToClosest <= closestFixture.locationRadius) {
+    return RelativeLocation{.hypotDistance = distanceToClosest,
+                            .trackedPose = closestFixture.trackedPose,
+                            .fixtureLocation = closestFixture.fixtureLocation};
+  }
+  return RelativeLocation{0_m, currentPose, currentPose};
+}
+
+static std::vector<Locations::FixtureLocation> GetFixtureLocations() {
+  auto alliance = frc::DriverStation::GetAlliance();
+  if (!alliance) {
+    return {};
+  }
+  auto side = alliance.value();
+  auto& fixtureLocations = side == frc::DriverStation::Alliance::kRed
+                               ? Locations::RedFixtureLocations
+                               : Locations::BlueFixtureLocations;
+  return fixtureLocations;
 }
 
 // static frc2::CommandPtr SnapToAngle(DriveSubsystem* drive) {
