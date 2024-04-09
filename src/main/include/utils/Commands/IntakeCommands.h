@@ -89,15 +89,29 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intake,
                scoring->SpinVectorSide(ScoringDirection::AmpSide);
              },
              // onEnd
-             [intake, scoring](bool interupted) {
-               intake->Stop();
-               scoring->Stop();
-             },
+             [intake, scoring](bool interupted) {},
              // isFinished
              [intake, scoring] { return intake->NotePresentUpperCenter(); },
              // req
              {intake, scoring})
       .ToPtr()
+      .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
+      .AndThen(
+      frc2::FunctionalCommand(
+             // onInit
+             [] {},
+             // onExecute
+             [intake, scoring] {
+               intake->Stop();
+               scoring->Stop();
+             },
+             // onEnd
+             [intake, scoring](bool interupted) {},
+             // isFinished
+             [intake, scoring] { return true; },
+             // req
+             {intake, scoring})
+      .ToPtr())
       .AndThen(frc2::FunctionalCommand(
                    // onInit
                    [] {},

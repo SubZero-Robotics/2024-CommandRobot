@@ -119,7 +119,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
     if (joystickSpeeds.omega.value() == 0) {
       joystickSpeeds = turnToPose->BlendWithInput(joystickSpeeds, 1);
     } else {
-      joystickSpeeds = turnToPose->BlendWithInput(joystickSpeeds, 0.2);
+      joystickSpeeds = turnToPose->BlendWithInput(joystickSpeeds, 0.1);
     }
   }
 

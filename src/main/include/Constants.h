@@ -272,10 +272,10 @@ const std::vector<FixtureLocation> RedFixtureLocations{
     // {.location = frc::Pose2d(13.8_m, 4.12_m, frc::Rotation2d(-148_deg)),
     //  .desiredRotation = -148_deg},
     // Amp (ScoreAmp)
-    {.location = frc::Pose2d(14.64_m, 8.5_m, frc::Rotation2d(0_deg)),
+    {.location = frc::Pose2d(14.64_m, 8.5_m, frc::Rotation2d(180_deg)),
      .desiredRotation = 90_deg},
     // Speaker (ScoreSubwoofer)
-    {.location = frc::Pose2d(16.34_m, 5.6_m, frc::Rotation2d(0_deg)),
+    {.location = frc::Pose2d(16.34_m, 5.6_m, frc::Rotation2d(180_deg)),
      .desiredRotation = 0_deg},
 };
 const std::vector<FixtureLocation> BlueFixtureLocations{

@@ -101,7 +101,7 @@ frc2::CommandPtr TargetTracker::IntakeTarget() {
 
 std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose() {
   if (!frc::RobotBase::IsReal()) {
-    return frc::Pose2d(7_m, 4_m, frc::Rotation2d(0_deg));
+    return frc::Pose2d(7_m, 4_m, frc::Rotation2d(180_deg));
   }
 
   if (!HasTargetLock()) {
