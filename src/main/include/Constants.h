@@ -261,33 +261,42 @@ const std::map<FinalLocation, std::string> PoseToPath{
     {FinalLocation::StageRight, "Wing Line 2 to Stage Right"}};
 
 struct FixtureLocation {
-  frc::Pose2d location;
-  // TODO: Make this a desired Pose2d so we can track that pose instead based on
-  // the location
-  units::degree_t desiredRotation;
+  // The location of the point to begin tracking
+  frc::Pose2d fixtureLocation;
+  // The distance around the fixtureLocation where tracking should be active
+  units::inch_t locationRadius;
+  // What the robot should "look" at
+  frc::Pose2d trackedPose;
 };
 
 const std::vector<FixtureLocation> RedFixtureLocations{
     // Podium (ScoreSpeaker)
-    // {.location = frc::Pose2d(13.8_m, 4.12_m, frc::Rotation2d(-148_deg)),
-    //  .desiredRotation = -148_deg},
+    {.fixtureLocation = frc::Pose2d(13.8_m, 4.12_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 3_ft,
+     .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(0_deg))},
     // Amp (ScoreAmp)
-    {.location = frc::Pose2d(14.64_m, 8.5_m, frc::Rotation2d(180_deg)),
-     .desiredRotation = 90_deg},
+    {.fixtureLocation = frc::Pose2d(14.64_m, 8.5_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 3_ft,
+     .trackedPose = frc::Pose2d(14.75_m, 8.75_m, frc::Rotation2d(180_deg))},
     // Speaker (ScoreSubwoofer)
-    {.location = frc::Pose2d(16.34_m, 5.6_m, frc::Rotation2d(180_deg)),
-     .desiredRotation = 0_deg},
+    {.fixtureLocation = frc::Pose2d(15.34_m, 5.6_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 6_ft,
+     .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(180_deg))},
 };
 const std::vector<FixtureLocation> BlueFixtureLocations{
     // Podium (ScoreSpeaker)
-    // {.location = frc::Pose2d(0.158_m, 5.6_m, frc::Rotation2d(-32_deg)),
-    //  .desiredRotation = -32_deg},
+    // TODO
+    {.fixtureLocation = frc::Pose2d(2.9_m, 4.15_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 3_ft,
+     .trackedPose = frc::Pose2d(0_m, 5.6_m, frc::Rotation2d(0_deg))},
     // Amp (ScoreAmp)
-    {.location = frc::Pose2d(1.82_m, 8.5_m, frc::Rotation2d(0_deg)),
-     .desiredRotation = 90_deg},
+    {.fixtureLocation = frc::Pose2d(1.82_m, 8.5_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 3_ft,
+     .trackedPose = frc::Pose2d(1.82_m, 8.75_m, frc::Rotation2d(180_deg))},
     // Speaker (ScoreSubwoofer)
-    {.location = frc::Pose2d(0.158_m, 5.6_m, frc::Rotation2d(0_deg)),
-     .desiredRotation = 175_deg},
+    {.fixtureLocation = frc::Pose2d(1.35_m, 5.6_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 6_ft,
+     .trackedPose = frc::Pose2d(0_m, 5.6_m, frc::Rotation2d(180_deg))},
 };
 }  // namespace Locations
 }  // namespace AutoConstants

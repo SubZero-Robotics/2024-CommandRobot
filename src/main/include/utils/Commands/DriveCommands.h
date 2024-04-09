@@ -25,8 +25,8 @@ namespace DrivingCommands {
 using namespace AutoConstants;
 struct RelativeLocation {
   units::meter_t hypotDistance;
-  units::degree_t desiredRotation;
-  frc::Pose2d location;
+  frc::Pose2d trackedPose;
+  frc::Pose2d fixtureLocation;
 };
 
 static std::vector<RelativeLocation> GetDistancesToFixtures(
@@ -44,12 +44,12 @@ static std::vector<RelativeLocation> GetDistancesToFixtures(
   std::transform(fixureLocations.begin(), fixureLocations.end(),
                  std::back_inserter(locationDistances),
                  [currentPose](const Locations::FixtureLocation& loc) {
-                   auto dif = currentPose - loc.location;
+                   auto dif = currentPose - loc.fixtureLocation;
                    auto distance = std::hypot(dif.X().value(), dif.Y().value());
                    return RelativeLocation{
                        .hypotDistance = units::meter_t(distance),
-                       .desiredRotation = loc.desiredRotation,
-                       .location = loc.location};
+                       .trackedPose = loc.trackedPose,
+                       .fixtureLocation = loc.fixtureLocation};
                  });
 
   return locationDistances;
@@ -66,36 +66,30 @@ static RelativeLocation GetClosestFixture(
   return *it;
 }
 
-static frc::Pose2d FixtureFromProximity(frc::Pose2d currentPose) {
+static RelativeLocation LocationFromProximity(frc::Pose2d currentPose) {
   auto locationDistances = GetDistancesToFixtures(currentPose);
 
-  return GetClosestFixture(locationDistances).location;
+  return GetClosestFixture(locationDistances);
 }
 
-static units::degree_t RotationFromProximity(frc::Pose2d currentPose) {
-  auto locationDistances = GetDistancesToFixtures(currentPose);
-
-  return GetClosestFixture(locationDistances).desiredRotation;
-}
-
-static frc2::CommandPtr SnapToAngle(DriveSubsystem* drive) {
-  return (frc2::InstantCommand([] {
-            ConsoleLogger::getInstance().logInfo(
-                "SnapToAngle", "Snapping to a new angle%s", "");
-          })
-              .ToPtr()
-              .AndThen(TurnToAngle(
-                           drive,
-                           [drive] {
-                             return RotationFromProximity(drive->GetPose());
-                           },
-                           false)
-                           .ToPtr()))
-      .WithTimeout(2_s)
-      .FinallyDo([drive] {
-        frc::ChassisSpeeds chassisSpeeds = {
-            .vx = 0_mps, .vy = 0_mps, .omega = 0_rad_per_s};
-        drive->Drive(chassisSpeeds);
-      });
-}
+// static frc2::CommandPtr SnapToAngle(DriveSubsystem* drive) {
+//   return (frc2::InstantCommand([] {
+//             ConsoleLogger::getInstance().logInfo(
+//                 "SnapToAngle", "Snapping to a new angle%s", "");
+//           })
+//               .ToPtr()
+//               .AndThen(TurnToAngle(
+//                            drive,
+//                            [drive] {
+//                              return RotationFromProximity(drive->GetPose());
+//                            },
+//                            false)
+//                            .ToPtr()))
+//       .WithTimeout(2_s)
+//       .FinallyDo([drive] {
+//         frc::ChassisSpeeds chassisSpeeds = {
+//             .vx = 0_mps, .vy = 0_mps, .omega = 0_rad_per_s};
+//         drive->Drive(chassisSpeeds);
+//       });
+// }
 }  // namespace DrivingCommands

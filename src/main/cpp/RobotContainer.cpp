@@ -342,16 +342,20 @@ void RobotContainer::Periodic() {
   frc::SmartDashboard::PutBoolean("HAS TARGET LOCK", tracker.HasTargetLock());
   frc::SmartDashboard::PutBoolean("TURN TO POSE AT GOAL",
                                   m_turnToPose.AtGoal());
+
+  // TODO: toggle aimbot based on if robot is within range of a fixture
+
   m_turnToPose.Update();
 
   if (m_intake.NotePresent()) {
     // Note is present, get ready to score it
 
-    auto targetPose = DrivingCommands::FixtureFromProximity(m_drive.GetPose());
-    m_turnToPose.SetTargetPose(targetPose);
+    auto location = DrivingCommands::LocationFromProximity(m_drive.GetPose());
+    m_turnToPose.SetTargetPose(location.trackedPose);
 
-    frc::SmartDashboard::PutNumber("TURN TO POSE TARGET deg",
-                                   targetPose.Rotation().Degrees().value());
+    frc::SmartDashboard::PutNumber(
+        "TURN TO POSE TARGET deg",
+        location.trackedPose.Rotation().Degrees().value());
   } else {
     auto targetPose = tracker.GetBestTargetPose();
 
