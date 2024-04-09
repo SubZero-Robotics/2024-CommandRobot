@@ -108,4 +108,8 @@ class RobotContainer {
   void ConfigureButtonBindings();
 
   frc2::CommandPtr autoCommand = frc2::InstantCommand([] {}).ToPtr();
+
+  bool m_aimbotEnabled = false;
+
+  void ToggleAimbot();
 };

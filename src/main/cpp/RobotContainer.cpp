@@ -52,8 +52,7 @@ RobotContainer::RobotContainer() {
             m_driverController.GetLeftX(), m_driverController.GetLeftY(),
             OIConstants::kDriveDeadband);
 
-        // TODO: toggle mode instead of always true
-        TurnToPose* turnToPose = true ? &m_turnToPose : nullptr;
+        TurnToPose* turnToPose = m_aimbotEnabled ? &m_turnToPose : nullptr;
 
         m_drive.Drive(
             -units::meters_per_second_t{axes.y},
@@ -180,7 +179,7 @@ void RobotContainer::ConfigureButtonBindings() {
       m_leds.Outaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
 
   m_driverController.RightStick().OnTrue(
-      DrivingCommands::SnapToAngle(&m_drive));
+      frc2::InstantCommand([this] { ToggleAimbot(); }).ToPtr());
 
   ConfigureAutoBindings();
 #endif
@@ -364,4 +363,9 @@ void RobotContainer::Periodic() {
           targetPose.value().Rotation().Degrees().value());
     }
   }
+}
+
+void RobotContainer::ToggleAimbot() {
+  m_aimbotEnabled = !m_aimbotEnabled;
+  frc::SmartDashboard::PutBoolean("aimbot enabled", m_aimbotEnabled);
 }
