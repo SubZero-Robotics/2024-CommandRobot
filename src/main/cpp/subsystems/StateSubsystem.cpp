@@ -82,6 +82,16 @@ frc2::CommandPtr StateSubsystem::RunState() {
           .Until(std::bind(&StateSubsystem::IsControllerActive, this))
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
+    case RobotState::AllianceWing:
+      return StartAllianceWing()
+          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
+    case RobotState::EnemyWing:
+      return StartEnemyWing()
+          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .AndThen(SetState(RobotState::Manual))
+          .AndThen(RunStateDeferred().ToPtr());
     default:
       return m_subsystems.led->Error()
           .AndThen(frc2::WaitCommand(1_s).ToPtr())
@@ -233,6 +243,19 @@ frc2::CommandPtr StateSubsystem::StartAutoSequence() {
 frc2::CommandPtr StateSubsystem::StartFunni() {
   return FunniCommands::Funni(m_subsystems.intake, m_subsystems.scoring,
                               m_subsystems.led);
+}
+
+frc2::CommandPtr StateSubsystem::StartAllianceWing() {
+  // TODO: signaling
+  return PathFactory::PathfindApproximate([] { return FinalLocation::Scoring; })
+      .WithTimeout(20_s);
+}
+
+frc2::CommandPtr StateSubsystem::StartEnemyWing() {
+  // TODO: signaling
+  return PathFactory::PathfindApproximate(
+             [] { return FinalLocation::EnemyWing; })
+      .WithTimeout(20_s);
 }
 
 frc2::CommandPtr StateSubsystem::MoveToSourceAndIntake() {

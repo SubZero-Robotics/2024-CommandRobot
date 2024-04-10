@@ -93,6 +93,10 @@ class StateSubsystem : public frc2::SubsystemBase {
 
   frc2::CommandPtr StartAutoSequence();
 
+  frc2::CommandPtr StartAllianceWing();
+
+  frc2::CommandPtr StartEnemyWing();
+
   inline RobotState GetState() const { return m_currentState; }
 
   frc2::CommandPtr m_cmd = frc2::InstantCommand([] {}).ToPtr();

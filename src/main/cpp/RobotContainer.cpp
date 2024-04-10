@@ -208,13 +208,17 @@ void RobotContainer::ConfigureButtonBindings() {
 #ifndef TEST_SWERVE_BOT
 void RobotContainer::ConfigureAutoBindings() {
   // Maps to 9 on keyboard
-  m_operatorController.A().OnTrue(frc2::InstantCommand([this] {
-                                    if (!m_state.m_active) {
-                                      m_state.m_currentState =
-                                          RobotState::ScoringSpeaker;
-                                      m_state.SetDesiredState();
-                                    }
-                                  }).ToPtr());
+  // TODO: THIS HAS BEEN MODIFIED; maybe bind this to the Funni button instead?
+  m_operatorController.A().OnTrue(
+      frc2::InstantCommand([this] {
+        if (m_intake.NotePresent() && !m_state.m_active) {
+          m_state.m_currentState = RobotState::AllianceWing;
+          m_state.SetDesiredState();
+        } else if (!m_intake.NotePresent() && !m_state.m_active) {
+          m_state.m_currentState = RobotState::EnemyWing;
+          m_state.SetDesiredState();
+        }
+      }).ToPtr());
 
   // Maps to 8 on keyboard
   m_operatorController.B().OnTrue(frc2::InstantCommand([this] {

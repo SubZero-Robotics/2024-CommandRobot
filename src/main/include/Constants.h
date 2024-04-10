@@ -212,12 +212,24 @@ const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
 
 namespace Locations {
 
-enum class ApproxLocation { Scoring = 0, Source, Central };
+enum class ApproxLocation {
+  Scoring = 0,
+  Source,
+  Central,
+  AllianceWing,
+  EnemyWing,
+};
 
 constexpr frc::Pose2d ApproxScoringLocation =
     frc::Pose2d{2.90_m, 5.58_m, 0_deg};
 constexpr frc::Pose2d ApproxSourceLocation = frc::Pose2d{5.38_m, 1.5_m, 0_deg};
 constexpr frc::Pose2d ApproxCentralLocation = frc::Pose2d{8.3_m, 4.11_m, 0_deg};
+// TODO
+constexpr frc::Pose2d ApproxAllianceWingLocation =
+    frc::Pose2d{2.82_m, 6.07_m, 0_deg};
+// TODO
+constexpr frc::Pose2d ApproxEnemyWingLocation =
+    frc::Pose2d{13.7_m, 1.65_m, 0_deg};
 
 enum class FinalLocation {
   // Shooting in the speaker from close
@@ -240,12 +252,18 @@ enum class FinalLocation {
   // Climb location on the left as seen from alliance station
   // Closest to the opposing source
   StageRight,
+  // Close to alliance scoring locations
+  Scoring,
+  // Near our source
+  EnemyWing,
 };
 
 const std::map<ApproxLocation, const frc::Pose2d&> OnTheFlyPoses{
     {ApproxLocation::Scoring, ApproxScoringLocation},
     {ApproxLocation::Central, ApproxCentralLocation},
-    {ApproxLocation::Source, ApproxSourceLocation}};
+    {ApproxLocation::Source, ApproxSourceLocation},
+    {ApproxLocation::AllianceWing, ApproxAllianceWingLocation},
+    {ApproxLocation::EnemyWing, ApproxEnemyWingLocation}};
 
 const std::map<FinalLocation, std::string> PoseToPath{
     // Note 2 = ApproxScoringLocation
@@ -276,7 +294,7 @@ const std::vector<FixtureLocation> RedFixtureLocations{
      .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(0_deg))},
     // Amp (ScoreAmp)
     {.fixtureLocation = frc::Pose2d(14.64_m, 8.5_m, frc::Rotation2d(0_deg)),
-     .locationRadius = 3_ft,
+     .locationRadius = 6_ft,
      .trackedPose = frc::Pose2d(14.75_m, 8.75_m, frc::Rotation2d(180_deg))},
     // Speaker (ScoreSubwoofer)
     {.fixtureLocation = frc::Pose2d(15.34_m, 5.6_m, frc::Rotation2d(0_deg)),
@@ -291,7 +309,7 @@ const std::vector<FixtureLocation> BlueFixtureLocations{
      .trackedPose = frc::Pose2d(0_m, 5.6_m, frc::Rotation2d(0_deg))},
     // Amp (ScoreAmp)
     {.fixtureLocation = frc::Pose2d(1.82_m, 8.5_m, frc::Rotation2d(0_deg)),
-     .locationRadius = 3_ft,
+     .locationRadius = 6_ft,
      .trackedPose = frc::Pose2d(1.82_m, 8.75_m, frc::Rotation2d(180_deg))},
     // Speaker (ScoreSubwoofer)
     {.fixtureLocation = frc::Pose2d(1.35_m, 5.6_m, frc::Rotation2d(0_deg)),
@@ -570,6 +588,8 @@ enum class RobotState {
   AutoSequenceSpeaker,
   AutoSequenceAmp,
   AutoSequenceSubwoofer,
+  EnemyWing,
+  AllianceWing,
 };
 
 typedef std::function<RobotState()> StateGetter;
