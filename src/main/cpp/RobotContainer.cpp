@@ -18,6 +18,7 @@
 #include <frc2/command/WaitCommand.h>
 #include <frc2/command/button/JoystickButton.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/util/PathPlannerLogging.h>
 #include <units/angle.h>
 #include <units/velocity.h>
 
@@ -41,6 +42,11 @@ RobotContainer::RobotContainer() {
 
   // Configure the button bindings
   ConfigureButtonBindings();
+
+  pathplanner::PathPlannerLogging::setLogActivePathCallback(
+      [this](std::vector<frc::Pose2d> poses) {
+        m_drive.GetField()->GetObject("path")->SetPoses(poses);
+      });
 
   // Set up default drive command
   // The left stick controls translation of the robot.
@@ -353,18 +359,28 @@ void RobotContainer::Periodic() {
 
   if (m_intake.NotePresent()) {
     // Note is present, get ready to score it
-    auto location = DrivingCommands::LocationFromProximity(m_drive.GetPose());
-    if (location.hypotDistance <= location.locationRadius) {
-      m_turnToPose.SetTargetPose(location.trackedPose);
+    auto locations = DrivingCommands::GetSortedLocations(m_drive.GetPose());
+    bool inRange = false;
 
-      frc::SmartDashboard::PutNumber(
-          "TURN TO POSE TARGET deg",
-          location.trackedPose.Rotation().Degrees().value());
+    for (auto& location : locations) {
+      if (location.hypotDistance <= location.locationRadius) {
+        inRange = true;
+        m_turnToPose.SetTargetPose(location.trackedPose);
+
+        frc::SmartDashboard::PutNumber(
+            "TURN TO POSE TARGET deg",
+            location.trackedPose.Rotation().Degrees().value());
+
+        break;
+      }
     }
+
+    m_aimbotEnabled = inRange;
   } else {
     auto targetPose = tracker.GetBestTargetPose();
 
     if (targetPose) {
+      m_aimbotEnabled = true;
       m_turnToPose.SetTargetPose(targetPose.value());
 
       frc::SmartDashboard::PutNumber(

@@ -38,8 +38,8 @@ static std::vector<Locations::FixtureLocation> GetFixtureLocations() {
   }
   auto side = alliance.value();
   auto& fixtureLocations = side == frc::DriverStation::Alliance::kRed
-                              ? Locations::RedFixtureLocations
-                              : Locations::BlueFixtureLocations;
+                               ? Locations::RedFixtureLocations
+                               : Locations::BlueFixtureLocations;
   return fixtureLocations;
 }
 
@@ -59,6 +59,18 @@ static std::vector<RelativeLocation> GetDistancesToFixtures(
                        .fixtureLocation = loc.fixtureLocation,
                        .locationRadius = loc.locationRadius};
                  });
+
+  return locationDistances;
+}
+
+static std::vector<RelativeLocation> GetSortedLocations(
+    frc::Pose2d currentPose) {
+  auto locationDistances = GetDistancesToFixtures(currentPose);
+
+  std::sort(locationDistances.begin(), locationDistances.end(),
+            [](const RelativeLocation& a, const RelativeLocation& b) {
+              return a.hypotDistance < b.hypotDistance;
+            });
 
   return locationDistances;
 }

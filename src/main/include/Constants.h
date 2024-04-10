@@ -290,7 +290,7 @@ struct FixtureLocation {
 const std::vector<FixtureLocation> RedFixtureLocations{
     // Podium (ScoreSpeaker)
     {.fixtureLocation = frc::Pose2d(13.8_m, 4.12_m, frc::Rotation2d(0_deg)),
-     .locationRadius = 3_ft,
+     .locationRadius = 4_ft,
      .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(0_deg))},
     // Amp (ScoreAmp)
     {.fixtureLocation = frc::Pose2d(14.64_m, 8.5_m, frc::Rotation2d(0_deg)),
@@ -305,7 +305,7 @@ const std::vector<FixtureLocation> BlueFixtureLocations{
     // Podium (ScoreSpeaker)
     // TODO
     {.fixtureLocation = frc::Pose2d(2.9_m, 4.15_m, frc::Rotation2d(0_deg)),
-     .locationRadius = 3_ft,
+     .locationRadius = 4_ft,
      .trackedPose = frc::Pose2d(0_m, 5.6_m, frc::Rotation2d(0_deg))},
     // Amp (ScoreAmp)
     {.fixtureLocation = frc::Pose2d(1.82_m, 8.5_m, frc::Rotation2d(0_deg)),
