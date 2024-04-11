@@ -119,13 +119,27 @@ std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose() {
   distance -= kDistanceGap;
 
   frc::Pose2d currentPose = m_drive->GetPose();
-  frc::Rotation2d rotDelta = frc::Rotation2d(bestTarget.centerX);
 
   auto xTransformation = distance * cos(horizontalAngle.value());
   auto yTransformation = distance * sin(horizontalAngle.value());
-  frc::Transform2d transformDelta =
-      frc::Transform2d(xTransformation, yTransformation, rotDelta);
+  frc::Transform2d transformDelta = frc::Transform2d(
+      xTransformation, yTransformation, frc::Rotation2d(0_deg));
+  frc::Pose2d notePose = currentPose.TransformBy(transformDelta);
 
-  return currentPose.TransformBy(transformDelta)
-      .RotateBy(m_drive->GetHeading());
+  // Pivot around our robot's current pose to be field-oriented
+  // Maybe this isn't needed?
+
+  auto t1X = (notePose.X() - currentPose.X()) *
+             cos(currentPose.Rotation().Radians().value());
+  auto t2X = (notePose.Y() - currentPose.Y()) *
+             sin(currentPose.Rotation().Radians().value());
+  auto newX = t1X - t2X + notePose.X();
+
+  auto t1Y = (notePose.X() - currentPose.X()) *
+             sin(currentPose.Rotation().Radians().value());
+  auto t2Y = (notePose.Y() - currentPose.Y()) *
+             cos(currentPose.Rotation().Radians().value());
+  auto newY = t1Y + t2Y + notePose.Y();
+
+  return frc::Pose2d(newX, newY, 0_deg);
 }

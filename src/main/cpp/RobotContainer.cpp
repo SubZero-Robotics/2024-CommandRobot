@@ -58,7 +58,7 @@ RobotContainer::RobotContainer() {
             m_driverController.GetLeftX(), m_driverController.GetLeftY(),
             OIConstants::kDriveDeadband);
 
-        TurnToPose* turnToPose = m_aimbotEnabled ? &m_turnToPose : nullptr;
+        TurnToPose* turnToPose = m_shouldAim ? &m_turnToPose : nullptr;
 
         m_drive.Drive(
             -units::meters_per_second_t{axes.y},
@@ -361,8 +361,6 @@ void RobotContainer::Periodic() {
   frc::SmartDashboard::PutBoolean("TURN TO POSE AT GOAL",
                                   m_turnToPose.AtGoal());
 
-  // TODO: toggle aimbot based on if robot is within range of a fixture
-
   m_turnToPose.Update();
 
   if (m_intake.NotePresent()) {
@@ -383,16 +381,19 @@ void RobotContainer::Periodic() {
       }
     }
 
-    m_aimbotEnabled = inRange;
+    m_shouldAim = m_aimbotEnabled && inRange;
   } else {
     auto targetPose = tracker.GetBestTargetPose();
 
     if (targetPose) {
+      m_shouldAim = m_aimbotEnabled;
       m_turnToPose.SetTargetPose(targetPose.value());
 
       frc::SmartDashboard::PutNumber(
           "TURN TO POSE TARGET deg",
           targetPose.value().Rotation().Degrees().value());
+    } else {
+      m_shouldAim = false;
     }
     m_aimbotEnabled = false;
   }

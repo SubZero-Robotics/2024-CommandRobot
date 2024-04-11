@@ -94,7 +94,7 @@ class RobotContainer {
   StateSubsystem m_state{m_subsystems, m_driverController,
                          m_operatorController};
 
-  TargetTracker tracker{-25_deg, 24_in, 0.6, &m_intake, &m_scoring, &m_drive};
+  TargetTracker tracker{-25_deg, 24_in, 0.33, &m_intake, &m_scoring, &m_drive};
   TurnToPose m_turnToPose{[this] { return m_drive.GetPose(); },
                           [this] { return m_drive.GetField(); }};
 
@@ -110,7 +110,6 @@ class RobotContainer {
   frc2::CommandPtr autoCommand = frc2::InstantCommand([] {}).ToPtr();
 
   bool m_aimbotEnabled = false;
-  void ToggleAimbot();
   bool m_shouldAim = false;
-  bool IsWithinRange();
+  void ToggleAimbot();
 };
