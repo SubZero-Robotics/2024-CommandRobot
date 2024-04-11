@@ -300,6 +300,11 @@ const std::vector<FixtureLocation> RedFixtureLocations{
     {.fixtureLocation = frc::Pose2d(15.34_m, 5.6_m, frc::Rotation2d(0_deg)),
      .locationRadius = 6_ft,
      .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(180_deg))},
+    // Feeding (Feed)
+    {.fixtureLocation = frc::Pose2d(6_m, 1_m, frc::Rotation2d(0_deg)),
+     //TODO: bigger radius and motor velocity changes based on distance
+     .locationRadius = 2_ft,
+     .trackedPose = frc::Pose2d(15_m, 7.5_m, frc::Rotation2d(0_deg))}
 };
 const std::vector<FixtureLocation> BlueFixtureLocations{
     // Podium (ScoreSpeaker)
@@ -315,6 +320,11 @@ const std::vector<FixtureLocation> BlueFixtureLocations{
     {.fixtureLocation = frc::Pose2d(1.35_m, 5.6_m, frc::Rotation2d(0_deg)),
      .locationRadius = 6_ft,
      .trackedPose = frc::Pose2d(0_m, 5.6_m, frc::Rotation2d(180_deg))},
+    // Feeding (Feed)
+    {.fixtureLocation = frc::Pose2d(10_m, 1_m, frc::Rotation2d(0_deg)),
+     //TODO: bigger radius and motor velocity changes based on distance
+     .locationRadius = 2_ft,
+     .trackedPose = frc::Pose2d(1_m, 7.5_m, frc::Rotation2d(0_deg))}
 };
 }  // namespace Locations
 }  // namespace AutoConstants
