@@ -127,8 +127,10 @@ std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
   frc::Pose2d currentPose = m_drive->GetPose();
 
   auto xTransformation = distance * tan(horizontalAngle.value());
-  auto yTransformation =
-      units::inch_t(pow(cos(horizontalAngle.value()) / distance.value(), -1));
+  auto yTransformation = distance;
+  // auto yTransformation =
+  //     units::inch_t(pow(cos(horizontalAngle.value()) / distance.value(),
+  //     -1));
   frc::Transform2d transformDelta =
       frc::Transform2d(xTransformation, yTransformation, 0_deg);
   frc::Pose2d notePose = currentPose.TransformBy(transformDelta);
