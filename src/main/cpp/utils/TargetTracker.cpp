@@ -33,9 +33,8 @@ std::vector<DetectedObject> TargetTracker::GetTargets() {
   return objects;
 }
 
-std::optional<DetectedObject> TargetTracker::GetBestTarget() {
-  auto targets = GetTargets();
-
+std::optional<DetectedObject> TargetTracker::GetBestTarget(
+    std::vector<DetectedObject>& targets) {
   if (targets.empty()) {
     return std::nullopt;
   }
@@ -48,17 +47,20 @@ std::optional<DetectedObject> TargetTracker::GetBestTarget() {
   return *it;
 }
 
-bool TargetTracker::HasTargetLock() {
-  auto bestTarget = GetBestTarget();
+bool TargetTracker::HasTargetLock(std::vector<DetectedObject>& targets) {
+  auto bestTarget = GetBestTarget(targets);
   return bestTarget && bestTarget.value().confidence >= m_confidenceThreshold;
 }
 
 frc2::CommandPtr TargetTracker::MoveToIntakePose() {
   return frc2::DeferredCommand(
              [this] {
-               auto targetPose = GetBestTargetPose();
+               auto targets = GetTargets();
+               auto targetPose = GetBestTargetPose(targets);
 
                if (!targetPose) {
+                 ConsoleLogger::getInstance().logWarning("TargetTracker",
+                                                         "NO TARGET FOUND");
                  return frc2::InstantCommand([] {}).ToPtr();
                }
 
@@ -77,16 +79,19 @@ frc2::CommandPtr TargetTracker::MoveToIntakePose() {
 frc2::CommandPtr TargetTracker::IntakeTarget() {
   return frc2::DeferredCommand(
              [this] {
-               bool hasTarget = HasTargetLock();
+               auto targets = GetTargets();
+               bool hasTarget = HasTargetLock(targets);
 
                if (!hasTarget) {
+                 ConsoleLogger::getInstance().logWarning("TargetTracker",
+                                                         "NO TARGET FOUND");
                  return frc2::InstantCommand([] {}).ToPtr();
                }
 
                return (MoveToIntakePose()
                            .AlongWith(
                                IntakingCommands::Intake(m_intake, m_scoring))
-                           .WithTimeout(5_s))
+                           .WithTimeout(10_s))
                    .WithTimeout(20_s)
                    .FinallyDo([this] {
                      auto chassisSpeeds = frc::ChassisSpeeds::Discretize(
@@ -99,47 +104,44 @@ frc2::CommandPtr TargetTracker::IntakeTarget() {
       .ToPtr();
 }
 
-std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose() {
+std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
+    std::vector<DetectedObject>& targets) {
   if (!frc::RobotBase::IsReal()) {
     return frc::Pose2d(7_m, 4_m, frc::Rotation2d(180_deg));
   }
 
-  if (!HasTargetLock()) {
+  if (!HasTargetLock(targets)) {
     return std::nullopt;
   }
 
-  auto bestTarget = GetBestTarget().value();
+  auto bestTarget = GetBestTarget(targets).value();
 
-  units::degree_t targetOffsetVertical = -bestTarget.centerY;
-  units::degree_t verticalDelta = targetOffsetVertical - m_cameraAngle;
+  units::degree_t targetOffsetVertical = bestTarget.centerY;
+  units::degree_t verticalDelta = targetOffsetVertical + m_cameraAngle;
   units::inch_t heightDelta = -m_cameraHeight;
   units::radian_t verticalAngle = verticalDelta.convert<units::radian>();
   units::radian_t horizontalAngle = bestTarget.centerX.convert<units::radian>();
-  units::inch_t distance = heightDelta / (tan(verticalAngle.value()));
-  distance -= kDistanceGap;
+  units::inch_t distance = heightDelta / tan(verticalAngle.value());
+  // distance -= kDistanceGap;
 
   frc::Pose2d currentPose = m_drive->GetPose();
 
-  auto xTransformation = distance * cos(horizontalAngle.value());
-  auto yTransformation = distance * sin(horizontalAngle.value());
-  frc::Transform2d transformDelta = frc::Transform2d(
-      xTransformation, yTransformation, frc::Rotation2d(0_deg));
+  auto xTransformation = distance * tan(horizontalAngle.value());
+  auto yTransformation =
+      units::inch_t(pow(cos(horizontalAngle.value()) / distance.value(), -1));
+  frc::Transform2d transformDelta =
+      frc::Transform2d(xTransformation, yTransformation, 0_deg);
   frc::Pose2d notePose = currentPose.TransformBy(transformDelta);
 
   // Pivot around our robot's current pose to be field-oriented
-  // Maybe this isn't needed?
+  double s = sin(currentPose.Rotation().Radians().value());
+  double c = cos(currentPose.Rotation().Radians().value());
 
-  auto t1X = (notePose.X() - currentPose.X()) *
-             cos(currentPose.Rotation().Radians().value());
-  auto t2X = (notePose.Y() - currentPose.Y()) *
-             sin(currentPose.Rotation().Radians().value());
-  auto newX = t1X - t2X + notePose.X();
+  auto originX = notePose.X() - currentPose.X();
+  auto originY = notePose.Y() - currentPose.Y();
 
-  auto t1Y = (notePose.X() - currentPose.X()) *
-             sin(currentPose.Rotation().Radians().value());
-  auto t2Y = (notePose.Y() - currentPose.Y()) *
-             cos(currentPose.Rotation().Radians().value());
-  auto newY = t1Y + t2Y + notePose.Y();
+  auto newX = (originX * c) - (originY * s);
+  auto newY = (originX * s) + (originY * c);
 
-  return frc::Pose2d(newX, newY, 0_deg);
+  return frc::Pose2d(newX + currentPose.X(), newY + currentPose.Y(), 0_deg);
 }

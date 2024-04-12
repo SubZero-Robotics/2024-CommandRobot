@@ -349,7 +349,6 @@ void RobotContainer::DisableSubsystems() { m_arm.DisablePid(); }
 void RobotContainer::Initialize() { m_arm.OnInit(); }
 
 void RobotContainer::Periodic() {
-  frc::SmartDashboard::PutBoolean("HAS TARGET LOCK", tracker.HasTargetLock());
   frc::SmartDashboard::PutBoolean("TURN TO POSE AT GOAL",
                                   m_turnToPose.AtGoal());
 
@@ -375,7 +374,11 @@ void RobotContainer::Periodic() {
 
     m_shouldAim = m_aimbotEnabled && inRange;
   } else {
-    auto targetPose = tracker.GetBestTargetPose();
+    auto targets = tracker.GetTargets();
+    auto targetPose = tracker.GetBestTargetPose(targets);
+
+    frc::SmartDashboard::PutBoolean("HAS TARGET LOCK",
+                                    tracker.HasTargetLock(targets));
 
     if (targetPose) {
       m_shouldAim = m_aimbotEnabled;

@@ -39,11 +39,11 @@ class TargetTracker {
                 double confidenceThreshold, IntakeSubsystem* intake,
                 ScoringSubsystem* scoring, DriveSubsystem* drive);
   std::vector<DetectedObject> GetTargets();
-  std::optional<DetectedObject> GetBestTarget();
-  bool HasTargetLock();
+  std::optional<DetectedObject> GetBestTarget(std::vector<DetectedObject>&);
+  bool HasTargetLock(std::vector<DetectedObject>&);
   frc2::CommandPtr MoveToIntakePose();
   frc2::CommandPtr IntakeTarget();
-  std::optional<frc::Pose2d> GetBestTargetPose();
+  std::optional<frc::Pose2d> GetBestTargetPose(std::vector<DetectedObject>&);
 
  private:
   units::degree_t m_cameraAngle;
