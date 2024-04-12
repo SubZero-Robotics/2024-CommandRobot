@@ -91,7 +91,7 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intake,
              // onEnd
              [intake, scoring](bool interupted) {},
              // isFinished
-             [intake, scoring] { return intake->NotePresentUpperCenter(); },
+             [intake, scoring] { return intake->NotePresentUpperAll(); },
              // req
              {intake, scoring})
       .ToPtr()
