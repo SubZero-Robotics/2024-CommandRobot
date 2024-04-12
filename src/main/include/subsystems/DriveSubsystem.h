@@ -154,8 +154,6 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   void logMotorState(MAXSwerveModule& motor, std::string key);
 
-  frc::Pose2d adjustEstimatedPose(const frc::Pose2d& pose);
-
   MAXSwerveModule m_frontLeft;
   MAXSwerveModule m_rearLeft;
   MAXSwerveModule m_frontRight;

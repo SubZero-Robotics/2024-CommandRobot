@@ -510,6 +510,22 @@ static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
 namespace CollisionConstants {
 constexpr units::foot_t kFieldWidth = 27_ft;
 constexpr units::foot_t kFieldLength = 54_ft;
+
+// TODO: Get Correct number for this
+constexpr units::inch_t kBumperThickness = 2_in;
+
+// this assumes a rectangular perimeter which... yeah.
+constexpr units::inch_t kRobotWidth = DriveConstants::kTrackWidth + kBumperThickness;
+constexpr units::inch_t kRobotLength = DriveConstants::kWheelBase + kBumperThickness;
+
+struct Obstacle {
+  std::vector<frc::Translation2d> verticies;
+};
+
+std::vector<Obstacle> obstacles {
+    // TODO: Populate this
+    {}
+};
 }  // namespace CollisionConstants
 
 namespace ClimbConstants {
