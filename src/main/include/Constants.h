@@ -507,6 +507,11 @@ static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
 static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
 }  // namespace VisionConstants
 
+namespace CollisionConstants {
+constexpr units::foot_t kFieldWidth = 27_ft;
+constexpr units::foot_t kFieldLength = 54_ft;
+}  // namespace CollisionConstants
+
 namespace ClimbConstants {
 constexpr int kClimberLeftMotorId = 10;
 constexpr int kClimberRightMotorId = 11;
