@@ -20,7 +20,7 @@ static frc::Translation2d PerformCollision(
     frc::Translation2d edge = nextVertex - currentVertex;
 
     // hehe funny geometry class comming back to get me
-    frc::Translation2d normal = edge.RotateBy(M_PI / 2.0);
+    frc::Translation2d normal = edge.RotateBy(90_deg);
 
     std::vector<double> objectProjections;
     for (const auto& vertex : object) {
@@ -28,12 +28,12 @@ static frc::Translation2d PerformCollision(
     }
 
     double minProjection =
-        *std::min_element(robotProjectiions.begin(), robotProjections.end());
+        *std::min_element(objectProjections.begin(), objectProjections.end());
     double maxProjection =
-        *std::max_element(robotProjectiions.begin(), robotProjections.end());
+        *std::max_element(objectProjections.begin(), objectProjections.end());
 
     if (minProjection < 0 && maxProjection > 0) {
-      // :flushed:
+      // 😳
       double penetrationDepth = std::min(-minProjection, maxProjection);
       frc::Translation2d correctionVector = normal * penetrationDepth;
 
@@ -45,8 +45,8 @@ static frc::Translation2d PerformCollision(
 }
 
 static frc::Pose2d AdjustEstimatedPose(const frc::Pose2d& pose) {
-  frc::Translation2d robotPosition = pose.Translation;
-  double robotRotation = pose.Rotation().Radians().value();
+  frc::Translation2d robotPosition = pose.Translation();
+  auto robotRotation = pose.Rotation().Radians();
 
   auto adjustedPose = pose;
 
@@ -59,16 +59,18 @@ static frc::Pose2d AdjustEstimatedPose(const frc::Pose2d& pose) {
 
   for (auto& vertex : robotVerticies) {
     vertex = vertex.RotateBy(robotRotation);
-    vertex += robotPosition;
+    vertex. += robotPosition;
   }
 
-  for (const auto& obstacle: obstacles) {
+  for (const auto& obstacle : obstacles) {
     frc::Translation2d mtv = PerformCollision(obstacle, robotVerticies);
-    adjustedPose = adjustedPose.TranslateBy(mtv);
+    adjustedPose = adjustedPose.TransformBy(mtv);
   }
 
-  units::meter_t x = std::clamp(adjustedPose.Translation().X(), 0, kFieldWidth);
-  units::meter_t y = std::clamp(adjustedPose.Translation().Y(), 0, kFieldLength);
+  auto x = units::meter_t(std::clamp(adjustedPose.Translation().X().value(), 0.0,
+                                     kFieldWidth.value()));
+  auto y = units::meter_t(std::clamp(adjustedPose.Translation().Y().value(), 0.0,
+                                     kFieldLength.value()));
 
   return frc::Pose2d(frc::Translation2d(x, y), adjustedPose.Rotation());
 }

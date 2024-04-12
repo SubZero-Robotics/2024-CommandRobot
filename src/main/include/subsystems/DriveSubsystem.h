@@ -25,6 +25,7 @@
 #include "MAXSwerveModule.h"
 #include "utils/ConsoleLogger.h"
 #include "utils/Vision.h"
+#include "utils/Collision.h"
 
 // For sim to work
 #ifndef M_PI

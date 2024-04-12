@@ -511,18 +511,15 @@ namespace CollisionConstants {
 constexpr units::foot_t kFieldWidth = 27_ft;
 constexpr units::foot_t kFieldLength = 54_ft;
 
-// TODO: Get Correct number for this
-constexpr units::inch_t kBumperThickness = 2_in;
-
 // this assumes a rectangular perimeter which... yeah.
-constexpr units::inch_t kRobotWidth = DriveConstants::kTrackWidth + kBumperThickness;
-constexpr units::inch_t kRobotLength = DriveConstants::kWheelBase + kBumperThickness;
+constexpr units::inch_t kRobotWidth = 34_in;
+constexpr units::inch_t kRobotLength = 34_in;
 
 struct Obstacle {
   std::vector<frc::Translation2d> verticies;
 };
 
-std::vector<Obstacle> obstacles {
+static const std::vector<Obstacle> obstacles {
     // TODO: Populate this
     {}
 };
