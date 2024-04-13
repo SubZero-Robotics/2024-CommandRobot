@@ -94,7 +94,7 @@ class Vision {
     Eigen::Matrix<double, 3, 1> estStdDevs = VisionConstants::kSingleTagStdDevs;
     int numTags = 0;
     units::meter_t avgDist = 0_m;
-    // ConsoleLogger::getInstance().logVerbose("Vision", "targets used length
+    // ConsoleWriter.logVerbose("Vision", "targets used length
     // %d", pose.targetsUsed.size());
     for (const auto& tgt : pose.targetsUsed) {
       auto tagPose =

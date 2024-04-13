@@ -36,7 +36,7 @@ Finally stop all motors
 static frc2::CommandPtr Funni(IntakeSubsystem* intake,
                               ScoringSubsystem* scoring, LedSubsystem* leds) {
   return (frc2::InstantCommand([] {
-            ConsoleLogger::getInstance().logVerbose("Gamepiece Funni",
+            ConsoleWriter.logVerbose("Gamepiece Funni",
                                                     "Started%s", "");
           })
               .ToPtr()

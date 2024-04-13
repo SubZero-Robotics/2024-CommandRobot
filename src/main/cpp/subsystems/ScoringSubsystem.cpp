@@ -66,20 +66,20 @@ bool ScoringSubsystem::GetMotorAtScoringSpeed(ScoringDirection direction) {
 
 bool ScoringSubsystem::GetMotorFreeWheel(ScoringDirection direction) {
   if (direction == ScoringDirection::AmpSide) {
-    ConsoleLogger::getInstance().logVerbose(
+    ConsoleWriter.logVerbose(
         "Amp free wheel", "Current: %.3f",
         m_ampLowerSpinnyBoi.GetOutputCurrent());
     return m_ampLowerSpinnyBoi.GetOutputCurrent() < kFreeSpinCurrentThreshold;
   }
 
   if (direction == ScoringDirection::Subwoofer) {
-    ConsoleLogger::getInstance().logVerbose(
+    ConsoleWriter.logVerbose(
         "Subwoofer free wheel", "Current: %.3f",
         m_ampUpperSpinnyBoi.GetOutputCurrent());
     return m_ampUpperSpinnyBoi.GetOutputCurrent() < kFreeSpinCurrentThreshold;
   }
 
-  ConsoleLogger::getInstance().logVerbose(
+  ConsoleWriter.logVerbose(
       "Other free wheel", "Current: %.3f",
       m_ampUpperSpinnyBoi.GetOutputCurrent());
   return m_speakerLowerSpinnyBoi.GetOutputCurrent() < kFreeSpinCurrentThreshold;
@@ -102,13 +102,13 @@ void ScoringSubsystem::SpinSubwoofer() {
 }
 
 bool ScoringSubsystem::CheckAmpSpeed() {
-  ConsoleLogger::getInstance().logVerbose("Amp Ramp Speed",
+  ConsoleWriter.logVerbose("Amp Ramp Speed",
                                           m_ampLowerEnc.GetVelocity());
   return abs(m_ampLowerEnc.GetVelocity()) >= abs(MaxSpeedToRpm(kAmpLowerSpeed));
 }
 
 bool ScoringSubsystem::CheckSpeakerSpeed() {
-  ConsoleLogger::getInstance().logVerbose("Scoring Subsystem",
+  ConsoleWriter.logVerbose("Scoring Subsystem",
                                           "Speaker Velocity %.3f",
                                           m_speakerLowerEnc.GetVelocity());
   ShuffleboardLogger::getInstance().logVerbose("Speaker Ramp Speed",
@@ -118,7 +118,7 @@ bool ScoringSubsystem::CheckSpeakerSpeed() {
 }
 
 bool ScoringSubsystem::CheckSubwooferSpeed() {
-  ConsoleLogger::getInstance().logVerbose("Scoring Subsystem",
+  ConsoleWriter.logVerbose("Scoring Subsystem",
                                           "Subwoofer Velocity %.3f",
                                           m_ampLowerEnc.GetVelocity());
   ShuffleboardLogger::getInstance().logVerbose("Subwoofer Ramp Speed",

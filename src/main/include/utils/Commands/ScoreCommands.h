@@ -58,7 +58,7 @@ static frc2::CommandPtr ScoreRamp(std::function<ScoringDirection()> direction,
                            .ToPtr()
                            .WithTimeout(2_s)
                            .AndThen(frc2::InstantCommand([] {
-                                      ConsoleLogger::getInstance().logVerbose(
+                                      ConsoleWriter.logVerbose(
                                           "Scoring Composition",
                                           "flywheel ramped %s", "");
                                     }).ToPtr())))
@@ -80,7 +80,7 @@ static frc2::CommandPtr PreScoreShuffle(
     std::function<ScoringDirection()> direction, ScoringSubsystem* scoring,
     IntakeSubsystem* intake) {
   return frc2::InstantCommand([] {
-           ConsoleLogger::getInstance().logInfo("Scoring", "Pre Score Shuffle");
+           ConsoleWriter.logInfo("Scoring", "Pre Score Shuffle");
          })
       .ToPtr()
       .AndThen(frc2::FunctionalCommand(
@@ -119,7 +119,7 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                  .ToPtr()
                  .WithTimeout(2_s)
                  .AndThen(frc2::InstantCommand([] {
-                            ConsoleLogger::getInstance().logVerbose(
+                            ConsoleWriter.logVerbose(
                                 "Scoring Composition", "fed %s", "");
                           }).ToPtr())
                  .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
@@ -127,7 +127,7 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                  .AndThen(
                      Shoot(intake, scoring, direction).ToPtr().WithTimeout(1_s))
                  .AndThen(frc2::InstantCommand([] {
-                            ConsoleLogger::getInstance().logVerbose(
+                            ConsoleWriter.logVerbose(
                                 "Scoring Composition", "shot %s", "");
                           }).ToPtr()))
       .Unless([intake] { return !intake->NotePresent(); })

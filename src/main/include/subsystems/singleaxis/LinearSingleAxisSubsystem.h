@@ -49,7 +49,7 @@ class LinearSingleAxisSubsystem
                         bool ignoreEncoder = false) override {
     BaseSingleAxisSubsystem<TMotor, TController, TRelativeEncoder,
                             TAbsoluteEncoder, units::meter>::DisablePid();
-    ConsoleLogger::getInstance().logWarning(
+    ConsoleWriter.logWarning(
         BaseSingleAxisSubsystem<TMotor, TController, TRelativeEncoder,
                                 TAbsoluteEncoder, units::meter>::m_name,
         "Running with a velocity is not supported for linear subsystems!%s",

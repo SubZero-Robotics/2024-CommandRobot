@@ -25,7 +25,7 @@ static frc2::CommandPtr FeedUntilNotPresent(IntakeSubsystem* intake,
                                             ScoringSubsystem* scoring,
                                             ScoringDirection direction) {
   return frc2::InstantCommand([] {
-           ConsoleLogger::getInstance().logVerbose("FeedUntilNotPresent",
+           ConsoleWriter.logVerbose("FeedUntilNotPresent",
                                                    "Feeding to top%s", "");
          })
       .ToPtr()
@@ -41,7 +41,7 @@ static frc2::CommandPtr DowntakeUntilPresent(IntakeSubsystem* intake,
                                              ScoringSubsystem* scoring,
                                              ScoringDirection direction) {
   return (frc2::InstantCommand([] {
-            ConsoleLogger::getInstance().logVerbose("Downtake",
+            ConsoleWriter.logVerbose("Downtake",
                                                     "Downtake down%s", "");
           })
               .ToPtr()
@@ -66,7 +66,7 @@ static frc2::CommandPtr DowntakeUntilPresent(IntakeSubsystem* intake,
                          scoring->Stop();
                        }).ToPtr())
               .AndThen(frc2::InstantCommand([] {
-                         ConsoleLogger::getInstance().logVerbose(
+                         ConsoleWriter.logVerbose(
                              "Intake Subsystem", "Intake completed normally%s",
                              "");
                        }).ToPtr()))

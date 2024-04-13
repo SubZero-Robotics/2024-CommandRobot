@@ -26,7 +26,7 @@ class ExtendClimbCommand
     auto in = m_inExtend();
 
     auto extend = out >= in ? out : -in;
-    ConsoleLogger::getInstance().logVerbose("ExtendCommand", "Extend Speed %f",
+    ConsoleWriter.logVerbose("ExtendCommand", "Extend Speed %f",
                                             extend);
     m_climbSubsystem->RunMotorPercentage(extend);
   }

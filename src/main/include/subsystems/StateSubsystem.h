@@ -45,7 +45,7 @@ class StateSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr SetState(RobotState newState) {
     return frc2::InstantCommand(
                [this, newState] {
-                 ConsoleLogger::getInstance().logVerbose(
+                 ConsoleWriter.logVerbose(
                      "StateSubsystem", "Setting new state to %u",
                      static_cast<uint8_t>(newState));
                  m_currentState = newState;
@@ -61,7 +61,7 @@ class StateSubsystem : public frc2::SubsystemBase {
   }
 
   void SetDesiredState() {
-    ConsoleLogger::getInstance().logInfo("StateSubsystem",
+    ConsoleWriter.logInfo("StateSubsystem",
                                          "Running with state %u",
                                          static_cast<uint8_t>(m_currentState));
     frc2::CommandScheduler::GetInstance().Cancel(m_cmd);

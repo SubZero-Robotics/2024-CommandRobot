@@ -134,9 +134,9 @@ class BaseSingleAxisSubsystem
     }
 
     if (!m_pidEnabled && !IsMovementAllowed(m_latestSpeed)) {
-      ConsoleLogger::getInstance().logInfo(
-          m_name, "Periodic: Movement with speed %f is not allowed",
-          m_latestSpeed);
+      ConsoleWriter.logInfo(m_name,
+                            "Periodic: Movement with speed %f is not allowed",
+                            m_latestSpeed);
 
       Stop();
     }
@@ -181,7 +181,7 @@ class BaseSingleAxisSubsystem
   }
 
   void ResetEncoder() override {
-    ConsoleLogger::getInstance().logInfo(m_name, "Reset encoder%s", "");
+    ConsoleWriter.logInfo(m_name, "Reset encoder%s", "");
     m_controller.ResetEncoder();
   }
 
@@ -218,16 +218,16 @@ class BaseSingleAxisSubsystem
                [this, position] {
                  if (position < m_config.minDistance ||
                      position > m_config.maxDistance) {
-                   ConsoleLogger::getInstance().logWarning(
+                   ConsoleWriter.logWarning(
                        m_name,
                        "Attempting to move to position %f outside of boundary",
                        position.value());
                    return;
                  }
 
-                 ConsoleLogger::getInstance().logVerbose(
-                     m_name, "Moving to absolute position %f",
-                     position.value());
+                 ConsoleWriter.logVerbose(m_name,
+                                          "Moving to absolute position %f",
+                                          position.value());
 
                  m_goalPosition = position;
                  EnablePid();

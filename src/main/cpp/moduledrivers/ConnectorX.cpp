@@ -84,12 +84,12 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
     return currentZone;
   }
 
-  ConsoleLogger::getInstance().logVerbose(
+  ConsoleWriter.logVerbose(
       "ConnectorX", "Setting new zone index to %u", zoneIndex);
   currentPort.currentZoneIndex = zoneIndex;
   currentZone = getCurrentZone();
 
-  ConsoleLogger::getInstance().logVerbose("ConnectorX", "Got zone %s",
+  ConsoleWriter.logVerbose("ConnectorX", "Got zone %s",
                                           currentZone.toString().c_str());
 
   Commands::Command cmd;
@@ -149,17 +149,17 @@ void ConnectorX::ConnectorXBoard::createZones(
 
   currentPort.zones = zones;
 
-  ConsoleLogger::getInstance().logVerbose("ConnectorX", "Created zones: %s",
+  ConsoleWriter.logVerbose("ConnectorX", "Created zones: %s",
                                           "");
   for (auto& zone : currentPort.zones) {
-    ConsoleLogger::getInstance().logVerbose("ConnectorX", "Zone: %s",
+    ConsoleWriter.logVerbose("ConnectorX", "Zone: %s",
                                             zone.toString().c_str());
   }
 }
 
 void ConnectorX::ConnectorXBoard::setLedPort(LedPort port) {
   if (static_cast<uint8_t>(port) != m_device.currentPort) {
-    ConsoleLogger::getInstance().logVerbose(
+    ConsoleWriter.logVerbose(
         "ConnectorX", "Setting new LED port to %u", static_cast<uint8_t>(port));
     m_device.currentPort = static_cast<uint8_t>(port);
     Commands::Command cmd;
@@ -185,7 +185,7 @@ void ConnectorX::ConnectorXBoard::setOn() {
   }
 
   if (shouldSet) {
-    ConsoleLogger::getInstance().logVerbose("ConnectorX", "Setting to on %s",
+    ConsoleWriter.logVerbose("ConnectorX", "Setting to on %s",
                                             "");
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::On;
@@ -218,7 +218,7 @@ void ConnectorX::ConnectorXBoard::setOff() {
   }
 
   if (shouldSet) {
-    ConsoleLogger::getInstance().logVerbose("ConnectorX", "Setting to off %s",
+    ConsoleWriter.logVerbose("ConnectorX", "Setting to off %s",
                                             "");
     Commands::Command cmd;
     cmd.commandType = Commands::CommandType::Off;
@@ -235,7 +235,7 @@ void ConnectorX::ConnectorXBoard::setPattern(LedPort port, PatternType pattern,
   delaySeconds(kConnectorXDelay);
 
   if (zone.pattern != pattern) {
-    ConsoleLogger::getInstance().logVerbose("ConnectorX",
+    ConsoleWriter.logVerbose("ConnectorX",
                                             "Setting new pattern to %u",
                                             static_cast<uint8_t>(pattern));
     zone.pattern = pattern;
@@ -263,12 +263,12 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
   setLedPort(port);
   delaySeconds(kConnectorXDelay);
 
-  ConsoleLogger::getInstance().logVerbose(
+  ConsoleWriter.logVerbose(
       "ConnectorX", "Zone %u cur color=%s | new color=%s", zoneIndex,
       zone.color.HexString().c_str(), newColor.HexString().c_str());
 
   if (zone.color != newColor) {
-    ConsoleLogger::getInstance().logVerbose(
+    ConsoleWriter.logVerbose(
         "ConnectorX", "Setting new color to %s", newColor.HexString().c_str());
     zone.color = newColor;
     Commands::Command cmd;
@@ -411,11 +411,11 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
     stream << std::to_string(sendBuf[i]) << " ";
   }
   std::string result = stream.str();
-  ConsoleLogger::getInstance().logVerbose("ConnectorX",
+  ConsoleWriter.logVerbose("ConnectorX",
                                           "Sending data: %s with len=%d",
                                           result.c_str(), sendLen + 1);
   if (recSize == 0) {
-    ConsoleLogger::getInstance().logVerbose(
+    ConsoleWriter.logVerbose(
         "ConnectorX", "FPGA TIMESTAMP BEFORE %f",
         frc::Timer::GetFPGATimestamp().value());
     // _i2c->WriteBulk(sendBuf, sendLen + 1);
@@ -428,18 +428,18 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
     // int result = 0;
 
     if (result == -1) {
-      ConsoleLogger::getInstance().logError("ConnectorX",
+      ConsoleWriter.logError("ConnectorX",
                                             "Write Result Failed %d errno=%s",
                                             result, std::strerror(errno));
     }
 
-    ConsoleLogger::getInstance().logVerbose(
+    ConsoleWriter.logVerbose(
         "ConnectorX", "FPGA TIMESTAMP AFTER %f",
         frc::Timer::GetFPGATimestamp().value());
     return response;
   }
 
-  ConsoleLogger::getInstance().logVerbose("ConnectorX", "UNREACHABLE %s", "");
+  ConsoleWriter.logVerbose("ConnectorX", "UNREACHABLE %s", "");
 
   _i2c->Transaction(sendBuf, sendLen + 1,
                     reinterpret_cast<uint8_t*>(&response.responseData),

@@ -63,4 +63,6 @@ class ConsoleLogger : ILogger {
   }
 };
 
+#define ConsoleWriter ConsoleLogger::getInstance()
+
 #endif

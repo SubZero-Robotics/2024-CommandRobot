@@ -81,9 +81,8 @@ void RobotContainer::RegisterAutos() {
                                  &m_scoring, &m_intake, &m_arm));
   pathplanner::NamedCommands::registerCommand(
       AutoConstants::kIntakeName,
-      frc2::InstantCommand([this] {
-        ConsoleLogger::getInstance().logVerbose("Autos", "Intaking %s", "");
-      })
+      frc2::InstantCommand(
+          [this] { ConsoleWriter.logVerbose("Autos", "Intaking %s", ""); })
           .ToPtr()
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
   using namespace AutoConstants;
@@ -107,7 +106,7 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.Start().WhileTrue(new frc2::RunCommand(
       [this] {
         m_drive.SetX();
-        // ConsoleLogger::getInstance().logVerbose("Drive", "SetX %s", "");
+        // ConsoleWriter.logVerbose("Drive", "SetX %s", "");
       },
       {&m_drive}));
 
@@ -181,14 +180,13 @@ void RobotContainer::ConfigureButtonBindings() {
   ConfigureAutoBindings();
 #endif
 #ifdef TEST_SWERVE_BOT
-  m_driverController.A().OnTrue(
-      m_leds.ScoringAmp()
-          .WithTimeout(5_s)
-          .AndThen(m_leds.Idling())
-          .AndThen(frc2::InstantCommand([] {
-                     ConsoleLogger::getInstance().logVerbose("'A' Button",
-                                                             "Pressed");
-                   }).ToPtr()));
+  m_driverController.A().OnTrue(m_leds.ScoringAmp()
+                                    .WithTimeout(5_s)
+                                    .AndThen(m_leds.Idling())
+                                    .AndThen(frc2::InstantCommand([] {
+                                               ConsoleWriter.logVerbose(
+                                                   "'A' Button", "Pressed");
+                                             }).ToPtr()));
   m_driverController.B().OnTrue(
       m_leds.Intaking().WithTimeout(5_s).AndThen(m_leds.Idling()));
   m_driverController.X().OnTrue(

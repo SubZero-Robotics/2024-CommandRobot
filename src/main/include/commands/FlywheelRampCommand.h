@@ -21,7 +21,7 @@ class FlywheelRamp : public frc2::CommandHelper<frc2::Command, FlywheelRamp> {
         }
 
   void Initialize() override {
-    ConsoleLogger::getInstance().logVerbose("Score State", "Start state: %s",
+    ConsoleWriter.logVerbose("Score State", "Start state: %s",
                                             "Ramping");
     m_scoring->StartScoringRamp(m_direction());
     isFinished = false;
@@ -35,7 +35,7 @@ class FlywheelRamp : public frc2::CommandHelper<frc2::Command, FlywheelRamp> {
   bool IsFinished() override { return isFinished; }
 
   void End(bool interrupted) override {
-    ConsoleLogger::getInstance().logVerbose("Score State", "End state: %s",
+    ConsoleWriter.logVerbose("Score State", "End state: %s",
                                             "Ramping");
   }
 

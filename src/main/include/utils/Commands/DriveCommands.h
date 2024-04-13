@@ -59,8 +59,7 @@ static units::degree_t RotationFromProximity(DriveSubsystem* drive) {
 
 static frc2::CommandPtr SnapToAngle(DriveSubsystem* drive) {
   return (frc2::InstantCommand([] {
-            ConsoleLogger::getInstance().logInfo(
-                "SnapToAngle", "Snapping to a new angle%s", "");
+            ConsoleWriter.logInfo("SnapToAngle", "Snapping to a new angle%s", "");
           })
               .ToPtr()
               .AndThen(TurnToAngle(

@@ -56,7 +56,7 @@ class PidMotorController {
 
   void Update() {
     if (m_absolutePositionEnabled) {
-      ConsoleLogger::getInstance().logVerbose(
+      ConsoleWriter.logVerbose(
           m_name,
           "relative position %0.3f, absolute position %0.3f, absolute target"
           "%0.3f",
@@ -86,10 +86,9 @@ class PidMotorController {
   /// @param percentage
   void RunWithVelocity(double percentage) {
     if (abs(percentage) > 1.0) {
-      ConsoleLogger::getInstance().logError(
-          "PidMotorController",
-          "Incorrect percentages for motor %s: Value=%.4f ", m_name.c_str(),
-          percentage);
+      ConsoleWriter.logError("PidMotorController",
+                             "Incorrect percentages for motor %s: Value=%.4f ",
+                             m_name.c_str(), percentage);
       return;
     }
     auto rpm = units::revolutions_per_minute_t(m_maxRpm) * percentage;
@@ -108,8 +107,7 @@ class PidMotorController {
 
   virtual void ResetEncoder() {
     m_encoder.SetPosition(0);
-    ConsoleLogger::getInstance().logInfo(m_name + " PID Controller",
-                                         "Reset encoder%s", "");
+    ConsoleWriter.logInfo(m_name + " PID Controller", "Reset encoder%s", "");
   }
 
   double GetEncoderPosition() { return m_encoder.GetPosition(); }
@@ -143,37 +141,33 @@ class PidMotorController {
 
   void UpdatePidSettings(PidSettings settings) {
     if (settings.p != m_settings.p) {
-      ConsoleLogger::getInstance().logInfo("PidMotorController",
-                                           "Setting P to %.6f for %s",
-                                           settings.p, m_name.c_str());
+      ConsoleWriter.logInfo("PidMotorController", "Setting P to %.6f for %s",
+                            settings.p, m_name.c_str());
       m_controller.SetP(settings.p);
     }
 
     if (settings.i != m_settings.i) {
-      ConsoleLogger::getInstance().logInfo("PidMotorController",
-                                           "Setting I to %.6f for %s",
-                                           settings.i, m_name.c_str());
+      ConsoleWriter.logInfo("PidMotorController", "Setting I to %.6f for %s",
+                            settings.i, m_name.c_str());
       m_controller.SetI(settings.i);
     }
 
     if (settings.d != m_settings.d) {
-      ConsoleLogger::getInstance().logInfo("PidMotorController",
-                                           "Setting D to %.6f for %s",
-                                           settings.d, m_name.c_str());
+      ConsoleWriter.logInfo("PidMotorController", "Setting D to %.6f for %s",
+                            settings.d, m_name.c_str());
       m_controller.SetD(settings.d);
     }
 
     if (settings.iZone != m_settings.iZone) {
-      ConsoleLogger::getInstance().logInfo("PidMotorController",
-                                           "Setting IZone to %.6f for %s",
-                                           settings.iZone, m_name.c_str());
+      ConsoleWriter.logInfo("PidMotorController",
+                            "Setting IZone to %.6f for %s", settings.iZone,
+                            m_name.c_str());
       m_controller.SetIZone(settings.iZone);
     }
 
     if (settings.ff != m_settings.ff) {
-      ConsoleLogger::getInstance().logInfo("PidMotorController",
-                                           "Setting FF to %.6f for %s",
-                                           settings.ff, m_name.c_str());
+      ConsoleWriter.logInfo("PidMotorController", "Setting FF to %.6f for %s",
+                            settings.ff, m_name.c_str());
       m_controller.SetFF(settings.ff);
     }
 

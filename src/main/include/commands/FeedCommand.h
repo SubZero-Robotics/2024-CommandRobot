@@ -21,7 +21,7 @@ class Feed : public frc2::CommandHelper<frc2::Command, Feed> {
   }
 
   void Initialize() override {
-    ConsoleLogger::getInstance().logVerbose("Score State", "Start state: %s",
+    ConsoleWriter.logVerbose("Score State", "Start state: %s",
                                             "Feed");
     m_scoring->SpinVectorSide(m_direction());
     m_intake->Feed(m_direction());
@@ -35,7 +35,7 @@ class Feed : public frc2::CommandHelper<frc2::Command, Feed> {
   bool IsFinished() override { return isFinished; }
 
   void End(bool interrupted) override {
-    ConsoleLogger::getInstance().logVerbose("Score State", "End state: %s",
+    ConsoleWriter.logVerbose("Score State", "End state: %s",
                                             "Feed");
   }
 

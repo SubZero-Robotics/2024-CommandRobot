@@ -27,9 +27,8 @@ void StateSubsystem::IncrementState() {
 }
 
 frc2::CommandPtr StateSubsystem::RunState() {
-  ConsoleLogger::getInstance().logVerbose("StateSubsystem",
-                                          "Running with state %u",
-                                          static_cast<uint8_t>(m_currentState));
+  ConsoleWriter.logVerbose("StateSubsystem", "Running with state %u",
+                           static_cast<uint8_t>(m_currentState));
 
   switch (m_currentState) {
     case RobotState::Manual:
@@ -256,8 +255,7 @@ bool StateSubsystem::IsControllerActive() {
   // Check the operator's "stop" button
   active |= m_operatorController.RightStick().Get();
   if (active) {
-    ConsoleLogger::getInstance().logVerbose("StateSubsystem",
-                                            "Controller interrupt! %s", "");
+    ConsoleWriter.logVerbose("StateSubsystem", "Controller interrupt! %s", "");
   }
   return active;
 }
