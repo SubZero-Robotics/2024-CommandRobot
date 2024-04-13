@@ -45,6 +45,11 @@ class LeftClimbSubsystem : public ClimbSubsystem {
                                       .ff = 0};
   PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      m_controller{"Left Climb Motor",   m_motor, m_encoder, m_pidController,
-                   m_climberPidSettings, nullptr, kMaxRpm};
+      m_controller{"Left Climb Motor",
+                   m_motor,
+                   m_encoder,
+                   m_pidController,
+                   m_climberPidSettings,
+                   nullptr,
+                   IntakingConstants::kMaxRpm};
 };
