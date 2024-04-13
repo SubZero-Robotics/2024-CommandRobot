@@ -23,8 +23,8 @@ class ClimbSubsystem
                  frc::MechanismObject2d* node = nullptr)
       : LinearSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
                                   rev::SparkRelativeEncoder,
-                                  rev::SparkAbsoluteEncoder>(
-            name, controller, config, node) {}
+                                  rev::SparkAbsoluteEncoder>(name, controller,
+                                                             config, node) {}
   void Periodic() override {
     LinearSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
                               rev::SparkRelativeEncoder,

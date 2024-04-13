@@ -58,10 +58,11 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
                                 ArmConstants::kArmFF};
   PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      armController{"Arm",          m_SpinnyBoi, m_enc,  m_PidController,
-                    armPidSettings, &m_absEnc,   IntakingConstants::kMaxRpm};
-  // PidMotorControllerTuner<rev::CANSparkMax, rev::SparkPIDController,
-  //                         rev::SparkRelativeEncoder,
-  //                         rev::SparkAbsoluteEncoder>
-  // armTuner{upperController};
+      armController{"Arm",
+                    m_SpinnyBoi,
+                    m_enc,
+                    m_PidController,
+                    armPidSettings,
+                    &m_absEnc,
+                    IntakingConstants::kMaxRpm};
 };

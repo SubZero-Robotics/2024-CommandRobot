@@ -11,9 +11,9 @@ class RightClimbSubsystem : public ClimbSubsystem {
                         // Max distance
                         40_in,
                         // Distance per revolution of relative encoder
-                        (1_in),
+                        1_in / 80,
                         // Distance per revolution of absolute encoder
-                        0_in,
+                        std::nullopt,
                         // Default velocity
                         0.5_fps,
                         // Velocity scalar
