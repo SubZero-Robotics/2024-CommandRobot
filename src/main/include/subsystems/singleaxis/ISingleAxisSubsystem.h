@@ -11,28 +11,6 @@
 
 #include "ColorConstants.h"
 
-class ISingleAxisSubsystem : public frc2::SubsystemBase {
- public:
-  // Need controller input
-  virtual void RunMotorSpeed(double speed, bool ignoreEncoder) = 0;
-  virtual void RunMotorSpeedDefault(bool invertDirection) = 0;
-  virtual void RunMotorExternal(double speed, bool ignoreEncoder = false) = 0;
-  virtual void UpdateMovement() = 0;
-  virtual void ResetEncoder() = 0;
-  virtual double GetCurrentPosition() = 0;
-  virtual bool AtHome() = 0;
-  virtual bool AtMax() = 0;
-  virtual bool AtLimitSwitchHome() = 0;
-  virtual bool AtLimitSwitchMax() = 0;
-  virtual void Home() = 0;
-  virtual void MoveToPosition(double) = 0;
-  virtual bool GetIsMovingToPosition() = 0;
-  virtual void StopMovement() = 0;
-  virtual void JoystickMoveStep(double) = 0;
-  virtual double IncrementTargetPosition(double) = 0;
-  virtual frc2::CommandPtr GetHomeCommand() = 0;
-};
-
 struct SingleAxisMechanism {
   units::meter_t minimumLength;
   units::degree_t minimumAngle;
@@ -41,7 +19,7 @@ struct SingleAxisMechanism {
 };
 
 template <typename Distance>
-class ISingleAxisSubsystem2 {
+class ISingleAxisSubsystem {
  public:
   using Distance_t = units::unit_t<Distance>;
   using Velocity =
@@ -51,7 +29,7 @@ class ISingleAxisSubsystem2 {
       units::compound_unit<Velocity, units::inverse<units::seconds>>;
   using Acceleration_t = units::unit_t<Acceleration>;
 
-  struct SingleAxisConfig2 {
+  struct SingleAxisConfig {
     Distance_t minDistance;
     Distance_t maxDistance;
     Distance_t encoderDistancePerRevolution;
@@ -64,7 +42,7 @@ class ISingleAxisSubsystem2 {
     bool reversed;
     SingleAxisMechanism mechanismConfig;
 
-    SingleAxisConfig2(
+    SingleAxisConfig(
         Distance_t _minDistance, Distance_t _maxDistance,
         Distance_t _encoderDistancePerRevolution,
         std::optional<Distance_t> _absoluteEncoderDistancePerRevolution,

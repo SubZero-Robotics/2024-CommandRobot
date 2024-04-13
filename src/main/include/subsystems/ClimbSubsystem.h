@@ -7,7 +7,7 @@
 #include <string>
 
 #include "Constants.h"
-#include "subsystems/BaseSingleAxisSubsystem2.h"
+#include "subsystems/singleaxis/LinearSingleAxisSubsystem.h"
 #include "utils/ConsoleLogger.h"
 
 class ClimbSubsystem
@@ -19,7 +19,7 @@ class ClimbSubsystem
                  PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                                     rev::SparkRelativeEncoder,
                                     rev::SparkAbsoluteEncoder>& controller,
-                 ISingleAxisSubsystem2<units::meter>::SingleAxisConfig2 config,
+                 ISingleAxisSubsystem<units::meter>::SingleAxisConfig config,
                  frc::MechanismObject2d* node = nullptr)
       : LinearSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
                                   rev::SparkRelativeEncoder,

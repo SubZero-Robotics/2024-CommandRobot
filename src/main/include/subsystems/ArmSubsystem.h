@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Constants.h"
-#include "subsystems/BaseSingleAxisSubsystem2.h"
+#include "subsystems/singleaxis/RotationalSingleAxisSubsystem.h"
 #include "utils/PidMotorController.h"
 
 class ArmSubsystem : public RotationalSingleAxisSubsystem<
