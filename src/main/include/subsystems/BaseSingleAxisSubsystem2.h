@@ -19,6 +19,7 @@
 #include <units/velocity.h>
 
 #include <memory>
+#include <string>
 
 #include "Constants.h"
 #include "subsystems/ISingleAxisSubsystem.h"

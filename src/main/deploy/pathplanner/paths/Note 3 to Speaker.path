@@ -8,11 +8,27 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1268309203285076,
-        "y": 5.4322241977817285
+        "x": 2.118506425308017,
+        "y": 4.908866815189101
       },
       "isLocked": false,
       "linkedName": "Note 3"
+    },
+    {
+      "anchor": {
+        "x": 2.1707284127036455,
+        "y": 4.898422417709976
+      },
+      "prevControl": {
+        "x": 2.265715309331775,
+        "y": 4.784006383135184
+      },
+      "nextControl": {
+        "x": 1.7111749236221125,
+        "y": 5.45197548410364
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +36,8 @@
         "y": 5.577308253853149
       },
       "prevControl": {
-        "x": 2.7567521801710275,
-        "y": 5.852171704343409
+        "x": 1.8260632958924956,
+        "y": 5.420642291666263
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,7 +46,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.2,
+      "waypointRelativePos": 1.1,
       "rotationDegrees": 180.0,
       "rotateFast": false
     }
@@ -39,7 +55,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.55,
+      "waypointRelativePos": 0.3,
       "command": {
         "type": "parallel",
         "data": {

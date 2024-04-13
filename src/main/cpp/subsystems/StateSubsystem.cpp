@@ -9,7 +9,6 @@
 #include "commands/IntakeOutCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
-#include "utils/CommandUtils.h"
 #include "utils/ShuffleboardLogger.h"
 
 using namespace AutoConstants::Locations;
@@ -23,13 +22,14 @@ StateSubsystem::StateSubsystem(Subsystems_t& subsystems,
       m_operatorController{op} {}
 
 void StateSubsystem::IncrementState() {
-  uint8_t nextState = ((uint8_t)m_currentState) + 1;
-  m_currentState = (RobotState)(nextState % 6);
+  uint8_t nextState = (static_cast<uint8_t>(m_currentState)) + 1;
+  m_currentState = static_cast<RobotState>(nextState % 6);
 }
 
 frc2::CommandPtr StateSubsystem::RunState() {
-  ConsoleLogger::getInstance().logVerbose(
-      "StateSubsystem", "Running with state %u", (uint8_t)m_currentState);
+  ConsoleLogger::getInstance().logVerbose("StateSubsystem",
+                                          "Running with state %u",
+                                          static_cast<uint8_t>(m_currentState));
 
   switch (m_currentState) {
     case RobotState::Manual:
@@ -190,10 +190,7 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
       .AndThen(
           // TODO: method to get the stage location
           PathFactory::GetPathFromFinalLocation(
-              [this] { return GetFinalFromState(); }, m_subsystems.drive
-              // ExtendAbsolute(m_subsystems.leftClimb, m_subsystems.rightClimb)
-              //  .ToPtr()))
-              ))
+              [this] { return GetFinalFromState(); }, m_subsystems.drive))
       .WithTimeout(20_s);
 }
 
@@ -235,7 +232,7 @@ frc2::CommandPtr StateSubsystem::StartFunni() {
 
 frc2::CommandPtr StateSubsystem::MoveToSourceAndIntake() {
   return StartSource().AndThen(
-      IntakingCommands::OuttakeUntilPresent(
+      IntakingCommands::DowntakeUntilPresent(
           m_subsystems.intake, m_subsystems.scoring, ScoringDirection::AmpSide)
           // TODO: REMOVE THIS; ONLY FOR TESTING PURPOSES
           .WithTimeout(5_s));

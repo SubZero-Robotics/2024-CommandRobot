@@ -5,32 +5,33 @@
 #include <pathplanner/lib/commands/FollowPathHolonomic.h>
 
 #include <functional>
+#include <utility>
 
 #include "Constants.h"
 #include "OnTheFlyFactory.h"
 #include "subsystems/DriveSubsystem.h"
 
-using namespace AutoConstants::Locations;
-using namespace pathplanner;
-
 class PathFactory {
  public:
   static frc2::CommandPtr GetPathFromFinalLocation(
-      std::function<FinalLocation()> locationGetter, DriveSubsystem* drive,
-      frc2::CommandPtr&& prepCommand) {
+      std::function<AutoConstants::Locations::FinalLocation()> locationGetter,
+      DriveSubsystem* drive, frc2::CommandPtr&& prepCommand) {
     return GetApproxCommand(locationGetter())
         .AndThen(std::move(prepCommand))
         .AndThen(GetFinalApproachCommand(locationGetter(), drive));
-  };
+  }
 
   static frc2::CommandPtr GetPathFromFinalLocation(
-      std::function<FinalLocation()> locationGetter, DriveSubsystem* drive) {
+      std::function<AutoConstants::Locations::FinalLocation()> locationGetter,
+      DriveSubsystem* drive) {
     return GetApproxCommand(locationGetter())
         .AndThen(GetFinalApproachCommand(locationGetter(), drive));
   }
 
  private:
-  static bool ShouldFlip(FinalLocation location) {
+  static bool ShouldFlip(AutoConstants::Locations::FinalLocation location) {
+    using namespace AutoConstants::Locations;
+
     auto alliance = frc::DriverStation::GetAlliance();
     if (!alliance) {
       return false;
@@ -57,7 +58,8 @@ class PathFactory {
     return false;
   }
 
-  static frc2::CommandPtr GetApproxCommand(FinalLocation location) {
+  static frc2::CommandPtr GetApproxCommand(
+      AutoConstants::Locations::FinalLocation location) {
     auto& approxPose = OnTheFlyFactory::GetApproxLocation(location);
     frc::Pose2d betterapprox = approxPose;
     ConsoleLogger::getInstance().logInfo("PATH factory", betterapprox);
@@ -82,9 +84,12 @@ class PathFactory {
     );
   }
 
-  static frc2::CommandPtr GetFinalApproachCommand(FinalLocation location,
-                                                  DriveSubsystem* drive) {
-    auto path = PathPlannerPath::fromPathFile(PoseToPath.at(location));
+  static frc2::CommandPtr GetFinalApproachCommand(
+      AutoConstants::Locations::FinalLocation location, DriveSubsystem* drive) {
+    using namespace pathplanner;
+
+    auto path = PathPlannerPath::fromPathFile(
+        AutoConstants::Locations::PoseToPath.at(location));
 
     return FollowPathHolonomic(
                path, [drive]() { return drive->GetPose(); },

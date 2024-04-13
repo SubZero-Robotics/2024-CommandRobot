@@ -17,6 +17,7 @@
 #include <units/velocity.h>
 
 #include <memory>
+#include <string>
 
 #include "Constants.h"
 #include "subsystems/ISingleAxisSubsystem.h"
@@ -121,27 +122,32 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
 
       _motor.Set(0);
       return;
-    }
-
-    else if (AtMax()) {
+    } else if (AtMax()) {
       if (_log) ConsoleLogger::getInstance().logInfo(_prefix, "AT MAX %s", "");
+
       if (speed > 0) {
-        if (_log)
+        if (_log) {
           ConsoleLogger::getInstance().logVerbose(
               _prefix, "SETTING SPEED TO: %.2f", speed);
+        }
+
         _motor.Set(speed);
         return;
       }
 
-      if (_log)
+      if (_log) {
         ConsoleLogger::getInstance().logVerbose(
             _prefix, "NOT MOVING; AT MAX; speed=%.2f", speed);
+      }
+
       _motor.Set(0);
       return;
     } else {
-      if (_log)
+      if (_log) {
         ConsoleLogger::getInstance().logVerbose(
             _prefix, "SETTING SPEED TO: %.2f", speed);
+      }
+
       _motor.Set(speed);
     }
   }
@@ -158,8 +164,7 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
    * @param speed Percentage speed
    */
   void RunMotorExternal(double speed, bool ignoreEncoder = false) override {
-    // TODO: constant
-    if (abs(speed) <= 0.05) {
+    if (abs(speed) <= BaseSingleAxisSubsystemConstants::kMotorDeadSpeedRange) {
       if (_isMovingToPosition)
         return;  // Don't set the motor and overwrite a potential
                  // automated movement
@@ -240,7 +245,8 @@ class BaseSingleAxisSubsystem : public ISingleAxisSubsystem {
 
     // TODO: Constant wrap-around value
     if (GetCurrentPosition() <= _config.minDistance ||
-        GetCurrentPosition() >= 350.0) {
+        GetCurrentPosition() >=
+            BaseSingleAxisSubsystemConstants::kMaxRotPosition) {
       if (_log)
         ConsoleLogger::getInstance().logInfo(_prefix, "AT HOME ENCODER %s", "");
       return true;

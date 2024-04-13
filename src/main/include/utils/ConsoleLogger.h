@@ -2,10 +2,9 @@
 #define CONSOLE_LOGGER_H
 
 #include <iostream>
+#include <string>
 
 #include "ILogger.h"
-
-using namespace Logging;
 
 class ConsoleLogger : ILogger {
  public:
@@ -51,15 +50,17 @@ class ConsoleLogger : ILogger {
   void logError(std::string key, wpi::Sendable* val) override;
   void logFatal(std::string key, wpi::Sendable* val) override;
 
-  private:
-    ConsoleLogger();
+ private:
+  ConsoleLogger();
 
-    void log(LogLevel level, std::string key, std::string fmt, va_list ap) {
-        if (!shouldLog(level)) return;
+  void log(Logging::LogLevel level, std::string key, std::string fmt,
+           va_list ap) {
+    if (!shouldLog(level)) return;
 
-        std::string val = formatString(fmt, ap);
-        std::cout << levelToString(level) << " - " << key << ": " << val << std::endl;
-    }
+    std::string val = formatString(fmt, ap);
+    std::cout << levelToString(level) << " - " << key << ": " << val
+              << std::endl;
+  }
 };
 
 #endif

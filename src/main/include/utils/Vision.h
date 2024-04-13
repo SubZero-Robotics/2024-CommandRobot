@@ -8,10 +8,10 @@
 
 #include <limits>
 #include <memory>
+#include <vector>
+#include <utility>
 
 #include "Constants.h"
-
-using namespace VisionConstants;
 
 struct CameraResults {
   photon::PhotonPipelineResult camera;
@@ -91,10 +91,11 @@ class Vision {
 
   Eigen::Matrix<double, 3, 1> GetEstimationStdDevs(
       photon::EstimatedRobotPose& pose) {
-    Eigen::Matrix<double, 3, 1> estStdDevs = kSingleTagStdDevs;
+    Eigen::Matrix<double, 3, 1> estStdDevs = VisionConstants::kSingleTagStdDevs;
     int numTags = 0;
     units::meter_t avgDist = 0_m;
-    //ConsoleLogger::getInstance().logVerbose("Vision", "targets used length %d", pose.targetsUsed.size());
+    // ConsoleLogger::getInstance().logVerbose("Vision", "targets used length
+    // %d", pose.targetsUsed.size());
     for (const auto& tgt : pose.targetsUsed) {
       auto tagPose =
           photonEstimator.GetFieldLayout().GetTagPose(tgt.GetFiducialId());
@@ -109,7 +110,7 @@ class Vision {
     }
     avgDist /= numTags;
     if (numTags > 1) {
-      estStdDevs = kMultiTagStdDevs;
+      estStdDevs = VisionConstants::kMultiTagStdDevs;
     }
     if (numTags == 1 && avgDist > 4_m) {
       estStdDevs = (Eigen::MatrixXd(3, 1) << std::numeric_limits<double>::max(),
@@ -132,11 +133,13 @@ class Vision {
   }
 
   photon::PhotonPoseEstimator photonEstimator{
-      kTagLayout, kPoseStrategy, photon::PhotonCamera{kFrontCamera},
-      kRobotToCam};
+      VisionConstants::kTagLayout, VisionConstants::kPoseStrategy,
+      photon::PhotonCamera{VisionConstants::kFrontCamera},
+      VisionConstants::kRobotToCam};
   photon::PhotonPoseEstimator photonEstimator2{
-      kTagLayout, kPoseStrategy, photon::PhotonCamera{kRearCamera},
-      kRobotToCam2};
+      VisionConstants::kTagLayout, VisionConstants::kPoseStrategy,
+      photon::PhotonCamera{VisionConstants::kRearCamera},
+      VisionConstants::kRobotToCam2};
   std::shared_ptr<photon::PhotonCamera> camera{photonEstimator.GetCamera()};
   std::shared_ptr<photon::PhotonCamera> camera2{photonEstimator2.GetCamera()};
 

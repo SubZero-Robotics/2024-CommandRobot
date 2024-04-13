@@ -76,17 +76,11 @@ void DriveSubsystem::SimulationPeriodic() {
   poseEstimator.Update(-GetHeading().Degrees(), GetModulePositions());
 
   m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
-};
+}
 
 void DriveSubsystem::Periodic() {
   // Implementation of subsystem periodic method goes here.
   if (frc::RobotBase::IsReal()) {
-    // ConsoleLogger::getInstance().logInfo(
-    //     "DriveSubsystem", "Gyro angle = %f",
-    //     m_gyro.GetRotation2d().Degrees().value());
-    // ConsoleLogger::getInstance().logInfo("DriveSubsystem", "Gyro rate = %f",
-
-    //                                      m_gyro.GetRate());
     poseEstimator.UpdateWithTime(frc::Timer::GetFPGATimestamp(), GetHeading(),
                                  GetModulePositions());
     logDrivebase();
@@ -95,11 +89,9 @@ void DriveSubsystem::Periodic() {
 
     auto updatedPose = poseEstimator.GetEstimatedPosition();
     // https://github.com/Hemlock5712/2023-Robot/blob/dd5ac64587a3839492cfdb0a28d21677d465584a/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java#L149
-    // ConsoleLogger::getInstance().logVerbose(
-    //     "DriveSubsystem PoseEstimator final pose", updatedPose);
     m_lastGoodPosition = updatedPose;
     m_field.SetRobotPose(updatedPose);
-  };
+  }
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
@@ -218,38 +210,9 @@ wpi::array<frc::SwerveModulePosition, 4U> DriveSubsystem::GetModulePositions()
           m_rearLeft.GetPosition(), m_rearRight.GetPosition()};
 }
 
-frc::Rotation2d DriveSubsystem::GetHeading() {
-  // frc::Rotation2d rotation = m_gyro1.GetRotation2d();
-  // if (m_gyro1.GetFaultField().GetStatus() == ctre::phoenix::StatusCode::OK) {
-  //   rotation = m_gyro1.GetRotation2d();
-  // } else if (m_gyro2.GetFaultField().GetStatus() ==
-  //            ctre::phoenix::StatusCode::OK) {
-  //   ConsoleLogger::getInstance().logError(
-  //       "Gyro",
-  //       "Pigeon Gyro 1 has experienced fault '%s', using second pigeon gyro "
-  //       "instead",
-  //       m_gyro1.GetFaultField().GetStatus().GetName());
-  //   rotation = m_gyro2.GetRotation2d();
-  // } else {
-  //   ConsoleLogger::getInstance().logError(
-  //       "Gyro",
-  //       "Pigeon Gyro 1 has experienced fault '%s' and Pigeon Gyro 2 has "
-  //       "expierenced fault '%s', using ADXRS450 gyro instead",
-  //       m_gyro1.GetFaultField().GetStatus().GetName(),
-  //       m_gyro2.GetFaultField().GetStatus().GetName());
-  //   rotation = m_gyro3.GetRotation2d();
-  // }
+frc::Rotation2d DriveSubsystem::GetHeading() { return m_gyro1.GetRotation2d(); }
 
-  frc::SmartDashboard::PutBoolean("Gyro OK",
-                                  m_gyro1.GetFaultField().IsAllGood());
-  return m_gyro1.GetRotation2d();
-}
-
-void DriveSubsystem::ZeroHeading() {
-  m_gyro1.Reset();
-  // m_gyro2.Reset();
-  // m_gyro3.Reset();
-}
+void DriveSubsystem::ZeroHeading() { m_gyro1.Reset(); }
 
 // TODO: Return the rate of the currently used gyro
 double DriveSubsystem::GetTurnRate() { return m_gyro1.GetRate(); }
@@ -261,5 +224,4 @@ frc::Pose2d DriveSubsystem::GetPose() {
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
   m_lastGoodPosition = pose;
   poseEstimator.ResetPosition(GetHeading(), GetModulePositions(), pose);
-  // ResetEncoders();
 }
