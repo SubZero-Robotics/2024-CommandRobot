@@ -141,15 +141,17 @@ std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
       frc::Transform2d(wpiTranslation, currentPose.Rotation());
   auto wpiFinalPose = currentPose.TransformBy(wpiTransformation);
 
-  // Pivot around our robot's current pose to be field-oriented
-  double s = sin(currentPose.Rotation().Radians().value());
-  double c = cos(currentPose.Rotation().Radians().value());
+  // // Pivot around our robot's current pose to be field-oriented
+  // double s = sin(currentPose.Rotation().Radians().value());
+  // double c = cos(currentPose.Rotation().Radians().value());
 
-  auto originX = notePose.X() - currentPose.X();
-  auto originY = notePose.Y() - currentPose.Y();
+  // auto originX = notePose.X() - currentPose.X();
+  // auto originY = notePose.Y() - currentPose.Y();
 
-  auto newX = (originX * c) - (originY * s);
-  auto newY = (originX * s) + (originY * c);
+  // auto newX = (originX * c) - (originY * s);
+  // auto newY = (originX * s) + (originY * c);
 
-  return frc::Pose2d(newX + currentPose.X(), newY + currentPose.Y(), 0_deg);
+  // return frc::Pose2d(newX + currentPose.X(), newY + currentPose.Y(), 0_deg);
+
+  return wpiFinalPose;
 }
