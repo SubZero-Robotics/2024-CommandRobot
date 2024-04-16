@@ -248,13 +248,15 @@ void RobotContainer::ConfigureAutoBindings() {
                                            }).ToPtr());
 
   // Maps to 2 on keyboard
+  // m_operatorController.RightBumper().OnTrue(
+  //     frc2::InstantCommand([this] {
+  //       if (!m_state.m_active) {
+  //         m_state.m_currentState = RobotState::ClimbStageCenter;
+  //         m_state.SetDesiredState();
+  //       }
+  //     }).ToPtr());
   m_operatorController.RightBumper().OnTrue(
-      frc2::InstantCommand([this] {
-        if (!m_state.m_active) {
-          m_state.m_currentState = RobotState::ClimbStageCenter;
-          m_state.SetDesiredState();
-        }
-      }).ToPtr());
+      m_rightClimb.MoveToPositionAbsolute(18_in));
 
   // Maps to 3 on keyboard
   m_operatorController.LeftStick().OnTrue(frc2::InstantCommand([this] {

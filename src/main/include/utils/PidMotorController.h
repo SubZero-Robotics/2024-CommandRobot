@@ -46,7 +46,10 @@ class PidMotorController {
 
   void Set(double percentage) { m_motor.Set(percentage); }
 
-  void Set(units::volt_t volts) { m_motor.SetVoltage(volts); }
+  void Set(units::volt_t volts) {
+    frc::SmartDashboard::PutNumber(m_name + " Commanded volts", volts.value());
+        m_motor.SetVoltage(volts);
+  }
 
   void SetPidTolerance(double tolerance) {
     m_pidController.SetTolerance(tolerance);

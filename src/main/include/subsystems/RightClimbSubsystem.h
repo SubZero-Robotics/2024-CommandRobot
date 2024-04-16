@@ -9,9 +9,9 @@ class RightClimbSubsystem : public ClimbSubsystem {
                        {// Min distance
                         0_in,
                         // Max distance
-                        40_in,
+                        20_in,
                         // Distance per revolution of relative encoder
-                        1_in / 80,
+                        1_in / 23.1,
                         // Distance per revolution of absolute encoder
                         std::nullopt,
                         // Default velocity
@@ -27,7 +27,11 @@ class RightClimbSubsystem : public ClimbSubsystem {
                         // Reversed
                         false,
                         // Mechanism2d
-                        {24_in, 70_deg, 6, ColorConstants::kRed}},
+                        {24_in, 70_deg, 6, ColorConstants::kRed},
+                        // Conversion Function
+                        [](units::meter_t from) {
+                          return std::to_string(from.convert<units::inch>().value()) + " inches :(";
+                        }},
                        node) {
     m_motor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
   }
@@ -37,12 +41,7 @@ class RightClimbSubsystem : public ClimbSubsystem {
                            rev::CANSparkMax::MotorType::kBrushless};
   rev::SparkPIDController m_pidController = m_motor.GetPIDController();
   rev::SparkRelativeEncoder m_encoder = m_motor.GetEncoder();
-  PidSettings m_climberPidSettings = {// TODO: Constants
-                                      .p = 0.075,
-                                      .i = 0,
-                                      .d = 0,
-                                      .iZone = 0,
-                                      .ff = 0};
+  PidSettings m_climberPidSettings = {40, 0, 0, 0, 0};
   PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
       m_controller{"Right Climb Motor",

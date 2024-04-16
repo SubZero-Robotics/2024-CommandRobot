@@ -110,6 +110,10 @@ class BaseSingleAxisSubsystem
     frc::SmartDashboard::PutBoolean(m_name + " Pid Enabled", m_pidEnabled);
     frc::SmartDashboard::PutNumber(m_name + " Position",
                                    GetCurrentPosition().value());
+    if (m_config.conversionFunction) {
+      std::string curPos = m_config.conversionFunction.value()(GetCurrentPosition());
+      frc::SmartDashboard::PutString(m_name + " Converted Position", curPos);
+    }
 
     if (m_controller.GetAbsoluteEncoderPosition().has_value())
       frc::SmartDashboard::PutNumber(
