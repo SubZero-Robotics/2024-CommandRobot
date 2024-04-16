@@ -49,6 +49,10 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr BlinkingFace();
   frc2::CommandPtr SurprisedFace();
   frc2::CommandPtr AmogusFace();
+  frc2::CommandPtr AimbotEnabled();
+  frc2::CommandPtr OnTheFlyPP();
+  frc2::CommandPtr VisionNoteDetected();
+  frc2::CommandPtr SuccessfulIntake();
 
   void IdlingAsync();
   void ErrorAsync();
@@ -58,6 +62,7 @@ class LedSubsystem : public frc2::SubsystemBase {
     LeftClimber = 0,
     Back,
     RightClimber,
+    Front,
   };
 
   enum class EyePattern {
@@ -103,5 +108,8 @@ class LedSubsystem : public frc2::SubsystemBase {
   std::vector<ConnectorX::Commands::NewZone> m_ledZones1 = {
       {.offset = 0, .count = 1},
       {.offset = 1, .count = 256},
+  };
+  std::vector<ConnectorX::Commands::NewZone> m_ledZone2 = {
+      {.offset = 50, .count = 32},
   };
 };
