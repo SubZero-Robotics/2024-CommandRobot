@@ -226,13 +226,21 @@ void RobotContainer::ConfigureAutoBindings() {
   //       }
   //     }).ToPtr());
 
-  m_operatorController.A().OnTrue(frc2::InstantCommand([this] {
-                                    if (!m_state.m_active) {
-                                      m_state.m_currentState =
-                                          RobotState::ScoringSpeaker;
-                                      m_state.SetDesiredState();
-                                    }
-                                  }).ToPtr());
+  m_operatorController.A().OnTrue(tracker.IntakeTarget().AndThen(
+      frc2::InstantCommand([this] {
+        if (!m_state.m_active) {
+          m_state.m_currentState = RobotState::ScoringSubwoofer;
+          m_state.SetDesiredState();
+        }
+      }).ToPtr()));
+
+  // m_operatorController.A().OnTrue(frc2::InstantCommand([this] {
+  //                                   if (!m_state.m_active) {
+  //                                     m_state.m_currentState =
+  //                                         RobotState::ScoringSpeaker;
+  //                                     m_state.SetDesiredState();
+  //                                   }
+  //                                 }).ToPtr());
 
   // Maps to 8 on keyboard
   m_operatorController.B().OnTrue(frc2::InstantCommand([this] {

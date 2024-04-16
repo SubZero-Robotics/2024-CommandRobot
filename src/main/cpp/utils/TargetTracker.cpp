@@ -89,7 +89,7 @@ frc2::CommandPtr TargetTracker::IntakeTarget() {
                }
 
                return (MoveToIntakePose()
-                           .AlongWith(
+                           .AndThen(
                                IntakingCommands::Intake(m_intake, m_scoring))
                            .WithTimeout(10_s))
                    .WithTimeout(20_s)
@@ -131,12 +131,12 @@ std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
       units::inch_t(pow(cos(horizontalAngle.value()) / distance.value(), -1));
 
   frc::Transform2d transformDelta =
-      frc::Transform2d(-xTransformation, yTransformation, 0_deg);
+      frc::Transform2d(xTransformation, yTransformation, 0_deg);
   frc::Pose2d notePose = currentPose.TransformBy(transformDelta);
 
   // Do it the WPI way - currently just used for testing
   auto wpiTranslation = frc::Translation2d(
-      hypotDistance.convert<units::meter>(), frc::Rotation2d(horizontalAngle));
+      hypotDistance.convert<units::meter>(), -frc::Rotation2d(horizontalAngle));
   auto wpiTransformation =
       frc::Transform2d(wpiTranslation, currentPose.Rotation());
   auto wpiFinalPose = currentPose.TransformBy(wpiTransformation);
