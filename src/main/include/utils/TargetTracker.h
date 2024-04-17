@@ -21,16 +21,23 @@ struct DetectedObject {
   units::degree_t centerX;
   // Positive-down, center-zero
   units::degree_t centerY;
+  double areaPercentage;
 
   DetectedObject(uint8_t id, double conf, units::degree_t cX,
-                 units::degree_t cY)
-      : classId{id}, confidence{conf}, centerX{cX}, centerY{cY} {}
+                 units::degree_t cY, double area)
+      : classId{id},
+        confidence{conf},
+        centerX{cX},
+        centerY{cY},
+        areaPercentage{area} {}
 
   DetectedObject(const LimelightHelpers::DetectionResultClass& detectionResult)
       : classId{(uint8_t)detectionResult.m_classID},
         confidence{detectionResult.m_confidence},
         centerX{detectionResult.m_TargetXDegreesCrosshairAdjusted},
-        centerY{detectionResult.m_TargetYDegreesCrosshairAdjusted} {}
+        centerY{detectionResult.m_TargetYDegreesCrosshairAdjusted},
+        // TODO: I don't think this is the width in pixels...
+        areaPercentage{detectionResult.m_TargetAreaNormalizedPercentage} {}
 };
 
 class TargetTracker {
@@ -44,6 +51,7 @@ class TargetTracker {
   frc2::CommandPtr MoveToIntakePose();
   frc2::CommandPtr IntakeTarget();
   std::optional<frc::Pose2d> GetBestTargetPose(std::vector<DetectedObject>&);
+  units::inch_t GetDistanceToTarget(DetectedObject&);
 
  private:
   units::degree_t m_cameraAngle;

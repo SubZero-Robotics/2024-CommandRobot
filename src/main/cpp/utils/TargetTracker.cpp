@@ -122,6 +122,9 @@ std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
   units::radian_t verticalAngle = verticalDelta.convert<units::radian>();
   units::radian_t horizontalAngle = bestTarget.centerX.convert<units::radian>();
   units::inch_t distance = heightDelta / tan(verticalAngle.value());
+  auto otherDistance = GetDistanceToTarget(bestTarget);
+  frc::SmartDashboard::PutString("TargetTracker otherDistance",
+                                 std::to_string(otherDistance.value()) + " in");
 
   frc::Pose2d currentPose = m_drive->GetPose();
 
@@ -134,24 +137,17 @@ std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
       frc::Transform2d(xTransformation, yTransformation, 0_deg);
   frc::Pose2d notePose = currentPose.TransformBy(transformDelta);
 
-  // Do it the WPI way - currently just used for testing
+  // Do it the WPI way
   auto wpiTranslation = frc::Translation2d(
       hypotDistance.convert<units::meter>(), -frc::Rotation2d(horizontalAngle));
   auto wpiTransformation =
       frc::Transform2d(wpiTranslation, currentPose.Rotation());
   auto wpiFinalPose = currentPose.TransformBy(wpiTransformation);
 
-  // // Pivot around our robot's current pose to be field-oriented
-  // double s = sin(currentPose.Rotation().Radians().value());
-  // double c = cos(currentPose.Rotation().Radians().value());
-
-  // auto originX = notePose.X() - currentPose.X();
-  // auto originY = notePose.Y() - currentPose.Y();
-
-  // auto newX = (originX * c) - (originY * s);
-  // auto newY = (originX * s) + (originY * c);
-
-  // return frc::Pose2d(newX + currentPose.X(), newY + currentPose.Y(), 0_deg);
-
   return wpiFinalPose;
+}
+
+units::inch_t TargetTracker::GetDistanceToTarget(DetectedObject& target) {
+  return (VisionConstants::kNoteWidth * VisionConstants::focalLength) /
+         target.areaPercentage;
 }

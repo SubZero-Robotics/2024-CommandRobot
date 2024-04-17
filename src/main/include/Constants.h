@@ -309,10 +309,9 @@ const std::vector<FixtureLocation> RedFixtureLocations{
      .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(180_deg))},
     // Feeding (Feed)
     {.fixtureLocation = frc::Pose2d(6_m, 1_m, frc::Rotation2d(0_deg)),
-     //TODO: bigger radius and motor velocity changes based on distance
+     // TODO: bigger radius and motor velocity changes based on distance
      .locationRadius = 2_ft,
-     .trackedPose = frc::Pose2d(15_m, 7.5_m, frc::Rotation2d(0_deg))}
-};
+     .trackedPose = frc::Pose2d(15_m, 7.5_m, frc::Rotation2d(0_deg))}};
 const std::vector<FixtureLocation> BlueFixtureLocations{
     // Podium (ScoreSpeaker)
     // TODO
@@ -329,10 +328,9 @@ const std::vector<FixtureLocation> BlueFixtureLocations{
      .trackedPose = frc::Pose2d(0_m, 5.6_m, frc::Rotation2d(180_deg))},
     // Feeding (Feed)
     {.fixtureLocation = frc::Pose2d(10_m, 1_m, frc::Rotation2d(0_deg)),
-     //TODO: bigger radius and motor velocity changes based on distance
+     // TODO: bigger radius and motor velocity changes based on distance
      .locationRadius = 2_ft,
-     .trackedPose = frc::Pose2d(1_m, 7.5_m, frc::Rotation2d(0_deg))}
-};
+     .trackedPose = frc::Pose2d(1_m, 7.5_m, frc::Rotation2d(0_deg))}};
 }  // namespace Locations
 }  // namespace AutoConstants
 
@@ -575,6 +573,14 @@ static const frc::AprilTagFieldLayout kTagLayout{
     frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo)};
 static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
 static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
+
+// TODO: update to match!
+constexpr double kKnownCalibrationAreaPercentage = 0.4;
+constexpr units::inch_t kNoteWidth = 12_in;
+constexpr units::inch_t kKnownCalibrationDistance = 24_in;
+
+constexpr units::inch_t focalLength =
+    (kKnownCalibrationDistance * kKnownCalibrationAreaPercentage) / kNoteWidth;
 }  // namespace VisionConstants
 
 namespace ClimbConstants {
