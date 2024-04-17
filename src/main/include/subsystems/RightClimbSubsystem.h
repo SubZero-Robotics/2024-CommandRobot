@@ -8,19 +8,19 @@ class RightClimbSubsystem : public ClimbSubsystem {
       : ClimbSubsystem(
             "Right Climber", m_controller,
             {// Min distance
-             0_in,
+             ClimbConstants::kMinClimberDistance,
              // Max distance
-             36_in,
+             ClimbConstants::kMaxClimberDistance,
              // Distance per revolution of relative encoder
-             1_in / 23.1,
+             ClimbConstants::kInPerRotation,
              // Distance per revolution of absolute encoder
              std::nullopt,
              // Default velocity
-             0.5_fps,
+             ClimbConstants::kClimberExtendSpeed,
              // Velocity scalar
-             1.0,
+             ClimbConstants::kClimberVelocityScalar,
              // Tolerance
-             0.5_in,
+             ClimbConstants::kClimberTolerance,
              // Min limit switch
              std::nullopt,
              // Max limit switch
@@ -28,7 +28,7 @@ class RightClimbSubsystem : public ClimbSubsystem {
              // Reversed
              false,
              // Mechanism2d
-             {24_in, 70_deg, 6, ColorConstants::kRed},
+             ClimbConstants::kRightClimberMechanism,
              // Conversion Function
              [](units::meter_t from) {
                return std::to_string(from.convert<units::inch>().value()) +
@@ -43,7 +43,10 @@ class RightClimbSubsystem : public ClimbSubsystem {
                            rev::CANSparkMax::MotorType::kBrushless};
   rev::SparkPIDController m_pidController = m_motor.GetPIDController();
   rev::SparkRelativeEncoder m_encoder = m_motor.GetEncoder();
-  PidSettings m_climberPidSettings = {40, 0, 0, 0, 0};
+  PidSettings m_climberPidSettings = {
+      ClimbConstants::kClimberSetP, ClimbConstants::kClimberSetI,
+      ClimbConstants::kClimberSetD, ClimbConstants::kClimberSetIZone,
+      ClimbConstants::kClimberSetFF};
   PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
                      rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
       m_controller{"Right Climb Motor",

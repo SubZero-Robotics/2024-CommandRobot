@@ -20,7 +20,6 @@
 
 #include "Constants.h"
 #include "subsystems/ArmSubsystem.h"
-#include "subsystems/ArmSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/LedSubsystem.h"
@@ -77,13 +76,17 @@ class RobotContainer {
 #endif
 
 #ifndef TEST_SWERVE_BOT
-  LeftClimbSubsystem m_leftClimb{
-      (frc::MechanismObject2d*)m_mech.GetRoot("Climber Left", 0.5, 0)};
-  RightClimbSubsystem m_rightClimb{
-      (frc::MechanismObject2d*)m_mech.GetRoot("Climber Right", 0.5, 1)};
-  frc::MechanismRoot2d* armRoot = m_mech.GetRoot("Arm Root", 0.5, 0.5);
-  frc::MechanismLigament2d* armPost =
-      armRoot->Append<frc::MechanismLigament2d>("Arm Post", 0.4, 90_deg);
+  LeftClimbSubsystem m_leftClimb{(frc::MechanismObject2d*)m_mech.GetRoot(
+      "Climber Left", MechanismConstants::kClimberLeftX,
+      MechanismConstants::kClimberLeftY)};
+  RightClimbSubsystem m_rightClimb{(frc::MechanismObject2d*)m_mech.GetRoot(
+      "Climber Right", MechanismConstants::kClimberRightX,
+      MechanismConstants::kClimberRightY)};
+  frc::MechanismRoot2d* armRoot = m_mech.GetRoot(
+      "Arm Root", MechanismConstants::kArmRootX, MechanismConstants::kArmRootY);
+  frc::MechanismLigament2d* armPost = armRoot->Append<frc::MechanismLigament2d>(
+      "Arm Post", MechanismConstants::kArmPostX,
+      MechanismConstants::kArmPostAngle);
   ArmSubsystem m_arm{(frc::MechanismObject2d*)armPost};
   IntakeSubsystem m_intake;
   ScoringSubsystem m_scoring;

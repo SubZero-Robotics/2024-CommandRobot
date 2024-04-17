@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc/DigitalInput.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
 #include <units/angle.h>
@@ -8,8 +9,6 @@
 #include <units/velocity.h>
 
 #include <memory>
-
-#include "ColorConstants.h"
 
 struct SingleAxisMechanism {
   units::meter_t minimumLength;
@@ -51,7 +50,8 @@ class ISingleAxisSubsystem {
         std::optional<frc::DigitalInput *> _minLimitSwitch,
         std::optional<frc::DigitalInput *> _maxLimitSwitch, bool _reversed,
         SingleAxisMechanism _mechanismConfig,
-        std::optional<std::function<std::string(Distance_t)>> _conversionFunction)
+        std::optional<std::function<std::string(Distance_t)>>
+            _conversionFunction)
         : minDistance{_minDistance},
           maxDistance{_maxDistance},
           encoderDistancePerRevolution{_encoderDistancePerRevolution},

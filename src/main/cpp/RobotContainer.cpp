@@ -162,14 +162,16 @@ void RobotContainer::ConfigureButtonBindings() {
 
   m_driverController.LeftBumper()
       .OnTrue(m_leds.Climbing().AndThen(m_leds.AmogusFace()))
-      .WhileTrue(ExtendClimbCommand(
-                     &m_leftClimb, [this] { return 0; },
-                     [this] { return ClimbConstants::kCLimberExtendSpeed; })
-                     .ToPtr())
-      .WhileTrue(ExtendClimbCommand(
-                     &m_rightClimb, [this] { return 0; },
-                     [this] { return ClimbConstants::kCLimberExtendSpeed; })
-                     .ToPtr());
+      .WhileTrue(
+          ExtendClimbCommand(
+              &m_leftClimb, [this] { return 0; },
+              [this] { return ClimbConstants::kClimberExtendSpeed.value(); })
+              .ToPtr())
+      .WhileTrue(
+          ExtendClimbCommand(
+              &m_rightClimb, [this] { return 0; },
+              [this] { return ClimbConstants::kClimberExtendSpeed.value(); })
+              .ToPtr());
 
   m_driverController.RightBumper().WhileTrue(
       m_leds.Outaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
