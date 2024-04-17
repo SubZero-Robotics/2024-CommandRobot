@@ -3,12 +3,10 @@
 #include "Constants.h"
 #include "autos/PathFactory.h"
 #include "commands/DriveVelocityCommand.h"
-#include "commands/ExtendAbsoluteCommand.h"
 #include "commands/ExtendClimbCommand.h"
 #include "commands/Funni.h"
 #include "commands/IntakeInCommand.h"
 #include "commands/IntakeOutCommand.h"
-#include "commands/RetractClimbCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "utils/ShuffleboardLogger.h"
@@ -29,9 +27,8 @@ void StateSubsystem::IncrementState() {
 }
 
 frc2::CommandPtr StateSubsystem::RunState() {
-  ConsoleLogger::getInstance().logVerbose("StateSubsystem",
-                                          "Running with state %u",
-                                          static_cast<uint8_t>(m_currentState));
+  ConsoleWriter.logVerbose("StateSubsystem", "Running with state %u",
+                           static_cast<uint8_t>(m_currentState));
 
   switch (m_currentState) {
     case RobotState::Manual:
@@ -193,9 +190,6 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
           // TODO: method to get the stage location
           PathFactory::GetPathFromFinalLocation(
               [this] { return GetFinalFromState(); }, m_subsystems.drive))
-      .AndThen(
-          RetractClimbCommand(m_subsystems.leftClimb, m_subsystems.rightClimb)
-              .ToPtr())
       .WithTimeout(20_s);
 }
 
@@ -261,8 +255,7 @@ bool StateSubsystem::IsControllerActive() {
   // Check the operator's "stop" button
   active |= m_operatorController.RightStick().Get();
   if (active) {
-    ConsoleLogger::getInstance().logVerbose("StateSubsystem",
-                                            "Controller interrupt! %s", "");
+    ConsoleWriter.logVerbose("StateSubsystem", "Controller interrupt! %s", "");
   }
   return active;
 }

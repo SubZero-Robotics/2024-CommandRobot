@@ -30,7 +30,7 @@ class IntakeInSecondary
   }
 
   void Execute() override {
-    ConsoleLogger::getInstance().logVerbose("IntakeInSecondary",
+    ConsoleWriter.logVerbose("IntakeInSecondary",
                                             m_intake->NotePresentLower());
     if (m_intake->NotePresentLower()) {
       m_intake->Stop();

@@ -54,10 +54,10 @@ class PidMotorControllerPair {
   const PidSettings &GetPidSettings() const { return m_pidSettings; }
 
   void UpdatePidSettings(PidSettings settings) {
+    m_pidSettings = settings;
+
     m_controllerFirst.UpdatePidSettings(settings);
     m_controllerSecond.UpdatePidSettings(settings);
-
-    m_pidSettings = settings;
   }
 
   const std::string m_shuffleboardPrefix;

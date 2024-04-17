@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc/DigitalInput.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
 #include <units/angle.h>
@@ -7,32 +8,19 @@
 #include <units/length.h>
 #include <units/velocity.h>
 
+#include <functional>
 #include <memory>
+#include <string>
 
-class ISingleAxisSubsystem : public frc2::SubsystemBase {
- public:
-  // Need controller input
-  virtual void RunMotorSpeed(double speed, bool ignoreEncoder) = 0;
-  virtual void RunMotorSpeedDefault(bool invertDirection) = 0;
-  virtual void RunMotorExternal(double speed, bool ignoreEncoder = false) = 0;
-  virtual void UpdateMovement() = 0;
-  virtual void ResetEncoder() = 0;
-  virtual double GetCurrentPosition() = 0;
-  virtual bool AtHome() = 0;
-  virtual bool AtMax() = 0;
-  virtual bool AtLimitSwitchHome() = 0;
-  virtual bool AtLimitSwitchMax() = 0;
-  virtual void Home() = 0;
-  virtual void MoveToPosition(double) = 0;
-  virtual bool GetIsMovingToPosition() = 0;
-  virtual void StopMovement() = 0;
-  virtual void JoystickMoveStep(double) = 0;
-  virtual double IncrementTargetPosition(double) = 0;
-  virtual frc2::CommandPtr GetHomeCommand() = 0;
+struct SingleAxisMechanism {
+  units::meter_t minimumLength;
+  units::degree_t minimumAngle;
+  double lineWidth;
+  frc::Color8Bit color;
 };
 
 template <typename Distance>
-class ISingleAxisSubsystem2 {
+class ISingleAxisSubsystem {
  public:
   using Distance_t = units::unit_t<Distance>;
   using Velocity =
@@ -42,8 +30,7 @@ class ISingleAxisSubsystem2 {
       units::compound_unit<Velocity, units::inverse<units::seconds>>;
   using Acceleration_t = units::unit_t<Acceleration>;
 
-  struct SingleAxisConfig2 {
-    frc::PIDController pid;
+  struct SingleAxisConfig {
     Distance_t minDistance;
     Distance_t maxDistance;
     Distance_t encoderDistancePerRevolution;
@@ -54,30 +41,20 @@ class ISingleAxisSubsystem2 {
     std::optional<frc::DigitalInput *> minLimitSwitch;
     std::optional<frc::DigitalInput *> maxLimitSwitch;
     bool reversed;
+    SingleAxisMechanism mechanismConfig;
+    std::optional<std::function<std::string(Distance_t)>> conversionFunction;
 
-    SingleAxisConfig2(const SingleAxisConfig2 &other) : pid{other.pid} {
-      minDistance = other.minDistance;
-      maxDistance = other.maxDistance;
-      encoderDistancePerRevolution = other.encoderDistancePerRevolution;
-      absoluteEncoderDistancePerRevolution =
-          other.absoluteEncoderDistancePerRevolution;
-      defaultSpeed = other.defaultSpeed;
-      velocityScalar = other.velocityScalar;
-      tolerance = other.tolerance;
-      minLimitSwitch = other.minLimitSwitch;
-      maxLimitSwitch = other.maxLimitSwitch;
-      reversed = other.reversed;
-    }
-
-    SingleAxisConfig2(
-        frc::PIDController _pid, Distance_t _minDistance,
-        Distance_t _maxDistance, Distance_t _encoderDistancePerRevolution,
+    SingleAxisConfig(
+        Distance_t _minDistance, Distance_t _maxDistance,
+        Distance_t _encoderDistancePerRevolution,
         std::optional<Distance_t> _absoluteEncoderDistancePerRevolution,
         Velocity_t _defaultSpeed, double _velocityScalar, Distance_t _tolerance,
         std::optional<frc::DigitalInput *> _minLimitSwitch,
-        std::optional<frc::DigitalInput *> _maxLimitSwitch, bool _reversed)
-        : pid{_pid},
-          minDistance{_minDistance},
+        std::optional<frc::DigitalInput *> _maxLimitSwitch, bool _reversed,
+        SingleAxisMechanism _mechanismConfig,
+        std::optional<std::function<std::string(Distance_t)>>
+            _conversionFunction)
+        : minDistance{_minDistance},
           maxDistance{_maxDistance},
           encoderDistancePerRevolution{_encoderDistancePerRevolution},
           absoluteEncoderDistancePerRevolution{
@@ -87,7 +64,9 @@ class ISingleAxisSubsystem2 {
           tolerance{_tolerance},
           minLimitSwitch{_minLimitSwitch},
           maxLimitSwitch{_maxLimitSwitch},
-          reversed{_reversed} {}
+          reversed{_reversed},
+          mechanismConfig{_mechanismConfig},
+          conversionFunction{_conversionFunction} {}
   };
 
   // Will disable position-based movements when called
