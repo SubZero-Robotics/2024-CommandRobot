@@ -63,6 +63,10 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
       nt::NetworkTableInstance::GetDefault()
           .GetStructArrayTopic<frc::SwerveModuleState>("/SwerveStates")
           .Publish();
+  m_desiredPublisher =
+      nt::NetworkTableInstance::GetDefault()
+          .GetStructArrayTopic<frc::SwerveModuleState>("/SwerveDesiredStates")
+          .Publish();
 }
 
 void DriveSubsystem::SimulationPeriodic() {
@@ -102,10 +106,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   auto dif = now - driveLoopTime;
 
   if (dif > 30_ms) {
-    ConsoleWriter.logVerbose(
-        "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
-    ConsoleWriter.logVerbose(
-        "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
+    ConsoleWriter.logVerbose("EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
   }
 
   auto states =
@@ -170,8 +171,13 @@ void DriveSubsystem::logDrivebase() {
                             m_rearLeft.GetState(), m_rearRight.GetState()};
   std::span<frc::SwerveModuleState, 4> states(states_vec.begin(),
                                               states_vec.end());
+  std::vector desired_vec = {m_frontLeft.GetDesiredState(), m_frontRight.GetDesiredState(),
+                            m_rearLeft.GetDesiredState(), m_rearRight.GetDesiredState()};
+  std::span<frc::SwerveModuleState, 4> desiredStates(desired_vec.begin(),
+                                              desired_vec.end());
 
   m_publisher.Set(states);
+  m_desiredPublisher.Set(desiredStates);
 }
 
 void DriveSubsystem::AddVisionMeasurement(const frc::Pose2d& visionMeasurement,

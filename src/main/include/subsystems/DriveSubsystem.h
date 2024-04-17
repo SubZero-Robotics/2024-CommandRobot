@@ -194,6 +194,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
       {0.1, 0.1, 0.1},
       {1.0, 1.0, 1.0}};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
+  nt::StructArrayPublisher<frc::SwerveModuleState> m_desiredPublisher;
 
   // Pose viewing
   frc::Field2d m_field;
