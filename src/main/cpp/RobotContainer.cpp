@@ -90,9 +90,8 @@ void RobotContainer::RegisterAutos() {
                                  &m_scoring, &m_intake, &m_arm));
   pathplanner::NamedCommands::registerCommand(
       AutoConstants::kIntakeName,
-      frc2::InstantCommand([this] {
-        ConsoleLogger::getInstance().logVerbose("Autos", "Intaking %s", "");
-      })
+      frc2::InstantCommand(
+          [this] { ConsoleWriter.logVerbose("Autos", "Intaking %s", ""); })
           .ToPtr()
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
   using namespace AutoConstants;
@@ -116,7 +115,7 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.Start().WhileTrue(new frc2::RunCommand(
       [this] {
         m_drive.SetX();
-        // ConsoleLogger::getInstance().logVerbose("Drive", "SetX %s", "");
+        // ConsoleWriter.logVerbose("Drive", "SetX %s", "");
       },
       {&m_drive}));
 
@@ -172,14 +171,16 @@ void RobotContainer::ConfigureButtonBindings() {
 
   m_driverController.LeftBumper()
       .OnTrue(m_leds.Climbing().AndThen(m_leds.AmogusFace()))
-      .WhileTrue(ExtendClimbCommand(
-                     &m_leftClimb, [this] { return 0; },
-                     [this] { return ClimbConstants::kCLimberExtendSpeed; })
-                     .ToPtr())
-      .WhileTrue(ExtendClimbCommand(
-                     &m_rightClimb, [this] { return 0; },
-                     [this] { return ClimbConstants::kCLimberExtendSpeed; })
-                     .ToPtr());
+      .WhileTrue(
+          ExtendClimbCommand(
+              &m_leftClimb, [this] { return 0; },
+              [this] { return ClimbConstants::kClimberExtendSpeed.value(); })
+              .ToPtr())
+      .WhileTrue(
+          ExtendClimbCommand(
+              &m_rightClimb, [this] { return 0; },
+              [this] { return ClimbConstants::kClimberExtendSpeed.value(); })
+              .ToPtr());
 
   m_driverController.RightBumper().WhileTrue(
       m_leds.Outaking().AndThen(IntakeOut(&m_intake, &m_scoring).ToPtr()));
@@ -190,14 +191,13 @@ void RobotContainer::ConfigureButtonBindings() {
   ConfigureAutoBindings();
 #endif
 #ifdef TEST_SWERVE_BOT
-  m_driverController.A().OnTrue(
-      m_leds.ScoringAmp()
-          .WithTimeout(5_s)
-          .AndThen(m_leds.Idling())
-          .AndThen(frc2::InstantCommand([] {
-                     ConsoleLogger::getInstance().logVerbose("'A' Button",
-                                                             "Pressed");
-                   }).ToPtr()));
+  m_driverController.A().OnTrue(m_leds.ScoringAmp()
+                                    .WithTimeout(5_s)
+                                    .AndThen(m_leds.Idling())
+                                    .AndThen(frc2::InstantCommand([] {
+                                               ConsoleWriter.logVerbose(
+                                                   "'A' Button", "Pressed");
+                                             }).ToPtr()));
   m_driverController.B().OnTrue(
       m_leds.Intaking().WithTimeout(5_s).AndThen(m_leds.Idling()));
   m_driverController.X().OnTrue(
@@ -271,13 +271,15 @@ void RobotContainer::ConfigureAutoBindings() {
                                            }).ToPtr());
 
   // Maps to 2 on keyboard
+  // m_operatorController.RightBumper().OnTrue(
+  //     frc2::InstantCommand([this] {
+  //       if (!m_state.m_active) {
+  //         m_state.m_currentState = RobotState::ClimbStageCenter;
+  //         m_state.SetDesiredState();
+  //       }
+  //     }).ToPtr());
   m_operatorController.RightBumper().OnTrue(
-      frc2::InstantCommand([this] {
-        if (!m_state.m_active) {
-          m_state.m_currentState = RobotState::ClimbStageCenter;
-          m_state.SetDesiredState();
-        }
-      }).ToPtr());
+      m_rightClimb.MoveToPositionAbsolute(18_in));
 
   // Maps to 3 on keyboard
   m_operatorController.LeftStick().OnTrue(frc2::InstantCommand([this] {
@@ -347,16 +349,26 @@ void RobotContainer::ResetPose() {
   m_drive.ResetOdometry(frc::Pose2d{0_m, 0_m, 0_rad});
 }
 
+void RobotContainer::DisableSubsystems() {
+  m_arm.DisablePid();
+  m_leftClimb.DisablePid();
+  m_rightClimb.DisablePid();
+}
+
+void RobotContainer::Initialize() {
+  m_arm.OnInit();
+  m_leftClimb.OnInit();
+  m_rightClimb.OnInit();
+}
+
 void RobotContainer::StopMotors() {
   m_intake.Stop();
   m_scoring.Stop();
 }
 
-void RobotContainer::DisableSubsystems() { m_arm.DisablePid(); }
-
-void RobotContainer::Initialize() { m_arm.OnInit(); }
-
 void RobotContainer::Periodic() {
+  frc::SmartDashboard::PutData("Robot2d", &m_mech);
+
   frc::SmartDashboard::PutBoolean("TURN TO POSE AT GOAL",
                                   m_turnToPose.AtGoal());
 

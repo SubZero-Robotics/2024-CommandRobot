@@ -59,7 +59,7 @@ class PathFactory {
       }
       return true;
     }
-    ConsoleLogger::getInstance().logError("PPF", "Invalid Alliance%s", "");
+    ConsoleWriter.logError("PPF", "Invalid Alliance%s", "");
     return false;
   }
 
@@ -67,7 +67,7 @@ class PathFactory {
       AutoConstants::Locations::FinalLocation location) {
     auto& approxPose = OnTheFlyFactory::GetApproxLocation(location);
     frc::Pose2d betterapprox = approxPose;
-    ConsoleLogger::getInstance().logInfo("PATH factory", betterapprox);
+    ConsoleWriter.logInfo("PATH factory", betterapprox);
     if (ShouldFlip(location)) {
       return pathplanner::AutoBuilder::pathfindToPoseFlipped(
           approxPose,

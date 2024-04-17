@@ -7,6 +7,7 @@
 #include <AHRS.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
+#include <frc/smartdashboard/Mechanism2d.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/InstantCommand.h>
@@ -55,6 +56,8 @@ class RobotContainer {
   void Periodic();
 
  private:
+  frc::Mechanism2d m_mech{1, 1};
+
   // The driver's controller
   frc2::CommandXboxController m_driverController{
       OIConstants::kDriverControllerPort};
@@ -74,9 +77,18 @@ class RobotContainer {
 #endif
 
 #ifndef TEST_SWERVE_BOT
-  LeftClimbSubsystem m_leftClimb;
-  RightClimbSubsystem m_rightClimb;
-  ArmSubsystem m_arm;
+  LeftClimbSubsystem m_leftClimb{(frc::MechanismObject2d*)m_mech.GetRoot(
+      "Climber Left", MechanismConstants::kClimberLeftX,
+      MechanismConstants::kClimberLeftY)};
+  RightClimbSubsystem m_rightClimb{(frc::MechanismObject2d*)m_mech.GetRoot(
+      "Climber Right", MechanismConstants::kClimberRightX,
+      MechanismConstants::kClimberRightY)};
+  frc::MechanismRoot2d* armRoot = m_mech.GetRoot(
+      "Arm Root", MechanismConstants::kArmRootX, MechanismConstants::kArmRootY);
+  frc::MechanismLigament2d* armPost = armRoot->Append<frc::MechanismLigament2d>(
+      "Arm Post", MechanismConstants::kArmPostX,
+      MechanismConstants::kArmPostAngle);
+  ArmSubsystem m_arm{(frc::MechanismObject2d*)armPost};
   IntakeSubsystem m_intake;
   ScoringSubsystem m_scoring;
 

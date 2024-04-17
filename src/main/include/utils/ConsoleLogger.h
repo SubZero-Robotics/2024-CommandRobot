@@ -63,4 +63,14 @@ class ConsoleLogger : ILogger {
   }
 };
 
+#define ConsoleWriter ConsoleLogger::getInstance()
+#define ConsoleInfo(key, fmt, ...)                \
+  frc2::InstantCommand([] {                       \
+    ConsoleWriter.logInfo(key, fmt, __VA_ARGS__); \
+  }).ToPtr()
+#define ConsoleVerbose(key, fmt, ...)             \
+  frc2::InstantCommand([] {                       \
+    ConsoleWriter.logVerbose(key, fmt, __VA_ARGS__); \
+  }).ToPtr()
+
 #endif

@@ -20,7 +20,7 @@
 class LedSubsystem : public frc2::SubsystemBase {
  public:
   LedSubsystem() : m_connectorX(ConnectorX::ConnectorXBoard(kLedAddress)) {
-    ConsoleLogger::getInstance().logVerbose("LedSubsystem", "LEDs init%s", "");
+    ConsoleWriter.logVerbose("LedSubsystem", "LEDs init%s", "");
     createZones(ConnectorX::LedPort::P0, std::move(m_ledZones0));
     createZones(ConnectorX::LedPort::P1, std::move(m_ledZones1));
     m_connectorX.setOn();
