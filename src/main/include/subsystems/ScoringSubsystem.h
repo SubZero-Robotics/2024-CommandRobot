@@ -142,6 +142,6 @@ class ScoringSubsystem : public frc2::SubsystemBase {
                          nullptr,
                          ScoringConstants::kMaxSpinRpm};
 
-  double m_ampUpperVelocity;
-  double m_ampLowerVelocity;
+  //   double m_ampUpperVelocity;
+  //   double m_ampLowerVelocity;
 };

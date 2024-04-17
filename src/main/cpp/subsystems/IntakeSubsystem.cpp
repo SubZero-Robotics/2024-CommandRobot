@@ -28,7 +28,7 @@ void IntakeSubsystem::In(double intakeSpeed) {
 }
 
 void IntakeSubsystem::Stop() {
-  ConsoleLogger::getInstance().logVerbose("Intake Subsystem", "Stopping %s",
+  ConsoleWriter.logVerbose("Intake Subsystem", "Stopping %s",
                                           "");
   m_leftIntakeSpinnyBoy.Set(0);
 }

@@ -35,7 +35,7 @@ bool AutoFileExists(std::string fileName) {
 
 frc2::CommandPtr PathPlannerPathFromName(std::string autoName) {
   if (!AutoFileExists(autoName)) {
-    ConsoleLogger::getInstance().logError(
+    ConsoleWriter.logError(
         "Auto Factory", "AUTO '%s' DOES NOT EXIST HELP US EVAN",
         autoName.c_str());
     return GetEmptyCommand();
@@ -66,7 +66,7 @@ frc2::CommandPtr GetAuto(AutoConstants::AutoType type) {
     case AutoType::LeaveWing:
       return PathPlannerPathFromName(AutoConstants::kDefaultAutoName);
     default:
-      ConsoleLogger::getInstance().logWarning(
+      ConsoleWriter.logWarning(
           "Auto Factory",
           "Auto type %d does not exist, defaulting to empty "
           "auto",

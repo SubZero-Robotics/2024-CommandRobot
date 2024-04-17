@@ -3,6 +3,8 @@
 #include <frc/DigitalInput.h>
 #include <frc/DutyCycleEncoder.h>
 #include <frc/controller/PIDController.h>
+#include <frc/smartdashboard/MechanismLigament2d.h>
+#include <frc/smartdashboard/MechanismRoot2d.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/FunctionalCommand.h>
 #include <frc2/command/TrapezoidProfileSubsystem.h>
@@ -20,15 +22,15 @@
 #include <string>
 
 #include "Constants.h"
-#include "subsystems/ISingleAxisSubsystem.h"
+#include "subsystems/singleaxis/ISingleAxisSubsystem.h"
 #include "utils/ConsoleLogger.h"
 #include "utils/PidMotorController.h"
 #include "utils/ShuffleboardLogger.h"
 
 template <typename TMotor, typename TController, typename TRelativeEncoder,
           typename TAbsoluteEncoder, typename TDistance>
-class BaseSingleAxisSubsystem2
-    : public ISingleAxisSubsystem2<TDistance>,
+class BaseSingleAxisSubsystem
+    : public ISingleAxisSubsystem<TDistance>,
       public frc2::TrapezoidProfileSubsystem<TDistance> {
  public:
   using PidState = typename frc::TrapezoidProfile<TDistance>::State;
@@ -45,15 +47,14 @@ class BaseSingleAxisSubsystem2
     bool atMin = ignoreEncoder ? AtLimitSwitchMin() : AtHome();
     bool atMax = ignoreEncoder ? AtLimitSwitchMax() : AtMax();
 
+    frc::SmartDashboard::PutBoolean(m_name + " At Min", atMin);
+    frc::SmartDashboard::PutBoolean(m_name + " At Max", atMax);
+
     if (atMin) {
-      // ConsoleLogger::getInstance().logVerbose(
-      //     m_name, "At minimum; movement allowed = %d", speed >= 0);
       return speed >= 0;
     }
 
     if (atMax) {
-      ConsoleLogger::getInstance().logVerbose(
-          m_name, "At maximum, movement allowed = %d", speed <= 0);
       return speed <= 0;
     }
 
@@ -76,13 +77,14 @@ class BaseSingleAxisSubsystem2
   }
 
  public:
-  BaseSingleAxisSubsystem2(
+  BaseSingleAxisSubsystem(
       std::string name,
       PidMotorController<TMotor, TController, TRelativeEncoder,
                          TAbsoluteEncoder> &controller,
-      ISingleAxisSubsystem2<TDistance>::SingleAxisConfig2 config)
-      : frc2::TrapezoidProfileSubsystem<
-            TDistance>{AutoConstants::kSingleAxisConstraints},
+      ISingleAxisSubsystem<TDistance>::SingleAxisConfig config,
+      frc::TrapezoidProfile<TDistance>::Constraints profileConstraints,
+      frc::MechanismObject2d *mechanismNode = nullptr)
+      : frc2::TrapezoidProfileSubsystem<TDistance>{profileConstraints},
         m_minLimitSwitch{config.minLimitSwitch},
         m_maxLimitSwitch{config.maxLimitSwitch},
         m_controller{controller},
@@ -91,18 +93,37 @@ class BaseSingleAxisSubsystem2
         m_pidEnabled{false} {
     m_pidEnabled = false;
 
+    if (mechanismNode) {
+      m_ligament2d = mechanismNode->Append<frc::MechanismLigament2d>(
+          name, config.mechanismConfig.minimumLength.value(),
+          config.mechanismConfig.minimumAngle, config.mechanismConfig.lineWidth,
+          config.mechanismConfig.color);
+    }
+
+    m_resetEncCmd = ResetRelativeEncoder();
+    frc::SmartDashboard::PutData(m_name + " Reset Encoder",
+                                 m_resetEncCmd.get());
     frc2::TrapezoidProfileSubsystem<TDistance>::Disable();
   }
 
   void Periodic() override {
+    frc::SmartDashboard::PutBoolean(m_name + " Pid Enabled", m_pidEnabled);
+    frc::SmartDashboard::PutNumber(m_name + " Position",
+                                   GetCurrentPosition().value());
+    if (m_config.conversionFunction) {
+      std::string curPos =
+          m_config.conversionFunction.value()(GetCurrentPosition());
+      frc::SmartDashboard::PutString(m_name + " Converted Position", curPos);
+    }
+
+    if (m_controller.GetAbsoluteEncoderPosition().has_value())
+      frc::SmartDashboard::PutNumber(
+          m_name + " Absolute Position",
+          m_controller.GetAbsoluteEncoderPosition().value());
+
     if (m_controller.GetAbsoluteEncoderPosition().has_value()) {
       Distance_t absEncValue = Distance_t(
           std::abs(m_controller.GetAbsoluteEncoderPosition().value()));
-
-      // ConsoleLogger::getInstance().logVerbose(
-      //     m_name, "Absolute encoder=%0.3f | Relative encoder=%0.3f",
-      //     m_controller.GetAbsoluteEncoderPosition().value(),
-      //     m_controller.GetEncoderPosition());
 
       if (!resetOccurred && absEncValue <= m_config.tolerance) {
         m_controller.ResetEncoder();
@@ -118,9 +139,9 @@ class BaseSingleAxisSubsystem2
     }
 
     if (!m_pidEnabled && !IsMovementAllowed(m_latestSpeed)) {
-      ConsoleLogger::getInstance().logInfo(
-          m_name, "Periodic: Movement with speed %f is not allowed",
-          m_latestSpeed);
+      ConsoleWriter.logInfo(m_name,
+                            "Periodic: Movement with speed %f is not allowed",
+                            m_latestSpeed);
 
       Stop();
     }
@@ -130,13 +151,7 @@ class BaseSingleAxisSubsystem2
                                 bool ignoreEncoder = false) = 0;
 
   void UseState(PidState setpoint) override {
-    // if (IsMovementAllowed()) {
     m_controller.RunToPosition(setpoint.position.value());
-    // } else {
-    //   ConsoleLogger::getInstance().logVerbose(
-    //       m_name, "PID Trying to move out of limits %s", "");
-    //   Stop();
-    // }
   }
 
   void RunMotorSpeedDefault(bool ignoreEncoder = false) override {
@@ -145,16 +160,20 @@ class BaseSingleAxisSubsystem2
 
   void RunMotorPercentage(double percentSpeed,
                           bool ignoreEncoder = false) override {
-    if (!IsMovementAllowed(percentSpeed, ignoreEncoder)) {
-      ConsoleLogger::getInstance().logInfo(
-          m_name, "Movement with speed %f is not allowed", percentSpeed);
+    bool movementAllowed = IsMovementAllowed(percentSpeed, ignoreEncoder);
+    frc::SmartDashboard::PutBoolean(m_name + " Movement Allowed",
+                                    movementAllowed);
+
+    if (!movementAllowed) {
+      Stop();
       return;
     }
 
-    ConsoleLogger::getInstance().logVerbose(m_name, "Running with speed = %f",
-                                            percentSpeed);
     DisablePid();
-    m_controller.RunWithVelocity(percentSpeed);
+
+    frc::SmartDashboard::PutNumber(m_name + " Speed %", percentSpeed);
+
+    m_controller.Set(percentSpeed);
   }
 
   Distance_t GetCurrentPosition() override {
@@ -162,19 +181,16 @@ class BaseSingleAxisSubsystem2
   }
 
   void Stop() override {
-    ConsoleLogger::getInstance().logInfo(m_name, "Stopping%s", "");
+    frc::SmartDashboard::PutNumber(m_name + " Speed %", 0);
     m_controller.Stop();
   }
 
   void ResetEncoder() override {
-    ConsoleLogger::getInstance().logInfo(m_name, "Reset encoder%s", "");
+    ConsoleWriter.logInfo(m_name, "Reset encoder%s", "");
     m_controller.ResetEncoder();
   }
 
   bool AtHome() override {
-    ShuffleboardLogger::getInstance().logVerbose(
-        m_name, "Current Position %0.3f, Min Distance %0.3f",
-        GetCurrentPosition().value(), m_config.minDistance.value());
     return AtLimitSwitchMin() || GetCurrentPosition() <= m_config.minDistance;
   }
 
@@ -184,7 +200,9 @@ class BaseSingleAxisSubsystem2
 
   bool AtLimitSwitchMin() override {
     if (m_minLimitSwitch && m_minLimitSwitch.value()) {
-      return !m_minLimitSwitch.value()->Get();
+      bool value = !m_minLimitSwitch.value()->Get();
+      frc::SmartDashboard::PutBoolean(m_name + " Min Limit Switch", value);
+      return value;
     }
 
     return false;
@@ -192,7 +210,9 @@ class BaseSingleAxisSubsystem2
 
   bool AtLimitSwitchMax() override {
     if (m_maxLimitSwitch && m_maxLimitSwitch.value()) {
-      return !m_maxLimitSwitch.value()->Get();
+      bool value = !m_maxLimitSwitch.value()->Get();
+      frc::SmartDashboard::PutBoolean(m_name + " Max Limit Switch", value);
+      return value;
     }
 
     return false;
@@ -203,16 +223,16 @@ class BaseSingleAxisSubsystem2
                [this, position] {
                  if (position < m_config.minDistance ||
                      position > m_config.maxDistance) {
-                   ConsoleLogger::getInstance().logWarning(
+                   ConsoleWriter.logWarning(
                        m_name,
                        "Attempting to move to position %f outside of boundary",
                        position.value());
                    return;
                  }
 
-                 ConsoleLogger::getInstance().logVerbose(
-                     m_name, "Moving to absolute position %f",
-                     position.value());
+                 ConsoleWriter.logVerbose(m_name,
+                                          "Moving to absolute position %f",
+                                          position.value());
 
                  m_goalPosition = position;
                  EnablePid();
@@ -242,6 +262,12 @@ class BaseSingleAxisSubsystem2
         .ToPtr();
   }
 
+  frc2::CommandPtr ResetRelativeEncoder() {
+    return frc2::InstantCommand([this] { ResetEncoder(); }).ToPtr();
+  }
+
+  frc::MechanismLigament2d *GetLigament() { return m_ligament2d; }
+
   bool IsEnabled() override { return m_pidEnabled; }
 
   void DisablePid() override {
@@ -270,76 +296,13 @@ class BaseSingleAxisSubsystem2
   std::optional<frc::DigitalInput *> m_maxLimitSwitch;
   PidMotorController<TMotor, TController, TRelativeEncoder, TAbsoluteEncoder>
       &m_controller;
-  ISingleAxisSubsystem2<TDistance>::SingleAxisConfig2 m_config;
+  ISingleAxisSubsystem<TDistance>::SingleAxisConfig m_config;
   std::string m_name;
   Distance_t m_goalPosition;
   bool m_pidEnabled;
   bool m_home;
   bool resetOccurred = false;
   double m_latestSpeed;
-};
-
-template <typename TMotor, typename TController, typename TRelativeEncoder,
-          typename TAbsoluteEncoder>
-class RotationalSingleAxisSubsystem
-    : public BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
-                                      TAbsoluteEncoder, units::degree> {
- public:
-  RotationalSingleAxisSubsystem(
-      std::string name,
-      PidMotorController<TMotor, TController, TRelativeEncoder,
-                         TAbsoluteEncoder> &controller,
-      ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 config,
-      units::meter_t armatureLength)
-      : BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
-                                 TAbsoluteEncoder, units::degree>{name,
-                                                                  controller,
-                                                                  config},
-        m_armatureLength{armatureLength} {}
-
-  void RunMotorVelocity(units::degrees_per_second_t speed,
-                        bool ignoreEncoder = false) override {
-    if (!BaseSingleAxisSubsystem2<
-            TMotor, TController, TRelativeEncoder, TAbsoluteEncoder,
-            units::degree>::IsMovementAllowed(speed.value(), ignoreEncoder)) {
-      return;
-    }
-
-    BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
-                             TAbsoluteEncoder, units::degree>::DisablePid();
-
-    BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
-                             TAbsoluteEncoder, units::degree>::m_controller
-        .RunWithVelocity(speed);
-  }
-
- protected:
-  units::meter_t m_armatureLength;
-};
-
-template <typename TMotor, typename TController, typename TRelativeEncoder,
-          typename TAbsoluteEncoder>
-class LinearSingleAxisSubsystem
-    : public BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
-                                      TAbsoluteEncoder, units::meter> {
- public:
-  LinearSingleAxisSubsystem(
-      std::string name,
-      PidMotorController<TMotor, TController, TRelativeEncoder,
-                         TAbsoluteEncoder> &controller,
-      ISingleAxisSubsystem2<units::degree>::SingleAxisConfig2 config)
-      : BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
-                                 TAbsoluteEncoder, units::meter>{
-            name, controller, config} {}
-
-  void RunMotorVelocity(units::meters_per_second_t speed,
-                        bool ignoreEncoder = false) override {
-    BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
-                             TAbsoluteEncoder, units::meter>::DisablePid();
-    ConsoleLogger::getInstance().logWarning(
-        BaseSingleAxisSubsystem2<TMotor, TController, TRelativeEncoder,
-                                 TAbsoluteEncoder, units::meter>::m_name,
-        "Running with a velocity is not supported for linear subsystems!%s",
-        "");
-  }
+  frc2::CommandPtr m_resetEncCmd = frc2::InstantCommand([] {}).ToPtr();
+  frc::MechanismLigament2d *m_ligament2d;
 };

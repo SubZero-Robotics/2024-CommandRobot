@@ -21,7 +21,7 @@ class Shoot : public frc2::CommandHelper<frc2::Command, Shoot> {
   }
 
   void Initialize() override {
-    ConsoleLogger::getInstance().logVerbose("Score State", "Start state: %s",
+    ConsoleWriter.logVerbose("Score State", "Start state: %s",
                                             "Shoot");
     isFinished = false;
   }
@@ -34,7 +34,7 @@ class Shoot : public frc2::CommandHelper<frc2::Command, Shoot> {
   bool IsFinished() override { return isFinished; }
 
   void End(bool interrupted) override {
-    ConsoleLogger::getInstance().logVerbose("Score State", "End state: %s",
+    ConsoleWriter.logVerbose("Score State", "End state: %s",
                                             "Shoot");
     m_intake->Stop();
     m_scoring->Stop();

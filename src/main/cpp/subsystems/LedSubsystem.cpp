@@ -44,8 +44,8 @@ frc2::CommandPtr LedSubsystem::ShowFromState(StateGetter stateGetter) {
 
 frc2::CommandPtr LedSubsystem::Intaking() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo(
-               "LedSubsystem", "Setting LEDs to %s", "Intaking");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s",
+                                 "Intaking");
            setZoneColorPatternAsync(
                LedZone::LeftClimber, LedConstants::kIntakeLedPort,
                ColorConstants::kRed, PatternType::Chase, false, 60, false);
@@ -70,8 +70,8 @@ frc2::CommandPtr LedSubsystem::Intaking() {
 
 frc2::CommandPtr LedSubsystem::Outaking() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo(
-               "LedSubsystem", "Setting LEDs to %s", "Outaking");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s",
+                                 "Outaking");
            setZoneColorPatternAsync(
                LedZone::LeftClimber, LedConstants::kIntakeLedPort,
                ColorConstants::kRed, PatternType::Chase, false, 60, true);
@@ -97,8 +97,8 @@ frc2::CommandPtr LedSubsystem::Outaking() {
 
 frc2::CommandPtr LedSubsystem::ScoringSpeaker() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo(
-               "LedSubsystem", "Setting LEDs to %s", "ScoringSpeaker");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s",
+                                 "ScoringSpeaker");
            setZoneColorPatternAsync(
                LedZone::LeftClimber, LedConstants::kIntakeLedPort,
                ColorConstants::kPurple, PatternType::Chase, false, 100, false);
@@ -123,8 +123,8 @@ frc2::CommandPtr LedSubsystem::ScoringSpeaker() {
 
 frc2::CommandPtr LedSubsystem::ScoringAmp() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo(
-               "LedSubsystem", "Setting LEDs to %s", "ScoringAmp");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s",
+                                 "ScoringAmp");
            setZoneColorPatternAsync(
                LedZone::LeftClimber, LedConstants::kIntakeLedPort,
                ColorConstants::kTeal, PatternType::Chase, false, 100, false);
@@ -149,8 +149,8 @@ frc2::CommandPtr LedSubsystem::ScoringAmp() {
 
 frc2::CommandPtr LedSubsystem::ScoringSubwoofer() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo(
-               "LedSubsystem", "Setting LEDs to %s", "ScoringSubwoofer");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s",
+                                 "ScoringSubwoofer");
            setZoneColorPatternAsync(
                LedZone::LeftClimber, LedConstants::kIntakeLedPort,
                ColorConstants::kYellow, PatternType::Chase, false, 100, false);
@@ -175,8 +175,8 @@ frc2::CommandPtr LedSubsystem::ScoringSubwoofer() {
 
 frc2::CommandPtr LedSubsystem::Loaded() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo("LedSubsystem",
-                                                "Setting LEDs to %s", "Loaded");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s",
+                                 "Loaded");
            setZoneColorPatternAsync(
                LedZone::LeftClimber, LedConstants::kIdleLedPort,
                ColorConstants::kGreen, PatternType::Breathe, false, 15, false);
@@ -199,8 +199,7 @@ frc2::CommandPtr LedSubsystem::Idling() {
 }
 
 void LedSubsystem::IdlingAsync() {
-  ConsoleLogger::getInstance().logInfo("LedSubsystem", "Setting LEDs to %s",
-                                       "Idling");
+  ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s", "Idling");
   setZoneColorPatternAsync(LedZone::LeftClimber, LedConstants::kIdleLedPort,
                            ColorConstants::kBlue, PatternType::Breathe, false,
                            15, false);
@@ -218,8 +217,8 @@ void LedSubsystem::IdlingAsync() {
 
 frc2::CommandPtr LedSubsystem::Climbing() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo(
-               "LedSubsystem", "Setting LEDs to %s", "Climbing");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s",
+                                 "Climbing");
            setZoneColorPatternAsync(
                LedZone::LeftClimber, LedConstants::kIntakeLedPort,
                ColorConstants::kGreen, PatternType::Chase, false, 120, false);
@@ -244,8 +243,7 @@ frc2::CommandPtr LedSubsystem::Climbing() {
 
 frc2::CommandPtr LedSubsystem::Funni() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo("LedSubsystem",
-                                                "Setting LEDs to %s", "Funni");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s", "Funni");
            setZoneColorPatternAsync(
                LedZone::LeftClimber, LedConstants::kIntakeLedPort,
                ColorConstants::kGreen, PatternType::RGBFade, false, 15, false);
@@ -268,8 +266,7 @@ frc2::CommandPtr LedSubsystem::Error() {
 }
 
 void LedSubsystem::ErrorAsync() {
-  ConsoleLogger::getInstance().logInfo("LedSubsystem", "Setting LEDs to %s",
-                                       "Error");
+  ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s", "Error");
   setZoneColorPatternAsync(LedZone::LeftClimber, LedConstants::kIntakeLedPort,
                            ColorConstants::kRed, PatternType::Blink, false, 750,
                            false);
@@ -291,8 +288,7 @@ void LedSubsystem::ErrorAsync() {
 
 frc2::CommandPtr LedSubsystem::AngryFace() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo("LedSubsystem",
-                                                "Setting LEDs to %s", "Angry");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s", "Angry");
            showFace(EyePattern::Angry);
          })
       .ToPtr();
@@ -300,8 +296,7 @@ frc2::CommandPtr LedSubsystem::AngryFace() {
 
 frc2::CommandPtr LedSubsystem::HappyFace() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo("LedSubsystem",
-                                                "Setting LEDs to %s", "Happy");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s", "Happy");
            showFace(EyePattern::Happy);
          })
       .ToPtr();
@@ -309,8 +304,8 @@ frc2::CommandPtr LedSubsystem::HappyFace() {
 
 frc2::CommandPtr LedSubsystem::BlinkingFace() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo(
-               "LedSubsystem", "Setting LEDs to %s", "Blinking");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s",
+                                 "Blinking");
            showFace(EyePattern::Blinking);
          })
       .ToPtr();
@@ -318,8 +313,8 @@ frc2::CommandPtr LedSubsystem::BlinkingFace() {
 
 frc2::CommandPtr LedSubsystem::SurprisedFace() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo(
-               "LedSubsystem", "Setting LEDs to %s", "Surprised");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s",
+                                 "Surprised");
            showFace(EyePattern::Surprised);
          })
       .ToPtr();
@@ -327,8 +322,8 @@ frc2::CommandPtr LedSubsystem::SurprisedFace() {
 
 frc2::CommandPtr LedSubsystem::AmogusFace() {
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo("LedSubsystem",
-                                                "Setting LEDs to %s", "Amogus");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s",
+                                 "Amogus");
            setZoneColorPatternAsync(LedZone::Back, LedPort::P1,
                                     ColorConstants::kRed, PatternType::Amogus,
                                     false, 125, false);
@@ -344,7 +339,7 @@ frc2::CommandPtr LedSubsystem::setZoneColorPattern(LedZone zone, LedPort port,
   return frc2::DeferredCommand(
              [this, port, color, zone, pattern, oneShot, delay, reversed] {
                auto zoneIndex = static_cast<uint8_t>(zone);
-               ConsoleLogger::getInstance().logVerbose(
+               ConsoleWriter.logVerbose(
                    "ConnectorX",
                    "Attempting to set port %u zone %u to color=%s pattern=%u "
                    "reversed=%u",
@@ -470,7 +465,7 @@ void LedSubsystem::setZoneColorPatternAsync(LedZone zone, LedPort port,
                                             PatternType pattern, bool oneShot,
                                             int16_t delay, bool reversed) {
   auto zoneIndex = static_cast<uint8_t>(zone);
-  ConsoleLogger::getInstance().logVerbose(
+  ConsoleWriter.logVerbose(
       "ConnectorX",
       "Attempting to set port %u zone %u to color=%s pattern=%u "
       "reversed=%u",
@@ -498,8 +493,7 @@ void LedSubsystem::showFace(EyePattern pattern) {
 }
 
 void LedSubsystem::syncAllZones() {
-  ConsoleLogger::getInstance().logInfo("LedSubsystem", "Syncing all zones %s",
-                                       "");
+  ConsoleWriter.logInfo("LedSubsystem", "Syncing all zones %s", "");
   m_connectorX.syncZones(LedConstants::kIntakeLedPort,
                          {static_cast<uint8_t>(LedZone::LeftClimber),
                           static_cast<uint8_t>(LedZone::Back),

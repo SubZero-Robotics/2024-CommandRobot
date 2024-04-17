@@ -2,6 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+#pragma once
+
 // Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
 // #define TEST_SWERVE_BOT
 
@@ -11,6 +13,7 @@
 #include <frc/geometry/Transform2d.h>
 #include <frc/geometry/Transform3d.h>
 #include <frc/trajectory/TrapezoidProfile.h>
+#include <frc/util/Color.h>
 #include <frc/util/Color8Bit.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/path/PathPlannerPath.h>
@@ -33,7 +36,8 @@
 #include <string>
 #include <vector>
 
-#pragma once
+#include "ColorConstants.h"
+#include "subsystems/singleaxis/ISingleAxisSubsystem.h"
 
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
@@ -185,7 +189,10 @@ extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
 extern const frc::TrapezoidProfile<units::degree>::Constraints
-    kSingleAxisConstraints;
+    kRotationalAxisConstraints;
+
+extern const frc::TrapezoidProfile<units::meter>::Constraints
+    kLinearAxisConstraints;
 
 const std::string kDefaultAutoName = "Leave Wing";
 
@@ -471,24 +478,48 @@ namespace ArmConstants {
 // Motor Constants
 constexpr int kTicksPerMotorRotation = 42;
 constexpr int kReverseRotationsSoftLimit = 0;
-constexpr double kAntiGravityPercentage = -0.05;
 
 // Homing Speeds
 constexpr double kRotationHomingSpeed = .15;
 
 // Arm Constants
 constexpr int kArmGearRatio = 125;
-constexpr auto kArmDegreeLimit = 144;
-constexpr double kArmStepSize = 4;
-constexpr units::degree_t AmpRotation = 142_deg;
-constexpr units::degree_t HomeRotation = 10_deg;
+constexpr units::degree_t kArmRelativeDistancePerRev = 360_deg * (1 / 8.75);
+constexpr units::degree_t kArmAbsoluteDistancePerRev = 360_deg;
+constexpr units::degree_t kAmpRotation = 190_deg;
+constexpr units::degree_t kHomeRotation = 10_deg;
+constexpr units::degrees_per_second_t kDefaultVelocity = 10_deg_per_s;
+constexpr double kVelocityScalar = 1.0;
+constexpr units::degree_t kTolerance = 2_deg;
+constexpr units::meter_t kArmLength = 0.2_m;
 
 constexpr double kArmP = 0.075;
 constexpr double kArmI = 0;
 constexpr double kArmD = 0;
 constexpr double kArmIZone = 0;
 constexpr double kArmFF = 0;
+
+static const SingleAxisMechanism kArmMechanism = {
+    // length
+    0.2_m,
+    // min angle
+    110_deg,
+    // line width
+    6,
+    // color
+    ColorConstants::kBlue};
 }  // namespace ArmConstants
+
+namespace MechanismConstants {
+constexpr double kClimberLeftX = 0.5;
+constexpr double kClimberLeftY = 0;
+constexpr double kClimberRightX = 0.5;
+constexpr double kClimberRightY = 1;
+constexpr double kArmRootX = 0.5;
+constexpr double kArmRootY = 0.5;
+constexpr double kArmPostX = 0.4;
+constexpr units::degree_t kArmPostAngle = 90_deg;
+}  // namespace MechanismConstants
 
 namespace VisionConstants {
 static constexpr std::string_view kFrontCamera{"PhotonVision"};
@@ -511,27 +542,52 @@ namespace ClimbConstants {
 constexpr int kClimberLeftMotorId = 10;
 constexpr int kClimberRightMotorId = 11;
 
-constexpr double kClimberSetP = 1;
-constexpr double kClimberSetI = 0;
-constexpr double kClimberSetD = 0;
+constexpr double kClimberSetP = 40.0;
+constexpr double kClimberSetI = 0.0;
+constexpr double kClimberSetD = 0.0;
+constexpr double kClimberSetIZone = 0.0;
+constexpr double kClimberSetFF = 0.0;
 
-// Maximum arm extension distance
-constexpr double kMaxArmDistance = 1000;
-// Arm climbing position
-constexpr double kClimbExtensionPosition = 5;
-// Arm retracted position
-constexpr double kClimbRetractPosition = 3;
-constexpr double kInPerRotation = 0.1;
+// Minimum climber extension distance
+constexpr units::inch_t kMinClimberDistance = 0_in;
+// Maximum climber extension distance
+constexpr units::inch_t kMaxClimberDistance = 36_in;
+// Extended position
+constexpr units::inch_t kClimbExtensionPosition = 24_in;
+// Retracted position
+constexpr units::inch_t kClimbRetractPosition = 1_in;
+constexpr units::inch_t kInPerRotation = 1_in / 23.1;
+constexpr units::inch_t kClimberTolerance = 0.5_in;
 
-constexpr double kClimbStepSize = 1;
-constexpr double kClimbHomingSpeed = 1;
+constexpr double kClimbStepSize = 1.0;
+constexpr double kClimbHomingSpeed = 1.0;
 constexpr int kTicksPerMotorRotation = 42;
 
-constexpr double kCLimberExtendSpeed = 1;
+constexpr units::feet_per_second_t kClimberExtendSpeed = 1_fps;
+constexpr double kClimberVelocityScalar = 1.0;
 
 // Distance between left and right arm centers
 constexpr units::meter_t kClimberOffsetDistance = 4_m;
 
+static const SingleAxisMechanism kLeftClimberMechanism = {
+    // min length
+    24_in,
+    // angle
+    70_deg,
+    // line width
+    6.0,
+    // color
+    ColorConstants::kGreen};
+
+static const SingleAxisMechanism kRightClimberMechanism = {
+    // min length
+    24_in,
+    // angle
+    70_deg,
+    // line width
+    6.0,
+    // color
+    ColorConstants::kRed};
 }  // namespace ClimbConstants
 
 namespace RobotConstants {
