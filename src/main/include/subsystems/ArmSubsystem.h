@@ -15,19 +15,19 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
             "Arm",
             armController,
             {// Min distance
-             10_deg,
+             ArmConstants::kHomeRotation,
              // Max distance
-             190_deg,
+             ArmConstants::kAmpRotation,
              // Distance per revolution of relative encoder
-             (360_deg * (1 / 8.75)),
+             ArmConstants::kArmRelativeDistancePerRev,
              // Distance per revolution of absolute encoder
-             360_deg,
+             ArmConstants::kArmAbsoluteDistancePerRev,
              // Default velocity
-             10_deg_per_s,
+             ArmConstants::kDefaultVelocity,
              // Velocity scalar
-             1.0,
+             ArmConstants::kVelocityScalar,
              // Tolerance
-             2_deg,
+             ArmConstants::kTolerance,
              // Min limit switch
              std::nullopt,
              // Max limit switch
@@ -35,10 +35,10 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
              // Reversed
              false,
              // Mechanism2d
-             {0.2_m, 110_deg, 6, ColorConstants::kBlue},
+             ArmConstants::kArmMechanism,
              // Conversion Function
              std::nullopt},
-            0.2_m,
+            ArmConstants::kArmLength,
             node} {
     m_SpinnyBoi.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
   }

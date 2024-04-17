@@ -39,7 +39,7 @@ static frc2::CommandPtr ArmScoringGoal(
   return frc2::DeferredCommand(
              [direction, arm] {
                if (direction() == ScoringDirection::AmpSide) {
-                 return arm->MoveToPositionAbsolute(ArmConstants::AmpRotation);
+                 return arm->MoveToPositionAbsolute(ArmConstants::kAmpRotation);
                } else {
                  // // In case it got stuck up, make it go down when not
                  // shooting
@@ -128,7 +128,7 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
                    [direction, arm] {
                      if (direction() == ScoringDirection::AmpSide) {
                        return arm->MoveToPositionAbsolute(
-                           ArmConstants::HomeRotation);
+                           ArmConstants::kHomeRotation);
                      } else {
                        return frc2::InstantCommand([] {}).ToPtr();
                      }
