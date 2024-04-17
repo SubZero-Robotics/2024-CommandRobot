@@ -106,12 +106,13 @@ class BaseSingleAxisSubsystem
     frc2::TrapezoidProfileSubsystem<TDistance>::Disable();
   }
 
-  virtual void Periodic() override {
+  void Periodic() override {
     frc::SmartDashboard::PutBoolean(m_name + " Pid Enabled", m_pidEnabled);
     frc::SmartDashboard::PutNumber(m_name + " Position",
                                    GetCurrentPosition().value());
     if (m_config.conversionFunction) {
-      std::string curPos = m_config.conversionFunction.value()(GetCurrentPosition());
+      std::string curPos =
+          m_config.conversionFunction.value()(GetCurrentPosition());
       frc::SmartDashboard::PutString(m_name + " Converted Position", curPos);
     }
 

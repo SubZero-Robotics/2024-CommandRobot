@@ -4,7 +4,7 @@
 
 class RightClimbSubsystem : public ClimbSubsystem {
  public:
-  RightClimbSubsystem(frc::MechanismObject2d* node = nullptr)
+  explicit RightClimbSubsystem(frc::MechanismObject2d* node = nullptr)
       : ClimbSubsystem(
             "Right Climber", m_controller,
             {// Min distance

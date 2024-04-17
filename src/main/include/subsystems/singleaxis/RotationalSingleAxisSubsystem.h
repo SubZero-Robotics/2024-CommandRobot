@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "subsystems/singleaxis/BaseSingleAxisSubsystem.h"
 
 template <typename TMotor, typename TController, typename TRelativeEncoder,

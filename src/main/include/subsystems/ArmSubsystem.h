@@ -8,7 +8,7 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
                          rev::CANSparkMax, rev::SparkPIDController,
                          rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder> {
  public:
-  ArmSubsystem(frc::MechanismObject2d* node = nullptr)
+  explicit ArmSubsystem(frc::MechanismObject2d* node = nullptr)
       : RotationalSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
                                       rev::SparkRelativeEncoder,
                                       rev::SparkAbsoluteEncoder>{

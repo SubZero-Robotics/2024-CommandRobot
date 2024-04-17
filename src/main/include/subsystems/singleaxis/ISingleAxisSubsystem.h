@@ -8,7 +8,9 @@
 #include <units/length.h>
 #include <units/velocity.h>
 
+#include <functional>
 #include <memory>
+#include <string>
 
 struct SingleAxisMechanism {
   units::meter_t minimumLength;
