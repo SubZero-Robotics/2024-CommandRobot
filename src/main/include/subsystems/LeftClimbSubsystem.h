@@ -10,7 +10,7 @@ class LeftClimbSubsystem : public ClimbSubsystem {
             {// Min distance
              0_in,
              // Max distance
-             20_in,
+             36_in,
              // Distance per revolution of relative encoder
              1_in / 23.1,
              // Distance per revolution of absolute encoder
