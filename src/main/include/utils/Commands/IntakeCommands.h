@@ -24,11 +24,7 @@ using namespace IntakingConstants;
 static frc2::CommandPtr FeedUntilNotPresent(IntakeSubsystem* intake,
                                             ScoringSubsystem* scoring,
                                             ScoringDirection direction) {
-  return frc2::InstantCommand([] {
-           ConsoleWriter.logVerbose("FeedUntilNotPresent",
-                                                   "Feeding to top%s", "");
-         })
-      .ToPtr()
+  return ConsoleVerbose("FeedUntilNotPresent", "Feeding to top%s", "")
       .AndThen(Feed(intake, scoring, [direction] { return direction; })
                    .ToPtr()
                    .Until([intake] { return intake->NotePresentUpper(); })
@@ -40,11 +36,7 @@ static frc2::CommandPtr FeedUntilNotPresent(IntakeSubsystem* intake,
 static frc2::CommandPtr DowntakeUntilPresent(IntakeSubsystem* intake,
                                              ScoringSubsystem* scoring,
                                              ScoringDirection direction) {
-  return (frc2::InstantCommand([] {
-            ConsoleWriter.logVerbose("Downtake",
-                                                    "Downtake down%s", "");
-          })
-              .ToPtr()
+  return (ConsoleVerbose("Downtake", "Downtake down %s", "start")
               .AndThen(
                   frc2::InstantCommand([intake, scoring, direction] {
                     intake->Out(kDowntakeSpeed);
@@ -65,11 +57,8 @@ static frc2::CommandPtr DowntakeUntilPresent(IntakeSubsystem* intake,
                          intake->Stop();
                          scoring->Stop();
                        }).ToPtr())
-              .AndThen(frc2::InstantCommand([] {
-                         ConsoleWriter.logVerbose(
-                             "Intake Subsystem", "Intake completed normally%s",
-                             "");
-                       }).ToPtr()))
+              .AndThen(ConsoleVerbose("Intake Subsystem",
+                                      "Intake completed normally%s", "")))
       .WithTimeout(2_s)
       .FinallyDo([intake, scoring] {
         intake->Stop();

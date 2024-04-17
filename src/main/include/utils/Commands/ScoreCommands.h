@@ -57,11 +57,8 @@ static frc2::CommandPtr ScoreRamp(std::function<ScoringDirection()> direction,
               .AndThen(FlywheelRamp(intake, scoring, direction)
                            .ToPtr()
                            .WithTimeout(2_s)
-                           .AndThen(frc2::InstantCommand([] {
-                                      ConsoleWriter.logVerbose(
-                                          "Scoring Composition",
-                                          "flywheel ramped %s", "");
-                                    }).ToPtr())))
+                           .AndThen(ConsoleVerbose("Scoring Composition",
+                                                   "flywheel ramped%s", ""))))
       .Unless([intake] { return !intake->NotePresent(); })
       .WithTimeout(3_s);
 }
@@ -79,10 +76,7 @@ static bool IsNoteTopSide(IntakeSubsystem* intake, ScoringDirection direction) {
 static frc2::CommandPtr PreScoreShuffle(
     std::function<ScoringDirection()> direction, ScoringSubsystem* scoring,
     IntakeSubsystem* intake) {
-  return frc2::InstantCommand([] {
-           ConsoleWriter.logInfo("Scoring", "Pre Score Shuffle");
-         })
-      .ToPtr()
+  return ConsoleInfo("Scoring", "Pre Score Shuffle%s", "")
       .AndThen(frc2::FunctionalCommand(
                    // on init
                    [scoring, intake, direction] {
@@ -118,18 +112,12 @@ static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
              Feed(intake, scoring, direction)
                  .ToPtr()
                  .WithTimeout(2_s)
-                 .AndThen(frc2::InstantCommand([] {
-                            ConsoleWriter.logVerbose(
-                                "Scoring Composition", "fed %s", "");
-                          }).ToPtr())
+                 .AndThen(ConsoleVerbose("Scoring Composition", "fed%s", ""))
                  .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
                  // .AndThen(PreScoreShuffle(direction, scoring, intake))
                  .AndThen(
                      Shoot(intake, scoring, direction).ToPtr().WithTimeout(1_s))
-                 .AndThen(frc2::InstantCommand([] {
-                            ConsoleWriter.logVerbose(
-                                "Scoring Composition", "shot %s", "");
-                          }).ToPtr()))
+                 .AndThen(ConsoleVerbose("Scoring Composition", "shot%s", "")))
       .Unless([intake] { return !intake->NotePresent(); })
       .WithTimeout(3_s)
       .FinallyDo([intake, scoring] {
