@@ -265,7 +265,7 @@ void RobotContainer::ConfigureAutoBindings() {
           m_leftClimb.MoveToPositionAbsolute(18_in)));
 
   // Maps to 1 on keyboard
-  m_operatorController.Button(15).OnTrue(frc2::InstantCommand([this] {
+  m_operatorController.Button(10).OnTrue(frc2::InstantCommand([this] {
                                            if (!m_state.m_active) {
                                              m_state.m_currentState =
                                                  RobotState::ClimbStageLeft;
