@@ -211,6 +211,10 @@ All robot states begin by calling `ShowFromState` with the `RobotState` on the L
 |       Loaded        |                                           Sets all zones to blink green                                            |
 |       Idling        |                                           Sets all zones to breathe blue                                           |
 |        Climb        |             Sets left and right zones to a blue sine roll, front and back zones to a yellow sine roll              |
+|AimbotEnable| Sets all LEDs to an acid green blink
+|OnTheFlyPP| Sets all LEDs to blue
+|SuccessfulIntake| Sets LEDs to green
+|VisionNoteDetected| Sets all LEDs chase orange
 |        Error        |                                         Sets all zones to red and a blink                                          |
 | setZoneColorPattern |                                    Helper to set a zone to a color and pattern                                     |
 |     createZones     |                                      Helper to create a std::vector of zones                                       |

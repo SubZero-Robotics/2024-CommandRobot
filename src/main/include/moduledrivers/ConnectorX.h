@@ -244,7 +244,7 @@ enum class PatternType {
   SetAll = 1,
   Blink = 2,
   RGBFade = 3,
-  HackerMode = 4,
+  HackerMode = 4, // No worky
   Breathe = 5,
   SineRoll = 6,
   Chase = 7,
