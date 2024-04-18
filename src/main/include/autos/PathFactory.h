@@ -23,9 +23,11 @@ class PathFactory {
 
   static frc2::CommandPtr GetPathFromFinalLocation(
       std::function<AutoConstants::Locations::FinalLocation()> locationGetter,
-      DriveSubsystem* drive) {
-    return GetApproxCommand(locationGetter())
-        .AndThen(GetFinalApproachCommand(locationGetter(), drive));
+      DriveSubsystem* drive, LedSubsystem* leds) {
+    return leds->OnTheFlyPP()
+        .AndThen(GetApproxCommand(locationGetter())
+                     .AndThen(GetFinalApproachCommand(locationGetter(), drive)))
+        .AndThen(leds->Idling());
   }
 
  private:

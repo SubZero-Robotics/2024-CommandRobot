@@ -104,6 +104,7 @@ class LedSubsystem : public frc2::SubsystemBase {
       {.offset = 0, .count = 18},
       {.offset = 18, .count = 32},
       {.offset = 50, .count = 17},
+      {.offset = 67, .count = 19},
   };
   std::vector<ConnectorX::Commands::NewZone> m_ledZones1 = {
       {.offset = 0, .count = 1},

@@ -54,6 +54,10 @@ frc2::CommandPtr LedSubsystem::Intaking() {
                LedZone::RightClimber, LedConstants::kIntakeLedPort,
                ColorConstants::kRed, PatternType::Chase, false, 60, true);
            delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(
+               LedZone::Front, LedConstants::kIntakeLedPort,
+               ColorConstants::kRed, PatternType::Blink, false, 60, true);
+           delaySeconds(kConnectorXDelay);
            setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
                                     ColorConstants::kRed, PatternType::Blink,
                                     false, 400, false);
@@ -84,6 +88,10 @@ frc2::CommandPtr LedSubsystem::Outaking() {
                                     ColorConstants::kRed, PatternType::Blink,
                                     false, 400, false);
            delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(
+               LedZone::Front, LedConstants::kIntakeLedPort,
+               ColorConstants::kRed, PatternType::Blink, false, 400, false);
+           delaySeconds(kConnectorXDelay);
            m_connectorX.syncZones(
                LedConstants::kIntakeLedPort,
                {
@@ -111,6 +119,10 @@ frc2::CommandPtr LedSubsystem::ScoringSpeaker() {
                                     ColorConstants::kRed, PatternType::SineRoll,
                                     false, 40, false);
            delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(
+               LedZone::Front, LedConstants::kIntakeLedPort,
+               ColorConstants::kRed, PatternType::SineRoll, false, 40, false);
+           delaySeconds(kConnectorXDelay);
            m_connectorX.syncZones(
                LedConstants::kIntakeLedPort,
                {
@@ -136,6 +148,10 @@ frc2::CommandPtr LedSubsystem::ScoringAmp() {
            setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
                                     ColorConstants::kBlack, PatternType::SetAll,
                                     true, -1, false);
+           delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(
+               LedZone::Front, LedConstants::kIntakeLedPort,
+               ColorConstants::kBlack, PatternType::SetAll, true, -1, false);
            delaySeconds(kConnectorXDelay);
            m_connectorX.syncZones(
                LedConstants::kIntakeLedPort,
@@ -163,6 +179,10 @@ frc2::CommandPtr LedSubsystem::ScoringSubwoofer() {
                                     ColorConstants::kBlack, PatternType::SetAll,
                                     true, -1, false);
            delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(
+               LedZone::Front, LedConstants::kIntakeLedPort,
+               ColorConstants::kBlack, PatternType::SetAll, true, -1, false);
+           delaySeconds(kConnectorXDelay);
            m_connectorX.syncZones(
                LedConstants::kIntakeLedPort,
                {
@@ -189,6 +209,10 @@ frc2::CommandPtr LedSubsystem::Loaded() {
                                     ColorConstants::kGreen,
                                     PatternType::Breathe, false, 15, false);
            delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(LedZone::Front, LedConstants::kIdleLedPort,
+                                    ColorConstants::kGreen,
+                                    PatternType::Breathe, false, 15, false);
+           delaySeconds(kConnectorXDelay);
            syncAllZones();
          })
       .ToPtr();
@@ -212,6 +236,10 @@ void LedSubsystem::IdlingAsync() {
                            ColorConstants::kBlue, PatternType::Breathe, false,
                            15, false);
   delaySeconds(kConnectorXDelay);
+  setZoneColorPatternAsync(LedZone::Front, LedConstants::kIdleLedPort,
+                           ColorConstants::kBlue, PatternType::Breathe, false,
+                           15, false);
+  delaySeconds(kConnectorXDelay);
   syncAllZones();
 }
 
@@ -230,6 +258,10 @@ frc2::CommandPtr LedSubsystem::Climbing() {
            setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
                                     ColorConstants::kGreen,
                                     PatternType::SineRoll, false, 50, false);
+           delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(
+               LedZone::Front, LedConstants::kIntakeLedPort,
+               ColorConstants::kGreen, PatternType::SineRoll, false, 50, false);
            delaySeconds(kConnectorXDelay);
            m_connectorX.syncZones(
                LedConstants::kIntakeLedPort,
@@ -276,6 +308,10 @@ void LedSubsystem::ErrorAsync() {
                            false);
   delaySeconds(kConnectorXDelay);
   setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
+                           ColorConstants::kRed, PatternType::Blink, false, 750,
+                           false);
+  delaySeconds(kConnectorXDelay);
+  setZoneColorPatternAsync(LedZone::Front, LedConstants::kIntakeLedPort,
                            ColorConstants::kRed, PatternType::Blink, false, 750,
                            false);
   delaySeconds(kConnectorXDelay);
@@ -376,11 +412,19 @@ frc2::CommandPtr LedSubsystem::AimbotEnabled() {
 
            setZoneColorPatternAsync(
                LedZone::LeftClimber, LedConstants::kIntakeLedPort,
-               ColorConstants::kAcidGreen, PatternType::Blink, false, 300);
+               ColorConstants::kOrange, PatternType::Blink, false, 600);
            delaySeconds(kConnectorXDelay);
            setZoneColorPatternAsync(
                LedZone::RightClimber, LedConstants::kIntakeLedPort,
-               ColorConstants::kAcidGreen, PatternType::Blink, false, 300);
+               ColorConstants::kOrange, PatternType::Blink, false, 600);
+           delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
+                                    ColorConstants::kOrange, PatternType::Blink,
+                                    false, 600);
+           delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(
+               LedZone::Front, LedConstants::kIntakeLedPort,
+               ColorConstants::kOrange, PatternType::Blink, false, 600);
            delaySeconds(kConnectorXDelay);
            setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
                                     ColorConstants::kAcidGreen,
@@ -400,15 +444,19 @@ frc2::CommandPtr LedSubsystem::OnTheFlyPP() {
 
            setZoneColorPatternAsync(
                LedZone::LeftClimber, LedConstants::kIntakeLedPort,
-               ColorConstants::kBlue, PatternType::SetAll, false);
+               ColorConstants::kPurple, PatternType::Chase, false, 60, false);
            delaySeconds(kConnectorXDelay);
            setZoneColorPatternAsync(
                LedZone::RightClimber, LedConstants::kIntakeLedPort,
-               ColorConstants::kBlue, PatternType::SetAll, false);
+               ColorConstants::kPurple, PatternType::Chase, false, 60, true);
+           delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(
+               LedZone::Front, LedConstants::kIntakeLedPort,
+               ColorConstants::kPurple, PatternType::Chase, false, 60, false);
            delaySeconds(kConnectorXDelay);
            setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
-                                    ColorConstants::kBlue, PatternType::SetAll,
-                                    false);
+                                    ColorConstants::kPurple, PatternType::Chase,
+                                    false, 60, false);
            delaySeconds(kConnectorXDelay);
            syncAllZones();
          })
