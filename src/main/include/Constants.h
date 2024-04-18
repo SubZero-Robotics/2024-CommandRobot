@@ -575,12 +575,13 @@ static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
 static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
 
 // TODO: update to match!
-constexpr double kKnownCalibrationAreaPercentage = 0.4;
-constexpr units::inch_t kNoteWidth = 12_in;
-constexpr units::inch_t kKnownCalibrationDistance = 24_in;
+constexpr double kKnownPixelWidth = 130;
+constexpr units::inch_t kNoteWidth = 14_in;
+constexpr units::inch_t kKnownCalibrationDistance = 70_in;
+constexpr units::inch_t kCalibrationDistanceAreaPercentage =
+    kKnownCalibrationDistance * kKnownPixelWidth;
 
-constexpr units::inch_t focalLength =
-    (kKnownCalibrationDistance * kKnownCalibrationAreaPercentage) / kNoteWidth;
+constexpr auto focalLength = kCalibrationDistanceAreaPercentage / kNoteWidth;
 }  // namespace VisionConstants
 
 namespace ClimbConstants {

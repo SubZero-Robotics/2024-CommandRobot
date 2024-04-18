@@ -88,17 +88,16 @@ frc2::CommandPtr TargetTracker::IntakeTarget() {
                  return frc2::InstantCommand([] {}).ToPtr();
                }
 
-               return (MoveToIntakePose()
-                           .AndThen(
-                               IntakingCommands::Intake(m_intake, m_scoring))
-                           .WithTimeout(10_s))
+               return (MoveToIntakePose())
                    .WithTimeout(20_s)
                    .FinallyDo([this] {
                      auto chassisSpeeds = frc::ChassisSpeeds::Discretize(
                          0_mps, 0_mps, AutoConstants::kMaxAngularSpeed,
                          DriveConstants::kLoopTime);
                      m_drive->Drive(chassisSpeeds);
-                   });
+                   })
+                   .AlongWith(IntakingCommands::Intake(m_intake, m_scoring))
+                   .WithTimeout(10_s);
              },
              {})
       .ToPtr();
@@ -148,6 +147,11 @@ std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
 }
 
 units::inch_t TargetTracker::GetDistanceToTarget(DetectedObject& target) {
+  DetectedCorners corners = target.detectedCorners;
+  double pixelWidth = corners.bottomRight.x - corners.bottomLeft.x;
+
+  frc::SmartDashboard::PutNumber("Pixel Width", pixelWidth);
+
   return (VisionConstants::kNoteWidth * VisionConstants::focalLength) /
-         target.areaPercentage;
+         pixelWidth;
 }
