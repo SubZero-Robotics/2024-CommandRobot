@@ -731,5 +731,16 @@ inline LimelightResultsClass getLatestResults(
     return LimelightResultsClass();
   }
 }
+
+inline std::optional<std::vector<double>> getCurrentCorners(
+    const std::string &limelightName = "") {
+  auto entry = getLimelightNTDoubleArray(limelightName, "tcornxy");
+
+  if (entry.size() < 8) {
+    return std::nullopt;
+  }
+
+  return entry;
+}
 }  // namespace LimelightHelpers
 #endif  // LIMELIGHTHELPERS_H

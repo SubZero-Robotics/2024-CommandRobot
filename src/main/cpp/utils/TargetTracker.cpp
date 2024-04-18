@@ -20,8 +20,8 @@ TargetTracker::TargetTracker(units::degree_t cameraAngle,
 
 std::vector<DetectedObject> TargetTracker::GetTargets() {
   auto llResult = LimelightHelpers::getLatestResults(kLimelightName);
-
   auto& detectionResults = llResult.targetingResults.DetectionResults;
+
   std::vector<DetectedObject> objects;
   objects.reserve(detectionResults.size());
 
@@ -30,6 +30,7 @@ std::vector<DetectedObject> TargetTracker::GetTargets() {
                  [](const LimelightHelpers::DetectionResultClass& det) {
                    return DetectedObject(det);
                  });
+
   return objects;
 }
 
@@ -44,6 +45,12 @@ std::optional<DetectedObject> TargetTracker::GetBestTarget(
                        [](const DetectedObject& a, const DetectedObject& b) {
                          return a.confidence < b.confidence;
                        });
+
+  auto corners = LimelightHelpers::getCurrentCorners(kLimelightName);
+  if (corners) {
+    it->withRawCorners(corners.value());
+  }
+
   return *it;
 }
 
