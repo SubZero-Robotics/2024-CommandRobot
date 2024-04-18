@@ -354,6 +354,16 @@ void RobotContainer::Periodic() {
                                   m_turnToPose.AtGoal());
 
   m_turnToPose.Update();
+  auto targets = tracker.GetTargets();
+
+  // ! This causes spam! Better way of tracking + updating individual targets?
+  // for (auto& target : targets) {
+  //   std::string label =
+  //       "tracked_gamepiece [" + std::to_string(target.confidence) + "]";
+  //   auto pose = tracker.GetTargetPose(target);
+
+  //   if (pose) m_drive.GetField()->GetObject(label)->SetPose(pose.value());
+  // }
 
   if (m_intake.NotePresent()) {
     // Note is present, get ready to score it
@@ -375,7 +385,6 @@ void RobotContainer::Periodic() {
 
     m_shouldAim = m_aimbotEnabled && inRange;
   } else {
-    auto targets = tracker.GetTargets();
     auto targetPose = tracker.GetBestTargetPose(targets);
 
     frc::SmartDashboard::PutBoolean("HAS TARGET LOCK",

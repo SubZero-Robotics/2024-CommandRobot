@@ -20,8 +20,8 @@ TargetTracker::TargetTracker(units::degree_t cameraAngle,
 
 std::vector<DetectedObject> TargetTracker::GetTargets() {
   auto llResult = LimelightHelpers::getLatestResults(kLimelightName);
-
   auto& detectionResults = llResult.targetingResults.DetectionResults;
+
   std::vector<DetectedObject> objects;
   objects.reserve(detectionResults.size());
 
@@ -30,6 +30,7 @@ std::vector<DetectedObject> TargetTracker::GetTargets() {
                  [](const LimelightHelpers::DetectionResultClass& det) {
                    return DetectedObject(det);
                  });
+
   return objects;
 }
 
@@ -44,6 +45,12 @@ std::optional<DetectedObject> TargetTracker::GetBestTarget(
                        [](const DetectedObject& a, const DetectedObject& b) {
                          return a.confidence < b.confidence;
                        });
+
+  auto corners = LimelightHelpers::getCurrentCorners(kLimelightName);
+  if (corners) {
+    it->withRawCorners(corners.value());
+  }
+
   return *it;
 }
 
@@ -115,17 +122,16 @@ std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
 
   auto bestTarget = GetBestTarget(targets).value();
 
-  units::degree_t targetOffsetVertical = bestTarget.centerY;
-  units::degree_t verticalDelta = targetOffsetVertical + m_cameraAngle;
-  units::inch_t heightDelta = -m_cameraHeight;
-  units::radian_t verticalAngle = verticalDelta.convert<units::radian>();
-  units::radian_t horizontalAngle = bestTarget.centerX.convert<units::radian>();
-  units::inch_t distance = heightDelta / tan(verticalAngle.value());
-  auto otherDistance = GetDistanceToTarget(bestTarget);
-  frc::SmartDashboard::PutString("TargetTracker otherDistance",
-                                 std::to_string(otherDistance.value()) + " in");
+  return GetTargetPose(bestTarget);
+}
+
+std::optional<frc::Pose2d> TargetTracker::GetTargetPose(
+    const DetectedObject& object) {
+  units::radian_t horizontalAngle = object.centerX.convert<units::radian>();
 
   frc::Pose2d currentPose = m_drive->GetPose();
+
+  auto distance = GetDistanceToTarget(object);
 
   auto xTransformation = distance * tan(horizontalAngle.value());
   auto yTransformation = distance;
@@ -146,12 +152,26 @@ std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
   return wpiFinalPose;
 }
 
-units::inch_t TargetTracker::GetDistanceToTarget(DetectedObject& target) {
+units::inch_t TargetTracker::GetDistanceToTarget(const DetectedObject& target) {
+  units::degree_t targetOffsetVertical = target.centerY;
+  units::degree_t verticalDelta = targetOffsetVertical + m_cameraAngle;
+  units::radian_t verticalAngle = verticalDelta.convert<units::radian>();
+
   DetectedCorners corners = target.detectedCorners;
   double pixelWidth = corners.bottomRight.x - corners.bottomLeft.x;
-
   frc::SmartDashboard::PutNumber("Pixel Width", pixelWidth);
 
-  return (VisionConstants::kNoteWidth * VisionConstants::focalLength) /
-         pixelWidth;
+  auto otherDistance =
+      (VisionConstants::kNoteWidth * VisionConstants::focalLength) / pixelWidth;
+
+  units::inch_t heightDelta = -m_cameraHeight;
+  units::inch_t distance = heightDelta / tan(verticalAngle.value());
+  frc::SmartDashboard::PutString("TargetTracker otherDistance",
+                                 std::to_string(otherDistance.value()) + " in");
+
+  auto combinedDistance = (distance * 0.75) + (otherDistance * 0.25);
+  frc::SmartDashboard::PutString("TargetTracker combinedDistance",
+                                 std::to_string(otherDistance.value()) + " in");
+
+  return combinedDistance;
 }

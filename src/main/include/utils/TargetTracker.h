@@ -36,6 +36,15 @@ struct DetectedCorners {
     bottomLeft = DetectedCorner(corners[2]);
     bottomRight = DetectedCorner(corners[3]);
   }
+
+  DetectedCorners(const std::vector<double>& rawCorners) {
+    if (rawCorners.size() < 8) return;
+
+    topLeft = DetectedCorner({rawCorners[0], rawCorners[1]});
+    bottomLeft = DetectedCorner({rawCorners[2], rawCorners[3]});
+    bottomRight = DetectedCorner({rawCorners[4], rawCorners[5]});
+    topRight = DetectedCorner({rawCorners[6], rawCorners[7]});
+  }
 };
 
 const pathplanner::PathConstraints kMovementConstraints{
@@ -71,6 +80,10 @@ struct DetectedObject {
         centerY{detectionResult.m_TargetYDegreesCrosshairAdjusted},
         areaPercentage{detectionResult.m_TargetAreaNormalized},
         detectedCorners{detectionResult.m_TargetCorners} {}
+
+  void withRawCorners(const std::vector<double>& rawCorners) {
+    detectedCorners = DetectedCorners(rawCorners);
+  }
 };
 
 class TargetTracker {
@@ -83,8 +96,9 @@ class TargetTracker {
   bool HasTargetLock(std::vector<DetectedObject>&);
   frc2::CommandPtr MoveToIntakePose();
   frc2::CommandPtr IntakeTarget();
+  std::optional<frc::Pose2d> GetTargetPose(const DetectedObject&);
   std::optional<frc::Pose2d> GetBestTargetPose(std::vector<DetectedObject>&);
-  units::inch_t GetDistanceToTarget(DetectedObject&);
+  units::inch_t GetDistanceToTarget(const DetectedObject&);
 
  private:
   units::degree_t m_cameraAngle;
