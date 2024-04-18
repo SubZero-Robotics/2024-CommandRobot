@@ -56,7 +56,7 @@ frc2::CommandPtr LedSubsystem::Intaking() {
            delaySeconds(kConnectorXDelay);
            setZoneColorPatternAsync(
                LedZone::Front, LedConstants::kIntakeLedPort,
-               ColorConstants::kRed, PatternType::Blink, false, 60, true);
+               ColorConstants::kRed, PatternType::Blink, false, 400, true);
            delaySeconds(kConnectorXDelay);
            setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
                                     ColorConstants::kRed, PatternType::Blink,
