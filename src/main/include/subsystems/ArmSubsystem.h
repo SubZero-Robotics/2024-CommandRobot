@@ -17,7 +17,7 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
             {// Min distance
              ArmConstants::kHomeRotation,
              // Max distance
-             ArmConstants::kAmpRotation,
+             ArmConstants::kMaxRotation,
              // Distance per revolution of relative encoder
              ArmConstants::kArmRelativeDistancePerRev,
              // Distance per revolution of absolute encoder

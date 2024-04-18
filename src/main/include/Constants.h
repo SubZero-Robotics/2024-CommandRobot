@@ -376,7 +376,7 @@ constexpr double kVectorSpeed = -0.4;
 
 // These need to be different
 // TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
-constexpr double kAmpLowerSpeed = -0.254 * 1.4;  // .264
+constexpr double kAmpLowerSpeed = -0.254 * 1.9;  // .264
 constexpr double kAmpUpperSpeed = -0.168 * 1.4;  // .278
 
 // These should match
@@ -486,7 +486,8 @@ constexpr double kRotationHomingSpeed = .15;
 constexpr int kArmGearRatio = 125;
 constexpr units::degree_t kArmRelativeDistancePerRev = 360_deg * (1 / 8.75);
 constexpr units::degree_t kArmAbsoluteDistancePerRev = 360_deg;
-constexpr units::degree_t kAmpRotation = 190_deg;
+constexpr units::degree_t kAmpRotation = 142_deg;
+constexpr units::degree_t kMaxRotation = 190_deg;
 constexpr units::degree_t kHomeRotation = 10_deg;
 constexpr units::degrees_per_second_t kDefaultVelocity = 10_deg_per_s;
 constexpr double kVelocityScalar = 1.0;

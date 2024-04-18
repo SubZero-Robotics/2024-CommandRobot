@@ -204,26 +204,23 @@ void RobotContainer::ConfigureButtonBindings() {
 
 #ifndef TEST_SWERVE_BOT
 void RobotContainer::ConfigureAutoBindings() {
-  // Maps to 9 on keyboard
-  m_operatorController.A().OnTrue(frc2::InstantCommand([this] {
-                                    if (!m_state.m_active) {
-                                      m_state.m_currentState =
-                                          RobotState::ScoringSpeaker;
-                                      m_state.SetDesiredState();
-                                    }
-                                  }).ToPtr());
+  // Maps to / on keyboard
+  // m_operatorController.Button(0).OnTrue(
+      // TODO: GOTO APPROX SCORING
+  // );
 
-  // Maps to 8 on keyboard
-  m_operatorController.B().OnTrue(frc2::InstantCommand([this] {
-                                    if (!m_state.m_active) {
-                                      m_state.m_currentState =
-                                          RobotState::ScoringSubwoofer;
-                                      m_state.SetDesiredState();
-                                    }
-                                  }).ToPtr());
+  // Maps to NUM LOCK on keyboard
+  m_operatorController.Button(2).OnTrue(
+      // GOTO SRC
+      frc2::InstantCommand([this] {
+        if (!m_state.m_active) {
+          m_state.m_currentState = RobotState::SourceCenter;
+          m_state.SetDesiredState();
+        }
+      }).ToPtr());
 
   // Maps to 7 on keyboard
-  m_operatorController.X().OnTrue(frc2::InstantCommand([this] {
+  m_operatorController.Button(3).OnTrue(frc2::InstantCommand([this] {
                                     if (!m_state.m_active) {
                                       m_state.m_currentState =
                                           RobotState::ScoringAmp;
@@ -231,78 +228,73 @@ void RobotContainer::ConfigureAutoBindings() {
                                     }
                                   }).ToPtr());
 
-  // Maps to 4 on keyboard
-  m_operatorController.Y().OnTrue(frc2::InstantCommand([this] {
-                                    if (!m_state.m_active) {
-                                      m_state.m_currentState =
-                                          RobotState::AutoSequenceAmp;
-                                      m_state.SetDesiredState();
-                                    }
-                                  }).ToPtr());
-
-  // Maps to 1 on keyboard
-  m_operatorController.LeftBumper().OnTrue(frc2::InstantCommand([this] {
+  // Maps to 8 on keyboard
+  m_operatorController.Button(4).OnTrue(frc2::InstantCommand([this] {
                                              if (!m_state.m_active) {
                                                m_state.m_currentState =
-                                                   RobotState::ClimbStageLeft;
+                                                   RobotState::ScoringSpeaker;
                                                m_state.SetDesiredState();
                                              }
                                            }).ToPtr());
 
-  // Maps to 2 on keyboard
-  // m_operatorController.RightBumper().OnTrue(
-  //     frc2::InstantCommand([this] {
-  //       if (!m_state.m_active) {
-  //         m_state.m_currentState = RobotState::ClimbStageCenter;
-  //         m_state.SetDesiredState();
-  //       }
-  //     }).ToPtr());
-  m_operatorController.RightBumper().OnTrue(
-      m_rightClimb.MoveToPositionAbsolute(18_in));
+  // Maps to 9 on keyboard
+  m_operatorController.Button(5).OnTrue(frc2::InstantCommand([this] {
+                                              if (!m_state.m_active) {
+                                                m_state.m_currentState =
+                                                    RobotState::ScoringSubwoofer;
+                                                m_state.SetDesiredState();
+                                              }
+                                            }).ToPtr());
 
-  // Maps to 3 on keyboard
-  m_operatorController.LeftStick().OnTrue(frc2::InstantCommand([this] {
+  // Maps to 4 on keyboard
+  m_operatorController.Button(7).OnTrue(frc2::InstantCommand([this] {
                                             if (!m_state.m_active) {
                                               m_state.m_currentState =
-                                                  RobotState::ClimbStageRight;
+                                                  RobotState::AutoSequenceAmp;
                                               m_state.SetDesiredState();
                                             }
                                           }).ToPtr());
 
+  // Maps to 5 on keyboard
+  m_operatorController.Button(8).OnTrue(
+      frc2::InstantCommand([this] { m_drive.ZeroHeading(); }).ToPtr());
+
+  // Maps to 6 on keyboard
+  m_operatorController.Button(9).OnTrue(
+      m_rightClimb.MoveToPositionAbsolute(18_in).AlongWith(
+          m_leftClimb.MoveToPositionAbsolute(18_in)));
+
+  // Maps to 1 on keyboard
+  // m_operatorController.Button(9).OnTrue(frc2::InstantCommand([this] {
+  //                                          if (!m_state.m_active) {
+  //                                            m_state.m_currentState =
+  //                                                RobotState::ClimbStageLeft;
+  //                                            m_state.SetDesiredState();
+  //                                          }
+  //                                        }).ToPtr());
+
+  // Maps to 2 on keyboard
   m_operatorController.Button(15).OnTrue(frc2::InstantCommand([this] {
                                            if (!m_state.m_active) {
                                              m_state.m_currentState =
-                                                 RobotState::SourceLeft;
+                                                 RobotState::ClimbStageCenter;
                                              m_state.SetDesiredState();
                                            }
                                          }).ToPtr());
 
+  // Maps to 3 on keyboard
   m_operatorController.Button(16).OnTrue(frc2::InstantCommand([this] {
                                            if (!m_state.m_active) {
                                              m_state.m_currentState =
-                                                 RobotState::SourceCenter;
+                                                 RobotState::ClimbStageRight;
                                              m_state.SetDesiredState();
                                            }
                                          }).ToPtr());
 
-  m_operatorController.Button(17).OnTrue(frc2::InstantCommand([this] {
-                                           if (!m_state.m_active) {
-                                             m_state.m_currentState =
-                                                 RobotState::SourceRight;
-                                             m_state.SetDesiredState();
-                                           }
-                                         }).ToPtr());
-
-  m_operatorController.Button(18).OnTrue(frc2::InstantCommand([this] {
-                                           if (!m_state.m_active) {
-                                             m_state.m_currentState =
-                                                 RobotState::Funni;
-                                             m_state.SetDesiredState();
-                                           }
-                                         }).ToPtr());
-
-  m_operatorController.Button(20).OnTrue(
-      frc2::InstantCommand([this] { m_drive.ZeroHeading(); }).ToPtr());
+  // Maps to 0 on keyboard
+  // m_operatorController.Button(17).OnTrue(
+      // TODO: FEED SCORING COMMAND
+  // );
 }
 #endif
 
