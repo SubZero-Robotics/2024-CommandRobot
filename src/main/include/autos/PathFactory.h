@@ -10,12 +10,14 @@
 #include "Constants.h"
 #include "OnTheFlyFactory.h"
 #include "subsystems/DriveSubsystem.h"
+#include "subsystems/LedSubsystem.h"
 
 class PathFactory {
  public:
   static frc2::CommandPtr GetPathFromFinalLocation(
       std::function<AutoConstants::Locations::FinalLocation()> locationGetter,
-      DriveSubsystem* drive, frc2::CommandPtr&& prepCommand) {
+      DriveSubsystem* drive, LedSubsystem* leds,
+      frc2::CommandPtr&& prepCommand) {
     return GetApproxCommand(locationGetter())
         .AndThen(std::move(prepCommand))
         .AndThen(GetFinalApproachCommand(locationGetter(), drive));
@@ -23,9 +25,11 @@ class PathFactory {
 
   static frc2::CommandPtr GetPathFromFinalLocation(
       std::function<AutoConstants::Locations::FinalLocation()> locationGetter,
-      DriveSubsystem* drive) {
-    return GetApproxCommand(locationGetter())
-        .AndThen(GetFinalApproachCommand(locationGetter(), drive));
+      DriveSubsystem* drive, LedSubsystem* leds) {
+    return leds->OnTheFlyPP()
+        .AndThen(GetApproxCommand(locationGetter())
+                     .AndThen(GetFinalApproachCommand(locationGetter(), drive)))
+        .AndThen(leds->Idling());
   }
 
   static frc2::CommandPtr PathfindApproximate(

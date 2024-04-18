@@ -131,7 +131,8 @@ frc2::CommandPtr StateSubsystem::StartScoringSpeaker() {
 
   return m_subsystems.led->ScoringSpeaker()
       .AndThen(PathFactory::GetPathFromFinalLocation(
-          [] { return FinalLocation::Podium; }, m_subsystems.drive))
+          [] { return FinalLocation::Podium; }, m_subsystems.drive,
+          m_subsystems.led))
       // ? TODO: Snap to angle first?
       .AndThen(ScoringCommands::Score(
           [] { return ScoringDirection::PodiumSide; }, m_subsystems.scoring,
@@ -148,7 +149,8 @@ frc2::CommandPtr StateSubsystem::StartScoringAmp() {
   */
   return m_subsystems.led->ScoringAmp()
       .AndThen(PathFactory::GetPathFromFinalLocation(
-          [] { return FinalLocation::Amp; }, m_subsystems.drive))
+          [] { return FinalLocation::Amp; }, m_subsystems.drive,
+          m_subsystems.led))
       // ? TODO: Snap to angle first?
       .AndThen(ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
                                       m_subsystems.scoring, m_subsystems.intake,
@@ -165,7 +167,8 @@ frc2::CommandPtr StateSubsystem::StartScoringSubwoofer() {
   */
   return m_subsystems.led->ScoringSubwoofer()
       .AndThen(PathFactory::GetPathFromFinalLocation(
-          [] { return FinalLocation::Subwoofer; }, m_subsystems.drive))
+          [] { return FinalLocation::Subwoofer; }, m_subsystems.drive,
+          m_subsystems.led))
       // ? TODO: Snap to angle first?
       .AndThen(ScoringCommands::Score(
           [] { return ScoringDirection::Subwoofer; }, m_subsystems.scoring,
@@ -199,7 +202,8 @@ frc2::CommandPtr StateSubsystem::StartClimb() {
       .AndThen(
           // TODO: method to get the stage location
           PathFactory::GetPathFromFinalLocation(
-              [this] { return GetFinalFromState(); }, m_subsystems.drive))
+              [this] { return GetFinalFromState(); }, m_subsystems.drive,
+              m_subsystems.led))
       .WithTimeout(20_s);
 }
 
@@ -212,7 +216,8 @@ frc2::CommandPtr StateSubsystem::StartSource() {
 
   return m_subsystems.led->Outaking()
       .AndThen(PathFactory::GetPathFromFinalLocation(
-          [this] { return GetFinalFromState(); }, m_subsystems.drive))
+          [this] { return GetFinalFromState(); }, m_subsystems.drive,
+          m_subsystems.led))
       .WithTimeout(20_s);
 }
 
@@ -276,7 +281,7 @@ bool StateSubsystem::IsControllerActive() {
     active |= m_driverController.GetPOV(i) != -1;
   }
   // Check the operator's "stop" button
-  active |= m_operatorController.RightStick().Get();
+  active |= m_operatorController.Button(19).Get();
   if (active) {
     ConsoleWriter.logVerbose("StateSubsystem", "Controller interrupt! %s", "");
   }
