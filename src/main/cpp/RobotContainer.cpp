@@ -210,7 +210,7 @@ void RobotContainer::ConfigureAutoBindings() {
   // );
 
   // Maps to NUM LOCK on keyboard
-  m_operatorController.Button(2).OnTrue(
+  m_operatorController.Button(3).OnTrue(
       // GOTO SRC
       frc2::InstantCommand([this] {
         if (!m_state.m_active) {
