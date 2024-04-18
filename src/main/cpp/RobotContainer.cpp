@@ -265,16 +265,16 @@ void RobotContainer::ConfigureAutoBindings() {
           m_leftClimb.MoveToPositionAbsolute(18_in)));
 
   // Maps to 1 on keyboard
-  // m_operatorController.Button(9).OnTrue(frc2::InstantCommand([this] {
-  //                                          if (!m_state.m_active) {
-  //                                            m_state.m_currentState =
-  //                                                RobotState::ClimbStageLeft;
-  //                                            m_state.SetDesiredState();
-  //                                          }
-  //                                        }).ToPtr());
+  m_operatorController.Button(15).OnTrue(frc2::InstantCommand([this] {
+                                           if (!m_state.m_active) {
+                                             m_state.m_currentState =
+                                                 RobotState::ClimbStageLeft;
+                                             m_state.SetDesiredState();
+                                           }
+                                         }).ToPtr());
 
   // Maps to 2 on keyboard
-  m_operatorController.Button(15).OnTrue(frc2::InstantCommand([this] {
+  m_operatorController.Button(16).OnTrue(frc2::InstantCommand([this] {
                                            if (!m_state.m_active) {
                                              m_state.m_currentState =
                                                  RobotState::ClimbStageCenter;
@@ -283,7 +283,7 @@ void RobotContainer::ConfigureAutoBindings() {
                                          }).ToPtr());
 
   // Maps to 3 on keyboard
-  m_operatorController.Button(16).OnTrue(frc2::InstantCommand([this] {
+  m_operatorController.Button(17).OnTrue(frc2::InstantCommand([this] {
                                            if (!m_state.m_active) {
                                              m_state.m_currentState =
                                                  RobotState::ClimbStageRight;
