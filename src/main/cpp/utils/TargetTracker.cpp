@@ -132,6 +132,10 @@ std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
   frc::SmartDashboard::PutString("TargetTracker otherDistance",
                                  std::to_string(otherDistance.value()) + " in");
 
+  auto combinedDistance = (distance * 0.75) + (otherDistance * 0.25);
+  frc::SmartDashboard::PutString("TargetTracker combinedDistance",
+                                 std::to_string(otherDistance.value()) + " in");
+
   frc::Pose2d currentPose = m_drive->GetPose();
 
   auto xTransformation = distance * tan(horizontalAngle.value());
