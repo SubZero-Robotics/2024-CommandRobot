@@ -220,7 +220,7 @@ void RobotContainer::ConfigureAutoBindings() {
       }).ToPtr());
 
   // Maps to 7 on keyboard
-  m_operatorController.Button(3).OnTrue(frc2::InstantCommand([this] {
+  m_operatorController.Button(4).OnTrue(frc2::InstantCommand([this] {
                                     if (!m_state.m_active) {
                                       m_state.m_currentState =
                                           RobotState::ScoringAmp;
@@ -229,7 +229,7 @@ void RobotContainer::ConfigureAutoBindings() {
                                   }).ToPtr());
 
   // Maps to 8 on keyboard
-  m_operatorController.Button(4).OnTrue(frc2::InstantCommand([this] {
+  m_operatorController.Button(5).OnTrue(frc2::InstantCommand([this] {
                                              if (!m_state.m_active) {
                                                m_state.m_currentState =
                                                    RobotState::ScoringSpeaker;
@@ -238,7 +238,7 @@ void RobotContainer::ConfigureAutoBindings() {
                                            }).ToPtr());
 
   // Maps to 9 on keyboard
-  m_operatorController.Button(5).OnTrue(frc2::InstantCommand([this] {
+  m_operatorController.Button(6).OnTrue(frc2::InstantCommand([this] {
                                               if (!m_state.m_active) {
                                                 m_state.m_currentState =
                                                     RobotState::ScoringSubwoofer;
