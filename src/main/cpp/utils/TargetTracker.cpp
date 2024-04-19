@@ -140,7 +140,6 @@ std::optional<frc::Pose2d> TargetTracker::GetTargetPose(
 
   frc::Transform2d transformDelta =
       frc::Transform2d(xTransformation, yTransformation, 0_deg);
-  frc::Pose2d notePose = currentPose.TransformBy(transformDelta);
 
   // Do it the WPI way
   auto wpiTranslation = frc::Translation2d(
@@ -149,7 +148,7 @@ std::optional<frc::Pose2d> TargetTracker::GetTargetPose(
       frc::Transform2d(wpiTranslation, currentPose.Rotation());
   auto wpiFinalPose = currentPose.TransformBy(wpiTransformation);
 
-  return wpiFinalPose;
+  return frc::Pose2d(wpiFinalPose.Translation(), 0_deg);
 }
 
 units::inch_t TargetTracker::GetDistanceToTarget(const DetectedObject& target) {

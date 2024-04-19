@@ -188,6 +188,14 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.RightStick().OnTrue(
       frc2::InstantCommand([this] { ToggleAimbot(); }).ToPtr());
 
+  m_driverController.LeftStick().OnTrue(tracker.IntakeTarget().AndThen(
+      frc2::InstantCommand([this] {
+        if (!m_state.m_active) {
+          m_state.m_currentState = RobotState::ScoringSubwoofer;
+          m_state.SetDesiredState();
+        }
+      }).ToPtr()));
+
   ConfigureAutoBindings();
 #endif
 #ifdef TEST_SWERVE_BOT
@@ -215,7 +223,7 @@ void RobotContainer::ConfigureButtonBindings() {
 void RobotContainer::ConfigureAutoBindings() {
   // Maps to / on keyboard
   // m_operatorController.Button(0).OnTrue(
-      // TODO: GOTO APPROX SCORING
+  // TODO: GOTO APPROX SCORING
   // );
 
   // Maps to NUM LOCK on keyboard
@@ -230,39 +238,39 @@ void RobotContainer::ConfigureAutoBindings() {
 
   // Maps to 7 on keyboard
   m_operatorController.Button(4).OnTrue(frc2::InstantCommand([this] {
-                                    if (!m_state.m_active) {
-                                      m_state.m_currentState =
-                                          RobotState::ScoringAmp;
-                                      m_state.SetDesiredState();
-                                    }
-                                  }).ToPtr());
+                                          if (!m_state.m_active) {
+                                            m_state.m_currentState =
+                                                RobotState::ScoringAmp;
+                                            m_state.SetDesiredState();
+                                          }
+                                        }).ToPtr());
 
   // Maps to 8 on keyboard
   m_operatorController.Button(5).OnTrue(frc2::InstantCommand([this] {
-                                             if (!m_state.m_active) {
-                                               m_state.m_currentState =
-                                                   RobotState::ScoringSpeaker;
-                                               m_state.SetDesiredState();
-                                             }
-                                           }).ToPtr());
+                                          if (!m_state.m_active) {
+                                            m_state.m_currentState =
+                                                RobotState::ScoringSpeaker;
+                                            m_state.SetDesiredState();
+                                          }
+                                        }).ToPtr());
 
   // Maps to 9 on keyboard
   m_operatorController.Button(6).OnTrue(frc2::InstantCommand([this] {
-                                              if (!m_state.m_active) {
-                                                m_state.m_currentState =
-                                                    RobotState::ScoringSubwoofer;
-                                                m_state.SetDesiredState();
-                                              }
-                                            }).ToPtr());
+                                          if (!m_state.m_active) {
+                                            m_state.m_currentState =
+                                                RobotState::ScoringSubwoofer;
+                                            m_state.SetDesiredState();
+                                          }
+                                        }).ToPtr());
 
   // Maps to 4 on keyboard
   m_operatorController.Button(7).OnTrue(frc2::InstantCommand([this] {
-                                            if (!m_state.m_active) {
-                                              m_state.m_currentState =
-                                                  RobotState::AutoSequenceAmp;
-                                              m_state.SetDesiredState();
-                                            }
-                                          }).ToPtr());
+                                          if (!m_state.m_active) {
+                                            m_state.m_currentState =
+                                                RobotState::AutoSequenceAmp;
+                                            m_state.SetDesiredState();
+                                          }
+                                        }).ToPtr());
 
   // Maps to 5 on keyboard
   m_operatorController.Button(8).OnTrue(
@@ -307,8 +315,7 @@ void RobotContainer::ConfigureAutoBindings() {
               [] { return ScoringDirection::FeedPodium; }, &m_scoring,
               &m_intake, &m_arm))
           .AndThen(m_leds.BlinkingFace())
-          .AndThen(m_leds.Idling())
-  );
+          .AndThen(m_leds.Idling()));
 
   // Maps to DEL on keyboard
   m_operatorController.Button(18).OnTrue(tracker.IntakeTarget());
@@ -389,23 +396,23 @@ void RobotContainer::Periodic() {
     }
 
     m_shouldAim = m_aimbotEnabled && inRange;
-  } else {
-    auto targetPose = tracker.GetBestTargetPose(targets);
-
-    frc::SmartDashboard::PutBoolean("HAS TARGET LOCK",
-                                    tracker.HasTargetLock(targets));
-
-    if (targetPose) {
-      m_shouldAim = m_aimbotEnabled;
-      m_turnToPose.SetTargetPose(targetPose.value());
-
-      frc::SmartDashboard::PutNumber(
-          "TURN TO POSE TARGET deg",
-          targetPose.value().Rotation().Degrees().value());
     } else {
+      // auto targetPose = tracker.GetBestTargetPose(targets);
+
+      // frc::SmartDashboard::PutBoolean("HAS TARGET LOCK",
+      //                                 tracker.HasTargetLock(targets));
+
+      // if (targetPose) {
+      //   m_shouldAim = m_aimbotEnabled;
+      //   m_turnToPose.SetTargetPose(targetPose.value());
+
+      //   frc::SmartDashboard::PutNumber(
+      //       "TURN TO POSE TARGET deg",
+      //       targetPose.value().Rotation().Degrees().value());
+      // } else {
+      //   m_shouldAim = false;
+      // }
       m_shouldAim = false;
-    }
-    m_aimbotEnabled = false;
   }
 }
 
