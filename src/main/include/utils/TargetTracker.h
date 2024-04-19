@@ -94,8 +94,6 @@ class TargetTracker {
   std::vector<DetectedObject> GetTargets();
   std::optional<DetectedObject> GetBestTarget(std::vector<DetectedObject>&);
   bool HasTargetLock(std::vector<DetectedObject>&);
-  frc2::CommandPtr MoveToIntakePose();
-  frc2::CommandPtr IntakeTarget();
   std::optional<frc::Pose2d> GetTargetPose(const DetectedObject&);
   std::optional<frc::Pose2d> GetBestTargetPose(std::vector<DetectedObject>&);
   units::inch_t GetDistanceToTarget(const DetectedObject&);

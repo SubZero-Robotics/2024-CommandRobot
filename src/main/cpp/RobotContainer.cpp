@@ -48,8 +48,8 @@ RobotContainer::RobotContainer() {
         m_drive.GetField()->GetObject("path")->SetPoses(poses);
       });
 
-  pathplanner::PPHolonomicDriveController::setRotationTargetOverride(
-      std::bind(&RobotContainer::GetRotationTargetOverride, this));
+  // pathplanner::PPHolonomicDriveController::setRotationTargetOverride(
+  //     std::bind(&RobotContainer::GetRotationTargetOverride, this));
 
   // Set up default drive command
   // The left stick controls translation of the robot.
@@ -192,18 +192,19 @@ void RobotContainer::ConfigureButtonBindings() {
       frc2::InstantCommand([this] { ToggleAimbot(); }).ToPtr());
 
   m_driverController.LeftStick().OnTrue(
-      frc2::InstantCommand([this] { m_autoAcquiringNote = true; })
-          .ToPtr()
-          .AndThen(tracker.IntakeTarget())
-          .AndThen(frc2::InstantCommand([this] {
-                     m_autoAcquiringNote = false;
-                   }).ToPtr())
-          .AndThen(frc2::InstantCommand([this] {
-                     if (!m_state.m_active) {
-                       m_state.m_currentState = RobotState::ScoringSubwoofer;
-                       m_state.SetDesiredState();
-                     }
-                   }).ToPtr()));
+      (frc2::InstantCommand([this] { m_autoAcquiringNote = true; })
+           .ToPtr()
+           .AndThen(IntakeTarget())
+           .AndThen(frc2::InstantCommand([this] {
+                      m_autoAcquiringNote = false;
+                    }).ToPtr())
+           .AndThen(frc2::InstantCommand([this] {
+                      if (!m_state.m_active) {
+                        m_state.m_currentState = RobotState::ScoringSubwoofer;
+                        m_state.SetDesiredState();
+                      }
+                    }).ToPtr()))
+          .FinallyDo([this] { m_autoAcquiringNote = false; }));
 
   ConfigureAutoBindings();
 #endif
@@ -327,7 +328,7 @@ void RobotContainer::ConfigureAutoBindings() {
           .AndThen(m_leds.Idling()));
 
   // Maps to DEL on keyboard
-  m_operatorController.Button(18).OnTrue(tracker.IntakeTarget());
+  m_operatorController.Button(18).OnTrue(IntakeTarget());
 }
 #endif
 
@@ -431,6 +432,7 @@ std::optional<frc::Rotation2d> RobotContainer::GetRotationTargetOverride() {
 
   if (m_autoAcquiringNote && targetPose) {
     auto angle = m_turnToPose.GetTargetHeading();
+    // angle = m_drive.GetPose().Rotation().Degrees();
     frc::SmartDashboard::PutNumber("Overridden PP angle", angle.value());
     return angle;
   }
@@ -441,4 +443,51 @@ std::optional<frc::Rotation2d> RobotContainer::GetRotationTargetOverride() {
 void RobotContainer::ToggleAimbot() {
   m_aimbotEnabled = !m_aimbotEnabled;
   frc::SmartDashboard::PutBoolean("aimbot enabled", m_aimbotEnabled);
+}
+
+frc2::CommandPtr RobotContainer::MoveToIntakePose() {
+  return frc2::DeferredCommand(
+             [this] {
+               auto targets = tracker.GetTargets();
+               auto targetPose = tracker.GetBestTargetPose(targets);
+
+               //  if (!targetPose) {
+               //    ConsoleLogger::getInstance().logWarning("TargetTracker",
+               //                                            "NO TARGET FOUND");
+               //    return frc2::InstantCommand([] {}).ToPtr();
+               //  }
+
+               targetPose = frc::Pose2d(targetPose.value().Translation(),
+                                        m_turnToPose.GetTargetHeading());
+
+               return pathplanner::AutoBuilder::pathfindToPose(
+                   targetPose.value(), kMovementConstraints,
+                   0.0_mps,  // Goal end velocity in meters/sec
+                   0.0_m  // Rotation delay distance in meters. This is how far
+                          // the robot should travel before attempting to
+                          // rotate.
+               );
+             },
+             {})
+      .ToPtr();
+}
+
+frc2::CommandPtr RobotContainer::IntakeTarget() {
+  return frc2::DeferredCommand(
+             [this] {
+               //  auto targets = GetTargets();
+               //  bool hasTarget = HasTargetLock(targets);
+
+               //  if (!hasTarget) {
+               //    ConsoleLogger::getInstance().logWarning("TargetTracker",
+               //                                            "NO TARGET FOUND");
+               //    return frc2::InstantCommand([] {}).ToPtr();
+               //  }
+
+               return (MoveToIntakePose())
+                   .AlongWith(IntakingCommands::Intake(&m_intake, &m_scoring))
+                   .WithTimeout(10_s);
+             },
+             {})
+      .ToPtr();
 }

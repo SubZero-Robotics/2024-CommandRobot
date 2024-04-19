@@ -59,57 +59,6 @@ bool TargetTracker::HasTargetLock(std::vector<DetectedObject>& targets) {
   return bestTarget && bestTarget.value().confidence >= m_confidenceThreshold;
 }
 
-frc2::CommandPtr TargetTracker::MoveToIntakePose() {
-  return frc2::DeferredCommand(
-             [this] {
-               auto targets = GetTargets();
-               auto targetPose = GetBestTargetPose(targets);
-
-               //  if (!targetPose) {
-               //    ConsoleLogger::getInstance().logWarning("TargetTracker",
-               //                                            "NO TARGET FOUND");
-               //    return frc2::InstantCommand([] {}).ToPtr();
-               //  }
-
-               return pathplanner::AutoBuilder::pathfindToPose(
-                   targetPose.value(), kMovementConstraints,
-                   0.0_mps,  // Goal end velocity in meters/sec
-                   0.0_m  // Rotation delay distance in meters. This is how far
-                          // the robot should travel before attempting to
-                          // rotate.
-               );
-             },
-             {})
-      .ToPtr();
-}
-
-frc2::CommandPtr TargetTracker::IntakeTarget() {
-  return frc2::DeferredCommand(
-             [this] {
-               //  auto targets = GetTargets();
-               //  bool hasTarget = HasTargetLock(targets);
-
-               //  if (!hasTarget) {
-               //    ConsoleLogger::getInstance().logWarning("TargetTracker",
-               //                                            "NO TARGET FOUND");
-               //    return frc2::InstantCommand([] {}).ToPtr();
-               //  }
-
-               return (MoveToIntakePose())
-                   .WithTimeout(20_s)
-                   .FinallyDo([this] {
-                     auto chassisSpeeds = frc::ChassisSpeeds::Discretize(
-                         0_mps, 0_mps, AutoConstants::kMaxAngularSpeed,
-                         DriveConstants::kLoopTime);
-                     m_drive->Drive(chassisSpeeds);
-                   })
-                   .AlongWith(IntakingCommands::Intake(m_intake, m_scoring))
-                   .WithTimeout(10_s);
-             },
-             {})
-      .ToPtr();
-}
-
 std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
     std::vector<DetectedObject>& targets) {
   if (!frc::RobotBase::IsReal()) {
