@@ -24,6 +24,12 @@ class TurnToPose {
   void SetTargetPose(frc::Pose2d pose);
 
   frc::ChassisSpeeds GetSpeedCorrection();
+  /**
+   * @param currentPose
+   * @param targetPose
+   */
+  static units::degree_t GetAngleFromOtherPose(const frc::Pose2d&,
+                                               const frc::Pose2d&);
 
   /**
    * @param other The initial ChassisSpeeds
@@ -35,11 +41,15 @@ class TurnToPose {
 
   inline bool AtGoal() const { return m_driveController->AtReference(); }
 
+  inline std::optional<frc::Pose2d> GetTargetPose() const {
+    return m_targetPose;
+  }
+
  private:
   std::function<frc::Pose2d()> m_poseGetter;
   std::function<frc::Field2d*()> m_fieldGetter;
   std::unique_ptr<frc::HolonomicDriveController> m_driveController;
   frc::Pose2d m_startPose;
-  frc::Pose2d m_targetPose;
+  std::optional<frc::Pose2d> m_targetPose;
   frc::ChassisSpeeds m_speeds;
 };

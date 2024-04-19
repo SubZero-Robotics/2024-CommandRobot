@@ -48,6 +48,9 @@ RobotContainer::RobotContainer() {
         m_drive.GetField()->GetObject("path")->SetPoses(poses);
       });
 
+  pathplanner::PPHolonomicDriveController::setRotationTargetOverride(
+      std::bind(&RobotContainer::GetRotationTargetOverride, this));
+
   // Set up default drive command
   // The left stick controls translation of the robot.
   // Turning is controlled by the X axis of the right stick.
@@ -215,7 +218,7 @@ void RobotContainer::ConfigureButtonBindings() {
 void RobotContainer::ConfigureAutoBindings() {
   // Maps to / on keyboard
   // m_operatorController.Button(0).OnTrue(
-      // TODO: GOTO APPROX SCORING
+  // TODO: GOTO APPROX SCORING
   // );
 
   // Maps to NUM LOCK on keyboard
@@ -230,39 +233,39 @@ void RobotContainer::ConfigureAutoBindings() {
 
   // Maps to 7 on keyboard
   m_operatorController.Button(4).OnTrue(frc2::InstantCommand([this] {
-                                    if (!m_state.m_active) {
-                                      m_state.m_currentState =
-                                          RobotState::ScoringAmp;
-                                      m_state.SetDesiredState();
-                                    }
-                                  }).ToPtr());
+                                          if (!m_state.m_active) {
+                                            m_state.m_currentState =
+                                                RobotState::ScoringAmp;
+                                            m_state.SetDesiredState();
+                                          }
+                                        }).ToPtr());
 
   // Maps to 8 on keyboard
   m_operatorController.Button(5).OnTrue(frc2::InstantCommand([this] {
-                                             if (!m_state.m_active) {
-                                               m_state.m_currentState =
-                                                   RobotState::ScoringSpeaker;
-                                               m_state.SetDesiredState();
-                                             }
-                                           }).ToPtr());
+                                          if (!m_state.m_active) {
+                                            m_state.m_currentState =
+                                                RobotState::ScoringSpeaker;
+                                            m_state.SetDesiredState();
+                                          }
+                                        }).ToPtr());
 
   // Maps to 9 on keyboard
   m_operatorController.Button(6).OnTrue(frc2::InstantCommand([this] {
-                                              if (!m_state.m_active) {
-                                                m_state.m_currentState =
-                                                    RobotState::ScoringSubwoofer;
-                                                m_state.SetDesiredState();
-                                              }
-                                            }).ToPtr());
+                                          if (!m_state.m_active) {
+                                            m_state.m_currentState =
+                                                RobotState::ScoringSubwoofer;
+                                            m_state.SetDesiredState();
+                                          }
+                                        }).ToPtr());
 
   // Maps to 4 on keyboard
   m_operatorController.Button(7).OnTrue(frc2::InstantCommand([this] {
-                                            if (!m_state.m_active) {
-                                              m_state.m_currentState =
-                                                  RobotState::AutoSequenceAmp;
-                                              m_state.SetDesiredState();
-                                            }
-                                          }).ToPtr());
+                                          if (!m_state.m_active) {
+                                            m_state.m_currentState =
+                                                RobotState::AutoSequenceAmp;
+                                            m_state.SetDesiredState();
+                                          }
+                                        }).ToPtr());
 
   // Maps to 5 on keyboard
   m_operatorController.Button(8).OnTrue(
@@ -307,8 +310,7 @@ void RobotContainer::ConfigureAutoBindings() {
               [] { return ScoringDirection::FeedPodium; }, &m_scoring,
               &m_intake, &m_arm))
           .AndThen(m_leds.BlinkingFace())
-          .AndThen(m_leds.Idling())
-  );
+          .AndThen(m_leds.Idling()));
 
   // Maps to DEL on keyboard
   m_operatorController.Button(18).OnTrue(tracker.IntakeTarget());
@@ -407,6 +409,17 @@ void RobotContainer::Periodic() {
     }
     m_aimbotEnabled = false;
   }
+}
+
+std::optional<frc::Rotation2d> RobotContainer::GetRotationTargetOverride() {
+  auto targetPose = m_turnToPose.GetTargetPose();
+
+  if (m_autoAcquiringNote && targetPose) {
+    return TurnToPose::GetAngleFromOtherPose(m_drive.GetPose(),
+                                             targetPose.value());
+  }
+
+  return std::nullopt;
 }
 
 void RobotContainer::ToggleAimbot() {
