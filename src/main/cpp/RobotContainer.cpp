@@ -48,8 +48,8 @@ RobotContainer::RobotContainer() {
         m_drive.GetField()->GetObject("path")->SetPoses(poses);
       });
 
-  // pathplanner::PPHolonomicDriveController::setRotationTargetOverride(
-  //     std::bind(&RobotContainer::GetRotationTargetOverride, this));
+  pathplanner::PPHolonomicDriveController::setRotationTargetOverride(
+      std::bind(&RobotContainer::GetRotationTargetOverride, this));
 
   // Set up default drive command
   // The left stick controls translation of the robot.
