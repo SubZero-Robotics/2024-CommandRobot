@@ -27,6 +27,7 @@
 #include <chrono>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <vector>
 
 #ifndef M_PI
@@ -401,8 +402,8 @@ inline PoseEstimate getBotPoseEstimate_wpiRed_MegaTag2(
 inline const double INVALID_TARGET = 0.0;
 class SingleTargetingResultClass {
  public:
-  SingleTargetingResultClass(){};
-  ~SingleTargetingResultClass(){};
+  SingleTargetingResultClass() {}
+  ~SingleTargetingResultClass() {}
   double m_TargetXPixels{INVALID_TARGET};
   double m_TargetYPixels{INVALID_TARGET};
 

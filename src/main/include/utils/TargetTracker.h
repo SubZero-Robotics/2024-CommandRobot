@@ -2,6 +2,9 @@
 
 #include <pathplanner/lib/commands/FollowPathHolonomic.h>
 
+#include <string>
+#include <vector>
+
 #include "Constants.h"
 #include "LimelightHelpers.h"
 #include "subsystems/DriveSubsystem.h"
@@ -14,7 +17,7 @@ struct DetectedCorner {
 
   DetectedCorner() {}
 
-  DetectedCorner(const std::vector<double>& coord) {
+  explicit DetectedCorner(const std::vector<double>& coord) {
     x = coord[0];
     y = coord[1];
   }
@@ -28,7 +31,7 @@ struct DetectedCorners {
 
   DetectedCorners() {}
 
-  DetectedCorners(const std::vector<std::vector<double>>& corners) {
+  explicit DetectedCorners(const std::vector<std::vector<double>>& corners) {
     if (corners.empty()) return;
 
     topLeft = DetectedCorner(corners[0]);
@@ -37,7 +40,7 @@ struct DetectedCorners {
     bottomRight = DetectedCorner(corners[3]);
   }
 
-  DetectedCorners(const std::vector<double>& rawCorners) {
+  explicit DetectedCorners(const std::vector<double>& rawCorners) {
     if (rawCorners.size() < 8) return;
 
     topLeft = DetectedCorner({rawCorners[0], rawCorners[1]});
@@ -63,9 +66,9 @@ struct DetectedObject {
   double areaPercentage;
   DetectedCorners detectedCorners;
 
-  DetectedObject(uint8_t id, double conf, units::degree_t cX,
-                 units::degree_t cY, double area,
-                 std::vector<std::vector<double>> corners)
+  explicit DetectedObject(uint8_t id, double conf, units::degree_t cX,
+                          units::degree_t cY, double area,
+                          std::vector<std::vector<double>> corners)
       : classId{id},
         confidence{conf},
         centerX{cX},
@@ -73,8 +76,9 @@ struct DetectedObject {
         areaPercentage{area},
         detectedCorners{corners} {}
 
-  DetectedObject(const LimelightHelpers::DetectionResultClass& detectionResult)
-      : classId{(uint8_t)detectionResult.m_classID},
+  explicit DetectedObject(
+      const LimelightHelpers::DetectionResultClass& detectionResult)
+      : classId{static_cast<uint8_t>(detectionResult.m_classID)},
         confidence{detectionResult.m_confidence},
         centerX{detectionResult.m_TargetXDegreesCrosshairAdjusted},
         centerY{detectionResult.m_TargetYDegreesCrosshairAdjusted},
