@@ -319,13 +319,13 @@ void RobotContainer::ConfigureAutoBindings() {
                                          }).ToPtr());
 
   // Maps to 0 on keyboard
-  m_operatorController.Button(18).OnTrue(
-      m_leds.ScoringAmp()
-          .AndThen(ScoringCommands::Score(
-              [] { return ScoringDirection::FeedPodium; }, &m_scoring,
-              &m_intake, &m_arm))
-          .AndThen(m_leds.BlinkingFace())
-          .AndThen(m_leds.Idling()));
+  // m_operatorController.Button(18).OnTrue(
+  //     m_leds.ScoringAmp()
+  //         .AndThen(ScoringCommands::Score(
+  //             [] { return ScoringDirection::FeedPodium; }, &m_scoring,
+  //             &m_intake, &m_arm))
+  //         .AndThen(m_leds.BlinkingFace())
+  //         .AndThen(m_leds.Idling()));
 
   // Maps to DEL on keyboard
   m_operatorController.Button(18).OnTrue(
@@ -335,12 +335,13 @@ void RobotContainer::ConfigureAutoBindings() {
            .AndThen(frc2::InstantCommand([this] {
                       m_autoAcquiringNote = false;
                     }).ToPtr())
-           .AndThen(frc2::InstantCommand([this] {
-                      if (!m_state.m_active) {
-                        m_state.m_currentState = RobotState::ScoringSubwoofer;
-                        m_state.SetDesiredState();
-                      }
-                    }).ToPtr()))
+          //  .AndThen(frc2::InstantCommand([this] {
+          //             if (!m_state.m_active) {
+          //               m_state.m_currentState = RobotState::ScoringSubwoofer;
+          //               m_state.SetDesiredState();
+          //             }
+          //           }).ToPtr())
+                    )
           .WithTimeout(20_s)
           .FinallyDo([this] { m_autoAcquiringNote = false; }));
 }
@@ -498,12 +499,13 @@ frc2::CommandPtr RobotContainer::IntakeTarget() {
                //    return frc2::InstantCommand([] {}).ToPtr();
                //  }
 
-               return (MoveToIntakePose())
-                   //  .AlongWith(IntakingCommands::Intake(&m_intake,
-                   //  &m_scoring))
+               return (MoveToIntakePose()
+                   .AlongWith(IntakingCommands::Intake(&m_intake, &m_scoring)))
                    .WithTimeout(10_s)
-                   .Until(StateSubsystem::IsControllerActive(
-                       m_driverController, m_operatorController));
+                   .Until([this] {
+                     return StateSubsystem::IsControllerActive(
+                         m_driverController, m_operatorController);
+                   });
              },
              {})
       .ToPtr();

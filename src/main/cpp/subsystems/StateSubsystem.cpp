@@ -288,8 +288,8 @@ frc2::CommandPtr StateSubsystem::MoveToSourceAndIntake() {
 }
 
 bool StateSubsystem::IsControllerActive(
-    frc::XboxController& driverController,
-    frc::XboxController& operatorController) {
+    frc2::CommandXboxController& driverController,
+    frc2::CommandXboxController& operatorController) {
   bool active = false;
   int count = driverController.GetButtonCount();
   for (int i = 1; i <= count; i++) {

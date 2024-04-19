@@ -98,14 +98,15 @@ class StateSubsystem : public frc2::SubsystemBase {
 
   inline RobotState GetState() const { return m_currentState; }
 
+  static bool IsControllerActive(
+      frc2::CommandXboxController &controller,
+      frc2::CommandXboxController &operatorController);
+
   frc2::CommandPtr m_cmd = frc2::InstantCommand([] {}).ToPtr();
   bool m_active = false;
   RobotState m_currentState;
 
  private:
-  static bool IsControllerActive(frc::XboxController &controller,
-                                 frc::XboxController &operatorController);
-
   frc2::CommandPtr MoveToSourceAndIntake();
 
   inline AutoConstants::Locations::FinalLocation GetFinalFromState() {
