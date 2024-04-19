@@ -65,11 +65,11 @@ frc2::CommandPtr TargetTracker::MoveToIntakePose() {
                auto targets = GetTargets();
                auto targetPose = GetBestTargetPose(targets);
 
-               if (!targetPose) {
-                 ConsoleLogger::getInstance().logWarning("TargetTracker",
-                                                         "NO TARGET FOUND");
-                 return frc2::InstantCommand([] {}).ToPtr();
-               }
+               //  if (!targetPose) {
+               //    ConsoleLogger::getInstance().logWarning("TargetTracker",
+               //                                            "NO TARGET FOUND");
+               //    return frc2::InstantCommand([] {}).ToPtr();
+               //  }
 
                return pathplanner::AutoBuilder::pathfindToPose(
                    targetPose.value(), kMovementConstraints,
@@ -86,14 +86,14 @@ frc2::CommandPtr TargetTracker::MoveToIntakePose() {
 frc2::CommandPtr TargetTracker::IntakeTarget() {
   return frc2::DeferredCommand(
              [this] {
-               auto targets = GetTargets();
-               bool hasTarget = HasTargetLock(targets);
+               //  auto targets = GetTargets();
+               //  bool hasTarget = HasTargetLock(targets);
 
-               if (!hasTarget) {
-                 ConsoleLogger::getInstance().logWarning("TargetTracker",
-                                                         "NO TARGET FOUND");
-                 return frc2::InstantCommand([] {}).ToPtr();
-               }
+               //  if (!hasTarget) {
+               //    ConsoleLogger::getInstance().logWarning("TargetTracker",
+               //                                            "NO TARGET FOUND");
+               //    return frc2::InstantCommand([] {}).ToPtr();
+               //  }
 
                return (MoveToIntakePose())
                    .WithTimeout(20_s)

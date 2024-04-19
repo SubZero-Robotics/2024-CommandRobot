@@ -45,11 +45,14 @@ class TurnToPose {
     return m_targetPose;
   }
 
+  inline units::degree_t GetTargetHeading() const { return m_targetHeading; }
+
  private:
   std::function<frc::Pose2d()> m_poseGetter;
   std::function<frc::Field2d*()> m_fieldGetter;
   std::unique_ptr<frc::HolonomicDriveController> m_driveController;
   frc::Pose2d m_startPose;
   std::optional<frc::Pose2d> m_targetPose;
+  units::degree_t m_targetHeading;
   frc::ChassisSpeeds m_speeds;
 };

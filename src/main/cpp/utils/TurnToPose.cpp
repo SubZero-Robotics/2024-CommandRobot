@@ -29,6 +29,8 @@ void TurnToPose::Update() {
 
   auto currentPose = m_poseGetter();
   auto angleOffset = GetAngleFromOtherPose(currentPose, m_targetPose.value());
+  frc::SmartDashboard::PutNumber("Angle offset norm", angleOffset.value());
+  m_targetHeading = angleOffset;
   frc::Pose2d newTargetPose(m_targetPose.value().Translation(),
                             frc::Rotation2d(angleOffset));
 

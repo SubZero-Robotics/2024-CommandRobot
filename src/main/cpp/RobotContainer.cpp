@@ -191,13 +191,19 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.RightStick().OnTrue(
       frc2::InstantCommand([this] { ToggleAimbot(); }).ToPtr());
 
-  m_driverController.LeftStick().OnTrue(tracker.IntakeTarget().AndThen(
-      frc2::InstantCommand([this] {
-        if (!m_state.m_active) {
-          m_state.m_currentState = RobotState::ScoringSubwoofer;
-          m_state.SetDesiredState();
-        }
-      }).ToPtr()));
+  m_driverController.LeftStick().OnTrue(
+      frc2::InstantCommand([this] { m_autoAcquiringNote = true; })
+          .ToPtr()
+          .AndThen(tracker.IntakeTarget())
+          .AndThen(frc2::InstantCommand([this] {
+                     m_autoAcquiringNote = false;
+                   }).ToPtr())
+          .AndThen(frc2::InstantCommand([this] {
+                     if (!m_state.m_active) {
+                       m_state.m_currentState = RobotState::ScoringSubwoofer;
+                       m_state.SetDesiredState();
+                     }
+                   }).ToPtr()));
 
   ConfigureAutoBindings();
 #endif
@@ -399,23 +405,24 @@ void RobotContainer::Periodic() {
     }
 
     m_shouldAim = m_aimbotEnabled && inRange;
-    } else {
-      // auto targetPose = tracker.GetBestTargetPose(targets);
+  } else {
+    auto targetPose = tracker.GetBestTargetPose(targets);
 
-      // frc::SmartDashboard::PutBoolean("HAS TARGET LOCK",
-      //                                 tracker.HasTargetLock(targets));
+    frc::SmartDashboard::PutBoolean("HAS TARGET LOCK",
+                                    tracker.HasTargetLock(targets));
 
-      // if (targetPose) {
-      //   m_shouldAim = m_aimbotEnabled;
-      //   m_turnToPose.SetTargetPose(targetPose.value());
-
-      //   frc::SmartDashboard::PutNumber(
-      //       "TURN TO POSE TARGET deg",
-      //       targetPose.value().Rotation().Degrees().value());
-      // } else {
-      //   m_shouldAim = false;
-      // }
+    if (targetPose) {
+      // m_shouldAim = m_aimbotEnabled;
       m_shouldAim = false;
+      m_turnToPose.SetTargetPose(targetPose.value());
+
+      frc::SmartDashboard::PutNumber(
+          "TURN TO POSE TARGET deg",
+          targetPose.value().Rotation().Degrees().value());
+    } else {
+      m_shouldAim = false;
+    }
+    // m_shouldAim = false;
   }
 }
 
@@ -423,8 +430,9 @@ std::optional<frc::Rotation2d> RobotContainer::GetRotationTargetOverride() {
   auto targetPose = m_turnToPose.GetTargetPose();
 
   if (m_autoAcquiringNote && targetPose) {
-    return TurnToPose::GetAngleFromOtherPose(m_drive.GetPose(),
-                                             targetPose.value());
+    auto angle = m_turnToPose.GetTargetHeading();
+    frc::SmartDashboard::PutNumber("Overridden PP angle", angle.value());
+    return angle;
   }
 
   return std::nullopt;
