@@ -412,19 +412,19 @@ constexpr double kShuffleSpeed = 0.05;
 constexpr double kVectorSpeed = -0.4;
 
 // These need to be different
-// TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kAmpLowerSpeed = -0.254 * 1.9;  // .264
 constexpr double kAmpUpperSpeed = -0.168 * 1.4;  // .278
 
 // These should match
-// TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kSpeakerLowerSpeed = 1;
 constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
-// TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kSubwooferLowerSpeed = -0.95;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
+
+constexpr double kFeedLowerSpeed = 0.9;
+constexpr double kFeedUpperSpeed = 0.9;
 
 constexpr double kScoringOutakeUpperSpeed = 0.2;
 constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
@@ -576,9 +576,9 @@ static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
 static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
 
 // TODO: update to match!
-constexpr double kKnownPixelWidth = 130;
+constexpr double kKnownPixelWidth = 58;
 constexpr units::inch_t kNoteWidth = 14_in;
-constexpr units::inch_t kKnownCalibrationDistance = 70_in;
+constexpr units::inch_t kKnownCalibrationDistance = 60_in;
 constexpr units::inch_t kCalibrationDistanceAreaPercentage =
     kKnownCalibrationDistance * kKnownPixelWidth;
 

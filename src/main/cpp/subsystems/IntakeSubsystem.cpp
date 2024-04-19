@@ -47,6 +47,10 @@ void IntakeSubsystem::Feed(ScoringDirection direction) {
       In(IntakingConstants::kFeedSubwooferSpeed);
       break;
     }
+    case ScoringDirection::FeedPodium: {
+      In(IntakingConstants::kFeedSpeakerSpeed);
+      break;
+    }
   }
 }
 

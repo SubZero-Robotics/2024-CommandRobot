@@ -11,7 +11,7 @@
 #include "Constants.h"
 #include "utils/PidMotorControllerPair.h"
 
-enum class ScoringDirection { AmpSide = 0, PodiumSide, Subwoofer };
+enum class ScoringDirection { AmpSide = 0, PodiumSide, Subwoofer, FeedPodium };
 
 class ScoringSubsystem : public frc2::SubsystemBase {
  public:
@@ -47,7 +47,7 @@ class ScoringSubsystem : public frc2::SubsystemBase {
                double lowerPercentage = ScoringConstants::kAmpLowerSpeed);
 
  private:
-  void SpinSpeaker();
+  void SpinSpeaker(double lowerPercentage = ScoringConstants::kSpeakerLowerSpeed, double upperPercentage = ScoringConstants::kSpeakerUpperSpeed);
   void SpinSubwoofer();
   bool CheckAmpSpeed();
   bool CheckSpeakerSpeed();

@@ -41,9 +41,9 @@ struct DetectedCorners {
     if (rawCorners.size() < 8) return;
 
     topLeft = DetectedCorner({rawCorners[0], rawCorners[1]});
-    bottomLeft = DetectedCorner({rawCorners[2], rawCorners[3]});
+    bottomLeft = DetectedCorner({rawCorners[6], rawCorners[7]});
     bottomRight = DetectedCorner({rawCorners[4], rawCorners[5]});
-    topRight = DetectedCorner({rawCorners[6], rawCorners[7]});
+    topRight = DetectedCorner({rawCorners[2], rawCorners[3]});
   }
 };
 

@@ -301,9 +301,14 @@ void RobotContainer::ConfigureAutoBindings() {
                                          }).ToPtr());
 
   // Maps to 0 on keyboard
-  // m_operatorController.Button(17).OnTrue(
-      // TODO: FEED SCORING COMMAND
-  // );
+  m_operatorController.Button(18).OnTrue(
+      m_leds.ScoringAmp()
+          .AndThen(ScoringCommands::Score(
+              [] { return ScoringDirection::FeedPodium; }, &m_scoring,
+              &m_intake, &m_arm))
+          .AndThen(m_leds.BlinkingFace())
+          .AndThen(m_leds.Idling())
+  );
 
   // Maps to DEL on keyboard
   m_operatorController.Button(18).OnTrue(tracker.IntakeTarget());

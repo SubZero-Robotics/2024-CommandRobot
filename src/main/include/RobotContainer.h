@@ -106,7 +106,7 @@ class RobotContainer {
   StateSubsystem m_state{m_subsystems, m_driverController,
                          m_operatorController};
 
-  TargetTracker tracker{-20_deg, 15_in, 0.33,
+  TargetTracker tracker{-20_deg, 15_in, 0.3,
                         &m_intake, &m_scoring, &m_drive};
   TurnToPose m_turnToPose{[this] { return m_drive.GetPose(); },
                           [this] { return m_drive.GetField(); }};

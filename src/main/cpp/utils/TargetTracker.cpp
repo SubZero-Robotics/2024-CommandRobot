@@ -169,7 +169,7 @@ units::inch_t TargetTracker::GetDistanceToTarget(const DetectedObject& target) {
   frc::SmartDashboard::PutString("TargetTracker otherDistance",
                                  std::to_string(otherDistance.value()) + " in");
 
-  auto combinedDistance = (distance * 0.75) + (otherDistance * 0.25);
+  auto combinedDistance = (distance * 0.5) + (otherDistance * 0.5);
   frc::SmartDashboard::PutString("TargetTracker combinedDistance",
                                  std::to_string(otherDistance.value()) + " in");
 

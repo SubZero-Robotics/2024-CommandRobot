@@ -49,6 +49,10 @@ void ScoringSubsystem::StartScoringRamp(ScoringDirection direction) {
     return;
   }
 
+  if (direction == ScoringDirection::FeedPodium) {
+    SpinSpeaker(kFeedUpperSpeed, kFeedLowerSpeed);
+  }
+
   SpinSpeaker();
 }
 
@@ -91,9 +95,9 @@ void ScoringSubsystem::SpinAmp(double upperPercentage, double lowerPercentage) {
   frc::SmartDashboard::PutNumber("Amp lower target %", lowerPercentage);
 }
 
-void ScoringSubsystem::SpinSpeaker() {
-  m_speakerLowerSpinnyBoi.Set(-kSpeakerLowerSpeed);
-  m_speakerUpperSpinnyBoi.Set(-kSpeakerUpperSpeed);
+void ScoringSubsystem::SpinSpeaker(double upperPercentage, double lowerPercentage) {
+  m_speakerLowerSpinnyBoi.Set(-lowerPercentage);
+  m_speakerUpperSpinnyBoi.Set(-upperPercentage);
 }
 
 void ScoringSubsystem::SpinSubwoofer() {
