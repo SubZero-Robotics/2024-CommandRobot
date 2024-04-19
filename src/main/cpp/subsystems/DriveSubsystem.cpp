@@ -11,6 +11,7 @@
 #include <frc/geometry/Rotation2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
 #include <pathplanner/lib/util/PIDConstants.h>
@@ -107,8 +108,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   auto dif = now - driveLoopTime;
 
   if (dif > 30_ms) {
-    ConsoleWriter.logVerbose(
-        "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
+    ConsoleWriter.logVerbose("EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
   }
 
   auto joystickSpeeds =

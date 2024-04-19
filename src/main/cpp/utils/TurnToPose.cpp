@@ -25,26 +25,27 @@ TurnToPose::TurnToPose(std::function<frc::Pose2d()> poseGetter,
 }
 
 void TurnToPose::Update() {
+  if (!m_targetPose) return;
+
   auto currentPose = m_poseGetter();
-  auto diff = currentPose.Translation() - m_targetPose.Translation();
-
-  auto newDegree = units::radian_t(atan2(diff.Y().value(), diff.X().value()))
-                       .convert<units::degree>();
-
-  frc::SmartDashboard::PutNumber("newDegree deg", newDegree.value());
-
-  auto angleOffset = m_targetPose.Rotation().Degrees() + newDegree;
-
-  frc::SmartDashboard::PutNumber("target deg", angleOffset.value());
-
-  frc::Pose2d newTargetPose(m_targetPose.Translation(),
+  auto angleOffset = GetAngleFromOtherPose(currentPose, m_targetPose.value());
+  frc::Pose2d newTargetPose(m_targetPose.value().Translation(),
                             frc::Rotation2d(angleOffset));
 
   auto* field = m_fieldGetter();
-  field->GetObject("pose_target")->SetPose(m_targetPose);
+  field->GetObject("pose_target")->SetPose(m_targetPose.value());
 
   m_speeds = m_driveController->Calculate(currentPose, newTargetPose, 0_mps,
                                           newTargetPose.Rotation());
+}
+
+units::degree_t TurnToPose::GetAngleFromOtherPose(
+    const frc::Pose2d& currentPose, const frc::Pose2d& otherPose) {
+  auto diff = currentPose.Translation() - otherPose.Translation();
+
+  auto newDegree = units::radian_t(atan2(diff.Y().value(), diff.X().value()))
+                       .convert<units::degree>();
+  return otherPose.Rotation().Degrees() + newDegree;
 }
 
 void TurnToPose::SetTargetPose(frc::Pose2d pose) {

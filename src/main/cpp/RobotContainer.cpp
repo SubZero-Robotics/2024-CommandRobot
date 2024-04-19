@@ -48,6 +48,9 @@ RobotContainer::RobotContainer() {
         m_drive.GetField()->GetObject("path")->SetPoses(poses);
       });
 
+  pathplanner::PPHolonomicDriveController::setRotationTargetOverride(
+      std::bind(&RobotContainer::GetRotationTargetOverride, this));
+
   // Set up default drive command
   // The left stick controls translation of the robot.
   // Turning is controlled by the X axis of the right stick.
@@ -414,6 +417,17 @@ void RobotContainer::Periodic() {
       // }
       m_shouldAim = false;
   }
+}
+
+std::optional<frc::Rotation2d> RobotContainer::GetRotationTargetOverride() {
+  auto targetPose = m_turnToPose.GetTargetPose();
+
+  if (m_autoAcquiringNote && targetPose) {
+    return TurnToPose::GetAngleFromOtherPose(m_drive.GetPose(),
+                                             targetPose.value());
+  }
+
+  return std::nullopt;
 }
 
 void RobotContainer::ToggleAimbot() {

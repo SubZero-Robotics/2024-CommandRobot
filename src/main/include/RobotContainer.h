@@ -124,5 +124,7 @@ class RobotContainer {
 
   bool m_aimbotEnabled = false;
   bool m_shouldAim = false;
+  bool m_autoAcquiringNote = false;
   void ToggleAimbot();
+  std::optional<frc::Rotation2d> GetRotationTargetOverride();
 };
