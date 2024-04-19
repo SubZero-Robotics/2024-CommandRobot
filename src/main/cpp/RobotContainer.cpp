@@ -328,7 +328,21 @@ void RobotContainer::ConfigureAutoBindings() {
           .AndThen(m_leds.Idling()));
 
   // Maps to DEL on keyboard
-  m_operatorController.Button(18).OnTrue(IntakeTarget());
+  m_operatorController.Button(18).OnTrue(
+      (frc2::InstantCommand([this] { m_autoAcquiringNote = true; })
+           .ToPtr()
+           .AndThen(IntakeTarget())
+           .AndThen(frc2::InstantCommand([this] {
+                      m_autoAcquiringNote = false;
+                    }).ToPtr())
+           .AndThen(frc2::InstantCommand([this] {
+                      if (!m_state.m_active) {
+                        m_state.m_currentState = RobotState::ScoringSubwoofer;
+                        m_state.SetDesiredState();
+                      }
+                    }).ToPtr()))
+          .WithTimeout(20_s)
+          .FinallyDo([this] { m_autoAcquiringNote = false; }));
 }
 #endif
 
@@ -485,8 +499,11 @@ frc2::CommandPtr RobotContainer::IntakeTarget() {
                //  }
 
                return (MoveToIntakePose())
-                   .AlongWith(IntakingCommands::Intake(&m_intake, &m_scoring))
-                   .WithTimeout(10_s);
+                   //  .AlongWith(IntakingCommands::Intake(&m_intake,
+                   //  &m_scoring))
+                   .WithTimeout(10_s)
+                   .Until(StateSubsystem::IsControllerActive(
+                       m_driverController, m_operatorController));
              },
              {})
       .ToPtr();

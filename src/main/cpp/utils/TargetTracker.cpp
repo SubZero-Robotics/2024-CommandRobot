@@ -97,7 +97,7 @@ std::optional<frc::Pose2d> TargetTracker::GetTargetPose(
       frc::Transform2d(wpiTranslation, currentPose.Rotation());
   auto wpiFinalPose = currentPose.TransformBy(wpiTransformation);
 
-  return frc::Pose2d(wpiFinalPose.Translation(), 0_deg);
+  return frc::Pose2d(wpiFinalPose.Translation(), 180_deg);
 }
 
 units::inch_t TargetTracker::GetDistanceToTarget(const DetectedObject& target) {

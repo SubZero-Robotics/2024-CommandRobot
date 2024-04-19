@@ -35,64 +35,86 @@ frc2::CommandPtr StateSubsystem::RunState() {
       return StartManual();
     case RobotState::ScoringSpeaker:
       return StartScoringSpeaker()
-          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .Until([this] {
+            return IsControllerActive(m_driverController, m_operatorController);
+          })
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
     case RobotState::ScoringAmp:
       return StartScoringAmp()
-          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .Until([this] {
+            return IsControllerActive(m_driverController, m_operatorController);
+          })
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
     case RobotState::ScoringSubwoofer:
       return StartScoringSubwoofer()
-          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .Until([this] {
+            return IsControllerActive(m_driverController, m_operatorController);
+          })
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
     case RobotState::Intaking:
       return StartIntaking()
-          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .Until([this] {
+            return IsControllerActive(m_driverController, m_operatorController);
+          })
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
     case RobotState::ClimbStageLeft:
     case RobotState::ClimbStageCenter:
     case RobotState::ClimbStageRight:
       return StartClimb()
-          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .Until([this] {
+            return IsControllerActive(m_driverController, m_operatorController);
+          })
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
     case RobotState::SourceLeft:
     case RobotState::SourceCenter:
     case RobotState::SourceRight:
       return StartSource()
-          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .Until([this] {
+            return IsControllerActive(m_driverController, m_operatorController);
+          })
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
     case RobotState::AutoSequenceAmp:
     case RobotState::AutoSequenceSpeaker:
     case RobotState::AutoSequenceSubwoofer:
       return StartAutoSequence()
-          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .Until([this] {
+            return IsControllerActive(m_driverController, m_operatorController);
+          })
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
     case RobotState::Funni:
       return StartFunni()
-          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .Until([this] {
+            return IsControllerActive(m_driverController, m_operatorController);
+          })
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
     case RobotState::AllianceWing:
       return StartAllianceWing()
-          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .Until([this] {
+            return IsControllerActive(m_driverController, m_operatorController);
+          })
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
     case RobotState::EnemyWing:
       return StartEnemyWing()
-          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .Until([this] {
+            return IsControllerActive(m_driverController, m_operatorController);
+          })
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
     default:
       return m_subsystems.led->Error()
           .AndThen(frc2::WaitCommand(1_s).ToPtr())
-          .Until(std::bind(&StateSubsystem::IsControllerActive, this))
+          .Until([this] {
+            return IsControllerActive(m_driverController, m_operatorController);
+          })
           .AndThen(SetState(RobotState::Manual))
           .AndThen(RunStateDeferred().ToPtr());
   }
@@ -265,23 +287,25 @@ frc2::CommandPtr StateSubsystem::MoveToSourceAndIntake() {
           .WithTimeout(5_s));
 }
 
-bool StateSubsystem::IsControllerActive() {
+bool StateSubsystem::IsControllerActive(
+    frc::XboxController& driverController,
+    frc::XboxController& operatorController) {
   bool active = false;
-  int count = m_driverController.GetButtonCount();
+  int count = driverController.GetButtonCount();
   for (int i = 1; i <= count; i++) {
-    active |= m_driverController.GetRawButton(i);
+    active |= driverController.GetRawButton(i);
   }
-  count = m_driverController.GetAxisCount();
+  count = driverController.GetAxisCount();
   for (int i = 0; i < count; i++) {
     active |=
-        abs(m_driverController.GetRawAxis(i)) >= OIConstants::kDriveDeadband;
+        abs(driverController.GetRawAxis(i)) >= OIConstants::kDriveDeadband;
   }
-  count = m_driverController.GetPOVCount();
+  count = driverController.GetPOVCount();
   for (int i = 0; i < count; i++) {
-    active |= m_driverController.GetPOV(i) != -1;
+    active |= driverController.GetPOV(i) != -1;
   }
   // Check the operator's "stop" button
-  active |= m_operatorController.Button(19).Get();
+  active |= operatorController.Button(19).Get();
   if (active) {
     ConsoleWriter.logVerbose("StateSubsystem", "Controller interrupt! %s", "");
   }
