@@ -98,7 +98,6 @@ class LedSubsystem : public frc2::SubsystemBase {
 
   frc::BuiltInAccelerometer m_accel;
 
-  // TODO: make into a constant elsewhere
   const uint16_t m_totalLeds = 67;
   std::vector<ConnectorX::Commands::NewZone> m_ledZones0 = {
       {.offset = 0, .count = 18},
@@ -109,8 +108,5 @@ class LedSubsystem : public frc2::SubsystemBase {
   std::vector<ConnectorX::Commands::NewZone> m_ledZones1 = {
       {.offset = 0, .count = 1},
       {.offset = 1, .count = 256},
-  };
-  std::vector<ConnectorX::Commands::NewZone> m_ledZone2 = {
-      {.offset = 50, .count = 32},
   };
 };

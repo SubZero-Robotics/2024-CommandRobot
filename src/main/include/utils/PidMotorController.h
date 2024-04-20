@@ -134,7 +134,6 @@ class PidMotorController {
   }
 
   /// @brief Stop the motor
-  // TODO: USE MOTOR HERE, THIS IS BAD AND SHOULD NOT BE EMPTY
   void Stop() {
     m_absolutePositionEnabled = false;
     m_motor.Set(0);

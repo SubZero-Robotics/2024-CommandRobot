@@ -31,6 +31,7 @@
 #include "utils/Commands/FunniCommands.h"
 #include "utils/Commands/IntakeCommands.h"
 #include "utils/Commands/ScoreCommands.h"
+#include "utils/TargetTracker.h"
 #include "utils/Vision.h"
 
 /**
@@ -105,14 +106,58 @@ class RobotContainer {
   StateSubsystem m_state{m_subsystems, m_driverController,
                          m_operatorController};
 
+  TargetTracker m_tracker{{// Camera angle
+                           VisionConstants::kCameraAngle,
+                           // Camera lens height
+                           VisionConstants::kCameraLensHeight,
+                           // Confidence threshold
+                           VisionConstants::kConfidenceThreshold,
+                           // Limelight name
+                           VisionConstants::kLimelightName,
+                           // Gamepiece width
+                           VisionConstants::kNoteWidth,
+                           // Focal length
+                           VisionConstants::focalLength,
+                           // Sim gamepiece pose
+                           VisionConstants::kSimGamepiecePose,
+                           // Gamepiece rotation
+                           VisionConstants::kGamepieceRotation,
+                           // Trig-based distance percentage
+                           VisionConstants::kTrigDistancePercentage},
+                          &m_intake,
+                          &m_scoring,
+                          &m_drive};
+
+  TurnToPose m_turnToPose{{// Rotation constraints
+                           frc::TrapezoidProfile<units::radians>::Constraints{
+                               TurnToPoseConstants::kProfileVelocity,
+                               TurnToPoseConstants::kProfileAcceleration},
+                           // Turn P
+                           TurnToPoseConstants::kTurnP,
+                           // Turn I
+                           TurnToPoseConstants::kTurnI,
+                           // Turn D
+                           TurnToPoseConstants::kTurnD,
+                           // Pose tolerance
+                           TurnToPoseConstants::kPoseTolerance},
+                          [this] { return m_drive.GetPose(); },
+                          [this] { return m_drive.GetField(); }};
+
   void ConfigureAutoBindings();
 #endif
 
   Vision m_vision;
 
   void RegisterAutos();
-
   void ConfigureButtonBindings();
+  frc2::CommandPtr MoveToIntakePose();
+  frc2::CommandPtr IntakeTarget();
 
   frc2::CommandPtr autoCommand = frc2::InstantCommand([] {}).ToPtr();
+
+  bool m_aimbotEnabled = false;
+  bool m_shouldAim = false;
+  bool m_autoAcquiringNote = false;
+  void ToggleAimbot();
+  std::optional<frc::Rotation2d> GetRotationTargetOverride();
 };

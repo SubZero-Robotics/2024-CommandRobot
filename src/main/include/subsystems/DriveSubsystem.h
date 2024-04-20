@@ -19,11 +19,13 @@
 #include <networktables/StructArrayTopic.h>
 
 #include <ctre/phoenix6/Pigeon2.hpp>
+#include <ctre/phoenix6/sim/Pigeon2SimState.hpp>
 #include <string>
 
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 #include "utils/ConsoleLogger.h"
+#include "utils/TurnToPose.h"
 #include "utils/Vision.h"
 
 // For sim to work
@@ -56,10 +58,14 @@ class DriveSubsystem : public frc2::SubsystemBase {
    * @param rateLimit     Whether to enable rate limiting for smoother control.
    *
    * @param periodSeconds Time between periodic loops
+   *
+   * @param turnToPose Will apply a correction based on the PID's desired
+   * state
    */
   void Drive(units::meters_per_second_t xSpeed,
              units::meters_per_second_t ySpeed, units::radians_per_second_t rot,
-             bool fieldRelative, bool rateLimit, units::second_t periodSeconds);
+             bool fieldRelative, bool rateLimit, units::second_t periodSeconds,
+             TurnToPose* turnToPose = nullptr);
 
   /**
    * Drives the robot based on a ChassisSpeeds
@@ -115,6 +121,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
    */
   frc::Pose2d GetPose();
 
+  frc::Field2d* GetField() { return &m_field; }
+
   /**
    * Resets the odometry to the specified pose.
    *
@@ -154,6 +162,11 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   void logMotorState(MAXSwerveModule& motor, std::string key);
 
+  frc::ChassisSpeeds GetSpeedsFromJoystick(units::meters_per_second_t xSpeed,
+                                           units::meters_per_second_t ySpeed,
+                                           units::radians_per_second_t rot,
+                                           bool fieldRelative);
+
   MAXSwerveModule m_frontLeft;
   MAXSwerveModule m_rearLeft;
   MAXSwerveModule m_frontRight;
@@ -163,10 +176,12 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   ctre::phoenix6::hardware::Pigeon2 m_gyro1{CANConstants::kPigeonCanId1, "rio"};
 
-  HAL_SimDeviceHandle m_gyroSimHandle =
-      HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
-  hal::SimDouble m_gyroSimAngle =
-      HALSIM_GetSimValueHandle(m_gyroSimHandle, "Yaw");
+  // HAL_SimDeviceHandle m_gyroSimHandle =
+  //     HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
+  // hal::SimDouble m_gyroSimAngle =
+  //     HALSIM_GetSimValueHandle(m_gyroSimHandle, "Yaw");
+
+  ctre::phoenix6::sim::Pigeon2SimState& m_gyro1Sim = m_gyro1.GetSimState();
 
   // time last loop took, "deltatime"
   units::second_t driveLoopTime = DriveConstants::kLoopTime;

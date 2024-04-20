@@ -3,6 +3,7 @@
 #include <frc/DigitalInput.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
+#include <hal/SimDevice.h>
 #include <rev/CANSparkFlex.h>
 #include <rev/CANSparkLowLevel.h>
 #include <rev/CANSparkMax.h>
@@ -13,6 +14,12 @@
 
 class IntakeSubsystem : public frc2::SubsystemBase {
  public:
+  IntakeSubsystem() : m_simDevice{"IntakeSubsystem"} {
+    if (m_simDevice) {
+      m_notePresent = m_simDevice.CreateBoolean("Note present", 0, false);
+    }
+  }
+
   void Periodic() override;
 
   void SimulationPeriodic() override;
@@ -54,4 +61,7 @@ class IntakeSubsystem : public frc2::SubsystemBase {
       IntakingConstants::kUpperAmpBeamBreakDigitalPort};
   frc::DigitalInput m_lowerAmpBeamBreak{
       IntakingConstants::kLowerampBeamBreakDigitalPort};
+
+  hal::SimDevice m_simDevice;
+  hal::SimBoolean m_notePresent;
 };

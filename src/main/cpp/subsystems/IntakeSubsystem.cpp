@@ -47,6 +47,10 @@ void IntakeSubsystem::Feed(ScoringDirection direction) {
       In(IntakingConstants::kFeedSubwooferSpeed);
       break;
     }
+    case ScoringDirection::FeedPodium: {
+      In(IntakingConstants::kFeedSpeakerSpeed);
+      break;
+    }
   }
 }
 
@@ -91,6 +95,10 @@ bool IntakeSubsystem::NotePresentLower() {
 }
 
 bool IntakeSubsystem::NotePresent() {
+  if (m_simDevice) {
+    return m_notePresent.Get();
+  }
+
   return NotePresentUpperAmp() || NotePresentLowerPodium() ||
          NotePresentLowerAmp() || NotePresentUpperPodium() ||
          NotePresentCenter();

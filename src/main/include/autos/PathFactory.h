@@ -32,6 +32,11 @@ class PathFactory {
         .AndThen(leds->Idling());
   }
 
+  static frc2::CommandPtr PathfindApproximate(
+      std::function<AutoConstants::Locations::FinalLocation()> locationGetter) {
+    return GetApproxCommand(locationGetter());
+  }
+
  private:
   static bool ShouldFlip(AutoConstants::Locations::FinalLocation location) {
     using namespace AutoConstants::Locations;
@@ -69,22 +74,24 @@ class PathFactory {
     ConsoleWriter.logInfo("PATH factory", betterapprox);
     if (ShouldFlip(location)) {
       return pathplanner::AutoBuilder::pathfindToPoseFlipped(
-          approxPose,
-          pathplanner::PathConstraints{3.0_mps, 1.5_mps_sq, 540_deg_per_s,
-                                       720_deg_per_s_sq},
-          0.0_mps,  // Goal end velocity in meters/sec
-          0.0_m     // Rotation delay distance in meters. This is how far
-                    // the robot should travel before attempting to rotate.
+          approxPose, AutoConstants::kOnTheFlyPPConstraints,
+          AutoConstants::kOnTheFlyPPEndVelocity,  // Goal end velocity in
+                                                  // meters/sec
+          AutoConstants::kOnTheFlyRotationDelay   // Rotation delay distance in
+                                                 // meters. This is how far the
+                                                 // robot should travel before
+                                                 // attempting to rotate.
       );
     }
 
     return pathplanner::AutoBuilder::pathfindToPose(
-        approxPose,
-        pathplanner::PathConstraints{3.0_mps, 1.5_mps_sq, 540_deg_per_s,
-                                     720_deg_per_s_sq},
-        0.0_mps,  // Goal end velocity in meters/sec
-        0.0_m     // Rotation delay distance in meters. This is how far
-                  // the robot should travel before attempting to rotate.
+        approxPose, AutoConstants::kOnTheFlyPPConstraints,
+        AutoConstants::kOnTheFlyPPEndVelocity,  // Goal end velocity in
+                                                // meters/sec
+        AutoConstants::kOnTheFlyRotationDelay   // Rotation delay distance in
+                                               // meters. This is how far the
+                                               // robot should travel before
+                                               // attempting to rotate.
     );
   }
 
@@ -103,7 +110,6 @@ class PathFactory {
                },
                AutoConstants::PathConfig,
                [location]() {
-                 // todo, flip if is source
                  // reverse that if on red alliance
                  return ShouldFlip(location);
                },

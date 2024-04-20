@@ -11,6 +11,7 @@
 #include <frc/geometry/Rotation2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
 #include <pathplanner/lib/util/PIDConstants.h>
@@ -67,14 +68,18 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
 
 void DriveSubsystem::SimulationPeriodic() {
   logDrivebase();
+
   frc::ChassisSpeeds chassisSpeeds = m_driveKinematics.ToChassisSpeeds(
       m_frontLeft.GetState(), m_frontRight.GetState(), m_rearLeft.GetState(),
       m_rearRight.GetState());
-  m_gyroSimAngle.Set(m_gyro1.GetAngle() +
-                     (chassisSpeeds.omega.convert<units::deg_per_s>().value() *
-                      DriveConstants::kLoopTime.value()));
-  poseEstimator.Update(-GetHeading().Degrees(), GetModulePositions());
 
+  m_gyro1Sim.SetSupplyVoltage(frc::RobotController::GetBatteryVoltage());
+  m_gyro1Sim.SetRawYaw(
+      GetHeading().Degrees() +
+      units::degree_t(chassisSpeeds.omega.convert<units::deg_per_s>().value() *
+                      DriveConstants::kLoopTime.value()));
+
+  poseEstimator.Update(GetHeading().Degrees(), GetModulePositions());
   m_field.SetRobotPose(poseEstimator.GetEstimatedPosition());
 }
 
@@ -97,26 +102,29 @@ void DriveSubsystem::Periodic() {
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
                            units::meters_per_second_t ySpeed,
                            units::radians_per_second_t rot, bool fieldRelative,
-                           bool rateLimit, units::second_t periodSeconds) {
+                           bool rateLimit, units::second_t periodSeconds,
+                           TurnToPose* turnToPose) {
   auto now = frc::Timer::GetFPGATimestamp();
   auto dif = now - driveLoopTime;
 
   if (dif > 30_ms) {
-    ConsoleWriter.logVerbose(
-        "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
-    ConsoleWriter.logVerbose(
-        "EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
+    ConsoleWriter.logVerbose("EVAN", "AHHHH BAD NOOO CRYYYY TERRIBLE %s", "");
   }
 
-  auto states =
-      m_driveKinematics.ToSwerveModuleStates(frc::ChassisSpeeds::Discretize(
-          fieldRelative ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-                              xSpeed * DriveConstants::kMaxSpeed.value(),
-                              ySpeed * DriveConstants::kMaxSpeed.value(),
-                              rot * DriveConstants::kMaxAngularSpeed.value(),
-                              GetHeading())
-                        : frc::ChassisSpeeds{xSpeed, ySpeed, rot},
-          dif));
+  auto joystickSpeeds =
+      GetSpeedsFromJoystick(xSpeed, ySpeed, rot, fieldRelative);
+
+  if (turnToPose) {
+    if (joystickSpeeds.omega.value() == 0) {
+      joystickSpeeds = turnToPose->BlendWithInput(joystickSpeeds, 1);
+    } else {
+      joystickSpeeds = turnToPose->BlendWithInput(
+          joystickSpeeds, TurnToPoseConstants::kBlendRatio);
+    }
+  }
+
+  auto states = m_driveKinematics.ToSwerveModuleStates(
+      frc::ChassisSpeeds::Discretize(joystickSpeeds, dif));
 
   driveLoopTime = now;
 
@@ -138,6 +146,17 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
 void DriveSubsystem::Drive(frc::ChassisSpeeds speeds) {
   DriveSubsystem::SetModuleStates(
       m_driveKinematics.ToSwerveModuleStates(speeds));
+}
+
+frc::ChassisSpeeds DriveSubsystem::GetSpeedsFromJoystick(
+    units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
+    units::radians_per_second_t rot, bool fieldRelative) {
+  return fieldRelative
+             ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                   xSpeed * DriveConstants::kMaxSpeed.value(),
+                   ySpeed * DriveConstants::kMaxSpeed.value(),
+                   rot * DriveConstants::kMaxAngularSpeed.value(), GetHeading())
+             : frc::ChassisSpeeds{xSpeed, ySpeed, rot};
 }
 
 frc::ChassisSpeeds DriveSubsystem::getSpeed() {

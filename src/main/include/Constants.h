@@ -169,9 +169,12 @@ constexpr double kPXController = 0.5;
 constexpr double kPYController = 0.5;
 constexpr double kPThetaController = 0.5;
 
-constexpr double kSnapToAngleP = 4;
-constexpr double kSnapToAngleI = 0;
-constexpr double kSnapToAngleD = 0;
+constexpr pathplanner::PathConstraints kMovementConstraints{
+    3.0_mps, 1.5_mps_sq, 540_deg_per_s, 720_deg_per_s_sq};
+constexpr pathplanner::PathConstraints kOnTheFlyPPConstraints{
+    2.5_mps, 3_mps_sq, 540_deg_per_s, 720_deg_per_s_sq};
+constexpr units::meters_per_second_t kOnTheFlyPPEndVelocity = 0_mps;
+constexpr units::meter_t kOnTheFlyRotationDelay = 0_m;
 
 enum class AutoType {
   EmptyAuto = 0,
@@ -219,12 +222,22 @@ const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
 
 namespace Locations {
 
-enum class ApproxLocation { Scoring = 0, Source, Central };
+enum class ApproxLocation {
+  Scoring = 0,
+  Source,
+  Central,
+  AllianceWing,
+  EnemyWing,
+};
 
 constexpr frc::Pose2d ApproxScoringLocation =
     frc::Pose2d{2.90_m, 5.58_m, 0_deg};
 constexpr frc::Pose2d ApproxSourceLocation = frc::Pose2d{5.38_m, 1.5_m, 0_deg};
 constexpr frc::Pose2d ApproxCentralLocation = frc::Pose2d{8.3_m, 4.11_m, 0_deg};
+constexpr frc::Pose2d ApproxAllianceWingLocation =
+    frc::Pose2d{2.82_m, 6.07_m, 0_deg};
+constexpr frc::Pose2d ApproxEnemyWingLocation =
+    frc::Pose2d{13.7_m, 1.65_m, 0_deg};
 
 enum class FinalLocation {
   // Shooting in the speaker from close
@@ -247,12 +260,18 @@ enum class FinalLocation {
   // Climb location on the left as seen from alliance station
   // Closest to the opposing source
   StageRight,
+  // Close to alliance scoring locations
+  Scoring,
+  // Near our source
+  EnemyWing,
 };
 
 const std::map<ApproxLocation, const frc::Pose2d&> OnTheFlyPoses{
     {ApproxLocation::Scoring, ApproxScoringLocation},
     {ApproxLocation::Central, ApproxCentralLocation},
-    {ApproxLocation::Source, ApproxSourceLocation}};
+    {ApproxLocation::Source, ApproxSourceLocation},
+    {ApproxLocation::AllianceWing, ApproxAllianceWingLocation},
+    {ApproxLocation::EnemyWing, ApproxEnemyWingLocation}};
 
 const std::map<FinalLocation, std::string> PoseToPath{
     // Note 2 = ApproxScoringLocation
@@ -268,32 +287,51 @@ const std::map<FinalLocation, std::string> PoseToPath{
     {FinalLocation::StageRight, "Wing Line 2 to Stage Right"}};
 
 struct FixtureLocation {
-  frc::Pose2d location;
-  units::degree_t desiredRotation;
+  // The location of the point to begin tracking
+  frc::Pose2d fixtureLocation;
+  // The distance around the fixtureLocation where tracking should be active
+  units::inch_t locationRadius;
+  // What the robot should "look" at
+  frc::Pose2d trackedPose;
 };
 
 const std::vector<FixtureLocation> RedFixtureLocations{
     // Podium (ScoreSpeaker)
-    {.location = frc::Pose2d(13.8_m, 4.12_m, frc::Rotation2d(0_deg)),
-     .desiredRotation = -148_deg},
+    {.fixtureLocation = frc::Pose2d(13.8_m, 4.12_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 4_ft,
+     .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(0_deg))},
     // Amp (ScoreAmp)
-    {.location = frc::Pose2d(14.72_m, 7.85_m, frc::Rotation2d(0_deg)),
-     .desiredRotation = 90_deg},
+    {.fixtureLocation = frc::Pose2d(14.64_m, 8.5_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 6_ft,
+     .trackedPose = frc::Pose2d(14.75_m, 20_m, frc::Rotation2d(180_deg))},
     // Speaker (ScoreSubwoofer)
-    {.location = frc::Pose2d(15.39_m, 5.59_m, frc::Rotation2d(0_deg)),
-     .desiredRotation = 0_deg},
-};
+    {.fixtureLocation = frc::Pose2d(15.34_m, 5.6_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 6_ft,
+     .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(180_deg))},
+    // Feeding (Feed)
+    {.fixtureLocation = frc::Pose2d(6_m, 1_m, frc::Rotation2d(0_deg)),
+     // TODO: bigger radius and motor velocity changes based on distance
+     .locationRadius = 2_ft,
+     .trackedPose = frc::Pose2d(15_m, 7.5_m, frc::Rotation2d(0_deg))}};
 const std::vector<FixtureLocation> BlueFixtureLocations{
     // Podium (ScoreSpeaker)
-    {.location = frc::Pose2d(2.73_m, 4.11_m, frc::Rotation2d(0_deg)),
-     .desiredRotation = -32_deg},
+    // TODO
+    {.fixtureLocation = frc::Pose2d(2.9_m, 4.15_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 4_ft,
+     .trackedPose = frc::Pose2d(0_m, 5.6_m, frc::Rotation2d(0_deg))},
     // Amp (ScoreAmp)
-    {.location = frc::Pose2d(1.88_m, 7.85_m, frc::Rotation2d(0_deg)),
-     .desiredRotation = 90_deg},
+    {.fixtureLocation = frc::Pose2d(1.82_m, 8.5_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 6_ft,
+     .trackedPose = frc::Pose2d(1.82_m, 20_m, frc::Rotation2d(180_deg))},
     // Speaker (ScoreSubwoofer)
-    {.location = frc::Pose2d(1.19_m, 5.57_m, frc::Rotation2d(0_deg)),
-     .desiredRotation = 175_deg},
-};
+    {.fixtureLocation = frc::Pose2d(1.35_m, 5.6_m, frc::Rotation2d(0_deg)),
+     .locationRadius = 6_ft,
+     .trackedPose = frc::Pose2d(0_m, 5.6_m, frc::Rotation2d(180_deg))},
+    // Feeding (Feed)
+    {.fixtureLocation = frc::Pose2d(10_m, 1_m, frc::Rotation2d(0_deg)),
+     // TODO: bigger radius and motor velocity changes based on distance
+     .locationRadius = 2_ft,
+     .trackedPose = frc::Pose2d(1_m, 7.5_m, frc::Rotation2d(0_deg))}};
 }  // namespace Locations
 }  // namespace AutoConstants
 
@@ -375,19 +413,19 @@ constexpr double kShuffleSpeed = 0.05;
 constexpr double kVectorSpeed = -0.4;
 
 // These need to be different
-// TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kAmpLowerSpeed = -0.254 * 1.9;  // .264
 constexpr double kAmpUpperSpeed = -0.168 * 1.4;  // .278
 
 // These should match
-// TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kSpeakerLowerSpeed = 1;
 constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 
 // These should also match
-// TODO: CHANGE TO VELOCITY RATHER THAN % OUTPUT
 constexpr double kSubwooferLowerSpeed = -0.95;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
+
+constexpr double kFeedLowerSpeed = 0.9;
+constexpr double kFeedUpperSpeed = 0.9;
 
 constexpr double kScoringOutakeUpperSpeed = 0.2;
 constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
@@ -537,7 +575,40 @@ static const frc::AprilTagFieldLayout kTagLayout{
     frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo)};
 static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
 static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
+
+const std::string kLimelightName = "limelight";
+constexpr double kKnownPixelWidth = 58;
+constexpr units::inch_t kNoteWidth = 14_in;
+constexpr units::inch_t kKnownCalibrationDistance = 60_in;
+constexpr units::inch_t kCalibrationDistanceAreaPercentage =
+    kKnownCalibrationDistance * kKnownPixelWidth;
+constexpr auto focalLength = kCalibrationDistanceAreaPercentage / kNoteWidth;
+
+constexpr units::degree_t kCameraAngle = -20_deg;
+constexpr units::inch_t kCameraLensHeight = 15_in;
+constexpr double kConfidenceThreshold = 0.3;
+constexpr double kTrigDistancePercentage = 0.5;
+
+constexpr units::degree_t kGamepieceRotation = 180_deg;
+constexpr frc::Pose2d kSimGamepiecePose =
+    frc::Pose2d(7_m, 4_m, frc::Rotation2d(kGamepieceRotation));
 }  // namespace VisionConstants
+
+namespace TurnToPoseConstants {
+constexpr units::degrees_per_second_t kProfileVelocity = 960_deg_per_s;
+constexpr units::degrees_per_second_squared_t kProfileAcceleration =
+    1200_deg_per_s_sq;
+constexpr double kTurnP = 5;
+constexpr double kTurnI = 0;
+constexpr double kTurnD = 0;
+constexpr frc::Pose2d kPoseTolerance =
+    frc::Pose2d(0.2_m, 0.2_m, frc::Rotation2d(0.5_deg));
+constexpr double kBlendRatio = 0.1;
+
+constexpr double kTurnTranslationP = 1;
+constexpr double kTurnTranslationI = 0;
+constexpr double kTurnTranslationD = 0;
+}  // namespace TurnToPoseConstants
 
 namespace ClimbConstants {
 constexpr int kClimberLeftMotorId = 10;
@@ -616,6 +687,8 @@ enum class RobotState {
   AutoSequenceSpeaker,
   AutoSequenceAmp,
   AutoSequenceSubwoofer,
+  EnemyWing,
+  AllianceWing,
 };
 
 typedef std::function<RobotState()> StateGetter;

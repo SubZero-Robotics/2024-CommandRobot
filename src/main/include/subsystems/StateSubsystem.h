@@ -45,9 +45,9 @@ class StateSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr SetState(RobotState newState) {
     return frc2::InstantCommand(
                [this, newState] {
-                 ConsoleWriter.logVerbose(
-                     "StateSubsystem", "Setting new state to %u",
-                     static_cast<uint8_t>(newState));
+                 ConsoleWriter.logVerbose("StateSubsystem",
+                                          "Setting new state to %u",
+                                          static_cast<uint8_t>(newState));
                  m_currentState = newState;
                },
                {this})
@@ -61,9 +61,8 @@ class StateSubsystem : public frc2::SubsystemBase {
   }
 
   void SetDesiredState() {
-    ConsoleWriter.logInfo("StateSubsystem",
-                                         "Running with state %u",
-                                         static_cast<uint8_t>(m_currentState));
+    ConsoleWriter.logInfo("StateSubsystem", "Running with state %u",
+                          static_cast<uint8_t>(m_currentState));
     frc2::CommandScheduler::GetInstance().Cancel(m_cmd);
     m_cmd = RunState();
     frc2::CommandScheduler::GetInstance().Schedule(m_cmd);
@@ -93,15 +92,21 @@ class StateSubsystem : public frc2::SubsystemBase {
 
   frc2::CommandPtr StartAutoSequence();
 
+  frc2::CommandPtr StartAllianceWing();
+
+  frc2::CommandPtr StartEnemyWing();
+
   inline RobotState GetState() const { return m_currentState; }
+
+  static bool IsControllerActive(
+      frc2::CommandXboxController &controller,
+      frc2::CommandXboxController &operatorController);
 
   frc2::CommandPtr m_cmd = frc2::InstantCommand([] {}).ToPtr();
   bool m_active = false;
   RobotState m_currentState;
 
  private:
-  bool IsControllerActive();
-
   frc2::CommandPtr MoveToSourceAndIntake();
 
   inline AutoConstants::Locations::FinalLocation GetFinalFromState() {
