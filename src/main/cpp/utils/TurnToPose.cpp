@@ -4,24 +4,21 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/trajectory/TrajectoryGenerator.h>
 
-TurnToPose::TurnToPose(std::function<frc::Pose2d()> poseGetter,
+TurnToPose::TurnToPose(TurnToPoseConfig config,
+                       std::function<frc::Pose2d()> poseGetter,
                        std::function<frc::Field2d*()> fieldGetter)
-    : m_poseGetter{poseGetter}, m_fieldGetter{fieldGetter} {
+    : m_config{config}, m_poseGetter{poseGetter}, m_fieldGetter{fieldGetter} {
   using namespace AutoConstants;
 
-  // TODO: use constants
   auto xController = frc::PIDController(1, 0, 0);
   auto yController = frc::PIDController(1, 0, 0);
-  auto profile = frc::TrapezoidProfile<units::radians>::Constraints(
-      960_deg_per_s, 1200_deg_per_s_sq);
-  auto profiledController =
-      frc::ProfiledPIDController<units::radians>(5, 0, kSnapToAngleD, profile);
+  auto profile = m_config.rotationConstraints;
+  auto profiledController = frc::ProfiledPIDController<units::radians>(
+      m_config.turnP, m_config.turnI, m_config.turnD, profile);
 
-  // TODO: use constants
   m_driveController = std::make_unique<frc::HolonomicDriveController>(
       xController, yController, profiledController);
-  m_driveController->SetTolerance(
-      frc::Pose2d(0.2_m, 0.2_m, frc::Rotation2d(0.5_deg)));
+  m_driveController->SetTolerance(m_config.poseTolerance);
 }
 
 void TurnToPose::Update() {

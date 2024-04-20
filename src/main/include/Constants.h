@@ -169,10 +169,6 @@ constexpr double kPXController = 0.5;
 constexpr double kPYController = 0.5;
 constexpr double kPThetaController = 0.5;
 
-constexpr double kSnapToAngleP = 4;
-constexpr double kSnapToAngleI = 0;
-constexpr double kSnapToAngleD = 0;
-
 enum class AutoType {
   EmptyAuto = 0,
   FourNoteAuto,
@@ -592,6 +588,15 @@ constexpr units::degree_t kGamepieceRotation = 180_deg;
 constexpr frc::Pose2d kSimGamepiecePose =
     frc::Pose2d(7_m, 4_m, frc::Rotation2d(kGamepieceRotation));
 }  // namespace VisionConstants
+
+namespace TurnToPoseConstants {
+    constexpr units::degrees_per_second_t kProfileVelocity = 960_deg_per_s;
+    constexpr units::degrees_per_second_squared_t kProfileAcceleration = 1200_deg_per_s_sq;
+    constexpr double kTurnP = 5;
+    constexpr double kTurnI = 0;
+    constexpr double kTurnD = 0;
+    constexpr frc::Pose2d kPoseTolerance = frc::Pose2d(0.2_m, 0.2_m, frc::Rotation2d(0.5_deg));
+}
 
 namespace ClimbConstants {
 constexpr int kClimberLeftMotorId = 10;

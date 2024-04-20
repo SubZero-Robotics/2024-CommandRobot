@@ -128,7 +128,19 @@ class RobotContainer {
                           &m_scoring,
                           &m_drive};
 
-  TurnToPose m_turnToPose{[this] { return m_drive.GetPose(); },
+  TurnToPose m_turnToPose{{// Rotation constraints
+                           frc::TrapezoidProfile<units::radians>::Constraints{
+                               TurnToPoseConstants::kProfileVelocity,
+                               TurnToPoseConstants::kProfileAcceleration},
+                           // Turn P
+                           TurnToPoseConstants::kTurnP,
+                           // Turn I
+                           TurnToPoseConstants::kTurnI,
+                           // Turn D
+                           TurnToPoseConstants::kTurnD,
+                           // Pose tolerance
+                           TurnToPoseConstants::kPoseTolerance},
+                          [this] { return m_drive.GetPose(); },
                           [this] { return m_drive.GetField(); }};
 
   void ConfigureAutoBindings();

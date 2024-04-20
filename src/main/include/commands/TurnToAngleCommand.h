@@ -28,6 +28,7 @@ class TurnToAngle : public frc2::CommandHelper<frc2::Command, TurnToAngle> {
         m_relative{relative},
         m_goalAngle{angle} {
     using namespace AutoConstants;
+    using namespace TurnToPoseConstants;
 
     AddRequirements(drive);
 
@@ -38,11 +39,10 @@ class TurnToAngle : public frc2::CommandHelper<frc2::Command, TurnToAngle> {
         AutoConstants::kMaxAngularSpeed,
         AutoConstants::kMaxAngularAcceleration);
     auto profiledController = frc::ProfiledPIDController<units::radians>(
-        kSnapToAngleP, kSnapToAngleI, kSnapToAngleD, profile);
+        kTurnP, kTurnI, kTurnD, profile);
     m_driveController = std::make_unique<frc::HolonomicDriveController>(
         xController, yController, profiledController);
-    m_driveController->SetTolerance(
-        frc::Pose2d(1_m, 1_m, frc::Rotation2d(0.5_deg)));
+    m_driveController->SetTolerance(kPoseTolerance);
   }
 
   void Initialize() override {

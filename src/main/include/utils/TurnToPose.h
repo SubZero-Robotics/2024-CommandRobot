@@ -16,7 +16,16 @@
 
 class TurnToPose {
  public:
-  explicit TurnToPose(std::function<frc::Pose2d()> poseGetter,
+  struct TurnToPoseConfig {
+    frc::TrapezoidProfile<units::radians>::Constraints rotationConstraints;
+    double turnP;
+    double turnI;
+    double turnD;
+    /// @brief A pose within this range will be considered at-goal
+    frc::Pose2d poseTolerance;
+  };
+
+  explicit TurnToPose(TurnToPoseConfig config, std::function<frc::Pose2d()> poseGetter,
                       std::function<frc::Field2d*()> fieldGetter);
 
   void Update();
@@ -48,6 +57,7 @@ class TurnToPose {
   inline units::degree_t GetTargetHeading() const { return m_targetHeading; }
 
  private:
+  TurnToPoseConfig m_config;
   std::function<frc::Pose2d()> m_poseGetter;
   std::function<frc::Field2d*()> m_fieldGetter;
   std::unique_ptr<frc::HolonomicDriveController> m_driveController;
