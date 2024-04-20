@@ -74,22 +74,24 @@ class PathFactory {
     ConsoleWriter.logInfo("PATH factory", betterapprox);
     if (ShouldFlip(location)) {
       return pathplanner::AutoBuilder::pathfindToPoseFlipped(
-          approxPose,
-          pathplanner::PathConstraints{2.5_mps, 3_mps_sq, 540_deg_per_s,
-                                       720_deg_per_s_sq},
-          0.0_mps,  // Goal end velocity in meters/sec
-          0.0_m     // Rotation delay distance in meters. This is how far
-                    // the robot should travel before attempting to rotate.
+          approxPose, AutoConstants::kOnTheFlyPPConstraints,
+          AutoConstants::kOnTheFlyPPEndVelocity,  // Goal end velocity in
+                                                  // meters/sec
+          AutoConstants::kOnTheFlyRotationDelay   // Rotation delay distance in
+                                                 // meters. This is how far the
+                                                 // robot should travel before
+                                                 // attempting to rotate.
       );
     }
 
     return pathplanner::AutoBuilder::pathfindToPose(
-        approxPose,
-        pathplanner::PathConstraints{2.5_mps, 3_mps_sq, 540_deg_per_s,
-                                     720_deg_per_s_sq},
-        0.0_mps,  // Goal end velocity in meters/sec
-        0.0_m     // Rotation delay distance in meters. This is how far
-                  // the robot should travel before attempting to rotate.
+        approxPose, AutoConstants::kOnTheFlyPPConstraints,
+        AutoConstants::kOnTheFlyPPEndVelocity,  // Goal end velocity in
+                                                // meters/sec
+        AutoConstants::kOnTheFlyRotationDelay   // Rotation delay distance in
+                                               // meters. This is how far the
+                                               // robot should travel before
+                                               // attempting to rotate.
     );
   }
 

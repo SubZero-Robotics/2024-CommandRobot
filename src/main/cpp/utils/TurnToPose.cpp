@@ -10,8 +10,12 @@ TurnToPose::TurnToPose(TurnToPoseConfig config,
     : m_config{config}, m_poseGetter{poseGetter}, m_fieldGetter{fieldGetter} {
   using namespace AutoConstants;
 
-  auto xController = frc::PIDController(1, 0, 0);
-  auto yController = frc::PIDController(1, 0, 0);
+  auto xController = frc::PIDController(TurnToPoseConstants::kTurnTranslationP,
+                                        TurnToPoseConstants::kTurnTranslationI,
+                                        TurnToPoseConstants::kTurnTranslationD);
+  auto yController = frc::PIDController(TurnToPoseConstants::kTurnTranslationP,
+                                        TurnToPoseConstants::kTurnTranslationI,
+                                        TurnToPoseConstants::kTurnTranslationD);
   auto profile = m_config.rotationConstraints;
   auto profiledController = frc::ProfiledPIDController<units::radians>(
       m_config.turnP, m_config.turnI, m_config.turnD, profile);

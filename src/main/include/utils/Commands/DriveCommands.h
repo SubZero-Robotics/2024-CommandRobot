@@ -92,25 +92,4 @@ static RelativeLocation LocationFromProximity(frc::Pose2d currentPose) {
   auto closestFixture = GetClosestFixture(locationDistances);
   return closestFixture;
 }
-
-// static frc2::CommandPtr SnapToAngle(DriveSubsystem* drive) {
-//   return (frc2::InstantCommand([] {
-//             ConsoleLogger::getInstance().logInfo(
-//                 "SnapToAngle", "Snapping to a new angle%s", "");
-//           })
-//               .ToPtr()
-//               .AndThen(TurnToAngle(
-//                            drive,
-//                            [drive] {
-//                              return RotationFromProximity(drive->GetPose());
-//                            },
-//                            false)
-//                            .ToPtr()))
-//       .WithTimeout(2_s)
-//       .FinallyDo([drive] {
-//         frc::ChassisSpeeds chassisSpeeds = {
-//             .vx = 0_mps, .vy = 0_mps, .omega = 0_rad_per_s};
-//         drive->Drive(chassisSpeeds);
-//       });
-// }
 }  // namespace DrivingCommands

@@ -171,6 +171,10 @@ constexpr double kPThetaController = 0.5;
 
 constexpr pathplanner::PathConstraints kMovementConstraints{
     3.0_mps, 1.5_mps_sq, 540_deg_per_s, 720_deg_per_s_sq};
+constexpr pathplanner::PathConstraints kOnTheFlyPPConstraints{
+    2.5_mps, 3_mps_sq, 540_deg_per_s, 720_deg_per_s_sq};
+constexpr units::meters_per_second_t kOnTheFlyPPEndVelocity = 0_mps;
+constexpr units::meter_t kOnTheFlyRotationDelay = 0_m;
 
 enum class AutoType {
   EmptyAuto = 0,
@@ -600,6 +604,10 @@ constexpr double kTurnD = 0;
 constexpr frc::Pose2d kPoseTolerance =
     frc::Pose2d(0.2_m, 0.2_m, frc::Rotation2d(0.5_deg));
 constexpr double kBlendRatio = 0.1;
+
+constexpr double kTurnTranslationP = 1;
+constexpr double kTurnTranslationI = 0;
+constexpr double kTurnTranslationD = 0;
 }  // namespace TurnToPoseConstants
 
 namespace ClimbConstants {
