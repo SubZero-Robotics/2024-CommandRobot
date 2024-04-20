@@ -575,14 +575,22 @@ static const frc::AprilTagFieldLayout kTagLayout{
 static const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
 static const Eigen::Matrix<double, 3, 1> kMultiTagStdDevs{0.5, 0.5, 1};
 
-// TODO: update to match!
+const std::string kLimelightName = "limelight";
 constexpr double kKnownPixelWidth = 58;
 constexpr units::inch_t kNoteWidth = 14_in;
 constexpr units::inch_t kKnownCalibrationDistance = 60_in;
 constexpr units::inch_t kCalibrationDistanceAreaPercentage =
     kKnownCalibrationDistance * kKnownPixelWidth;
-
 constexpr auto focalLength = kCalibrationDistanceAreaPercentage / kNoteWidth;
+
+constexpr units::degree_t kCameraAngle = -20_deg;
+constexpr units::inch_t kCameraLensHeight = 15_in;
+constexpr double kConfidenceThreshold = 0.3;
+constexpr double kTrigDistancePercentage = 0.5;
+
+constexpr units::degree_t kGamepieceRotation = 180_deg;
+constexpr frc::Pose2d kSimGamepiecePose =
+    frc::Pose2d(7_m, 4_m, frc::Rotation2d(kGamepieceRotation));
 }  // namespace VisionConstants
 
 namespace ClimbConstants {

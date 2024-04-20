@@ -107,23 +107,23 @@ class RobotContainer {
                          m_operatorController};
 
   TargetTracker m_tracker{{// Camera angle
-                           -20_deg,
+                           VisionConstants::kCameraAngle,
                            // Camera lens height
-                           15_in,
+                           VisionConstants::kCameraLensHeight,
                            // Confidence threshold
-                           0.3,
+                           VisionConstants::kConfidenceThreshold,
                            // Limelight name
-                           "limelight",
+                           VisionConstants::kLimelightName,
                            // Gamepiece width
                            VisionConstants::kNoteWidth,
                            // Focal length
                            VisionConstants::focalLength,
                            // Sim gamepiece pose
-                           frc::Pose2d(7_m, 4_m, frc::Rotation2d(180_deg)),
+                           VisionConstants::kSimGamepiecePose,
                            // Gamepiece rotation
-                           180_deg,
+                           VisionConstants::kGamepieceRotation,
                            // Trig-based distance percentage
-                           0.5},
+                           VisionConstants::kTrigDistancePercentage},
                           &m_intake,
                           &m_scoring,
                           &m_drive};

@@ -53,9 +53,7 @@ struct DetectedCorners {
 // TODO: pass in through constructor
 const pathplanner::PathConstraints kMovementConstraints{
     3.0_mps, 1.5_mps_sq, 540_deg_per_s, 720_deg_per_s_sq};
-const std::string kLimelightName = "limelight";
-// The distance to stop short of the target
-constexpr units::inch_t kDistanceGap = 0_in;
+
 
 struct DetectedObject {
   uint8_t classId;
