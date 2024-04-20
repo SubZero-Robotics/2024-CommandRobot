@@ -48,8 +48,9 @@ RobotContainer::RobotContainer() {
         m_drive.GetField()->GetObject("path")->SetPoses(poses);
       });
 
-  pathplanner::PPHolonomicDriveController::setRotationTargetOverride(
-      std::bind(&RobotContainer::GetRotationTargetOverride, this));
+  // This causes a bug in PP :(
+  // pathplanner::PPHolonomicDriveController::setRotationTargetOverride(
+  //     std::bind(&RobotContainer::GetRotationTargetOverride, this));
 
   // Set up default drive command
   // The left stick controls translation of the robot.
@@ -192,19 +193,12 @@ void RobotContainer::ConfigureButtonBindings() {
       frc2::InstantCommand([this] { ToggleAimbot(); }).ToPtr());
 
   m_driverController.LeftStick().OnTrue(
-      (frc2::InstantCommand([this] { m_autoAcquiringNote = true; })
-           .ToPtr()
-           .AndThen(IntakeTarget())
-           .AndThen(frc2::InstantCommand([this] {
-                      m_autoAcquiringNote = false;
-                    }).ToPtr())
-           .AndThen(frc2::InstantCommand([this] {
-                      if (!m_state.m_active) {
-                        m_state.m_currentState = RobotState::ScoringSubwoofer;
-                        m_state.SetDesiredState();
-                      }
-                    }).ToPtr()))
-          .FinallyDo([this] { m_autoAcquiringNote = false; }));
+      m_leds.ScoringSpeaker()
+          .AndThen(ScoringCommands::Score(
+              [] { return ScoringDirection::FeedPodium; }, &m_scoring,
+              &m_intake, &m_arm))
+          .AndThen(m_leds.BlinkingFace())
+          .AndThen(m_leds.Idling()));
 
   ConfigureAutoBindings();
 #endif
@@ -319,15 +313,6 @@ void RobotContainer::ConfigureAutoBindings() {
                                          }).ToPtr());
 
   // Maps to 0 on keyboard
-  // m_operatorController.Button(18).OnTrue(
-  //     m_leds.ScoringAmp()
-  //         .AndThen(ScoringCommands::Score(
-  //             [] { return ScoringDirection::FeedPodium; }, &m_scoring,
-  //             &m_intake, &m_arm))
-  //         .AndThen(m_leds.BlinkingFace())
-  //         .AndThen(m_leds.Idling()));
-
-  // Maps to DEL on keyboard
   m_operatorController.Button(18).OnTrue(
       (frc2::InstantCommand([this] { m_autoAcquiringNote = true; })
            .ToPtr()
@@ -335,13 +320,12 @@ void RobotContainer::ConfigureAutoBindings() {
            .AndThen(frc2::InstantCommand([this] {
                       m_autoAcquiringNote = false;
                     }).ToPtr())
-          //  .AndThen(frc2::InstantCommand([this] {
-          //             if (!m_state.m_active) {
-          //               m_state.m_currentState = RobotState::ScoringSubwoofer;
-          //               m_state.SetDesiredState();
-          //             }
-          //           }).ToPtr())
-                    )
+           .AndThen(frc2::InstantCommand([this] {
+                      if (!m_state.m_active) {
+                        m_state.m_currentState = RobotState::ScoringSubwoofer;
+                        m_state.SetDesiredState();
+                      }
+                    }).ToPtr()))
           .WithTimeout(20_s)
           .FinallyDo([this] { m_autoAcquiringNote = false; }));
 }
@@ -499,8 +483,8 @@ frc2::CommandPtr RobotContainer::IntakeTarget() {
                //    return frc2::InstantCommand([] {}).ToPtr();
                //  }
 
-               return (MoveToIntakePose()
-                   .AlongWith(IntakingCommands::Intake(&m_intake, &m_scoring)))
+               return (MoveToIntakePose().AlongWith(
+                           IntakingCommands::Intake(&m_intake, &m_scoring)))
                    .WithTimeout(10_s)
                    .Until([this] {
                      return StateSubsystem::IsControllerActive(
