@@ -6,20 +6,13 @@
 #include "commands/DriveVelocityCommand.h"
 #include "utils/Commands/IntakeCommands.h"
 
-TargetTracker::TargetTracker(units::degree_t cameraAngle,
-                             units::inch_t cameraLensHeight,
-                             double confidenceThreshold,
+TargetTracker::TargetTracker(TargetTrackerConfig config,
                              IntakeSubsystem* intake, ScoringSubsystem* scoring,
                              DriveSubsystem* drive)
-    : m_cameraAngle{cameraAngle},
-      m_cameraHeight{cameraLensHeight},
-      m_confidenceThreshold{confidenceThreshold},
-      m_intake{intake},
-      m_scoring{scoring},
-      m_drive{drive} {}
+    : m_config{config}, m_intake{intake}, m_scoring{scoring}, m_drive{drive} {}
 
 std::vector<DetectedObject> TargetTracker::GetTargets() {
-  auto llResult = LimelightHelpers::getLatestResults(kLimelightName);
+  auto llResult = LimelightHelpers::getLatestResults(m_config.limelightName);
   auto& detectionResults = llResult.targetingResults.DetectionResults;
 
   std::vector<DetectedObject> objects;
@@ -46,7 +39,7 @@ std::optional<DetectedObject> TargetTracker::GetBestTarget(
                          return a.confidence < b.confidence;
                        });
 
-  auto corners = LimelightHelpers::getCurrentCorners(kLimelightName);
+  auto corners = LimelightHelpers::getCurrentCorners(m_config.limelightName);
   if (corners) {
     it->withRawCorners(corners.value());
   }
@@ -56,13 +49,14 @@ std::optional<DetectedObject> TargetTracker::GetBestTarget(
 
 bool TargetTracker::HasTargetLock(std::vector<DetectedObject>& targets) {
   auto bestTarget = GetBestTarget(targets);
-  return bestTarget && bestTarget.value().confidence >= m_confidenceThreshold;
+  return bestTarget &&
+         bestTarget.value().confidence >= m_config.confidenceThreshold;
 }
 
 std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
     std::vector<DetectedObject>& targets) {
   if (!frc::RobotBase::IsReal()) {
-    return frc::Pose2d(7_m, 4_m, frc::Rotation2d(180_deg));
+    return m_config.simGamepiecePose;
   }
 
   if (!HasTargetLock(targets)) {
@@ -97,27 +91,32 @@ std::optional<frc::Pose2d> TargetTracker::GetTargetPose(
       frc::Transform2d(wpiTranslation, currentPose.Rotation());
   auto wpiFinalPose = currentPose.TransformBy(wpiTransformation);
 
-  return frc::Pose2d(wpiFinalPose.Translation(), 180_deg);
+  return frc::Pose2d(wpiFinalPose.Translation(), m_config.gamepieceRotation);
 }
 
 units::inch_t TargetTracker::GetDistanceToTarget(const DetectedObject& target) {
   units::degree_t targetOffsetVertical = target.centerY;
-  units::degree_t verticalDelta = targetOffsetVertical + m_cameraAngle;
+  units::degree_t verticalDelta = targetOffsetVertical + m_config.cameraAngle;
   units::radian_t verticalAngle = verticalDelta.convert<units::radian>();
 
   DetectedCorners corners = target.detectedCorners;
   double pixelWidth = corners.bottomRight.x - corners.bottomLeft.x;
-  frc::SmartDashboard::PutNumber("Pixel Width", pixelWidth);
+  frc::SmartDashboard::PutNumber("TargetTracker Pixel Width", pixelWidth);
 
   auto otherDistance =
-      (VisionConstants::kNoteWidth * VisionConstants::focalLength) / pixelWidth;
+      pixelWidth > 0
+          ? ((m_config.gamepieceWidth * m_config.focalLength) / pixelWidth)
+          : 0_in;
 
-  units::inch_t heightDelta = -m_cameraHeight;
+  units::inch_t heightDelta = -m_config.cameraLensHeight;
   units::inch_t distance = heightDelta / tan(verticalAngle.value());
   frc::SmartDashboard::PutString("TargetTracker otherDistance",
                                  std::to_string(otherDistance.value()) + " in");
 
-  auto combinedDistance = (distance * 0.5) + (otherDistance * 0.5);
+  // TODO: configure split amount
+  auto combinedDistance =
+      (distance * m_config.trigDistancePercentage) +
+      (otherDistance * (1 - m_config.trigDistancePercentage));
   frc::SmartDashboard::PutString("TargetTracker combinedDistance",
                                  std::to_string(otherDistance.value()) + " in");
 

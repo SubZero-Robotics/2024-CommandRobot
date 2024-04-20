@@ -106,7 +106,28 @@ class RobotContainer {
   StateSubsystem m_state{m_subsystems, m_driverController,
                          m_operatorController};
 
-  TargetTracker tracker{-20_deg, 15_in, 0.3, &m_intake, &m_scoring, &m_drive};
+  TargetTracker m_tracker{{// Camera angle
+                           -20_deg,
+                           // Camera lens height
+                           15_in,
+                           // Confidence threshold
+                           0.3,
+                           // Limelight name
+                           "limelight",
+                           // Gamepiece width
+                           VisionConstants::kNoteWidth,
+                           // Focal length
+                           VisionConstants::focalLength,
+                           // Sim gamepiece pose
+                           frc::Pose2d(7_m, 4_m, frc::Rotation2d(180_deg)),
+                           // Gamepiece rotation
+                           180_deg,
+                           // Trig-based distance percentage
+                           0.5},
+                          &m_intake,
+                          &m_scoring,
+                          &m_drive};
+
   TurnToPose m_turnToPose{[this] { return m_drive.GetPose(); },
                           [this] { return m_drive.GetField(); }};
 

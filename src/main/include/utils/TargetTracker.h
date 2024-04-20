@@ -50,6 +50,7 @@ struct DetectedCorners {
   }
 };
 
+// TODO: pass in through constructor
 const pathplanner::PathConstraints kMovementConstraints{
     3.0_mps, 1.5_mps_sq, 540_deg_per_s, 720_deg_per_s_sq};
 const std::string kLimelightName = "limelight";
@@ -92,8 +93,21 @@ struct DetectedObject {
 
 class TargetTracker {
  public:
-  TargetTracker(units::degree_t cameraAngle, units::inch_t cameraLensHeight,
-                double confidenceThreshold, IntakeSubsystem* intake,
+  struct TargetTrackerConfig {
+    units::degree_t cameraAngle;
+    units::inch_t cameraLensHeight;
+    double confidenceThreshold;
+    std::string limelightName;
+    units::inch_t gamepieceWidth;
+    units::dimensionless::scalar_t focalLength;
+    frc::Pose2d simGamepiecePose;
+    units::degree_t gamepieceRotation;
+    /// @brief Ranges from 0 to 1; Multiplies trig-based distances and then
+    /// applies the inverse to width-based estimate
+    double trigDistancePercentage;
+  };
+
+  TargetTracker(TargetTrackerConfig config, IntakeSubsystem* intake,
                 ScoringSubsystem* scoring, DriveSubsystem* drive);
   std::vector<DetectedObject> GetTargets();
   std::optional<DetectedObject> GetBestTarget(std::vector<DetectedObject>&);
@@ -103,9 +117,7 @@ class TargetTracker {
   units::inch_t GetDistanceToTarget(const DetectedObject&);
 
  private:
-  units::degree_t m_cameraAngle;
-  units::inch_t m_cameraHeight;
-  double m_confidenceThreshold;
+  TargetTrackerConfig m_config;
   IntakeSubsystem* m_intake;
   ScoringSubsystem* m_scoring;
   DriveSubsystem* m_drive;
