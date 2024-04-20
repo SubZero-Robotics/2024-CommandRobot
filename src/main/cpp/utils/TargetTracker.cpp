@@ -113,7 +113,6 @@ units::inch_t TargetTracker::GetDistanceToTarget(const DetectedObject& target) {
   frc::SmartDashboard::PutString("TargetTracker otherDistance",
                                  std::to_string(otherDistance.value()) + " in");
 
-  // TODO: configure split amount
   auto combinedDistance =
       (distance * m_config.trigDistancePercentage) +
       (otherDistance * (1 - m_config.trigDistancePercentage));

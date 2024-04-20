@@ -169,6 +169,9 @@ constexpr double kPXController = 0.5;
 constexpr double kPYController = 0.5;
 constexpr double kPThetaController = 0.5;
 
+constexpr pathplanner::PathConstraints kMovementConstraints{
+    3.0_mps, 1.5_mps_sq, 540_deg_per_s, 720_deg_per_s_sq};
+
 enum class AutoType {
   EmptyAuto = 0,
   FourNoteAuto,
@@ -227,10 +230,8 @@ constexpr frc::Pose2d ApproxScoringLocation =
     frc::Pose2d{2.90_m, 5.58_m, 0_deg};
 constexpr frc::Pose2d ApproxSourceLocation = frc::Pose2d{5.38_m, 1.5_m, 0_deg};
 constexpr frc::Pose2d ApproxCentralLocation = frc::Pose2d{8.3_m, 4.11_m, 0_deg};
-// TODO
 constexpr frc::Pose2d ApproxAllianceWingLocation =
     frc::Pose2d{2.82_m, 6.07_m, 0_deg};
-// TODO
 constexpr frc::Pose2d ApproxEnemyWingLocation =
     frc::Pose2d{13.7_m, 1.65_m, 0_deg};
 
@@ -590,13 +591,16 @@ constexpr frc::Pose2d kSimGamepiecePose =
 }  // namespace VisionConstants
 
 namespace TurnToPoseConstants {
-    constexpr units::degrees_per_second_t kProfileVelocity = 960_deg_per_s;
-    constexpr units::degrees_per_second_squared_t kProfileAcceleration = 1200_deg_per_s_sq;
-    constexpr double kTurnP = 5;
-    constexpr double kTurnI = 0;
-    constexpr double kTurnD = 0;
-    constexpr frc::Pose2d kPoseTolerance = frc::Pose2d(0.2_m, 0.2_m, frc::Rotation2d(0.5_deg));
-}
+constexpr units::degrees_per_second_t kProfileVelocity = 960_deg_per_s;
+constexpr units::degrees_per_second_squared_t kProfileAcceleration =
+    1200_deg_per_s_sq;
+constexpr double kTurnP = 5;
+constexpr double kTurnI = 0;
+constexpr double kTurnD = 0;
+constexpr frc::Pose2d kPoseTolerance =
+    frc::Pose2d(0.2_m, 0.2_m, frc::Rotation2d(0.5_deg));
+constexpr double kBlendRatio = 0.1;
+}  // namespace TurnToPoseConstants
 
 namespace ClimbConstants {
 constexpr int kClimberLeftMotorId = 10;

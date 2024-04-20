@@ -50,11 +50,6 @@ struct DetectedCorners {
   }
 };
 
-// TODO: pass in through constructor
-const pathplanner::PathConstraints kMovementConstraints{
-    3.0_mps, 1.5_mps_sq, 540_deg_per_s, 720_deg_per_s_sq};
-
-
 struct DetectedObject {
   uint8_t classId;
   double confidence;

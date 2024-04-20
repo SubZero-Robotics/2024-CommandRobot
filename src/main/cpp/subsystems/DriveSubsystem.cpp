@@ -115,11 +115,11 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
       GetSpeedsFromJoystick(xSpeed, ySpeed, rot, fieldRelative);
 
   if (turnToPose) {
-    // TODO: use constant
     if (joystickSpeeds.omega.value() == 0) {
       joystickSpeeds = turnToPose->BlendWithInput(joystickSpeeds, 1);
     } else {
-      joystickSpeeds = turnToPose->BlendWithInput(joystickSpeeds, 0.1);
+      joystickSpeeds = turnToPose->BlendWithInput(
+          joystickSpeeds, TurnToPoseConstants::kBlendRatio);
     }
   }
 

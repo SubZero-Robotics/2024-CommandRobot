@@ -460,7 +460,7 @@ frc2::CommandPtr RobotContainer::MoveToIntakePose() {
                                         m_turnToPose.GetTargetHeading());
 
                return pathplanner::AutoBuilder::pathfindToPose(
-                   targetPose.value(), kMovementConstraints,
+                   targetPose.value(), AutoConstants::kMovementConstraints,
                    0.0_mps,  // Goal end velocity in meters/sec
                    0.0_m  // Rotation delay distance in meters. This is how far
                           // the robot should travel before attempting to

@@ -35,7 +35,6 @@ class OnTheFlyFactory {
         return ApproxEnemyWingLocation;
 
       default:
-        // TODO: Make this smarter
         return ApproxScoringLocation;
     }
   }

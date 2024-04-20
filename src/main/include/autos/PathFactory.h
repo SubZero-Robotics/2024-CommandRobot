@@ -108,7 +108,6 @@ class PathFactory {
                },
                AutoConstants::PathConfig,
                [location]() {
-                 // todo, flip if is source
                  // reverse that if on red alliance
                  return ShouldFlip(location);
                },
