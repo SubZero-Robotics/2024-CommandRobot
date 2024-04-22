@@ -69,6 +69,8 @@ static bool IsNoteTopSide(IntakeSubsystem* intake, ScoringDirection direction) {
     case ScoringDirection::Subwoofer:
       return intake->NotePresentUpperAmp();
     case ScoringDirection::PodiumSide:
+    case ScoringDirection::FeedPodium:
+    default:
       return intake->NotePresentUpperPodium();
   }
 }

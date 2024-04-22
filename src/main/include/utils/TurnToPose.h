@@ -33,6 +33,10 @@ class TurnToPose : public ITurnToTarget {
 
   void SetTargetPose(frc::Pose2d pose);
 
+  void SetTargetAngleRelative(units::degree_t angle);
+
+  void SetTargetAngleAbsolute(units::degree_t angle);
+
   frc::ChassisSpeeds GetSpeedCorrection() override;
   /**
    * @param currentPose
@@ -55,6 +59,10 @@ class TurnToPose : public ITurnToTarget {
     return m_targetPose;
   }
 
+  inline std::optional<units::degree_t> GetTargetAngle() const {
+    return m_targetAngle;
+  }
+
   inline units::degree_t GetTargetHeading() const { return m_targetHeading; }
 
  private:
@@ -64,6 +72,7 @@ class TurnToPose : public ITurnToTarget {
   std::unique_ptr<frc::HolonomicDriveController> m_driveController;
   frc::Pose2d m_startPose;
   std::optional<frc::Pose2d> m_targetPose;
+  std::optional<units::degree_t> m_targetAngle;
   units::degree_t m_targetHeading;
   frc::ChassisSpeeds m_speeds;
 };

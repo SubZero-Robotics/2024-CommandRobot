@@ -29,6 +29,9 @@ std::vector<DetectedObject> TargetTracker::GetTargets() {
 
 std::optional<DetectedObject> TargetTracker::GetBestTarget(
     std::vector<DetectedObject>& targets) {
+  if (!frc::RobotBase::IsReal()) {
+    return DetectedObject(1, 0.75, 20_deg, 30_deg, 0.08, {});
+  }
   if (targets.empty()) {
     return std::nullopt;
   }

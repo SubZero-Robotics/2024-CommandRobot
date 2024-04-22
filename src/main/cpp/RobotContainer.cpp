@@ -62,12 +62,7 @@ RobotContainer::RobotContainer() {
             m_driverController.GetLeftX(), m_driverController.GetLeftY(),
             OIConstants::kDriveDeadband);
 
-        ITurnToTarget* turnToTarget = nullptr;
-        if (m_shouldAim) {
-          turnToTarget = m_intake.NotePresent()
-                             ? dynamic_cast<ITurnToTarget*>(&m_turnToAngle)
-                             : dynamic_cast<ITurnToTarget*>(&m_turnToPose);
-        }
+        ITurnToTarget* turnToTarget = m_shouldAim ? &m_turnToPose : nullptr;
 
         m_drive.Drive(
             -units::meters_per_second_t{axes.y},
@@ -419,12 +414,12 @@ void RobotContainer::Periodic() {
 
     if (bestTarget) {
       m_shouldAim = m_aimbotEnabled;
+      auto centerDiff = bestTarget.value().centerX;
       // m_shouldAim = false;
-      // m_turnToPose.SetTargetPose(targetPose.value());
-      m_turnToAngle.SetTargetAngleRelative(-bestTarget.value().centerX);
+      m_turnToPose.SetTargetAngleRelative(-centerDiff);
 
       frc::SmartDashboard::PutNumber("TURN TO ANGLE relative target deg",
-                                     -bestTarget.value().centerX.value());
+                                     -centerDiff.value());
     } else {
       m_shouldAim = false;
     }
