@@ -1,16 +1,16 @@
-#include "utils/TurnToPose.h"
+#include "utils/TurnToAngle.h"
 
 #include <frc/smartdashboard/Field2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
-#include <frc/trajectory/TrajectoryGenerator.h>
 
 #include "Constants.h"
 
-TurnToPose::TurnToPose(TurnToPoseConfig config,
-                       std::function<frc::Pose2d()> poseGetter,
-                       std::function<frc::Field2d*()> fieldGetter)
+TurnToAngle::TurnToAngle(TurnToAngleConfig config,
+                         std::function<frc::Pose2d()> poseGetter,
+                         std::function<frc::Field2d*()> fieldGetter)
     : m_config{config}, m_poseGetter{poseGetter}, m_fieldGetter{fieldGetter} {
   using namespace AutoConstants;
+  using namespace TurnToPoseConstants;
 
   auto xController = frc::PIDController(TurnToPoseConstants::kTurnTranslationP,
                                         TurnToPoseConstants::kTurnTranslationI,
@@ -24,44 +24,37 @@ TurnToPose::TurnToPose(TurnToPoseConfig config,
 
   m_driveController = std::make_unique<frc::HolonomicDriveController>(
       xController, yController, profiledController);
-  m_driveController->SetTolerance(m_config.poseTolerance);
+  m_driveController->SetTolerance(kPoseTolerance);
 }
 
-void TurnToPose::Update() {
-  if (!m_targetPose) return;
+void TurnToAngle::Update() {
+  if (!m_targetAngle) return;
 
   auto currentPose = m_poseGetter();
-  auto angleOffset = GetAngleFromOtherPose(currentPose, m_targetPose.value());
-  frc::SmartDashboard::PutNumber("Angle offset norm", angleOffset.value());
-  m_targetHeading = angleOffset;
-  frc::Pose2d newTargetPose(m_targetPose.value().Translation(),
-                            frc::Rotation2d(angleOffset));
+  frc::SmartDashboard::PutNumber("Target angle deg",
+                                 m_targetAngle.value().value());
+  frc::Pose2d newTargetPose(currentPose.Translation(),
+                            frc::Rotation2d(m_targetAngle.value()));
 
   auto* field = m_fieldGetter();
-  field->GetObject("pose_target")->SetPose(m_targetPose.value());
+  field->GetObject("rotation pose_target")->SetPose(newTargetPose);
 
   m_speeds = m_driveController->Calculate(currentPose, newTargetPose, 0_mps,
                                           newTargetPose.Rotation());
 }
 
-units::degree_t TurnToPose::GetAngleFromOtherPose(
-    const frc::Pose2d& currentPose, const frc::Pose2d& otherPose) {
-  auto diff = currentPose.Translation() - otherPose.Translation();
-
-  auto newDegree = units::radian_t(atan2(diff.Y().value(), diff.X().value()))
-                       .convert<units::degree>();
-  return otherPose.Rotation().Degrees() + newDegree;
+void TurnToAngle::SetTargetAngleAbsolute(units::degree_t angle) {
+  m_targetAngle = angle;
 }
 
-void TurnToPose::SetTargetPose(frc::Pose2d pose) {
-  m_startPose = m_poseGetter();
-  m_targetPose = pose;
+void TurnToAngle::SetTargetAngleRelative(units::degree_t angle) {
+  m_targetAngle = m_poseGetter().RotateBy(angle).Rotation().Degrees();
 }
 
-frc::ChassisSpeeds TurnToPose::GetSpeedCorrection() { return m_speeds; }
+frc::ChassisSpeeds TurnToAngle::GetSpeedCorrection() { return m_speeds; }
 
-frc::ChassisSpeeds TurnToPose::BlendWithInput(const frc::ChassisSpeeds& other,
-                                              double correctionFactor) {
+frc::ChassisSpeeds TurnToAngle::BlendWithInput(const frc::ChassisSpeeds& other,
+                                               double correctionFactor) {
   frc::ChassisSpeeds speeds{
       .vx = other.vx, .vy = other.vy, .omega = other.omega};
 

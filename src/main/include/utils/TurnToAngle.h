@@ -14,32 +14,27 @@
 
 #include "utils/ITurnToTarget.h"
 
-class TurnToPose : public ITurnToTarget {
+class TurnToAngle : public ITurnToTarget {
  public:
-  struct TurnToPoseConfig {
+  struct TurnToAngleConfig {
     frc::TrapezoidProfile<units::radians>::Constraints rotationConstraints;
     double turnP;
     double turnI;
     double turnD;
-    /// @brief A pose within this range will be considered at-goal
-    frc::Pose2d poseTolerance;
+    units::degree_t tolerance;
   };
 
-  explicit TurnToPose(TurnToPoseConfig config,
-                      std::function<frc::Pose2d()> poseGetter,
-                      std::function<frc::Field2d*()> fieldGetter);
+  explicit TurnToAngle(TurnToAngleConfig config,
+                       std::function<frc::Pose2d()> poseGetter,
+                       std::function<frc::Field2d*()> fieldGetter);
 
   void Update() override;
 
-  void SetTargetPose(frc::Pose2d pose);
+  void SetTargetAngleAbsolute(units::degree_t angle);
+
+  void SetTargetAngleRelative(units::degree_t angle);
 
   frc::ChassisSpeeds GetSpeedCorrection() override;
-  /**
-   * @param currentPose
-   * @param targetPose
-   */
-  static units::degree_t GetAngleFromOtherPose(const frc::Pose2d&,
-                                               const frc::Pose2d&);
 
   /**
    * @param other The initial ChassisSpeeds
@@ -51,19 +46,16 @@ class TurnToPose : public ITurnToTarget {
 
   inline bool AtGoal() override { return m_driveController->AtReference(); }
 
-  inline std::optional<frc::Pose2d> GetTargetPose() const {
-    return m_targetPose;
+  inline std::optional<units::degree_t> GetTargetAngle() const {
+    return m_targetAngle;
   }
 
-  inline units::degree_t GetTargetHeading() const { return m_targetHeading; }
-
  private:
-  TurnToPoseConfig m_config;
+  TurnToAngleConfig m_config;
   std::function<frc::Pose2d()> m_poseGetter;
   std::function<frc::Field2d*()> m_fieldGetter;
   std::unique_ptr<frc::HolonomicDriveController> m_driveController;
-  frc::Pose2d m_startPose;
-  std::optional<frc::Pose2d> m_targetPose;
-  units::degree_t m_targetHeading;
+  units::degree_t m_startAngle;
+  std::optional<units::degree_t> m_targetAngle;
   frc::ChassisSpeeds m_speeds;
 };

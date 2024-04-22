@@ -62,14 +62,19 @@ RobotContainer::RobotContainer() {
             m_driverController.GetLeftX(), m_driverController.GetLeftY(),
             OIConstants::kDriveDeadband);
 
-        TurnToPose* turnToPose = m_shouldAim ? &m_turnToPose : nullptr;
+        ITurnToTarget* turnToTarget = nullptr;
+        if (m_shouldAim) {
+          turnToTarget = m_intake.NotePresent()
+                             ? dynamic_cast<ITurnToTarget*>(&m_turnToAngle)
+                             : dynamic_cast<ITurnToTarget*>(&m_turnToPose);
+        }
 
         m_drive.Drive(
             -units::meters_per_second_t{axes.y},
             -units::meters_per_second_t{axes.x},
             -units::radians_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-            true, true, kLoopTime, turnToPose);
+            true, true, kLoopTime, turnToTarget);
       },
       {&m_drive}));
 #ifndef TEST_SWERVE_BOT
@@ -406,23 +411,23 @@ void RobotContainer::Periodic() {
 
     m_shouldAim = m_aimbotEnabled && inRange;
   } else {
+    auto bestTarget = m_tracker.GetBestTarget(targets);
     auto targetPose = m_tracker.GetBestTargetPose(targets);
 
     frc::SmartDashboard::PutBoolean("HAS TARGET LOCK",
                                     m_tracker.HasTargetLock(targets));
 
-    if (targetPose) {
-      // m_shouldAim = m_aimbotEnabled;
-      m_shouldAim = false;
-      m_turnToPose.SetTargetPose(targetPose.value());
+    if (bestTarget) {
+      m_shouldAim = m_aimbotEnabled;
+      // m_shouldAim = false;
+      // m_turnToPose.SetTargetPose(targetPose.value());
+      m_turnToAngle.SetTargetAngleRelative(-bestTarget.value().centerX);
 
-      frc::SmartDashboard::PutNumber(
-          "TURN TO POSE TARGET deg",
-          targetPose.value().Rotation().Degrees().value());
+      frc::SmartDashboard::PutNumber("TURN TO ANGLE relative target deg",
+                                     -bestTarget.value().centerX.value());
     } else {
       m_shouldAim = false;
     }
-    // m_shouldAim = false;
   }
 }
 
