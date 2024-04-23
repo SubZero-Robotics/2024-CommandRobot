@@ -39,7 +39,7 @@ void TurnToPose::Update() {
     field->GetObject("pose_target")->SetPose(m_targetPose.value());
   } else if (m_targetAngle) {
     targetAngle = m_targetAngle.value();
-    ConsoleWriter.logVerbose("Target Angle", targetAngle.value());
+    // ConsoleWriter.logVerbose("Target Angle", targetAngle.value());
     auto normalizedTargetAngle =
         NormalizeScalar(targetAngle.value(), -30.0, 30.0, -1.0, 1.0);
     normalizedTargetAngle =
@@ -76,8 +76,8 @@ void TurnToPose::SetTargetPose(frc::Pose2d pose) {
 void TurnToPose::SetTargetAngleRelative(units::degree_t angle) {
   m_startPose = m_poseGetter();
   m_targetAngle = m_startPose.Rotation().Degrees() + angle;
-  ConsoleWriter.logInfo("TURN TO POSE TARGET ANGLE SET",
-                        m_targetAngle.value().value());
+  // ConsoleWriter.logInfo("TURN TO POSE TARGET ANGLE SET",
+  //                       m_targetAngle.value().value());
   m_targetPose = std::nullopt;
 }
 

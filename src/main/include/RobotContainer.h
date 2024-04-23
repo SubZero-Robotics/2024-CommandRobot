@@ -27,6 +27,7 @@
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 #include "subsystems/StateSubsystem.h"
+#include "utils/AutoChooser.h"
 #include "utils/Commands/DriveCommands.h"
 #include "utils/Commands/FunniCommands.h"
 #include "utils/Commands/IntakeCommands.h"
@@ -72,6 +73,7 @@ class RobotContainer {
 
   // The chooser for the autonomous routines
   frc::SendableChooser<AutoConstants::AutoType> m_chooser;
+  AutoChooser<AutoConstants::AutoType> m_autoChooser{{}, {}, "Auto Selector"};
 
 #ifdef TEST_SWERVE_BOT
 
