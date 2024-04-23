@@ -155,6 +155,7 @@ class RobotContainer {
   frc2::CommandPtr IntakeTarget();
 
   frc2::CommandPtr autoCommand = frc2::InstantCommand([] {}).ToPtr();
+  frc2::CommandPtr autoScoreCommand = frc2::InstantCommand([] {}).ToPtr();
 
   bool m_aimbotEnabled = false;
   bool m_shouldAim = false;

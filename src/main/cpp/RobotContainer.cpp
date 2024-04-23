@@ -396,6 +396,22 @@ void RobotContainer::Periodic() {
         inRange = m_aimbotEnabled && true;
         m_turnToPose.SetTargetPose(location.trackedPose);
 
+        if (location.scoringDirection) {
+          ScoringDirection direction = location.scoringDirection
+                                           ? location.scoringDirection.value()
+                                           : ScoringDirection::AmpSide;
+          m_scoring.StartScoringRamp(direction);
+        }
+
+        if (location.scoringRadius && location.scoringDirection &&
+            location.hypotDistance <= location.scoringRadius.value()) {
+          autoScoreCommand.Cancel();
+          autoScoreCommand = ScoringCommands::ScoreShoot(
+              [location] { return location.scoringDirection.value(); },
+              &m_scoring, &m_intake, &m_arm);
+          autoScoreCommand.Schedule();
+        }
+
         frc::SmartDashboard::PutNumber(
             "TURN TO POSE TARGET deg",
             location.trackedPose.Rotation().Degrees().value());

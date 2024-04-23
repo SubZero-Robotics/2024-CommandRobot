@@ -29,6 +29,8 @@ struct RelativeLocation {
   frc::Pose2d trackedPose;
   frc::Pose2d fixtureLocation;
   units::meter_t locationRadius;
+  std::optional<units::meter_t> scoringRadius;
+  std::optional<ScoringDirection> scoringDirection;
 };
 
 static std::vector<Locations::FixtureLocation> GetFixtureLocations() {
@@ -57,7 +59,9 @@ static std::vector<RelativeLocation> GetDistancesToFixtures(
                        .hypotDistance = units::meter_t(distance),
                        .trackedPose = loc.trackedPose,
                        .fixtureLocation = loc.fixtureLocation,
-                       .locationRadius = loc.locationRadius};
+                       .locationRadius = loc.locationRadius,
+                       .scoringRadius = loc.scoringRadius,
+                       .scoringDirection = loc.scoringDirection};
                  });
 
   return locationDistances;

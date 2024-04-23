@@ -11,8 +11,6 @@
 #include "Constants.h"
 #include "utils/PidMotorControllerPair.h"
 
-enum class ScoringDirection { AmpSide = 0, PodiumSide, Subwoofer, FeedPodium };
-
 class ScoringSubsystem : public frc2::SubsystemBase {
  public:
   ScoringSubsystem();

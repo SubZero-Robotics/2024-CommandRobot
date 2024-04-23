@@ -159,6 +159,8 @@ constexpr units::ampere_t kDrivingMotorCurrentLimit = 50_A;
 constexpr units::ampere_t kTurningMotorCurrentLimit = 20_A;
 }  // namespace ModuleConstants
 
+enum class ScoringDirection { AmpSide = 0, PodiumSide, Subwoofer, FeedPodium };
+
 namespace AutoConstants {
 constexpr auto kMaxSpeed = 3_mps;
 constexpr auto kMaxAcceleration = 1.5_mps_sq;
@@ -291,6 +293,10 @@ struct FixtureLocation {
   frc::Pose2d fixtureLocation;
   // The distance around the fixtureLocation where tracking should be active
   units::inch_t locationRadius;
+  // The distance around the fixtureLocation where scoring should occur
+  std::optional<units::inch_t> scoringRadius;
+  // How to shoot the note when in range of scoringRadius; defaults to Amp
+  std::optional<ScoringDirection> scoringDirection;
   // What the robot should "look" at
   frc::Pose2d trackedPose;
 };
@@ -299,6 +305,8 @@ const std::vector<FixtureLocation> RedFixtureLocations{
     // Podium (ScoreSpeaker)
     {.fixtureLocation = frc::Pose2d(13.8_m, 4.12_m, frc::Rotation2d(0_deg)),
      .locationRadius = 4_ft,
+     .scoringRadius = 1.5_ft,
+     .scoringDirection = ScoringDirection::PodiumSide,
      .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(0_deg))},
     // Amp (ScoreAmp)
     {.fixtureLocation = frc::Pose2d(14.64_m, 8.5_m, frc::Rotation2d(0_deg)),
@@ -307,17 +315,23 @@ const std::vector<FixtureLocation> RedFixtureLocations{
     // Speaker (ScoreSubwoofer)
     {.fixtureLocation = frc::Pose2d(15.34_m, 5.6_m, frc::Rotation2d(0_deg)),
      .locationRadius = 6_ft,
+     .scoringRadius = 3_ft,
+     .scoringDirection = ScoringDirection::Subwoofer,
      .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(180_deg))},
     // Feeding (Feed)
     {.fixtureLocation = frc::Pose2d(6_m, 1_m, frc::Rotation2d(0_deg)),
      // TODO: bigger radius and motor velocity changes based on distance
      .locationRadius = 2_ft,
+     .scoringRadius = 1_ft,
+     .scoringDirection = ScoringDirection::FeedPodium,
      .trackedPose = frc::Pose2d(15_m, 7.5_m, frc::Rotation2d(0_deg))}};
 const std::vector<FixtureLocation> BlueFixtureLocations{
     // Podium (ScoreSpeaker)
     // TODO
     {.fixtureLocation = frc::Pose2d(2.9_m, 4.15_m, frc::Rotation2d(0_deg)),
      .locationRadius = 4_ft,
+     .scoringRadius = 1.5_ft,
+     .scoringDirection = ScoringDirection::PodiumSide,
      .trackedPose = frc::Pose2d(0_m, 5.6_m, frc::Rotation2d(0_deg))},
     // Amp (ScoreAmp)
     {.fixtureLocation = frc::Pose2d(1.82_m, 8.5_m, frc::Rotation2d(0_deg)),
@@ -326,11 +340,15 @@ const std::vector<FixtureLocation> BlueFixtureLocations{
     // Speaker (ScoreSubwoofer)
     {.fixtureLocation = frc::Pose2d(1.35_m, 5.6_m, frc::Rotation2d(0_deg)),
      .locationRadius = 6_ft,
+     .scoringRadius = 3_ft,
+     .scoringDirection = ScoringDirection::Subwoofer,
      .trackedPose = frc::Pose2d(0_m, 5.6_m, frc::Rotation2d(180_deg))},
     // Feeding (Feed)
     {.fixtureLocation = frc::Pose2d(10_m, 1_m, frc::Rotation2d(0_deg)),
      // TODO: bigger radius and motor velocity changes based on distance
      .locationRadius = 2_ft,
+     .scoringRadius = 1_ft,
+     .scoringDirection = ScoringDirection::FeedPodium,
      .trackedPose = frc::Pose2d(1_m, 7.5_m, frc::Rotation2d(0_deg))}};
 }  // namespace Locations
 }  // namespace AutoConstants
