@@ -73,7 +73,9 @@ class RobotContainer {
 
   // The chooser for the autonomous routines
   frc::SendableChooser<AutoConstants::AutoType> m_chooser;
-  AutoChooser<AutoConstants::AutoType> m_autoChooser{{}, {}, "Auto Selector"};
+  AutoChooser<AutoConstants::AutoType> m_autoChooser{
+      AutoConstants::kChooserEntries, AutoConstants::kChooserGroups,
+      "Auto Selector"};
 
 #ifdef TEST_SWERVE_BOT
 

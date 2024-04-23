@@ -67,7 +67,10 @@ class AutoChooser {
             availableEntries.begin(), availableEntries.end(),
             std::back_inserter(availableKeys),
             [](const AutoChooserValue<TKey>& value) { return value.first; });
-        m_onChangeCb(availableKeys);
+
+        if (m_onChangeCb) {
+          m_onChangeCb(availableKeys);
+        }
       });
       frc::SmartDashboard::PutData(group.group.first, group.chooser.get());
     }
@@ -116,6 +119,8 @@ class AutoChooser {
       m_chooser->AddOption(entry.second, entry.first);
     }
 
+    // This causes a crash after the initial creation of the new chooser...
+    // ? Better way to clear and repopulate the values?
     frc::SmartDashboard::PutData(m_chooserName, m_chooser.get());
   }
 

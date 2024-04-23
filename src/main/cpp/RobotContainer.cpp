@@ -99,6 +99,8 @@ void RobotContainer::RegisterAutos() {
           .ToPtr()
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
   using namespace AutoConstants;
+  m_autoChooser.Initialize();
+
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoType::LeaveWing);
   m_chooser.AddOption("4 Note Auto", AutoType::FourNoteAuto);
