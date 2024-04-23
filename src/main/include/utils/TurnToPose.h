@@ -65,6 +65,10 @@ class TurnToPose : public ITurnToTarget {
 
   inline units::degree_t GetTargetHeading() const { return m_targetHeading; }
 
+  static double NormalizeScalar(double x, double from_min, double from_max, double to_min, double to_max) {
+    return (x - from_min) * (to_max - to_min) / (from_max - from_min) + to_min;
+  }
+
  private:
   TurnToPoseConfig m_config;
   std::function<frc::Pose2d()> m_poseGetter;

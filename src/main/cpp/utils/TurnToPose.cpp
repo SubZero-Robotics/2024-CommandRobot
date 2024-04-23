@@ -39,6 +39,10 @@ void TurnToPose::Update() {
     field->GetObject("pose_target")->SetPose(m_targetPose.value());
   } else if (m_targetAngle) {
     targetAngle = m_targetAngle.value();
+    ConsoleWriter.logVerbose("Target Angle", targetAngle.value());
+    auto normalizedTargetAngle = NormalizeScalar(targetAngle.value(), -30.0, 30.0, -1.0, 1.0);
+    normalizedTargetAngle = std::clamp(pow(normalizedTargetAngle, 3), -1.0, 1.0);
+    targetAngle = units::degree_t(NormalizeScalar(normalizedTargetAngle, -1.0, 1.0, -30.0, 30.0));
   }
 
   frc::SmartDashboard::PutNumber("Angle offset norm", targetAngle.value());
@@ -68,7 +72,8 @@ void TurnToPose::SetTargetPose(frc::Pose2d pose) {
 
 void TurnToPose::SetTargetAngleRelative(units::degree_t angle) {
   m_startPose = m_poseGetter();
-  m_targetAngle = m_startPose.RotateBy(angle).Rotation().Degrees();
+  m_targetAngle = m_startPose.Rotation().RotateBy(angle).Degrees();
+  ConsoleWriter.logInfo("TURN TO POSE TARGET ANGLE SET", m_targetAngle.value().value());
   m_targetPose = std::nullopt;
 }
 

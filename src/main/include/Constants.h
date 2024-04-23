@@ -424,8 +424,8 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 constexpr double kSubwooferLowerSpeed = -0.95;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
-constexpr double kFeedLowerSpeed = 0.9;
-constexpr double kFeedUpperSpeed = 0.9;
+constexpr double kFeedLowerSpeed = 0.6;
+constexpr double kFeedUpperSpeed = 0.6;
 
 constexpr double kScoringOutakeUpperSpeed = 0.2;
 constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
@@ -602,7 +602,7 @@ constexpr double kTurnP = 5;
 constexpr double kTurnI = 0;
 constexpr double kTurnD = 0;
 constexpr frc::Pose2d kPoseTolerance =
-    frc::Pose2d(0.2_m, 0.2_m, frc::Rotation2d(0.5_deg));
+    frc::Pose2d(0.2_m, 0.2_m, frc::Rotation2d(2_deg));
 constexpr double kBlendRatio = 0.1;
 
 constexpr double kTurnTranslationP = 1;

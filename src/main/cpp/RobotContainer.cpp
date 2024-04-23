@@ -409,6 +409,10 @@ void RobotContainer::Periodic() {
     auto bestTarget = m_tracker.GetBestTarget(targets);
     auto targetPose = m_tracker.GetBestTargetPose(targets);
 
+    if (targetPose) {
+      m_drive.GetField()->GetObject("note_target")->SetPose(targetPose.value());
+    }
+
     frc::SmartDashboard::PutBoolean("HAS TARGET LOCK",
                                     m_tracker.HasTargetLock(targets));
 
