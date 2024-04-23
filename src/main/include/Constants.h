@@ -191,18 +191,20 @@ enum class AutoType {
   ThreeNoteCenter,
 };
 
-static const std::vector<AutoChooserEntry<AutoType>> kChooserEntries{
-    {{AutoType::FourNoteAuto, "4 Note Auto"}, {"4_note", "close"}},
-    {{AutoType::ThreeNoteAuto, "3 Note Auto"}, {"3_note", "close"}},
-    {{AutoType::TwoNoteCenter, "2 Note Center Note Under Stage"},
-     {"2_note", "far", "center"}},
-    {{AutoType::TwoNoteSource, "2 Note Source Side"}, {"2_note", "close"}},
-};
+static const std::vector<AutoChooser<AutoType>::AutoChooserEntry>
+    kChooserEntries{
+        {{AutoType::FourNoteAuto, "4 Note Auto"}, {"4_note", "close"}},
+        {{AutoType::ThreeNoteAuto, "3 Note Auto"}, {"3_note", "close"}},
+        {{AutoType::TwoNoteCenter, "2 Note Center Note Under Stage"},
+         {"2_note", "far", "center"}},
+        {{AutoType::TwoNoteSource, "2 Note Source Side"}, {"2_note", "close"}},
+    };
 
-static const std::vector<AutoChooserSelectorGroup> kChooserGroups{
-    {"Note Count", {"2_note", "3_note", "4_note"}},
-    {"Proximity", {"close", "far"}},
-};
+static const std::vector<AutoChooser<AutoType>::AutoChooserSelectorGroup>
+    kChooserGroups{
+        {"Note Count", {"2_note", "3_note", "4_note"}},
+        {"Proximity", {"close", "far"}},
+    };
 
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;

@@ -16,25 +16,24 @@
 // exclusive, including ANY as an option When a selection is made, grab the
 // intersection of T where all selections are in T's list of tags
 
-// A pair of:
-// - The entry's key
-// - The entry's name
-template <typename TKey>
-using AutoChooserValue = std::pair<TKey, std::string>;
-// A pair of:
-// - The entry's key and name
-// - A set of associated tags
-template <typename TKey>
-using AutoChooserEntry =
-    std::pair<AutoChooserValue<TKey>, std::set<std::string>>;
-// A pair of:
-// - The group's name
-// - A set of associated tags that can be selected from
-using AutoChooserSelectorGroup = std::pair<std::string, std::set<std::string>>;
-
 template <typename TKey>
 class AutoChooser {
  public:
+  // A pair of:
+  // - The entry's key
+  // - The entry's name
+  using AutoChooserValue = std::pair<TKey, std::string>;
+  // A pair of:
+  // - The entry's key and name
+  // - A set of associated tags
+  using AutoChooserEntry =
+      std::pair<AutoChooserValue, std::set<std::string>>;
+  // A pair of:
+  // - The group's name
+  // - A set of associated tags that can be selected from
+  using AutoChooserSelectorGroup =
+      std::pair<std::string, std::set<std::string>>;
+
   AutoChooser(const std::vector<AutoChooserEntry<TKey>>& entries,
               const std::vector<AutoChooserSelectorGroup>& groups,
               std::string chooserName) {
@@ -66,7 +65,7 @@ class AutoChooser {
         std::transform(
             availableEntries.begin(), availableEntries.end(),
             std::back_inserter(availableKeys),
-            [](const AutoChooserValue<TKey>& value) { return value.first; });
+            [](const AutoChooserValue& value) { return value.first; });
 
         if (m_onChangeCb) {
           m_onChangeCb(availableKeys);
@@ -84,8 +83,8 @@ class AutoChooser {
   }
 
   // Returns a list of all valid entries by key and name
-  std::vector<AutoChooserValue<TKey>> GetAvailableEntries() {
-    std::vector<AutoChooserValue<TKey>> availableEntries;
+  std::vector<AutoChooserValue> GetAvailableEntries() {
+    std::vector<AutoChooserValue> availableEntries;
     std::vector<std::string> selectedTags;
     for (auto& group : m_groups) {
       auto selected = group.chooser->GetSelected();
@@ -132,7 +131,7 @@ class AutoChooser {
     std::unique_ptr<frc::SendableChooser<std::string>> chooser;
   };
   std::function<void(std::vector<TKey>)> m_onChangeCb;
-  std::vector<AutoChooserEntry<TKey>> m_entries;
+  std::vector<AutoChooserEntry> m_entries;
   std::vector<AutoChooserSendableGroup> m_groups;
   std::unique_ptr<frc::SendableChooser<TKey>> m_chooser;
   std::string m_chooserName;
