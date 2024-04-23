@@ -79,47 +79,74 @@ static frc2::CommandPtr PreScoreShuffle(
   // This PreShuffle forces the note into the upper beam breaks before it is
   // pull back down
 
-  // return (frc2::FunctionalCommand(
-  //             // onInit
-  //             [] {},
-  //             // onExecute
-  //             [intake, scoring] {
-  //               intake->In();
-  //               scoring->SpinVectorSide(ScoringDirection::AmpSide);
-  //             },
-  //             // onEnd
-  //             [intake, scoring](bool interupted) {},
-  //             // isFinished
-  //             [intake, scoring] { return intake->NotePresentUpperAll(); },
-  //             // req
-  //             {intake, scoring})
-  //             .ToPtr()
-  //             .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
-  //             .AndThen(
-  //                 frc2::FunctionalCommand(
-  //                     // onInit
-  //                     [] {},
-  //                     // onExecute
-  //                     [intake, scoring] {
-  //                       intake->Out();
-  //                       scoring->SpinVectorSide(ScoringDirection::PodiumSide);
-  //                     },
-  //                     // onEnd
-  //                     [intake, scoring](bool interupted) {},
-  //                     // isFinished
-  //                     [intake, scoring] { return intake->NotePresentLower();
-  //                     },
-  //                     // req
-  //                     {intake, scoring})
-  //                     .ToPtr())
-  //             .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
+  return (ConsoleVerbose("Score Command", "Pre Score Shuffle%s", "")
+              .AndThen(frc2::FunctionalCommand(
+                           // onInit
+                           [] {},
+                           // onExecute
+                           [intake, scoring] {
+                             intake->In();
+                             scoring->SpinVectorSide(ScoringDirection::AmpSide);
+                           },
+                           // onEnd
+                           [intake, scoring](bool interupted) {},
+                           // isFinished
+                           [intake, scoring] {
+                             return intake->NotePresentUpperAll();
+                           },
+                           // req
+                           {intake, scoring})
+                           .ToPtr())
+              .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
+              .AndThen(
+                  frc2::FunctionalCommand(
+                      // onInit
+                      [] {},
+                      // onExecute
+                      [intake, scoring] {
+                        intake->Out();
+                        scoring->SpinVectorSide(ScoringDirection::PodiumSide);
+                      },
+                      // onEnd
+                      [intake, scoring](bool interupted) {},
+                      // isFinished
+                      [intake, scoring] { return intake->NotePresentLower(); },
+                      // req
+                      {intake, scoring})
+                      .ToPtr())
+              .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
+              .AndThen(frc2::FunctionalCommand(
+                           // onInit
+                           [] {},
+                           // onExecute
+                           [intake, scoring] {
+                             intake->Stop();
+                             scoring->Stop();
+                           },
+                           // onEnd
+                           [intake, scoring](bool interupted) {},
+                           // isFinished
+                           [intake, scoring] { return true; },
+                           // req
+                           {intake, scoring})
+                           .ToPtr()))
+      .WithTimeout(1_s)
+      .FinallyDo([intake, scoring] {
+        intake->Stop();
+        scoring->Stop();
+      });
+
+  // This PreShuffle only downtakes to the lower beam breaks
+
+  // return (ConsoleVerbose("Score Command", "Pre Score Shuffle%s", "")
   //             .AndThen(frc2::FunctionalCommand(
   //                          // onInit
   //                          [] {},
   //                          // onExecute
   //                          [intake, scoring] {
-  //                            intake->Stop();
-  //                            scoring->Stop();
+  //                            intake->Out();
+  //                            scoring->SpinVectorSide(
+  //                                ScoringDirection::PodiumSide);
   //                          },
   //                          // onEnd
   //                          [intake, scoring](bool interupted) {},
@@ -128,50 +155,27 @@ static frc2::CommandPtr PreScoreShuffle(
   //                          // req
   //                          {intake, scoring})
   //                          .ToPtr()))
+  //     .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
+  //     .AndThen(frc2::FunctionalCommand(
+  //                  // onInit
+  //                  [] {},
+  //                  // onExecute
+  //                  [intake, scoring] {
+  //                    intake->Stop();
+  //                    scoring->Stop();
+  //                  },
+  //                  // onEnd
+  //                  [intake, scoring](bool interupted) {},
+  //                  // isFinished
+  //                  [intake, scoring] { return true; },
+  //                  // req
+  //                  {intake, scoring})
+  //                  .ToPtr())
   //     .WithTimeout(1_s)
   //     .FinallyDo([intake, scoring] {
   //       intake->Stop();
   //       scoring->Stop();
   //     });
-
-  // This PreShuffle only downtakes to the lower beam breaks
-
-  return (frc2::FunctionalCommand(
-              // onInit
-              [] {},
-              // onExecute
-              [intake, scoring] {
-                intake->Out();
-                scoring->SpinVectorSide(ScoringDirection::PodiumSide);
-              },
-              // onEnd
-              [intake, scoring](bool interupted) {},
-              // isFinished
-              [intake, scoring] { return true; },
-              // req
-              {intake, scoring})
-              .ToPtr())
-      .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
-      .AndThen(frc2::FunctionalCommand(
-                   // onInit
-                   [] {},
-                   // onExecute
-                   [intake, scoring] {
-                     intake->Stop();
-                     scoring->Stop();
-                   },
-                   // onEnd
-                   [intake, scoring](bool interupted) {},
-                   // isFinished
-                   [intake, scoring] { return true; },
-                   // req
-                   {intake, scoring})
-                   .ToPtr())
-      .WithTimeout(1_s)
-      .FinallyDo([intake, scoring] {
-        intake->Stop();
-        scoring->Stop();
-      });
 }
 
 static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
