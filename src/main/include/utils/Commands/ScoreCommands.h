@@ -76,25 +76,95 @@ static bool IsNoteTopSide(IntakeSubsystem* intake, ScoringDirection direction) {
 static frc2::CommandPtr PreScoreShuffle(
     std::function<ScoringDirection()> direction, ScoringSubsystem* scoring,
     IntakeSubsystem* intake) {
-  return ConsoleInfo("Scoring", "Pre Score Shuffle%s", "")
+  // This PreShuffle forces the note into the upper beam breaks before it is
+  // pull back down
+
+  // return (frc2::FunctionalCommand(
+  //             // onInit
+  //             [] {},
+  //             // onExecute
+  //             [intake, scoring] {
+  //               intake->In();
+  //               scoring->SpinVectorSide(ScoringDirection::AmpSide);
+  //             },
+  //             // onEnd
+  //             [intake, scoring](bool interupted) {},
+  //             // isFinished
+  //             [intake, scoring] { return intake->NotePresentUpperAll(); },
+  //             // req
+  //             {intake, scoring})
+  //             .ToPtr()
+  //             .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
+  //             .AndThen(
+  //                 frc2::FunctionalCommand(
+  //                     // onInit
+  //                     [] {},
+  //                     // onExecute
+  //                     [intake, scoring] {
+  //                       intake->Out();
+  //                       scoring->SpinVectorSide(ScoringDirection::PodiumSide);
+  //                     },
+  //                     // onEnd
+  //                     [intake, scoring](bool interupted) {},
+  //                     // isFinished
+  //                     [intake, scoring] { return intake->NotePresentLower();
+  //                     },
+  //                     // req
+  //                     {intake, scoring})
+  //                     .ToPtr())
+  //             .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
+  //             .AndThen(frc2::FunctionalCommand(
+  //                          // onInit
+  //                          [] {},
+  //                          // onExecute
+  //                          [intake, scoring] {
+  //                            intake->Stop();
+  //                            scoring->Stop();
+  //                          },
+  //                          // onEnd
+  //                          [intake, scoring](bool interupted) {},
+  //                          // isFinished
+  //                          [intake, scoring] { return true; },
+  //                          // req
+  //                          {intake, scoring})
+  //                          .ToPtr()))
+  //     .WithTimeout(1_s)
+  //     .FinallyDo([intake, scoring] {
+  //       intake->Stop();
+  //       scoring->Stop();
+  //     });
+
+  // This PreShuffle only downtakes to the lower beam breaks
+
+  return (frc2::FunctionalCommand(
+              // onInit
+              [] {},
+              // onExecute
+              [intake, scoring] {
+                intake->Out();
+                scoring->SpinVectorSide(ScoringDirection::PodiumSide);
+              },
+              // onEnd
+              [intake, scoring](bool interupted) {},
+              // isFinished
+              [intake, scoring] { return true; },
+              // req
+              {intake, scoring})
+              .ToPtr())
+      .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
       .AndThen(frc2::FunctionalCommand(
-                   // on init
-                   [scoring, intake, direction] {
-                     scoring->SpinVectorSide(direction());
-                     intake->Out();
-                   },
-                   // on execute
+                   // onInit
                    [] {},
-                   // on end
-                   [scoring, intake](bool interupted) {
-                     scoring->Stop();
+                   // onExecute
+                   [intake, scoring] {
                      intake->Stop();
+                     scoring->Stop();
                    },
-                   // is finished
-                   [intake, direction] {
-                     return !IsNoteTopSide(intake, direction());
-                   },
-                   // reqs
+                   // onEnd
+                   [intake, scoring](bool interupted) {},
+                   // isFinished
+                   [intake, scoring] { return true; },
+                   // req
                    {intake, scoring})
                    .ToPtr())
       .WithTimeout(1_s)
@@ -142,7 +212,8 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                               IntakeSubsystem* intake, ArmSubsystem* arm) {
   return (
              // Downshuffle until either of the bottom two beam breaks is broken
-             ScoreRamp(direction, scoring, intake, arm)
+             PreScoreShuffle(direction, scoring, intake)
+                 .AndThen(ScoreRamp(direction, scoring, intake, arm))
                  .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
                  .AndThen(ScoreShoot(direction, scoring, intake, arm))
              // Unless note isn't present
