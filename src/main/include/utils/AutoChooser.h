@@ -11,6 +11,8 @@
 #include <utility>
 #include <vector>
 
+#include "utils/ModifiableChooser.h"
+
 // Each key of type T has a vector<string> of tags
 // Construct groups with a name and list of possible tags that are mutually
 // exclusive, including ANY as an option When a selection is made, grab the
@@ -26,17 +28,17 @@ class AutoChooser {
   // A pair of:
   // - The entry's key and name
   // - A set of associated tags
-  using AutoChooserEntry =
-      std::pair<AutoChooserValue, std::set<std::string>>;
+  using AutoChooserEntry = std::pair<AutoChooserValue, std::set<std::string>>;
   // A pair of:
   // - The group's name
   // - A set of associated tags that can be selected from
   using AutoChooserSelectorGroup =
       std::pair<std::string, std::set<std::string>>;
 
-  AutoChooser(const std::vector<AutoChooserEntry<TKey>>& entries,
+  AutoChooser(const std::vector<AutoChooserEntry>& entries,
               const std::vector<AutoChooserSelectorGroup>& groups,
-              std::string chooserName) {
+              std::string chooserName)
+      : m_chooserName{chooserName} {
     m_entries = entries;
     m_groups.reserve(groups.size());
 
@@ -46,6 +48,14 @@ class AutoChooser {
           .chooser = std::make_unique<frc::SendableChooser<std::string>>(),
       });
     }
+
+    m_chooser.OnChange([this](std::optional<TKey> value) {
+      if (value && m_onChangeCb) {
+        m_onChangeCb(value.value());
+      }
+    });
+
+    frc::SmartDashboard::PutData(m_chooserName, &m_chooser);
   }
 
   // Pushes everything to smart dashboard
@@ -66,10 +76,6 @@ class AutoChooser {
             availableEntries.begin(), availableEntries.end(),
             std::back_inserter(availableKeys),
             [](const AutoChooserValue& value) { return value.first; });
-
-        if (m_onChangeCb) {
-          m_onChangeCb(availableKeys);
-        }
       });
       frc::SmartDashboard::PutData(group.group.first, group.chooser.get());
     }
@@ -78,9 +84,7 @@ class AutoChooser {
   }
 
   // Will be called any time the available entries change
-  void SetOnChangeCallback(std::function<void(std::vector<TKey>)> cb) {
-    m_onChangeCb = cb;
-  }
+  void SetOnChangeCallback(std::function<void(TKey)> cb) { m_onChangeCb = cb; }
 
   // Returns a list of all valid entries by key and name
   std::vector<AutoChooserValue> GetAvailableEntries() {
@@ -112,27 +116,23 @@ class AutoChooser {
 
   void PopulateChooser() {
     auto entries = GetAvailableEntries();
-    m_chooser = std::make_unique<frc::SendableChooser<TKey>>();
+    m_chooser.ClearOptions();
 
     for (auto& entry : entries) {
-      m_chooser->AddOption(entry.second, entry.first);
+      m_chooser.AddOption(entry.second, entry.first);
     }
-
-    // This causes a crash after the initial creation of the new chooser...
-    // ? Better way to clear and repopulate the values?
-    frc::SmartDashboard::PutData(m_chooserName, m_chooser.get());
   }
 
-  inline TKey GetSelectedValue() { return m_chooser->GetSelected(); }
+  inline TKey GetSelectedValue() { return m_chooser.GetSelected(); }
 
  private:
   struct AutoChooserSendableGroup {
     AutoChooserSelectorGroup group;
     std::unique_ptr<frc::SendableChooser<std::string>> chooser;
   };
-  std::function<void(std::vector<TKey>)> m_onChangeCb;
+  std::function<void(TKey)> m_onChangeCb;
   std::vector<AutoChooserEntry> m_entries;
   std::vector<AutoChooserSendableGroup> m_groups;
-  std::unique_ptr<frc::SendableChooser<TKey>> m_chooser;
+  ModifiableChooser<TKey> m_chooser;
   std::string m_chooserName;
 };
