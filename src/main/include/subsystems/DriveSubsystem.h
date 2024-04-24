@@ -207,7 +207,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
       frc::Pose2d{0_m, 0_m, 0_rad},
       {0.1, 0.1, 0.1},
-      {1.0, 1.0, 1.0}};
+      {0.8, 0.8, 0.8}};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing

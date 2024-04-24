@@ -101,6 +101,7 @@ void RobotContainer::RegisterAutos() {
   using namespace AutoConstants;
   m_autoChooser.Initialize();
 
+  // TODO: Add these to the auto chooser
   m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
                              AutoType::LeaveWing);
   m_chooser.AddOption("4 Note Auto", AutoType::FourNoteAuto);
@@ -334,7 +335,8 @@ void RobotContainer::ConfigureAutoBindings() {
 #endif
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
-  auto autoType = m_chooser.GetSelected();
+  auto autoType = m_autoChooser.GetSelectedValue();
+  // auto autoType = m_chooser.GetSelected();
   autoCommand = AutoFactory::GetAuto(autoType);
   return autoCommand.get();
 }
@@ -398,23 +400,23 @@ void RobotContainer::Periodic() {
         inRange = m_aimbotEnabled && true;
         m_turnToPose.SetTargetPose(location.trackedPose);
 
-        if (location.scoringDirection) {
+        if (location.scoringRadius && location.scoringDirection &&
+            location.hypotDistance <= location.scoringRadius.value() &&
+            !autoScoreCommand.IsScheduled()) {
+          // TODO: Add a toggle flag + previous so we don't duplicate this call
+          autoScoreCommand = ScoringCommands::Score(
+              [location] { return location.scoringDirection.value(); },
+              &m_scoring, &m_intake, &m_arm);
+          // ? How do we know that the shooter is ramped up enough?
+          autoScoreCommand.Schedule();
+        }
+
+        else if (location.scoringDirection && !autoScoreCommand.IsScheduled()) {
           ScoringDirection direction = location.scoringDirection
                                            ? location.scoringDirection.value()
                                            : ScoringDirection::AmpSide;
           // TODO: Add a toggle flag + previous so we don't duplicate this call
           m_scoring.StartScoringRamp(direction);
-        }
-
-        if (location.scoringRadius && location.scoringDirection &&
-            location.hypotDistance <= location.scoringRadius.value()) {
-          // TODO: Add a toggle flag + previous so we don't duplicate this call
-          autoScoreCommand.Cancel();
-          autoScoreCommand = ScoringCommands::ScoreShoot(
-              [location] { return location.scoringDirection.value(); },
-              &m_scoring, &m_intake, &m_arm);
-          // ? How do we know that the shooter is ramped up enough?
-          autoScoreCommand.Schedule();
         }
 
         frc::SmartDashboard::PutNumber(
