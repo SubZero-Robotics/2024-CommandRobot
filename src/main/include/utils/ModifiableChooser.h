@@ -16,6 +16,7 @@
 #include <mutex>
 #include <ranges>
 #include <string>
+#include <vector>
 
 template <typename T>
 class ModifiableChooser : public wpi::Sendable {
