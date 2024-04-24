@@ -402,15 +402,18 @@ void RobotContainer::Periodic() {
           ScoringDirection direction = location.scoringDirection
                                            ? location.scoringDirection.value()
                                            : ScoringDirection::AmpSide;
+          // TODO: Add a toggle flag + previous so we don't duplicate this call
           m_scoring.StartScoringRamp(direction);
         }
 
         if (location.scoringRadius && location.scoringDirection &&
             location.hypotDistance <= location.scoringRadius.value()) {
+          // TODO: Add a toggle flag + previous so we don't duplicate this call
           autoScoreCommand.Cancel();
           autoScoreCommand = ScoringCommands::ScoreShoot(
               [location] { return location.scoringDirection.value(); },
               &m_scoring, &m_intake, &m_arm);
+          // ? How do we know that the shooter is ramped up enough?
           autoScoreCommand.Schedule();
         }
 
