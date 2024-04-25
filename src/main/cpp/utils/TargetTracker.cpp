@@ -3,6 +3,8 @@
 #include <frc/RobotBase.h>
 #include <frc2/command/DeferredCommand.h>
 
+#include <ranges>
+
 #include "commands/DriveVelocityCommand.h"
 #include "utils/Commands/IntakeCommands.h"
 
@@ -23,6 +25,14 @@ std::vector<DetectedObject> TargetTracker::GetTargets() {
                  [](const LimelightHelpers::DetectionResultClass& det) {
                    return DetectedObject(det);
                  });
+
+  std::vector<DetectedObject> filteredObjects;
+  std::copy_if(objects.begin(), objects.end(),
+               std::inserter(filteredObjects, filteredObjects.end()),
+               [this](const DetectedObject& object) {
+                 return object.areaPercentage >=
+                        m_config.areaPercentageThreshold;
+               });
 
   return objects;
 }

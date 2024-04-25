@@ -625,6 +625,7 @@ constexpr units::degree_t kCameraAngle = -20_deg;
 constexpr units::inch_t kCameraLensHeight = 15_in;
 constexpr double kConfidenceThreshold = 0.3;
 constexpr double kTrigDistancePercentage = 0.5;
+constexpr double kAreaPercentageThreshold = 0.04;
 
 constexpr units::degree_t kGamepieceRotation = 180_deg;
 constexpr frc::Pose2d kSimGamepiecePose =

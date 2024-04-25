@@ -128,7 +128,9 @@ class RobotContainer {
                            // Gamepiece rotation
                            VisionConstants::kGamepieceRotation,
                            // Trig-based distance percentage
-                           VisionConstants::kTrigDistancePercentage},
+                           VisionConstants::kTrigDistancePercentage,
+                           // Area percentage threshold
+                           VisionConstants::kAreaPercentageThreshold},
                           &m_intake,
                           &m_scoring,
                           &m_drive};
@@ -162,8 +164,10 @@ class RobotContainer {
   frc2::CommandPtr autoScoreCommand = frc2::InstantCommand([] {}).ToPtr();
 
   bool m_aimbotEnabled = false;
+  bool m_autoScoringEnabled = false;
   bool m_shouldAim = false;
   bool m_autoAcquiringNote = false;
   void ToggleAimbot();
+  void ToggleAutoScoring();
   std::optional<frc::Rotation2d> GetRotationTargetOverride();
 };

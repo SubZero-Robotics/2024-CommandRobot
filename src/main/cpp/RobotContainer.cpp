@@ -195,6 +195,10 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.RightStick().OnTrue(
       frc2::InstantCommand([this] { ToggleAimbot(); }).ToPtr());
 
+  // TODO: re-bind this
+  m_driverController.Start().OnTrue(
+      frc2::InstantCommand([this] { ToggleAutoScoring(); }).ToPtr());
+
   m_driverController.LeftStick().OnTrue(
       m_leds.ScoringSpeaker()
           .AndThen(ScoringCommands::Score(
@@ -400,23 +404,23 @@ void RobotContainer::Periodic() {
         inRange = m_aimbotEnabled && true;
         m_turnToPose.SetTargetPose(location.trackedPose);
 
-        if (inRange && location.scoringRadius && location.scoringDirection &&
+        if (inRange && m_autoScoringEnabled && location.scoringRadius &&
+            location.scoringDirection &&
             location.hypotDistance <= location.scoringRadius.value() &&
             !autoScoreCommand.IsScheduled()) {
-          // TODO: Add a toggle flag + previous so we don't duplicate this call
           autoScoreCommand = ScoringCommands::Score(
               [location] { return location.scoringDirection.value(); },
               &m_scoring, &m_intake, &m_arm);
           // ? How do we know that the shooter is ramped up enough?
+          // Re: https://i.ytimg.com/vi/8Jul5SuPYJc/mqdefault.jpg
           autoScoreCommand.Schedule();
         }
 
-        else if (inRange && location.scoringDirection &&
+        else if (inRange && m_autoScoringEnabled && location.scoringDirection &&
                  !autoScoreCommand.IsScheduled()) {
           ScoringDirection direction = location.scoringDirection
                                            ? location.scoringDirection.value()
                                            : ScoringDirection::AmpSide;
-          // TODO: Add a toggle flag + previous so we don't duplicate this call
           m_scoring.StartScoringRamp(direction);
         }
 
@@ -470,6 +474,11 @@ std::optional<frc::Rotation2d> RobotContainer::GetRotationTargetOverride() {
 void RobotContainer::ToggleAimbot() {
   m_aimbotEnabled = !m_aimbotEnabled;
   frc::SmartDashboard::PutBoolean("aimbot enabled", m_aimbotEnabled);
+}
+
+void RobotContainer::ToggleAutoScoring() {
+  m_autoScoringEnabled = !m_autoScoringEnabled;
+  frc::SmartDashboard::PutBoolean("auto-scoring enabled", m_autoScoringEnabled);
 }
 
 frc2::CommandPtr RobotContainer::MoveToIntakePose() {
