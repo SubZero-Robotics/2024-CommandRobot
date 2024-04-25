@@ -39,13 +39,17 @@ class ScoringSubsystem : public frc2::SubsystemBase {
    */
   bool GetMotorFreeWheel(ScoringDirection);
 
-  void SpinOutake();
+  void SpinOutake(
+      double upperPercentage = ScoringConstants::kScoringOutakeUpperSpeed,
+      double lowerPercentage = ScoringConstants::kScoringOutakeLowerSpeed);
 
   void SpinAmp(double upperPercentage = ScoringConstants::kAmpUpperSpeed,
                double lowerPercentage = ScoringConstants::kAmpLowerSpeed);
 
  private:
-  void SpinSpeaker(double lowerPercentage = ScoringConstants::kSpeakerLowerSpeed, double upperPercentage = ScoringConstants::kSpeakerUpperSpeed);
+  void SpinSpeaker(
+      double lowerPercentage = ScoringConstants::kSpeakerLowerSpeed,
+      double upperPercentage = ScoringConstants::kSpeakerUpperSpeed);
   void SpinSubwoofer();
   bool CheckAmpSpeed();
   bool CheckSpeakerSpeed();

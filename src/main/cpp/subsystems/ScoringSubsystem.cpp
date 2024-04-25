@@ -15,9 +15,9 @@ void ScoringSubsystem::Periodic() {
 
 void ScoringSubsystem::SimulationPeriodic() {}
 
-void ScoringSubsystem::SpinOutake() {
-  m_ampUpperSpinnyBoi.Set(kScoringOutakeUpperSpeed);
-  m_ampLowerSpinnyBoi.Set(kScoringOutakeLowerSpeed);
+void ScoringSubsystem::SpinOutake(double upperPercentage, double lowerPercentage) {
+  m_ampUpperSpinnyBoi.Set(upperPercentage);
+  m_ampLowerSpinnyBoi.Set(lowerPercentage);
 }
 
 void ScoringSubsystem::Stop() {

@@ -464,6 +464,9 @@ constexpr double kFeedUpperSpeed = 0.6;
 constexpr double kScoringOutakeUpperSpeed = 0.2;
 constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
 
+constexpr double kScoringIntakingOutakeUpperSpeed = 0.2;
+constexpr double kScoringIntakingOutakeLowerSpeed = kScoringIntakingOutakeUpperSpeed;
+
 enum class ScoreState {
   FlywheelRamp,
   Feeding,

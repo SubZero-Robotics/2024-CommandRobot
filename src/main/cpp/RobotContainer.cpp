@@ -400,7 +400,7 @@ void RobotContainer::Periodic() {
         inRange = m_aimbotEnabled && true;
         m_turnToPose.SetTargetPose(location.trackedPose);
 
-        if (location.scoringRadius && location.scoringDirection &&
+        if (inRange && location.scoringRadius && location.scoringDirection &&
             location.hypotDistance <= location.scoringRadius.value() &&
             !autoScoreCommand.IsScheduled()) {
           // TODO: Add a toggle flag + previous so we don't duplicate this call
@@ -411,7 +411,8 @@ void RobotContainer::Periodic() {
           autoScoreCommand.Schedule();
         }
 
-        else if (location.scoringDirection && !autoScoreCommand.IsScheduled()) {
+        else if (inRange && location.scoringDirection &&
+                 !autoScoreCommand.IsScheduled()) {
           ScoringDirection direction = location.scoringDirection
                                            ? location.scoringDirection.value()
                                            : ScoringDirection::AmpSide;
