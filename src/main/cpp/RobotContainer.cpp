@@ -179,10 +179,6 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController.RightStick().OnTrue(
       frc2::InstantCommand([this] { ToggleAimbot(); }).ToPtr());
 
-  // TODO: re-bind this
-  m_driverController.Start().OnTrue(
-      frc2::InstantCommand([this] { ToggleAutoScoring(); }).ToPtr());
-
   m_driverController.LeftStick().OnTrue(
       m_leds.ScoringSpeaker()
           .AndThen(ScoringCommands::Score(
@@ -190,6 +186,17 @@ void RobotContainer::ConfigureButtonBindings() {
               &m_intake, &m_arm))
           .AndThen(m_leds.BlinkingFace())
           .AndThen(m_leds.Idling()));
+
+  m_driverController
+      .POVUp(frc2::CommandScheduler::GetInstance().GetActiveButtonLoop())
+      .CastTo<frc2::Trigger>()
+      .OnTrue(m_rightClimb.MoveToPositionAbsolute(18_in).AlongWith(
+          m_leftClimb.MoveToPositionAbsolute(18_in)));
+
+  m_driverController
+      .POVDown(frc2::CommandScheduler::GetInstance().GetActiveButtonLoop())
+      .CastTo<frc2::Trigger>()
+      .OnTrue(frc2::InstantCommand([this] { ToggleAutoScoring(); }).ToPtr());
 
   ConfigureAutoBindings();
 #endif
