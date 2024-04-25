@@ -193,17 +193,24 @@ enum class AutoType {
 
 static const std::vector<AutoChooser<AutoType>::AutoChooserEntry>
     kChooserEntries{
-        {{AutoType::FourNoteAuto, "4 Note Auto"}, {"4_note", "close"}},
-        {{AutoType::ThreeNoteAuto, "3 Note Auto"}, {"3_note", "close"}},
+        {{AutoType::FourNoteAuto, "4 Note Auto"}, {"4 notes", "close", "high", "amp", "center"}},
+        {{AutoType::ThreeNoteAuto, "3 Note Auto"}, {"3 notes", "close", "decent", "center"}},
         {{AutoType::TwoNoteCenter, "2 Note Center Note Under Stage"},
-         {"2_note", "far", "center"}},
-        {{AutoType::TwoNoteSource, "2 Note Source Side"}, {"2_note", "close"}},
+         {"2 notes", "far", "high", "center"}},
+        {{AutoType::LeaveWing, "Leave Wing"}, {"0 notes", "minimal", "close", "source"}},
+        {{AutoType::PlaceAndLeave, "Place and leave"}, {"1 note", "minimal", "mid", "source"}},
+        {{AutoType::TwoNoteAuto, "2 Note Auto"}, {"2 notes", "decent", "far", "amp"}},
+        {{AutoType::TwoNoteSource, "2 Note Source Side"}, {"2 notes", "decent", "far", "source"}},
+        {{AutoType::ThreeNoteCenter, "3 Note Center Note 3 + 4"}, {"3 notes", "high", "far", "source", "center"}},
+        {{AutoType::EmptyAuto, "Empty Auto"}, {"0 notes", "minimal", "close", "center"}},
     };
 
 static const std::vector<AutoChooser<AutoType>::AutoChooserSelectorGroup>
     kChooserGroups{
-        {"Note Count", {"2_note", "3_note", "4_note"}},
-        {"Proximity", {"close", "far"}},
+        {"Note Count", {"0 notes", "1 note", "2 notes", "3 notes", "4 notes"}},
+        {"Proximity", {"close", "mid", "far"}},
+        {"Impact", {"minimal", "decent", "high"}},
+        {"Motion", {"amp", "center", "source", "complex"}},
     };
 
 extern const frc::TrapezoidProfile<units::radians>::Constraints
@@ -465,7 +472,8 @@ constexpr double kScoringOutakeUpperSpeed = 0.2;
 constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
 
 constexpr double kScoringIntakingOutakeUpperSpeed = 0.2;
-constexpr double kScoringIntakingOutakeLowerSpeed = kScoringIntakingOutakeUpperSpeed;
+constexpr double kScoringIntakingOutakeLowerSpeed =
+    kScoringIntakingOutakeUpperSpeed;
 
 enum class ScoreState {
   FlywheelRamp,

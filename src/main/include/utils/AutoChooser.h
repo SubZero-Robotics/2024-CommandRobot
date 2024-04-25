@@ -77,6 +77,7 @@ class AutoChooser {
             std::back_inserter(availableKeys),
             [](const AutoChooserValue& value) { return value.first; });
       });
+
       frc::SmartDashboard::PutData(group.group.first, group.chooser.get());
     }
 
@@ -118,8 +119,13 @@ class AutoChooser {
     auto entries = GetAvailableEntries();
     m_chooser.ClearOptions();
 
-    for (auto& entry : entries) {
-      m_chooser.AddOption(entry.second, entry.first);
+    for (auto it = entries.begin(); it != entries.end(); it++) {
+      if (it == entries.begin()) {
+        m_chooser.SetDefaultOption(it->second, it->first);
+        continue;
+      }
+
+      m_chooser.AddOption(it->second, it->first);
     }
   }
 

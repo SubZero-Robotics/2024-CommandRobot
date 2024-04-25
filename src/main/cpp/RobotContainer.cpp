@@ -98,24 +98,8 @@ void RobotContainer::RegisterAutos() {
           [this] { ConsoleWriter.logVerbose("Autos", "Intaking %s", ""); })
           .ToPtr()
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
-  using namespace AutoConstants;
+
   m_autoChooser.Initialize();
-
-  // TODO: Add these to the auto chooser
-  m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
-                             AutoType::LeaveWing);
-  m_chooser.AddOption("4 Note Auto", AutoType::FourNoteAuto);
-  m_chooser.AddOption("Place and leave", AutoType::PlaceAndLeave);
-  m_chooser.AddOption("3 Note Auto", AutoType::ThreeNoteAuto);
-  m_chooser.AddOption("2 Note and Center Line", AutoType::TwoNoteAuto);
-  m_chooser.AddOption("2 Note Center Note Under Stage",
-                      AutoType::TwoNoteCenter);
-  m_chooser.AddOption("2 Note Source Side", AutoType::TwoNoteSource);
-  m_chooser.AddOption("3 Note Center Note 3 + 4", AutoType::ThreeNoteCenter);
-
-  m_chooser.AddOption("Empty Auto", AutoType::EmptyAuto);
-
-  ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
 }
 
 void RobotContainer::ConfigureButtonBindings() {
@@ -340,8 +324,8 @@ void RobotContainer::ConfigureAutoBindings() {
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
   auto autoType = m_autoChooser.GetSelectedValue();
-  // auto autoType = m_chooser.GetSelected();
   autoCommand = AutoFactory::GetAuto(autoType);
+
   return autoCommand.get();
 }
 

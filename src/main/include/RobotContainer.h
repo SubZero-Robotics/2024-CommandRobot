@@ -72,7 +72,6 @@ class RobotContainer {
   LedSubsystem m_leds;
 
   // The chooser for the autonomous routines
-  frc::SendableChooser<AutoConstants::AutoType> m_chooser;
   AutoChooser<AutoConstants::AutoType> m_autoChooser{
       AutoConstants::kChooserEntries, AutoConstants::kChooserGroups,
       "Auto Selector"};
