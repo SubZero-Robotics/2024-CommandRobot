@@ -13,6 +13,8 @@
 #include <rev/SparkPIDController.h>
 #include <rev/SparkRelativeEncoder.h>
 
+#include "Constants.h"
+
 class MAXSwerveModule {
  public:
   /**
@@ -64,8 +66,9 @@ class MAXSwerveModule {
   rev::CANSparkMax m_drivingSparkMax;
   rev::CANSparkMax m_turningSparkMax;
 
-  rev::SparkRelativeEncoder m_drivingEncoder = m_drivingSparkMax.GetEncoder(
-      rev::SparkRelativeEncoder::Type::kHallSensor);
+  rev::SparkRelativeEncoder m_drivingEncoder =
+      m_drivingSparkMax.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
+                                   CANConstants::kTicksPerMotorRotation);
   rev::SparkAbsoluteEncoder m_turningAbsoluteEncoder =
       m_turningSparkMax.GetAbsoluteEncoder(
           rev::SparkAbsoluteEncoder::Type::kDutyCycle);
