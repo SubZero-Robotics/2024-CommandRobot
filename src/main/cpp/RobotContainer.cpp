@@ -430,7 +430,8 @@ void RobotContainer::Periodic() {
       m_shouldAim = m_aimbotEnabled;
       auto centerDiff = bestTarget.value().centerX;
       // m_shouldAim = false;
-      m_turnToPose.SetTargetAngleRelative(-centerDiff);
+      // m_turnToPose.SetTargetAngleRelative(-centerDiff);
+      // m_turnToPose.SetTargetPose(targetPose.value());
 
       frc::SmartDashboard::PutNumber("TURN TO ANGLE relative target deg",
                                      -centerDiff.value());
