@@ -342,7 +342,7 @@ const std::vector<FixtureLocation> RedFixtureLocations{
      .scoringDirection = ScoringDirection::Subwoofer,
      .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(180_deg))},
     // Feeding (Feed)
-    {.fixtureLocation = frc::Pose2d(6_m, 1_m, frc::Rotation2d(0_deg)),
+    {.fixtureLocation = frc::Pose2d(6.5_m, 1_m, frc::Rotation2d(0_deg)),
      // TODO: bigger radius and motor velocity changes based on distance
      .locationRadius = 2_ft,
      .scoringRadius = 1_ft,
@@ -465,8 +465,8 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 constexpr double kSubwooferLowerSpeed = -0.95;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
-constexpr double kFeedLowerSpeed = 0.6;
-constexpr double kFeedUpperSpeed = 0.6;
+constexpr double kFeedLowerSpeed = 1;
+constexpr double kFeedUpperSpeed = 1;
 
 constexpr double kScoringOutakeUpperSpeed = 0.2;
 constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
