@@ -76,14 +76,14 @@ void TurnToPose::SetTargetPose(frc::Pose2d pose) {
 void TurnToPose::SetTargetAngleRelative(units::degree_t angle) {
   m_startPose = m_poseGetter();
   auto wpiTranslation = frc::Translation2d(0_m, frc::Rotation2d(0_deg));
-  auto wpiTransformation = frc::Transform2d(wpiTranslation, angle);
+  auto wpiTransformation = frc::Transform2d(wpiTranslation, -angle);
   // auto wpiTranslation = frc::Translation2d(0_m, frc::Rotation2d(angle));
   // auto wpiTransformation =
   //     frc::Transform2d(wpiTranslation, m_startPose.Rotation());
   auto wpiFinalPose = m_startPose.TransformBy(wpiTransformation);
 
-  // m_targetAngle = m_startPose.Rotation().RotateBy(angle).Degrees();
-  m_targetAngle = wpiFinalPose.Rotation().Degrees();
+  m_targetAngle = m_startPose.Rotation().RotateBy(-angle).Degrees();
+  // m_targetAngle = wpiFinalPose.Rotation().Degrees();
   ConsoleWriter.logInfo("TURN TO POSE TARGET ANGLE SET",
                         m_targetAngle.value().value());
   m_targetPose = std::nullopt;
