@@ -428,11 +428,16 @@ void RobotContainer::Periodic() {
 
     if (bestTarget) {
       m_shouldAim = m_aimbotEnabled;
-      m_shouldAim = false;
       auto centerDiff = bestTarget.value().centerX;
-      // m_shouldAim = false;
-      // m_turnToPose.SetTargetAngleRelative(-centerDiff);
-      // m_turnToPose.SetTargetPose(targetPose.value());
+
+      auto normalizedTargetAngle = TurnToPose::NormalizeScalar(
+          centerDiff.value(), -30.0, 30.0, -1.0, 1.0);
+      normalizedTargetAngle =
+          std::clamp(pow(normalizedTargetAngle, 3), -1.0, 1.0);
+      centerDiff = units::degree_t(TurnToPose::NormalizeScalar(
+          normalizedTargetAngle, -1.0, 1.0, -30.0, 30.0));
+
+      m_turnToPose.SetTargetAngleRelative(-centerDiff);
 
       frc::SmartDashboard::PutNumber("TURN TO ANGLE relative target deg",
                                      -centerDiff.value());
