@@ -36,7 +36,7 @@ void ScoringSubsystem::SpinVectorSide(ScoringDirection direction) {
   }
 
   if (direction == ScoringDirection::Subwoofer) {
-    m_vectorSpinnyBoi.Set(kSubwooferVectorSpeed);
+    m_vectorSpinnyBoi.Set(-kSubwooferVectorSpeed);
     return;
   }
 

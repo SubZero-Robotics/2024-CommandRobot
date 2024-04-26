@@ -31,7 +31,9 @@ static frc2::CommandPtr StopIntakeAndScoring(ScoringSubsystem* scoring,
                scoring->Stop();
              },
              // onEnd
-             [intake, scoring](bool interupted) {},
+             [intake, scoring](bool interupted) {
+              intake->Stop();
+              scoring->Stop();},
              // isFinished
              [intake, scoring] { return true; },
              // req
