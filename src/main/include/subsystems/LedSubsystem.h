@@ -54,9 +54,11 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr OnTheFlyPP();
   frc2::CommandPtr VisionNoteDetected();
   frc2::CommandPtr SuccessfulIntake();
+  frc2::CommandPtr AutoScoring();
 
   void IdlingAsync();
   void ErrorAsync();
+  void RampingAsync();
 
  private:
   enum class LedZone {

@@ -167,6 +167,7 @@ class RobotContainer {
   bool m_autoScoringEnabled = false;
   bool m_shouldAim = false;
   bool m_autoAcquiringNote = false;
+  bool m_ramping = false;
   void ToggleAimbot();
   void ToggleAutoScoring();
   std::optional<frc::Rotation2d> GetRotationTargetOverride();
