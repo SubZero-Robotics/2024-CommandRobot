@@ -422,7 +422,7 @@ void RobotContainer::Periodic() {
 
     m_shouldAim = m_aimbotEnabled && inRange;
 
-    if (!m_shouldAim) {
+    if (!m_shouldAim || !m_autoScoringEnabled) {
       m_ramping = false;
     }
   } else {
