@@ -389,20 +389,27 @@ void RobotContainer::Periodic() {
         if (inRange && m_autoScoringEnabled && location.scoringRadius &&
             location.scoringDirection &&
             location.hypotDistance <= location.scoringRadius.value() &&
-            !autoScoreCommand.IsScheduled()) {
-          autoScoreCommand = ScoringCommands::Score(
-              [location] { return location.scoringDirection.value(); },
-              &m_scoring, &m_intake, &m_arm);
+            !autoScoreCommand.IsScheduled() && m_ramping) {
+          autoScoreCommand =
+              (m_leds.AutoScoring()
+                   .AndThen(ScoringCommands::Score(
+                       [location] { return location.scoringDirection.value(); },
+                       &m_scoring, &m_intake, &m_arm))
+                   .AndThen(m_leds.Idling()))
+                  .WithTimeout(4_s)
+                  .FinallyDo([this] { m_ramping = false; });
           // ? How do we know that the shooter is ramped up enough?
           // Re: https://i.ytimg.com/vi/8Jul5SuPYJc/mqdefault.jpg
           autoScoreCommand.Schedule();
         } else if (inRange && m_autoScoringEnabled &&
                    location.scoringDirection &&
-                   !autoScoreCommand.IsScheduled()) {
+                   !autoScoreCommand.IsScheduled() && !m_ramping) {
           ScoringDirection direction = location.scoringDirection
                                            ? location.scoringDirection.value()
                                            : ScoringDirection::AmpSide;
+          m_leds.RampingAsync();
           m_scoring.StartScoringRamp(direction);
+          m_ramping = true;
         }
 
         frc::SmartDashboard::PutNumber(
@@ -414,6 +421,10 @@ void RobotContainer::Periodic() {
     }
 
     m_shouldAim = m_aimbotEnabled && inRange;
+
+    if (!m_shouldAim) {
+      m_ramping = false;
+    }
   } else {
     auto bestTarget = m_tracker.GetBestTarget(targets);
     auto targetPose = m_tracker.GetBestTargetPose(targets);
