@@ -22,6 +22,9 @@ constexpr uint8_t kLowerampBeamBreakDigitalPort = 4;
 constexpr uint8_t kUpperPodiumBeamBreakDigitalPort = 6;
 constexpr uint8_t kUpperAmpBeamBreakDigitalPort = 5;
 
+constexpr units::second_t kDebounceTime = 50_ms;
+constexpr frc::Debouncer::DebounceType kDebounceType = frc::Debouncer::DebounceType::kBoth;
+
 constexpr units::revolutions_per_minute_t kMaxRpm = 5676_rpm;
 
 constexpr double kDowntakeSpeed = 0.4;

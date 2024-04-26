@@ -28,8 +28,7 @@ void IntakeSubsystem::In(double intakeSpeed) {
 }
 
 void IntakeSubsystem::Stop() {
-  ConsoleWriter.logVerbose("Intake Subsystem", "Stopping %s",
-                                          "");
+  ConsoleWriter.logVerbose("Intake Subsystem", "Stopping %s", "");
   m_leftIntakeSpinnyBoy.Set(0);
 }
 
@@ -55,27 +54,27 @@ void IntakeSubsystem::Feed(ScoringDirection direction) {
 }
 
 bool IntakeSubsystem::NotePresentLowerPodium() {
-  return !m_lowerPodiumBeamBreak.Get();
+  return !m_lowerPodiumDb.Calculate(m_lowerPodiumBeamBreak.Get());
 }
 
 bool IntakeSubsystem::NotePresentUpperAmp() {
-  return !m_upperAmpBeamBreak.Get();
+  return !m_upperAmpDb.Calculate(m_upperAmpBeamBreak.Get());
 }
 
 bool IntakeSubsystem::NotePresentLowerAmp() {
-  return !m_lowerAmpBeamBreak.Get();
+  return !m_lowerAmpDb.Calculate(m_lowerAmpBeamBreak.Get());
 }
 
 bool IntakeSubsystem::NotePresentUpperPodium() {
-  return !m_upperPodiumBeamBreak.Get();
+  return !m_upperPodiumDb.Calculate(m_upperPodiumBeamBreak.Get());
 }
 
 bool IntakeSubsystem::NotePresentUpperCenter() {
-  return !m_centerUpperBeamBreak.Get();
+  return !m_centerUpperDb.Calculate(m_centerUpperBeamBreak.Get());
 }
 
 bool IntakeSubsystem::NotePresentLowerCenter() {
-  return !m_centerLowerBeamBreak.Get();
+  return !m_centerLowerDb.Calculate(m_centerLowerBeamBreak.Get());
 }
 
 bool IntakeSubsystem::NotePresentCenter() {
