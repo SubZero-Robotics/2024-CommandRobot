@@ -428,6 +428,7 @@ void RobotContainer::Periodic() {
 
     if (bestTarget) {
       m_shouldAim = m_aimbotEnabled;
+      m_shouldAim = false;
       auto centerDiff = bestTarget.value().centerX;
       // m_shouldAim = false;
       // m_turnToPose.SetTargetAngleRelative(-centerDiff);

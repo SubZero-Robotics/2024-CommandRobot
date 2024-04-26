@@ -28,7 +28,7 @@ class FlywheelRamp : public frc2::CommandHelper<frc2::Command, FlywheelRamp> {
   }
 
   void Execute() override {
-    // isFinished = m_scoring->GetMotorAtScoringSpeed(m_direction());
+    //isFinished = m_scoring->GetMotorAtScoringSpeed(m_direction());
     isFinished = true;
   }
 

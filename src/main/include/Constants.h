@@ -193,16 +193,24 @@ enum class AutoType {
 
 static const std::vector<AutoChooser<AutoType>::AutoChooserEntry>
     kChooserEntries{
-        {{AutoType::FourNoteAuto, "4 Note Auto"}, {"4 notes", "close", "high", "amp", "center"}},
-        {{AutoType::ThreeNoteAuto, "3 Note Auto"}, {"3 notes", "close", "decent", "center"}},
+        {{AutoType::FourNoteAuto, "4 Note Auto"},
+         {"4 notes", "close", "high", "amp", "center"}},
+        {{AutoType::ThreeNoteAuto, "3 Note Auto"},
+         {"3 notes", "close", "decent", "center"}},
         {{AutoType::TwoNoteCenter, "2 Note Center Note Under Stage"},
          {"2 notes", "far", "high", "center"}},
-        {{AutoType::LeaveWing, "Leave Wing"}, {"0 notes", "minimal", "close", "source"}},
-        {{AutoType::PlaceAndLeave, "Place and leave"}, {"1 note", "minimal", "mid", "source"}},
-        {{AutoType::TwoNoteAuto, "2 Note Auto"}, {"2 notes", "decent", "far", "amp"}},
-        {{AutoType::TwoNoteSource, "2 Note Source Side"}, {"2 notes", "decent", "far", "source"}},
-        {{AutoType::ThreeNoteCenter, "3 Note Center Note 3 + 4"}, {"3 notes", "high", "far", "source", "center"}},
-        {{AutoType::EmptyAuto, "Empty Auto"}, {"0 notes", "minimal", "close", "center"}},
+        {{AutoType::LeaveWing, "Leave Wing"},
+         {"0 notes", "minimal", "close", "source"}},
+        {{AutoType::PlaceAndLeave, "Place and leave"},
+         {"1 note", "minimal", "mid", "source"}},
+        {{AutoType::TwoNoteAuto, "2 Note Auto"},
+         {"2 notes", "decent", "far", "amp"}},
+        {{AutoType::TwoNoteSource, "2 Note Source Side"},
+         {"2 notes", "decent", "far", "source"}},
+        {{AutoType::ThreeNoteCenter, "3 Note Center Note 3 + 4"},
+         {"3 notes", "high", "far", "source", "center"}},
+        {{AutoType::EmptyAuto, "Empty Auto"},
+         {"0 notes", "minimal", "close", "center"}},
     };
 
 static const std::vector<AutoChooser<AutoType>::AutoChooserSelectorGroup>
@@ -342,12 +350,12 @@ const std::vector<FixtureLocation> RedFixtureLocations{
      .scoringDirection = ScoringDirection::Subwoofer,
      .trackedPose = frc::Pose2d(16.54_m, 5.6_m, frc::Rotation2d(180_deg))},
     // Feeding (Feed)
-    {.fixtureLocation = frc::Pose2d(6.5_m, 1_m, frc::Rotation2d(0_deg)),
+    {.fixtureLocation = frc::Pose2d(7_m, 1.5_m, frc::Rotation2d(0_deg)),
      // TODO: bigger radius and motor velocity changes based on distance
-     .locationRadius = 2_ft,
-     .scoringRadius = 1_ft,
+     .locationRadius = 3_ft,
+     .scoringRadius = 3_ft,
      .scoringDirection = ScoringDirection::FeedPodium,
-     .trackedPose = frc::Pose2d(15_m, 7.5_m, frc::Rotation2d(0_deg))}};
+     .trackedPose = frc::Pose2d(16_m, 7_m, frc::Rotation2d(0_deg))}};
 const std::vector<FixtureLocation> BlueFixtureLocations{
     // Podium (ScoreSpeaker)
     // TODO
@@ -372,7 +380,7 @@ const std::vector<FixtureLocation> BlueFixtureLocations{
      .locationRadius = 2_ft,
      .scoringRadius = 1_ft,
      .scoringDirection = ScoringDirection::FeedPodium,
-     .trackedPose = frc::Pose2d(1_m, 7.5_m, frc::Rotation2d(0_deg))}};
+     .trackedPose = frc::Pose2d(1_m, 7_m, frc::Rotation2d(0_deg))}};
 }  // namespace Locations
 }  // namespace AutoConstants
 
@@ -452,6 +460,8 @@ constexpr double kShuffleSpeed = 0.05;
 
 // Positive = clockwise
 constexpr double kVectorSpeed = -0.4;
+constexpr double kSubwooferVectorSpeed = 1;
+constexpr double kFeedPodiumVectorSpeed = -1;
 
 // These need to be different
 constexpr double kAmpLowerSpeed = -0.254 * 1.9;  // .264
@@ -465,8 +475,9 @@ constexpr double kSpeakerUpperSpeed = kSpeakerLowerSpeed;
 constexpr double kSubwooferLowerSpeed = -0.95;
 constexpr double kSubwooferUpperSpeed = kSubwooferLowerSpeed;
 
-constexpr double kFeedLowerSpeed = 1;
-constexpr double kFeedUpperSpeed = 1;
+// nice :flushed:
+constexpr double kFeedLowerSpeed = 0.69;
+constexpr double kFeedUpperSpeed = 0.69;
 
 constexpr double kScoringOutakeUpperSpeed = 0.2;
 constexpr double kScoringOutakeLowerSpeed = kScoringOutakeUpperSpeed;
@@ -531,30 +542,6 @@ const std::string kAmpLowerName = "Amp Lower";
 const std::string kSubwooferUpperName = "Subwoofer Upper";
 const std::string kSubwooferLowerName = "Subwoofer Lower";
 }  // namespace ScoringPID
-
-namespace SpeakerPID {
-constexpr double kP = 6e-5;
-constexpr double kI = 1e-6;
-constexpr double kD = 0;
-constexpr double kIZone = 0;
-constexpr double kFF = 0.000015;
-}  // namespace SpeakerPID
-
-namespace AmpUpperPID {
-constexpr double kP = 6e-5;
-constexpr double kI = 1e-6;
-constexpr double kD = 0;
-constexpr double kIZone = 0;
-constexpr double kFF = 0.000015;
-}  // namespace AmpUpperPID
-
-namespace AmpLowerPID {
-constexpr double kP = 6e-5;
-constexpr double kI = 1e-6;
-constexpr double kD = 0;
-constexpr double kIZone = 0;
-constexpr double kFF = 0.000015;
-}  // namespace AmpLowerPID
 }  // namespace ScoringConstants
 
 namespace ArmConstants {

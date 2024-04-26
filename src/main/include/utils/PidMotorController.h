@@ -81,6 +81,7 @@ class PidMotorController {
   /// @param rpm The desired RPM
   void RunWithVelocity(units::revolutions_per_minute_t rpm) {
     m_absolutePositionEnabled = false;
+    frc::SmartDashboard::PutNumber(m_name + "commanded rpm", rpm.value());
     m_controller.SetReference(rpm.value(),
                               rev::CANSparkBase::ControlType::kVelocity);
   }
@@ -95,7 +96,7 @@ class PidMotorController {
       return;
     }
     auto rpm = units::revolutions_per_minute_t(m_maxRpm) * percentage;
-
+    ConsoleWriter.logVerbose("pidmotor", "%s: %f", m_name.c_str(), percentage);
     RunWithVelocity(rpm);
   }
 
