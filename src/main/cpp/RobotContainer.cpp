@@ -367,6 +367,18 @@ void RobotContainer::StopMotors() {
   m_scoring.Stop();
 }
 
+units::degree_t RobotContainer::CurveRotation(double sensitivity, double val, double inMin,
+                              double inMax, double outMin, double outMax) {
+  auto normalizedValue =
+      TurnToPose::NormalizeScalar(val, inMin, inMax, -1.0, 1.0);
+  double cubedVal = std::clamp(pow(normalizedValue, 3), -1.0, 1.0);
+  double rampedVal = std::clamp(
+      (sensitivity * (cubedVal) + (1.0 - sensitivity) * val), -1.0, 1.0);
+  double summedVal = cubedVal + rampedVal;
+  return units::degree_t(
+      TurnToPose::NormalizeScalar(summedVal, -1.0, 1.0, outMin, outMax));
+}
+
 void RobotContainer::Periodic() {
   frc::SmartDashboard::PutData("Robot2d", &m_mech);
 
@@ -435,6 +447,8 @@ void RobotContainer::Periodic() {
           std::clamp(pow(normalizedTargetAngle, 3), -1.0, 1.0);
       centerDiff = units::degree_t(TurnToPose::NormalizeScalar(
           normalizedTargetAngle, -1.0, 1.0, -30.0, 30.0));
+
+      // centerDiff = CurveRotation(0.375, centerDiff.value(), -30.0, 30.0, -30.0, 30.0);
 
       m_turnToPose.SetTargetAngleRelative(-centerDiff);
 
