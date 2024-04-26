@@ -56,6 +56,7 @@ class RobotContainer {
   void Initialize();
   void StopMotors();
   void Periodic();
+  units::degree_t CurveRotation(double sensitivity, double val, double inMin, double inMax, double outMin, double outMax);
 
  private:
   frc::Mechanism2d m_mech{1, 1};
