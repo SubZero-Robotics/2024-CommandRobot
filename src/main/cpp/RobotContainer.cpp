@@ -396,10 +396,9 @@ void RobotContainer::Periodic() {
           // ? How do we know that the shooter is ramped up enough?
           // Re: https://i.ytimg.com/vi/8Jul5SuPYJc/mqdefault.jpg
           autoScoreCommand.Schedule();
-        }
-
-        else if (inRange && m_autoScoringEnabled && location.scoringDirection &&
-                 !autoScoreCommand.IsScheduled()) {
+        } else if (inRange && m_autoScoringEnabled &&
+                   location.scoringDirection &&
+                   !autoScoreCommand.IsScheduled()) {
           ScoringDirection direction = location.scoringDirection
                                            ? location.scoringDirection.value()
                                            : ScoringDirection::AmpSide;

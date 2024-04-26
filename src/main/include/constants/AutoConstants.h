@@ -9,6 +9,8 @@
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include "constants/ScoringConstants.h"
