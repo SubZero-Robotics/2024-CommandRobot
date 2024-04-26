@@ -7,6 +7,7 @@
 #include "utils/ConsoleLogger.h"
 
 using namespace ConnectorX;
+using namespace LEDConstants;
 
 void LedSubsystem::Periodic() {
   if (abs(m_accel.GetX()) >= kAccelThreshold ||
