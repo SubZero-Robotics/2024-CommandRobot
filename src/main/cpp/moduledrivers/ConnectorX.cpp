@@ -2,9 +2,10 @@
 
 #include <hal/I2C.h>
 
-using namespace ConnectorX;
+#include "constants/LEDConstants.h"
 
-constexpr units::second_t kConnectorXDelay = 0.002_s;
+using namespace ConnectorX;
+using namespace LEDConstants;
 
 ConnectorX::ConnectorXBoard::ConnectorXBoard(uint8_t slaveAddress,
                                              frc::I2C::Port port)

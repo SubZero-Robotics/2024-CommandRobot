@@ -7,6 +7,7 @@
 #include <frc2/command/button/CommandXboxController.h>
 
 #include "Constants.h"
+#include "ScoreCommands.h"
 #include "commands/FeedCommand.h"
 #include "commands/FlywheelRampCommand.h"
 #include "commands/IntakeInInitialCommand.h"
@@ -68,42 +69,10 @@ static frc2::CommandPtr DowntakeUntilPresent(IntakeSubsystem* intake,
 
 static frc2::CommandPtr Intake(IntakeSubsystem* intake,
                                ScoringSubsystem* scoring) {
-  return frc2::FunctionalCommand(
-             // onInit
-             [] {},
-             // onExecute
-             [intake, scoring] {
-               //  intake->In(IntakingConstants::kIntakeAutoSpeed);
-               intake->In();
-               scoring->SpinVectorSide(ScoringDirection::AmpSide);
-              //  scoring->SpinOutake(
-              //      ScoringConstants::kScoringIntakingOutakeUpperSpeed,
-              //      ScoringConstants::kScoringIntakingOutakeLowerSpeed);
-             },
-             // onEnd
-             [intake, scoring](bool interupted) {},
-             // isFinished
-             [intake, scoring] { return intake->NotePresentUpperAll(); },
-             // req
-             {intake, scoring})
-      .ToPtr()
+  return RunUntilNotePresentUpper(scoring, intake)
       .AndThen(ConsoleInfo("Intk", "%s", "Intook"))
       .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
-      .AndThen(frc2::FunctionalCommand(
-                   // onInit
-                   [] {},
-                   // onExecute
-                   [intake, scoring] {
-                     intake->Stop();
-                     scoring->Stop();
-                   },
-                   // onEnd
-                   [intake, scoring](bool interupted) {},
-                   // isFinished
-                   [intake, scoring] { return true; },
-                   // req
-                   {intake, scoring})
-                   .ToPtr())
+      .AndThen(StopIntakeAndScoring(scoring, intake))
       .AndThen(ConsoleInfo("Intk", "%s", "Stopped"))
       .AndThen(frc2::InstantCommand([intake] {
                  ConsoleWriter.logInfo("Intk", "Note present lower: %d",
@@ -134,7 +103,7 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intake,
 }
 
 static frc2::CommandPtr IntakeAmpOnly(IntakeSubsystem* intake,
-                               ScoringSubsystem* scoring) {
+                                      ScoringSubsystem* scoring) {
   return frc2::FunctionalCommand(
              // onInit
              [] {},
@@ -143,9 +112,9 @@ static frc2::CommandPtr IntakeAmpOnly(IntakeSubsystem* intake,
                //  intake->In(IntakingConstants::kIntakeAutoSpeed);
                intake->In();
                scoring->SpinVectorSide(ScoringDirection::AmpSide);
-              //  scoring->SpinOutake(
-              //      ScoringConstants::kScoringIntakingOutakeUpperSpeed,
-              //      ScoringConstants::kScoringIntakingOutakeLowerSpeed);
+               //  scoring->SpinOutake(
+               //      ScoringConstants::kScoringIntakingOutakeUpperSpeed,
+               //      ScoringConstants::kScoringIntakingOutakeLowerSpeed);
              },
              // onEnd
              [intake, scoring](bool interupted) {},

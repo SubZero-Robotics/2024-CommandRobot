@@ -19,7 +19,8 @@
 
 class LedSubsystem : public frc2::SubsystemBase {
  public:
-  LedSubsystem() : m_connectorX(ConnectorX::ConnectorXBoard(kLedAddress)) {
+  LedSubsystem()
+      : m_connectorX(ConnectorX::ConnectorXBoard(LEDConstants::kLedAddress)) {
     ConsoleWriter.logVerbose("LedSubsystem", "LEDs init%s", "");
     createZones(ConnectorX::LedPort::P0, std::move(m_ledZones0));
     createZones(ConnectorX::LedPort::P1, std::move(m_ledZones1));
@@ -53,9 +54,11 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr OnTheFlyPP();
   frc2::CommandPtr VisionNoteDetected();
   frc2::CommandPtr SuccessfulIntake();
+  frc2::CommandPtr AutoScoring();
 
   void IdlingAsync();
   void ErrorAsync();
+  void RampingAsync();
 
  private:
   enum class LedZone {
