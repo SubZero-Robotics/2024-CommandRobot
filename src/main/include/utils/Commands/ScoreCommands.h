@@ -32,8 +32,9 @@ static frc2::CommandPtr StopIntakeAndScoring(ScoringSubsystem* scoring,
              },
              // onEnd
              [intake, scoring](bool interupted) {
-              intake->Stop();
-              scoring->Stop();},
+               intake->Stop();
+               scoring->Stop();
+             },
              // isFinished
              [intake, scoring] { return true; },
              // req
@@ -194,15 +195,26 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                               IntakeSubsystem* intake, ArmSubsystem* arm) {
   return (
              // Downshuffle until either of the bottom two beam breaks is broken
-             PreScoreShuffle(direction, scoring, intake)
-                 .AndThen(ScoreRamp(direction, scoring, intake, arm))
-                 .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
-                 .AndThen(ScoreShoot(direction, scoring, intake, arm))
+             (PreScoreShuffle(direction, scoring, intake)
+                  .AndThen(ScoreRamp(direction, scoring, intake, arm))
+                  .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
+                  .AndThen(ScoreShoot(direction, scoring, intake, arm).FinallyDo([intake, scoring] {
+                   intake->Stop();
+                   scoring->Stop();
+                 })))
+                 .FinallyDo([intake, scoring] {
+                   intake->Stop();
+                   scoring->Stop();
+                 })
              // Unless note isn't present
              // timeout after 3 seconds
              // finally stop everything
              )
       .Unless([intake] { return !intake->NotePresent(); })
-      .WithTimeout(1.5_s);
+      .WithTimeout(1.5_s)
+      .FinallyDo([intake, scoring] {
+        intake->Stop();
+        scoring->Stop();
+      });
 }
 }  // namespace ScoringCommands
