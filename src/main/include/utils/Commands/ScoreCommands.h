@@ -202,6 +202,7 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
              // timeout after 3 seconds
              // finally stop everything
              )
-      .WithTimeout(3_s);
+      .Unless([intake] { return !intake->NotePresent(); })
+      .WithTimeout(1.5_s);
 }
 }  // namespace ScoringCommands
