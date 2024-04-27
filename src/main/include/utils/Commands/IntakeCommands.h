@@ -72,7 +72,10 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intake,
   return RunUntilNotePresentUpper(scoring, intake)
       .AndThen(ConsoleInfo("Intk", "%s", "Intook"))
       .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
-      .AndThen(StopIntakeAndScoring(scoring, intake))
+      .AndThen(frc2::InstantCommand([intake, scoring] {
+                 intake->Stop();
+                 scoring->Stop();
+               }).ToPtr())
       .AndThen(ConsoleInfo("Intk", "%s", "Stopped"))
       .AndThen(frc2::InstantCommand([intake] {
                  ConsoleWriter.logInfo("Intk", "Note present lower: %d",
@@ -97,9 +100,15 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intake,
                    // isFinished
                    [intake, scoring] { return intake->NotePresentLower(); },
                    // req
-                   {intake, scoring})
-                   .ToPtr())
-      .AndThen(ConsoleInfo("Intk", "%s", "DownShuffled"));
+                   {})
+                   .ToPtr()
+                   .HandleInterrupt([] {
+                     ConsoleWriter.logInfo("Intk",
+                                           "AAAA INTERRUPTED EARLY1!!11!1");
+                   }))
+      .AndThen(ConsoleInfo("Intk", "%s", "DownShuffled"))
+      .HandleInterrupt(
+          [] { ConsoleWriter.logInfo("Intk", "AAAA INTERRUPTED EARLY"); });
 }
 
 static frc2::CommandPtr IntakeAmpOnly(IntakeSubsystem* intake,

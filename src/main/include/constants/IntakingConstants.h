@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc/filter/Debouncer.h>
 #include <units/angular_velocity.h>
 
 namespace IntakingConstants {
@@ -12,7 +13,6 @@ constexpr double kFeedSpeakerSpeed = 1;
 constexpr double kFeedSubwooferSpeed = 1;
 
 constexpr double kOutakeSpeed = -0.5;
-
 constexpr double kSecondaryIntakeOutSpeed = -0.05;
 
 constexpr uint8_t kCenterLowerBeamBreakDigitalPort = 3;
@@ -23,7 +23,8 @@ constexpr uint8_t kUpperPodiumBeamBreakDigitalPort = 6;
 constexpr uint8_t kUpperAmpBeamBreakDigitalPort = 5;
 
 constexpr units::second_t kDebounceTime = 50_ms;
-constexpr frc::Debouncer::DebounceType kDebounceType = frc::Debouncer::DebounceType::kBoth;
+constexpr frc::Debouncer::DebounceType kDebounceType =
+    frc::Debouncer::DebounceType::kBoth;
 
 constexpr units::revolutions_per_minute_t kMaxRpm = 5676_rpm;
 
