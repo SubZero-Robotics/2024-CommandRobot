@@ -97,7 +97,7 @@ void RobotContainer::RegisterAutos() {
       frc2::InstantCommand(
           [this] { ConsoleWriter.logVerbose("Autos", "Intaking %s", ""); })
           .ToPtr()
-          .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
+          .AndThen(IntakingCommands::Intake2(&m_intake, &m_scoring)));
 
   m_autoChooser.Initialize();
 }

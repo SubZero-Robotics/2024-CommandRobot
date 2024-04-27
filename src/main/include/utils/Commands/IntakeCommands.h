@@ -111,6 +111,32 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intake,
           [] { ConsoleWriter.logInfo("Intk", "AAAA INTERRUPTED EARLY"); });
 }
 
+static frc2::CommandPtr Intake2(IntakeSubsystem* intake,
+                                ScoringSubsystem* scoring) {
+  return frc2::InstantCommand([intake, scoring] {
+           //  intake->In(IntakingConstants::kIntakeAutoSpeed);
+           intake->In();
+           scoring->SpinVectorSide(ScoringDirection::AmpSide);
+         })
+      .ToPtr()
+      .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
+      .AndThen(frc2::InstantCommand([intake, scoring] {
+                 intake->Stop();
+                 scoring->Stop();
+               }).ToPtr())
+      .AndThen(frc2::InstantCommand([intake, scoring] {
+                 intake->Out();
+                 scoring->SpinVectorSide(ScoringDirection::PodiumSide);
+                 scoring->SpinOutake(
+                     ScoringConstants::kScoringIntakingOutakeUpperSpeed,
+                     ScoringConstants::kScoringIntakingOutakeLowerSpeed);
+               }).ToPtr())
+      .AndThen(frc2::InstantCommand([intake, scoring] {
+                 intake->Stop();
+                 scoring->Stop();
+               }).ToPtr());
+}
+
 static frc2::CommandPtr IntakeAmpOnly(IntakeSubsystem* intake,
                                       ScoringSubsystem* scoring) {
   return frc2::FunctionalCommand(
