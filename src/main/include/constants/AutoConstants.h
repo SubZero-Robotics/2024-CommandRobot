@@ -60,7 +60,7 @@ static const std::vector<AutoChooser<AutoType>::AutoChooserEntry>
          {"0 notes", "minimal", "close", "source"}},
         {{AutoType::PlaceAndLeave, "Place and leave"},
          {"1 note", "minimal", "mid", "source"}},
-        {{AutoType::TwoNoteAmpSide, "2 Note Auto"},
+        {{AutoType::TwoNoteAmpSide, "2 Note Amp Side"},
          {"2 notes", "decent", "far", "amp"}},
         {{AutoType::TwoNoteSource, "2 Note Source Side"},
          {"2 notes", "decent", "far", "source"}},

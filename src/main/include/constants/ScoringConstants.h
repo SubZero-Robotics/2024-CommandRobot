@@ -50,7 +50,7 @@ enum class ScoreState {
 constexpr units::second_t kFlywheelRampDelay = 0.5_s;
 
 namespace ScoringPID {
-constexpr double kSpeakerP = 6e-5;
+constexpr double kSpeakerP = 4e-5;
 constexpr double kSpeakerI = 1e-6;
 constexpr double kSpeakerD = 0;
 constexpr double kSpeakerIZone = 0;

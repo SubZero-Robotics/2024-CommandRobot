@@ -74,8 +74,8 @@ void TurnToPose::SetTargetAngleRelative(units::degree_t angle) {
 
   m_targetAngle = m_startPose.RotateBy(angle).Rotation().Degrees();
   // m_targetAngle = wpiFinalPose.Rotation().Degrees();
-  ConsoleWriter.logInfo("TURN TO POSE TARGET ANGLE SET",
-                        m_targetAngle.value().value());
+  // ConsoleWriter.logInfo("TURN TO POSE TARGET ANGLE SET",
+  //                       m_targetAngle.value().value());
   m_targetPose = std::nullopt;
 }
 
