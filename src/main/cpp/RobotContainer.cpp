@@ -190,8 +190,8 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController
       .POVUp(frc2::CommandScheduler::GetInstance().GetActiveButtonLoop())
       .CastTo<frc2::Trigger>()
-      .OnTrue(m_rightClimb.MoveToPositionAbsolute(18_in).AlongWith(
-          m_leftClimb.MoveToPositionAbsolute(18_in)));
+      .OnTrue(m_rightClimb.MoveToPositionAbsolute(20_in).AlongWith(
+          m_leftClimb.MoveToPositionAbsolute(20_in)));
 
   m_driverController
       .POVDown(frc2::CommandScheduler::GetInstance().GetActiveButtonLoop())
@@ -420,7 +420,7 @@ void RobotContainer::Periodic() {
                                            ? location.scoringDirection.value()
                                            : ScoringDirection::AmpSide;
           m_leds.RampingAsync();
-          m_scoring.StartScoringRamp(direction);
+          // m_scoring.StartScoringRamp(direction);
           m_ramping = true;
         }
 
