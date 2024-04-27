@@ -38,11 +38,14 @@ enum class AutoType {
   FourNoteAuto,
   PlaceAndLeave,
   ThreeNoteAuto,
-  TwoNoteAuto,
+  TwoNoteAmpSide,
   LeaveWing,
   TwoNoteCenter,
   TwoNoteSource,
   ThreeNoteCenter,
+  TwoNoteAuto,
+  TwoNoteInAmp,
+  TwoInSpeakerTwoInAmp,
 };
 
 static const std::vector<AutoChooser<AutoType>::AutoChooserEntry>
@@ -57,7 +60,7 @@ static const std::vector<AutoChooser<AutoType>::AutoChooserEntry>
          {"0 notes", "minimal", "close", "source"}},
         {{AutoType::PlaceAndLeave, "Place and leave"},
          {"1 note", "minimal", "mid", "source"}},
-        {{AutoType::TwoNoteAuto, "2 Note Auto"},
+        {{AutoType::TwoNoteAmpSide, "2 Note Auto"},
          {"2 notes", "decent", "far", "amp"}},
         {{AutoType::TwoNoteSource, "2 Note Source Side"},
          {"2 notes", "decent", "far", "source"}},
@@ -65,6 +68,8 @@ static const std::vector<AutoChooser<AutoType>::AutoChooserEntry>
          {"3 notes", "high", "far", "source", "center"}},
         {{AutoType::EmptyAuto, "Empty Auto"},
          {"0 notes", "minimal", "close", "center"}},
+        {{AutoType::TwoNoteAuto, "2 Note Auto"},
+         {"2 notes", "decent", "far", "amp"}},
     };
 
 static const std::vector<AutoChooser<AutoType>::AutoChooserSelectorGroup>

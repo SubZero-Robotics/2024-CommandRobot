@@ -46,6 +46,12 @@
           "data": {
             "pathName": "Speaker to Center Note 1"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Note 1 to Speaker"
+          }
         }
       ]
     }
