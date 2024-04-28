@@ -103,7 +103,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
                            units::meters_per_second_t ySpeed,
                            units::radians_per_second_t rot, bool fieldRelative,
                            bool rateLimit, units::second_t periodSeconds,
-                           TurnToPose* turnToPose) {
+                           ITurnToTarget* turnToTarget) {
   auto now = frc::Timer::GetFPGATimestamp();
   auto dif = now - driveLoopTime;
 
@@ -114,11 +114,11 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   auto joystickSpeeds =
       GetSpeedsFromJoystick(xSpeed, ySpeed, rot, fieldRelative);
 
-  if (turnToPose) {
+  if (turnToTarget) {
     if (joystickSpeeds.omega.value() == 0) {
-      joystickSpeeds = turnToPose->BlendWithInput(joystickSpeeds, 1);
+      joystickSpeeds = turnToTarget->BlendWithInput(joystickSpeeds, 1);
     } else {
-      joystickSpeeds = turnToPose->BlendWithInput(
+      joystickSpeeds = turnToTarget->BlendWithInput(
           joystickSpeeds, TurnToPoseConstants::kBlendRatio);
     }
   }

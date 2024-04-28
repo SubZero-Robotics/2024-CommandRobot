@@ -7,17 +7,18 @@ using namespace ScoringConstants;
 ScoringSubsystem::ScoringSubsystem() {}
 
 void ScoringSubsystem::Periodic() {
-  frc::SmartDashboard::PutNumber("Amp upper velocity",
-                                 m_ampUpperEnc.GetVelocity());
-  frc::SmartDashboard::PutNumber("Amp lower velocity",
-                                 m_ampLowerEnc.GetVelocity());
+  frc::SmartDashboard::PutNumber("Speaker upper velocity",
+                                 m_speakerUpperEnc.GetVelocity());
+  frc::SmartDashboard::PutNumber("Speaker lower velocity",
+                                 m_speakerLowerEnc.GetVelocity());
 }
 
 void ScoringSubsystem::SimulationPeriodic() {}
 
-void ScoringSubsystem::SpinOutake() {
-  m_ampUpperSpinnyBoi.Set(kScoringOutakeUpperSpeed);
-  m_ampLowerSpinnyBoi.Set(kScoringOutakeLowerSpeed);
+void ScoringSubsystem::SpinOutake(double upperPercentage,
+                                  double lowerPercentage) {
+  m_ampUpperSpinnyBoi.Set(upperPercentage);
+  m_ampLowerSpinnyBoi.Set(lowerPercentage);
 }
 
 void ScoringSubsystem::Stop() {
@@ -29,9 +30,18 @@ void ScoringSubsystem::Stop() {
 }
 
 void ScoringSubsystem::SpinVectorSide(ScoringDirection direction) {
-  if (direction == ScoringDirection::AmpSide ||
-      direction == ScoringDirection::Subwoofer) {
+  if (direction == ScoringDirection::AmpSide) {
     m_vectorSpinnyBoi.Set(kVectorSpeed);
+    return;
+  }
+
+  if (direction == ScoringDirection::Subwoofer) {
+    m_vectorSpinnyBoi.Set(-kSubwooferVectorSpeed);
+    return;
+  }
+
+  if (direction == ScoringDirection::FeedPodium) {
+    m_vectorSpinnyBoi.Set(-kFeedPodiumVectorSpeed);
     return;
   }
 
@@ -51,6 +61,7 @@ void ScoringSubsystem::StartScoringRamp(ScoringDirection direction) {
 
   if (direction == ScoringDirection::FeedPodium) {
     SpinSpeaker(kFeedUpperSpeed, kFeedLowerSpeed);
+    return;
   }
 
   SpinSpeaker();
@@ -70,22 +81,19 @@ bool ScoringSubsystem::GetMotorAtScoringSpeed(ScoringDirection direction) {
 
 bool ScoringSubsystem::GetMotorFreeWheel(ScoringDirection direction) {
   if (direction == ScoringDirection::AmpSide) {
-    ConsoleWriter.logVerbose(
-        "Amp free wheel", "Current: %.3f",
-        m_ampLowerSpinnyBoi.GetOutputCurrent());
+    ConsoleWriter.logVerbose("Amp free wheel", "Current: %.3f",
+                             m_ampLowerSpinnyBoi.GetOutputCurrent());
     return m_ampLowerSpinnyBoi.GetOutputCurrent() < kFreeSpinCurrentThreshold;
   }
 
   if (direction == ScoringDirection::Subwoofer) {
-    ConsoleWriter.logVerbose(
-        "Subwoofer free wheel", "Current: %.3f",
-        m_ampUpperSpinnyBoi.GetOutputCurrent());
+    ConsoleWriter.logVerbose("Subwoofer free wheel", "Current: %.3f",
+                             m_ampUpperSpinnyBoi.GetOutputCurrent());
     return m_ampUpperSpinnyBoi.GetOutputCurrent() < kFreeSpinCurrentThreshold;
   }
 
-  ConsoleWriter.logVerbose(
-      "Other free wheel", "Current: %.3f",
-      m_ampUpperSpinnyBoi.GetOutputCurrent());
+  ConsoleWriter.logVerbose("Other free wheel", "Current: %.3f",
+                           m_ampUpperSpinnyBoi.GetOutputCurrent());
   return m_speakerLowerSpinnyBoi.GetOutputCurrent() < kFreeSpinCurrentThreshold;
 }
 
@@ -95,9 +103,13 @@ void ScoringSubsystem::SpinAmp(double upperPercentage, double lowerPercentage) {
   frc::SmartDashboard::PutNumber("Amp lower target %", lowerPercentage);
 }
 
-void ScoringSubsystem::SpinSpeaker(double upperPercentage, double lowerPercentage) {
-  m_speakerLowerSpinnyBoi.Set(-lowerPercentage);
-  m_speakerUpperSpinnyBoi.Set(-upperPercentage);
+void ScoringSubsystem::SpinSpeaker(double upperPercentage,
+                                   double lowerPercentage) {
+  // m_speakerLowerSpinnyBoi.Set(-lowerPercentage);
+  // m_speakerUpperSpinnyBoi.Set(-upperPercentage);
+  ConsoleWriter.logVerbose("Scoring sbubby", "percentage: %f", upperPercentage);
+  speakerUpperController.RunWithVelocity(-lowerPercentage);
+  speakerLowerController.RunWithVelocity(-upperPercentage);
 }
 
 void ScoringSubsystem::SpinSubwoofer() {
@@ -106,15 +118,13 @@ void ScoringSubsystem::SpinSubwoofer() {
 }
 
 bool ScoringSubsystem::CheckAmpSpeed() {
-  ConsoleWriter.logVerbose("Amp Ramp Speed",
-                                          m_ampLowerEnc.GetVelocity());
+  ConsoleWriter.logVerbose("Amp Ramp Speed", m_ampLowerEnc.GetVelocity());
   return abs(m_ampLowerEnc.GetVelocity()) >= abs(MaxSpeedToRpm(kAmpLowerSpeed));
 }
 
 bool ScoringSubsystem::CheckSpeakerSpeed() {
-  ConsoleWriter.logVerbose("Scoring Subsystem",
-                                          "Speaker Velocity %.3f",
-                                          m_speakerLowerEnc.GetVelocity());
+  ConsoleWriter.logVerbose("Scoring Subsystem", "Speaker Velocity %.3f",
+                           m_speakerLowerEnc.GetVelocity());
   ShuffleboardLogger::getInstance().logVerbose("Speaker Ramp Speed",
                                                m_speakerLowerEnc.GetVelocity());
   return abs(m_speakerLowerEnc.GetVelocity()) >=
@@ -122,9 +132,8 @@ bool ScoringSubsystem::CheckSpeakerSpeed() {
 }
 
 bool ScoringSubsystem::CheckSubwooferSpeed() {
-  ConsoleWriter.logVerbose("Scoring Subsystem",
-                                          "Subwoofer Velocity %.3f",
-                                          m_ampLowerEnc.GetVelocity());
+  ConsoleWriter.logVerbose("Scoring Subsystem", "Subwoofer Velocity %.3f",
+                           m_ampLowerEnc.GetVelocity());
   ShuffleboardLogger::getInstance().logVerbose("Subwoofer Ramp Speed",
                                                m_ampLowerEnc.GetVelocity());
   return abs(m_ampLowerEnc.GetVelocity()) >=

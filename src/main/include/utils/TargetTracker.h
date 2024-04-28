@@ -98,6 +98,7 @@ class TargetTracker {
     /// @brief Ranges from 0 to 1; Multiplies trig-based distances and then
     /// applies the inverse to width-based estimate
     double trigDistancePercentage;
+    double areaPercentageThreshold;
   };
 
   TargetTracker(TargetTrackerConfig config, IntakeSubsystem* intake,

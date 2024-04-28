@@ -25,7 +25,7 @@
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 #include "utils/ConsoleLogger.h"
-#include "utils/TurnToPose.h"
+#include "utils/ITurnToTarget.h"
 #include "utils/Vision.h"
 
 // For sim to work
@@ -59,13 +59,13 @@ class DriveSubsystem : public frc2::SubsystemBase {
    *
    * @param periodSeconds Time between periodic loops
    *
-   * @param turnToPose Will apply a correction based on the PID's desired
+   * @param turnToTarget Will apply a correction based on the PID's desired
    * state
    */
   void Drive(units::meters_per_second_t xSpeed,
              units::meters_per_second_t ySpeed, units::radians_per_second_t rot,
              bool fieldRelative, bool rateLimit, units::second_t periodSeconds,
-             TurnToPose* turnToPose = nullptr);
+             ITurnToTarget* turnToTarget = nullptr);
 
   /**
    * Drives the robot based on a ChassisSpeeds
@@ -206,8 +206,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
       {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
        m_frontRight.GetPosition(), m_rearRight.GetPosition()},
       frc::Pose2d{0_m, 0_m, 0_rad},
-      {0.1, 0.1, 0.1},
-      {1.0, 1.0, 1.0}};
+      VisionConstants::kDrivetrainStd,
+      VisionConstants::kVisionStd};
   nt::StructArrayPublisher<frc::SwerveModuleState> m_publisher;
 
   // Pose viewing

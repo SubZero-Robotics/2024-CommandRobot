@@ -27,11 +27,13 @@
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 #include "subsystems/StateSubsystem.h"
+#include "utils/AutoChooser.h"
 #include "utils/Commands/DriveCommands.h"
 #include "utils/Commands/FunniCommands.h"
 #include "utils/Commands/IntakeCommands.h"
 #include "utils/Commands/ScoreCommands.h"
 #include "utils/TargetTracker.h"
+#include "utils/TurnToPose.h"
 #include "utils/Vision.h"
 
 /**
@@ -54,6 +56,7 @@ class RobotContainer {
   void Initialize();
   void StopMotors();
   void Periodic();
+  units::degree_t CurveRotation(double sensitivity, double val, double inMin, double inMax, double outMin, double outMax);
 
  private:
   frc::Mechanism2d m_mech{1, 1};
@@ -70,7 +73,9 @@ class RobotContainer {
   LedSubsystem m_leds;
 
   // The chooser for the autonomous routines
-  frc::SendableChooser<AutoConstants::AutoType> m_chooser;
+  AutoChooser<AutoConstants::AutoType> m_autoChooser{
+      AutoConstants::kChooserEntries, AutoConstants::kChooserGroups,
+      "Auto Selector"};
 
 #ifdef TEST_SWERVE_BOT
 
@@ -123,7 +128,9 @@ class RobotContainer {
                            // Gamepiece rotation
                            VisionConstants::kGamepieceRotation,
                            // Trig-based distance percentage
-                           VisionConstants::kTrigDistancePercentage},
+                           VisionConstants::kTrigDistancePercentage,
+                           // Area percentage threshold
+                           VisionConstants::kAreaPercentageThreshold},
                           &m_intake,
                           &m_scoring,
                           &m_drive};
@@ -154,10 +161,14 @@ class RobotContainer {
   frc2::CommandPtr IntakeTarget();
 
   frc2::CommandPtr autoCommand = frc2::InstantCommand([] {}).ToPtr();
+  frc2::CommandPtr autoScoreCommand = frc2::InstantCommand([] {}).ToPtr();
 
   bool m_aimbotEnabled = false;
+  bool m_autoScoringEnabled = false;
   bool m_shouldAim = false;
   bool m_autoAcquiringNote = false;
+  bool m_ramping = false;
   void ToggleAimbot();
+  void ToggleAutoScoring();
   std::optional<frc::Rotation2d> GetRotationTargetOverride();
 };

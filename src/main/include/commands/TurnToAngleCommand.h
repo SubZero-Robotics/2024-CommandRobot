@@ -18,11 +18,12 @@
 
 #include "subsystems/DriveSubsystem.h"
 
-class TurnToAngle : public frc2::CommandHelper<frc2::Command, TurnToAngle> {
+class TurnToAngleCommand
+    : public frc2::CommandHelper<frc2::Command, TurnToAngleCommand> {
  public:
-  explicit TurnToAngle(DriveSubsystem *drive,
-                       std::function<units::degree_t()> angle,
-                       bool relative = false)
+  explicit TurnToAngleCommand(DriveSubsystem *drive,
+                              std::function<units::degree_t()> angle,
+                              bool relative = false)
       : isFinished{false},
         m_drive{drive},
         m_relative{relative},

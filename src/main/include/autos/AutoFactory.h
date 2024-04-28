@@ -35,9 +35,9 @@ bool AutoFileExists(std::string fileName) {
 
 frc2::CommandPtr PathPlannerPathFromName(std::string autoName) {
   if (!AutoFileExists(autoName)) {
-    ConsoleWriter.logError(
-        "Auto Factory", "AUTO '%s' DOES NOT EXIST HELP US EVAN",
-        autoName.c_str());
+    ConsoleWriter.logError("Auto Factory",
+                           "AUTO '%s' DOES NOT EXIST HELP US EVAN",
+                           autoName.c_str());
     return GetEmptyCommand();
   }
   return pathplanner::PathPlannerAuto(autoName).ToPtr();
@@ -55,7 +55,7 @@ frc2::CommandPtr GetAuto(AutoConstants::AutoType type) {
       return PathPlannerPathFromName("Place and leave");
     case AutoType::ThreeNoteAuto:
       return PathPlannerPathFromName("3 Note Auto");
-    case AutoType::TwoNoteAuto:
+    case AutoType::TwoNoteAmpSide:
       return PathPlannerPathFromName("2 Note Amp Side");
     case AutoType::TwoNoteCenter:
       return PathPlannerPathFromName("2 Note Center Note 3");
@@ -63,6 +63,12 @@ frc2::CommandPtr GetAuto(AutoConstants::AutoType type) {
       return PathPlannerPathFromName("2 Note Source Side");
     case AutoType::ThreeNoteCenter:
       return PathPlannerPathFromName("3 Note Center Note 3 + 4");
+    case AutoType::TwoNoteAuto:
+      return PathPlannerPathFromName("2 Note Auto");
+    case AutoType::TwoNoteInAmp:
+      return PathPlannerPathFromName("2 In Amp");
+    case AutoType::TwoInSpeakerTwoInAmp:
+      return PathPlannerPathFromName("2 In Speaker 2 In Amp");
     case AutoType::LeaveWing:
       return PathPlannerPathFromName(AutoConstants::kDefaultAutoName);
     default:

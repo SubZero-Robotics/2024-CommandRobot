@@ -20,6 +20,88 @@
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 
+static frc2::CommandPtr StopIntakeAndScoring(ScoringSubsystem* scoring,
+                                             IntakeSubsystem* intake) {
+  return frc2::FunctionalCommand(
+             // onInit
+             [] {},
+             // onExecute
+             [intake, scoring] {
+               intake->Stop();
+               scoring->Stop();
+             },
+             // onEnd
+             [intake, scoring](bool interupted) {
+               intake->Stop();
+               scoring->Stop();
+             },
+             // isFinished
+             [intake, scoring] { return true; },
+             // req
+             {intake, scoring})
+      .ToPtr();
+}
+
+static frc2::CommandPtr RunUntilNotePresentUpper(ScoringSubsystem* scoring,
+                                                 IntakeSubsystem* intake) {
+  return ConsoleVerbose("Score Command", "RunUntilNotePresentUpper%s", "")
+      .AndThen(frc2::FunctionalCommand(
+                   // onInit
+                   [] {},
+                   // onExecute
+                   [intake, scoring] {
+                     intake->In();
+                     scoring->SpinVectorSide(ScoringDirection::AmpSide);
+                   },
+                   // onEnd
+                   [intake, scoring](bool interupted) {},
+                   // isFinished
+                   [intake, scoring] { return intake->NotePresentUpperAll(); },
+                   // req
+                   {intake, scoring})
+                   .ToPtr())
+      .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
+      .AndThen(StopIntakeAndScoring(scoring, intake));
+}
+
+static frc2::CommandPtr RunUntilNotePresentLower(ScoringSubsystem* scoring,
+                                                 IntakeSubsystem* intake) {
+  return ConsoleVerbose("Score Command", "RunUntilNotePresentLower%s", "")
+      .AndThen(frc2::FunctionalCommand(
+                   // onInit
+                   [] {},
+                   // onExecute
+                   [intake, scoring] {
+                     intake->Out();
+                     scoring->SpinVectorSide(ScoringDirection::PodiumSide);
+                   },
+                   // onEnd
+                   [intake, scoring](bool interupted) {},
+                   // isFinished
+                   [intake, scoring] { return intake->NotePresentLower(); },
+                   // req
+                   {intake, scoring})
+                   .ToPtr())
+      .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
+      .AndThen(StopIntakeAndScoring(scoring, intake));
+}
+
+static frc2::CommandPtr PreScoreShuffle(
+    std::function<ScoringDirection()> direction, ScoringSubsystem* scoring,
+    IntakeSubsystem* intake) {
+  // This PreShuffle forces the note into the upper beam breaks before it is
+  // pull back down
+
+  return (ConsoleVerbose("Score Command", "Pre Score Shuffle%s", "")
+              .AndThen(RunUntilNotePresentUpper(scoring, intake))
+              .AndThen(RunUntilNotePresentLower(scoring, intake))
+              .WithTimeout(1_s)
+              .FinallyDo([intake, scoring] {
+                intake->Stop();
+                scoring->Stop();
+              }));
+}
+
 namespace ScoringCommands {
 using namespace ScoringConstants;
 
@@ -69,39 +151,10 @@ static bool IsNoteTopSide(IntakeSubsystem* intake, ScoringDirection direction) {
     case ScoringDirection::Subwoofer:
       return intake->NotePresentUpperAmp();
     case ScoringDirection::PodiumSide:
+    case ScoringDirection::FeedPodium:
+    default:
       return intake->NotePresentUpperPodium();
   }
-}
-
-static frc2::CommandPtr PreScoreShuffle(
-    std::function<ScoringDirection()> direction, ScoringSubsystem* scoring,
-    IntakeSubsystem* intake) {
-  return ConsoleInfo("Scoring", "Pre Score Shuffle%s", "")
-      .AndThen(frc2::FunctionalCommand(
-                   // on init
-                   [scoring, intake, direction] {
-                     scoring->SpinVectorSide(direction());
-                     intake->Out();
-                   },
-                   // on execute
-                   [] {},
-                   // on end
-                   [scoring, intake](bool interupted) {
-                     scoring->Stop();
-                     intake->Stop();
-                   },
-                   // is finished
-                   [intake, direction] {
-                     return !IsNoteTopSide(intake, direction());
-                   },
-                   // reqs
-                   {intake, scoring})
-                   .ToPtr())
-      .WithTimeout(1_s)
-      .FinallyDo([intake, scoring] {
-        intake->Stop();
-        scoring->Stop();
-      });
 }
 
 static frc2::CommandPtr ScoreShoot(std::function<ScoringDirection()> direction,
@@ -142,13 +195,26 @@ static frc2::CommandPtr Score(std::function<ScoringDirection()> direction,
                               IntakeSubsystem* intake, ArmSubsystem* arm) {
   return (
              // Downshuffle until either of the bottom two beam breaks is broken
-             ScoreRamp(direction, scoring, intake, arm)
-                 .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
-                 .AndThen(ScoreShoot(direction, scoring, intake, arm))
+             (PreScoreShuffle(direction, scoring, intake)
+                  .AndThen(ScoreRamp(direction, scoring, intake, arm))
+                  .AndThen(frc2::WaitCommand(kFlywheelRampDelay).ToPtr())
+                  .AndThen(ScoreShoot(direction, scoring, intake, arm).FinallyDo([intake, scoring] {
+                   intake->Stop();
+                   scoring->Stop();
+                 })))
+                 .FinallyDo([intake, scoring] {
+                   intake->Stop();
+                   scoring->Stop();
+                 })
              // Unless note isn't present
              // timeout after 3 seconds
              // finally stop everything
              )
-      .WithTimeout(3_s);
+      .Unless([intake] { return !intake->NotePresent(); })
+      .WithTimeout(1.5_s)
+      .FinallyDo([intake, scoring] {
+        intake->Stop();
+        scoring->Stop();
+      });
 }
 }  // namespace ScoringCommands

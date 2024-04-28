@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.385144912783465,
-        "y": 2.36
+        "x": 8.280700937992206,
+        "y": 2.4335446126362994
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.1318172152883745,
-        "y": 1.9735572932723469
+        "x": 7.027373240497115,
+        "y": 2.0471019059086464
       },
       "isLocked": false,
       "linkedName": "Center Note 4"
@@ -52,25 +52,7 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 1.4,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Spin up Speaker"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.5,
     "maxAcceleration": 3.0,

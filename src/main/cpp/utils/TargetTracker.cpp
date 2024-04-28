@@ -3,6 +3,8 @@
 #include <frc/RobotBase.h>
 #include <frc2/command/DeferredCommand.h>
 
+#include <ranges>
+
 #include "commands/DriveVelocityCommand.h"
 #include "utils/Commands/IntakeCommands.h"
 
@@ -24,11 +26,25 @@ std::vector<DetectedObject> TargetTracker::GetTargets() {
                    return DetectedObject(det);
                  });
 
+  std::vector<DetectedObject> filteredObjects;
+  std::copy_if(objects.begin(), objects.end(),
+               std::inserter(filteredObjects, filteredObjects.end()),
+               [this](const DetectedObject& object) {
+                 return object.areaPercentage >=
+                        m_config.areaPercentageThreshold;
+               });
+
   return objects;
 }
 
 std::optional<DetectedObject> TargetTracker::GetBestTarget(
     std::vector<DetectedObject>& targets) {
+  static int counter = 0;
+  if (!frc::RobotBase::IsReal()) {
+    return DetectedObject(1, 0.75, units::degree_t((counter++ % (51 * 20)) / 20 - 25), 30_deg,
+                          0.08, {});
+  }
+
   if (targets.empty()) {
     return std::nullopt;
   }

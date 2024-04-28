@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot Subwoofer"
+            "name": "Score Subwoofer"
           }
         },
         {
@@ -38,13 +38,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot Subwoofer"
+            "name": "Score Subwoofer"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "Speaker to Center Note 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Note 1 to Speaker"
           }
         }
       ]

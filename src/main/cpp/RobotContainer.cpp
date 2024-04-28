@@ -62,14 +62,14 @@ RobotContainer::RobotContainer() {
             m_driverController.GetLeftX(), m_driverController.GetLeftY(),
             OIConstants::kDriveDeadband);
 
-        TurnToPose* turnToPose = m_shouldAim ? &m_turnToPose : nullptr;
+        ITurnToTarget* turnToTarget = m_shouldAim ? &m_turnToPose : nullptr;
 
         m_drive.Drive(
             -units::meters_per_second_t{axes.y},
             -units::meters_per_second_t{axes.x},
             -units::radians_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-            true, true, kLoopTime, turnToPose);
+            true, true, kLoopTime, turnToTarget);
       },
       {&m_drive}));
 #ifndef TEST_SWERVE_BOT
@@ -98,21 +98,8 @@ void RobotContainer::RegisterAutos() {
           [this] { ConsoleWriter.logVerbose("Autos", "Intaking %s", ""); })
           .ToPtr()
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
-  using namespace AutoConstants;
-  m_chooser.SetDefaultOption(AutoConstants::kDefaultAutoName,
-                             AutoType::LeaveWing);
-  m_chooser.AddOption("4 Note Auto", AutoType::FourNoteAuto);
-  m_chooser.AddOption("Place and leave", AutoType::PlaceAndLeave);
-  m_chooser.AddOption("3 Note Auto", AutoType::ThreeNoteAuto);
-  m_chooser.AddOption("2 Note and Center Line", AutoType::TwoNoteAuto);
-  m_chooser.AddOption("2 Note Center Note Under Stage",
-                      AutoType::TwoNoteCenter);
-  m_chooser.AddOption("2 Note Source Side", AutoType::TwoNoteSource);
-  m_chooser.AddOption("3 Note Center Note 3 + 4", AutoType::ThreeNoteCenter);
 
-  m_chooser.AddOption("Empty Auto", AutoType::EmptyAuto);
-
-  ShuffleboardLogger::getInstance().logVerbose("Auto Modes", &m_chooser);
+  m_autoChooser.Initialize();
 }
 
 void RobotContainer::ConfigureButtonBindings() {
@@ -199,6 +186,20 @@ void RobotContainer::ConfigureButtonBindings() {
               &m_intake, &m_arm))
           .AndThen(m_leds.BlinkingFace())
           .AndThen(m_leds.Idling()));
+
+  m_driverController
+      .POVUp(frc2::CommandScheduler::GetInstance().GetActiveButtonLoop())
+      .CastTo<frc2::Trigger>()
+      .OnTrue(
+          m_rightClimb
+              .MoveToPositionAbsolute(ClimbConstants::kClimbExtensionPosition)
+              .AlongWith(m_leftClimb.MoveToPositionAbsolute(
+                  ClimbConstants::kClimbExtensionPosition)));
+
+  m_driverController
+      .POVDown(frc2::CommandScheduler::GetInstance().GetActiveButtonLoop())
+      .CastTo<frc2::Trigger>()
+      .OnTrue(frc2::InstantCommand([this] { ToggleAutoScoring(); }).ToPtr());
 
   ConfigureAutoBindings();
 #endif
@@ -332,8 +333,9 @@ void RobotContainer::ConfigureAutoBindings() {
 #endif
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
-  auto autoType = m_chooser.GetSelected();
+  auto autoType = m_autoChooser.GetSelectedValue();
   autoCommand = AutoFactory::GetAuto(autoType);
+
   return autoCommand.get();
 }
 
@@ -368,6 +370,19 @@ void RobotContainer::StopMotors() {
   m_scoring.Stop();
 }
 
+units::degree_t RobotContainer::CurveRotation(double sensitivity, double val,
+                                              double inMin, double inMax,
+                                              double outMin, double outMax) {
+  auto normalizedValue =
+      TurnToPose::NormalizeScalar(val, inMin, inMax, -1.0, 1.0);
+  double cubedVal = std::clamp(pow(normalizedValue, 3), -1.0, 1.0);
+  double rampedVal = std::clamp(
+      (sensitivity * (cubedVal) + (1.0 - sensitivity) * val), -1.0, 1.0);
+  double summedVal = cubedVal + rampedVal;
+  return units::degree_t(
+      TurnToPose::NormalizeScalar(summedVal, -1.0, 1.0, outMin, outMax));
+}
+
 void RobotContainer::Periodic() {
   frc::SmartDashboard::PutData("Robot2d", &m_mech);
 
@@ -376,15 +391,6 @@ void RobotContainer::Periodic() {
 
   m_turnToPose.Update();
   auto targets = m_tracker.GetTargets();
-
-  // ! This causes spam! Better way of tracking + updating individual targets?
-  // for (auto& target : targets) {
-  //   std::string label =
-  //       "tracked_gamepiece [" + std::to_string(target.confidence) + "]";
-  //   auto pose = m_tracker.GetTargetPose(target);
-
-  //   if (pose) m_drive.GetField()->GetObject(label)->SetPose(pose.value());
-  // }
 
   if (m_intake.NotePresent()) {
     // Note is present, get ready to score it
@@ -396,6 +402,32 @@ void RobotContainer::Periodic() {
         inRange = m_aimbotEnabled && true;
         m_turnToPose.SetTargetPose(location.trackedPose);
 
+        if (inRange && m_autoScoringEnabled && location.scoringRadius &&
+            location.scoringDirection &&
+            location.hypotDistance <= location.scoringRadius.value() &&
+            !autoScoreCommand.IsScheduled() && m_ramping) {
+          autoScoreCommand =
+              (m_leds.AutoScoring()
+                   .AndThen(ScoringCommands::Score(
+                       [location] { return location.scoringDirection.value(); },
+                       &m_scoring, &m_intake, &m_arm))
+                   .AndThen(m_leds.Idling()))
+                  .WithTimeout(4_s)
+                  .FinallyDo([this] { m_ramping = false; });
+          // ? How do we know that the shooter is ramped up enough?
+          // Re: https://i.ytimg.com/vi/8Jul5SuPYJc/mqdefault.jpg
+          autoScoreCommand.Schedule();
+        } else if (inRange && m_autoScoringEnabled &&
+                   location.scoringDirection &&
+                   !autoScoreCommand.IsScheduled() && !m_ramping) {
+          ScoringDirection direction = location.scoringDirection
+                                           ? location.scoringDirection.value()
+                                           : ScoringDirection::AmpSide;
+          m_leds.RampingAsync();
+          // m_scoring.StartScoringRamp(direction);
+          m_ramping = true;
+        }
+
         frc::SmartDashboard::PutNumber(
             "TURN TO POSE TARGET deg",
             location.trackedPose.Rotation().Degrees().value());
@@ -405,24 +437,44 @@ void RobotContainer::Periodic() {
     }
 
     m_shouldAim = m_aimbotEnabled && inRange;
+
+    if (!m_shouldAim || !m_autoScoringEnabled) {
+      m_ramping = false;
+    }
   } else {
+    auto bestTarget = m_tracker.GetBestTarget(targets);
     auto targetPose = m_tracker.GetBestTargetPose(targets);
+
+    if (targetPose) {
+      m_drive.GetField()->GetObject("note_target")->SetPose(targetPose.value());
+    }
 
     frc::SmartDashboard::PutBoolean("HAS TARGET LOCK",
                                     m_tracker.HasTargetLock(targets));
 
-    if (targetPose) {
-      // m_shouldAim = m_aimbotEnabled;
-      m_shouldAim = false;
-      m_turnToPose.SetTargetPose(targetPose.value());
+    if (bestTarget) {
+      m_shouldAim = m_aimbotEnabled;
+      auto centerDiff = bestTarget.value().centerX;
 
-      frc::SmartDashboard::PutNumber(
-          "TURN TO POSE TARGET deg",
-          targetPose.value().Rotation().Degrees().value());
+      auto normalizedTargetAngle = TurnToPose::NormalizeScalar(
+          centerDiff.value(), VisionConstants::kMinAngleDeg,
+          VisionConstants::kMaxAngleDeg, -1.0, 1.0);
+      normalizedTargetAngle =
+          std::clamp(pow(normalizedTargetAngle, 3), -1.0, 1.0);
+      centerDiff = units::degree_t(TurnToPose::NormalizeScalar(
+          normalizedTargetAngle, -1.0, 1.0, VisionConstants::kMinAngleDeg,
+          VisionConstants::kMaxAngleDeg));
+
+      // centerDiff = CurveRotation(0.375, centerDiff.value(), -30.0, 30.0,
+      // -30.0, 30.0);
+
+      m_turnToPose.SetTargetAngleRelative(-centerDiff);
+
+      frc::SmartDashboard::PutNumber("TURN TO ANGLE relative target deg",
+                                     -centerDiff.value());
     } else {
       m_shouldAim = false;
     }
-    // m_shouldAim = false;
   }
 }
 
@@ -442,6 +494,11 @@ std::optional<frc::Rotation2d> RobotContainer::GetRotationTargetOverride() {
 void RobotContainer::ToggleAimbot() {
   m_aimbotEnabled = !m_aimbotEnabled;
   frc::SmartDashboard::PutBoolean("aimbot enabled", m_aimbotEnabled);
+}
+
+void RobotContainer::ToggleAutoScoring() {
+  m_autoScoringEnabled = !m_autoScoringEnabled;
+  frc::SmartDashboard::PutBoolean("auto-scoring enabled", m_autoScoringEnabled);
 }
 
 frc2::CommandPtr RobotContainer::MoveToIntakePose() {
