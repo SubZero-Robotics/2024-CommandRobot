@@ -14,6 +14,7 @@ constexpr double kFeedSubwooferSpeed = 1;
 
 constexpr double kOutakeSpeed = -0.5;
 constexpr double kSecondaryIntakeOutSpeed = -0.05;
+constexpr double kPseudoBrakeModeSpeed = 0.1;
 
 constexpr uint8_t kCenterLowerBeamBreakDigitalPort = 3;
 constexpr uint8_t kCenterUpperBeamBreakDigitalPort = 1;

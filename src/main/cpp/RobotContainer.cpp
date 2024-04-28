@@ -190,8 +190,11 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController
       .POVUp(frc2::CommandScheduler::GetInstance().GetActiveButtonLoop())
       .CastTo<frc2::Trigger>()
-      .OnTrue(m_rightClimb.MoveToPositionAbsolute(20_in).AlongWith(
-          m_leftClimb.MoveToPositionAbsolute(20_in)));
+      .OnTrue(
+          m_rightClimb
+              .MoveToPositionAbsolute(ClimbConstants::kClimbExtensionPosition)
+              .AlongWith(m_leftClimb.MoveToPositionAbsolute(
+                  ClimbConstants::kClimbExtensionPosition)));
 
   m_driverController
       .POVDown(frc2::CommandScheduler::GetInstance().GetActiveButtonLoop())
@@ -367,8 +370,9 @@ void RobotContainer::StopMotors() {
   m_scoring.Stop();
 }
 
-units::degree_t RobotContainer::CurveRotation(double sensitivity, double val, double inMin,
-                              double inMax, double outMin, double outMax) {
+units::degree_t RobotContainer::CurveRotation(double sensitivity, double val,
+                                              double inMin, double inMax,
+                                              double outMin, double outMax) {
   auto normalizedValue =
       TurnToPose::NormalizeScalar(val, inMin, inMax, -1.0, 1.0);
   double cubedVal = std::clamp(pow(normalizedValue, 3), -1.0, 1.0);
@@ -453,13 +457,16 @@ void RobotContainer::Periodic() {
       auto centerDiff = bestTarget.value().centerX;
 
       auto normalizedTargetAngle = TurnToPose::NormalizeScalar(
-          centerDiff.value(), -30.0, 30.0, -1.0, 1.0);
+          centerDiff.value(), VisionConstants::kMinAngleDeg,
+          VisionConstants::kMaxAngleDeg, -1.0, 1.0);
       normalizedTargetAngle =
           std::clamp(pow(normalizedTargetAngle, 3), -1.0, 1.0);
       centerDiff = units::degree_t(TurnToPose::NormalizeScalar(
-          normalizedTargetAngle, -1.0, 1.0, -30.0, 30.0));
+          normalizedTargetAngle, -1.0, 1.0, VisionConstants::kMinAngleDeg,
+          VisionConstants::kMaxAngleDeg));
 
-      // centerDiff = CurveRotation(0.375, centerDiff.value(), -30.0, 30.0, -30.0, 30.0);
+      // centerDiff = CurveRotation(0.375, centerDiff.value(), -30.0, 30.0,
+      // -30.0, 30.0);
 
       m_turnToPose.SetTargetAngleRelative(-centerDiff);
 

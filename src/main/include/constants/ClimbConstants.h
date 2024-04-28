@@ -21,7 +21,7 @@ constexpr units::inch_t kMinClimberDistance = 0_in;
 // Maximum climber extension distance
 constexpr units::inch_t kMaxClimberDistance = 36_in;
 // Extended position
-constexpr units::inch_t kClimbExtensionPosition = 24_in;
+constexpr units::inch_t kClimbExtensionPosition = 20_in;
 // Retracted position
 constexpr units::inch_t kClimbRetractPosition = 1_in;
 constexpr units::inch_t kInPerRotation = 1_in / 23.1;

@@ -68,9 +68,9 @@ void TurnToPose::SetTargetPose(frc::Pose2d pose) {
 
 void TurnToPose::SetTargetAngleRelative(units::degree_t angle) {
   m_startPose = m_poseGetter();
-  auto wpiTransformation = frc::Transform2d(0_m, 0_m, angle);
-  auto wpiFinalPose = m_startPose.TransformBy(wpiTransformation);
-  m_targetAngle = wpiFinalPose.Rotation().Degrees();
+  // auto wpiTransformation = frc::Transform2d(0_m, 0_m, angle);
+  // auto wpiFinalPose = m_startPose.TransformBy(wpiTransformation);
+  // m_targetAngle = wpiFinalPose.Rotation().Degrees();
 
   m_targetAngle = m_startPose.RotateBy(angle).Rotation().Degrees();
   // m_targetAngle = wpiFinalPose.Rotation().Degrees();

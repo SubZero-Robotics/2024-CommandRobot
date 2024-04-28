@@ -4,6 +4,7 @@
 #include <frc/geometry/Transform3d.h>
 #include <photon/PhotonPoseEstimator.h>
 #include <units/length.h>
+#include <wpi/array.h>
 
 #include <string>
 
@@ -36,6 +37,12 @@ constexpr units::inch_t kCameraLensHeight = 15_in;
 constexpr double kConfidenceThreshold = 0.3;
 constexpr double kTrigDistancePercentage = 0.5;
 constexpr double kAreaPercentageThreshold = 0.04;
+
+constexpr double kMinAngleDeg = -30.0;
+constexpr double kMaxAngleDeg = 30.0;
+
+static const wpi::array<double, 3> kDrivetrainStd = {0.1, 0.1, 0.1};
+static const wpi::array<double, 3> kVisionStd = {0.9, 0.9, 0.9};
 
 constexpr units::degree_t kGamepieceRotation = 180_deg;
 constexpr frc::Pose2d kSimGamepiecePose =

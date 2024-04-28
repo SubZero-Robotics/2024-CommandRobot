@@ -70,8 +70,10 @@ static frc2::CommandPtr DowntakeUntilPresent(IntakeSubsystem* intake,
 static frc2::CommandPtr Intake(IntakeSubsystem* intake,
                                ScoringSubsystem* scoring) {
   return frc2::InstantCommand([intake, scoring] {
-                 scoring->SpinAmp(0.1, 0.1);
-               }).ToPtr()
+           scoring->SpinAmp(IntakingConstants::kPseudoBrakeModeSpeed,
+                            IntakingConstants::kPseudoBrakeModeSpeed);
+         })
+      .ToPtr()
       .AndThen(RunUntilNotePresentUpper(scoring, intake))
       .AndThen(ConsoleInfo("Intk", "%s", "Intook"))
       .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
