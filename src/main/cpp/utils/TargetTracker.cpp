@@ -171,6 +171,8 @@ units::inch_t TargetTracker::GetDistanceToTarget(const DetectedObject& target) {
   frc::SmartDashboard::PutNumber("TargetTracker Pixel Width", pixelWidth);
 
   auto otherDistance =
+      // TODO: Replace with constant
+      // This ensures we don't get a wildly small width (= very far away) if bounding box is wrong/missing
       pixelWidth > 3
           ? ((m_config.gamepieceWidth * m_config.focalLength) / pixelWidth)
           : 0_in;
