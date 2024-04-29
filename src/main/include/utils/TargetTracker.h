@@ -29,7 +29,7 @@ struct DetectedCorners {
   DetectedCorner bottomLeft;
   DetectedCorner bottomRight;
 
-  DetectedCorners() {}
+  explicit DetectedCorners() {}
 
   explicit DetectedCorners(const std::vector<std::vector<double>>& corners) {
     if (corners.empty()) return;
