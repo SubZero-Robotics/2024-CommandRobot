@@ -29,7 +29,7 @@ struct DetectedCorners {
   DetectedCorner bottomLeft;
   DetectedCorner bottomRight;
 
-  explicit DetectedCorners() {}
+  DetectedCorners() {}
 
   explicit DetectedCorners(const std::vector<std::vector<double>>& corners) {
     if (corners.empty()) return;
@@ -61,7 +61,7 @@ struct DetectedObject {
   double areaPercentage;
   DetectedCorners detectedCorners;
 
-  explicit DetectedObject() {}
+  DetectedObject() {}
 
   explicit DetectedObject(uint8_t id, double conf, units::degree_t cX,
                           units::degree_t cY, double area,
