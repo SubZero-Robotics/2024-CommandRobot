@@ -391,6 +391,7 @@ void RobotContainer::Periodic() {
 
   m_turnToPose.Update();
   auto targets = m_tracker.GetTargets();
+  m_tracker.UpdateTrackedTargets(targets);
 
   if (m_intake.NotePresent()) {
     // Note is present, get ready to score it
