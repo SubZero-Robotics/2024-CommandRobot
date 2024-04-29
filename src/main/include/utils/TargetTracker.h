@@ -52,6 +52,7 @@ struct DetectedCorners {
 
 struct DetectedObject {
   uint8_t classId;
+  std::string className;
   double confidence;
   // Positive-right, center-zero
   units::degree_t centerX;
@@ -60,10 +61,13 @@ struct DetectedObject {
   double areaPercentage;
   DetectedCorners detectedCorners;
 
+  DetectedObject() {}
+
   explicit DetectedObject(uint8_t id, double conf, units::degree_t cX,
                           units::degree_t cY, double area,
                           std::vector<std::vector<double>> corners)
       : classId{id},
+        className{"unknown"},
         confidence{conf},
         centerX{cX},
         centerY{cY},
@@ -73,6 +77,7 @@ struct DetectedObject {
   explicit DetectedObject(
       const LimelightHelpers::DetectionResultClass& detectionResult)
       : classId{static_cast<uint8_t>(detectionResult.m_classID)},
+        className{detectionResult.m_className},
         confidence{detectionResult.m_confidence},
         centerX{detectionResult.m_TargetXDegreesCrosshairAdjusted},
         centerY{detectionResult.m_TargetYDegreesCrosshairAdjusted},
@@ -82,6 +87,12 @@ struct DetectedObject {
   void withRawCorners(const std::vector<double>& rawCorners) {
     detectedCorners = DetectedCorners(rawCorners);
   }
+};
+
+struct TrackedTarget {
+  DetectedObject object;
+  frc::Pose2d currentPose;
+  bool valid;
 };
 
 class TargetTracker {
@@ -99,11 +110,15 @@ class TargetTracker {
     /// applies the inverse to width-based estimate
     double trigDistancePercentage;
     double areaPercentageThreshold;
+
+    uint8_t maxTrackedItems;
+    frc::Pose2d invalidTrackedPose;
   };
 
   TargetTracker(TargetTrackerConfig config, IntakeSubsystem* intake,
                 ScoringSubsystem* scoring, DriveSubsystem* drive);
   std::vector<DetectedObject> GetTargets();
+  void UpdateTrackedTargets(const std::vector<DetectedObject>& objects);
   std::optional<DetectedObject> GetBestTarget(std::vector<DetectedObject>&);
   bool HasTargetLock(std::vector<DetectedObject>&);
   std::optional<frc::Pose2d> GetTargetPose(const DetectedObject&);
@@ -111,8 +126,15 @@ class TargetTracker {
   units::inch_t GetDistanceToTarget(const DetectedObject&);
 
  private:
+  /**
+   * Sort targets by ASC distance to camera
+   */
+  void SortTargetsByProximity(std::vector<DetectedObject>& objects);
+  void PublishTrackedTarget(const TrackedTarget& target, int index);
+
   TargetTrackerConfig m_config;
   IntakeSubsystem* m_intake;
   ScoringSubsystem* m_scoring;
   DriveSubsystem* m_drive;
+  std::vector<TrackedTarget> m_trackedTargets;
 };

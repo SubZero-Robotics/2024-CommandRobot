@@ -56,7 +56,8 @@ class RobotContainer {
   void Initialize();
   void StopMotors();
   void Periodic();
-  units::degree_t CurveRotation(double sensitivity, double val, double inMin, double inMax, double outMin, double outMax);
+  units::degree_t CurveRotation(double sensitivity, double val, double inMin,
+                                double inMax, double outMin, double outMax);
 
  private:
   frc::Mechanism2d m_mech{1, 1};
@@ -111,29 +112,34 @@ class RobotContainer {
   StateSubsystem m_state{m_subsystems, m_driverController,
                          m_operatorController};
 
-  TargetTracker m_tracker{{// Camera angle
-                           VisionConstants::kCameraAngle,
-                           // Camera lens height
-                           VisionConstants::kCameraLensHeight,
-                           // Confidence threshold
-                           VisionConstants::kConfidenceThreshold,
-                           // Limelight name
-                           VisionConstants::kLimelightName,
-                           // Gamepiece width
-                           VisionConstants::kNoteWidth,
-                           // Focal length
-                           VisionConstants::focalLength,
-                           // Sim gamepiece pose
-                           VisionConstants::kSimGamepiecePose,
-                           // Gamepiece rotation
-                           VisionConstants::kGamepieceRotation,
-                           // Trig-based distance percentage
-                           VisionConstants::kTrigDistancePercentage,
-                           // Area percentage threshold
-                           VisionConstants::kAreaPercentageThreshold},
-                          &m_intake,
-                          &m_scoring,
-                          &m_drive};
+  TargetTracker m_tracker{
+      {// Camera angle
+       VisionConstants::kCameraAngle,
+       // Camera lens height
+       VisionConstants::kCameraLensHeight,
+       // Confidence threshold
+       VisionConstants::kConfidenceThreshold,
+       // Limelight name
+       VisionConstants::kLimelightName,
+       // Gamepiece width
+       VisionConstants::kNoteWidth,
+       // Focal length
+       VisionConstants::focalLength,
+       // Sim gamepiece pose
+       VisionConstants::kSimGamepiecePose,
+       // Gamepiece rotation
+       VisionConstants::kGamepieceRotation,
+       // Trig-based distance percentage
+       VisionConstants::kTrigDistancePercentage,
+       // Area percentage threshold
+       VisionConstants::kAreaPercentageThreshold,
+       // Max # of tracked objects
+       10,
+       // Default pose to use when tracked target isn't found
+       frc::Pose2d{100_m, 100_m, frc::Rotation2d{0_deg}}},
+      &m_intake,
+      &m_scoring,
+      &m_drive};
 
   TurnToPose m_turnToPose{{// Rotation constraints
                            frc::TrapezoidProfile<units::radians>::Constraints{
