@@ -72,6 +72,7 @@ Following the WPILib command based structure we have broken our robot up into a 
 | [Drive](src/main/include/subsystems/DriveSubsystem.h)     | Drives robot                                              |
 | [Intake](src/main/include/subsystems/IntakeSubsystem.h)   | Activates the intake                                      |
 | [Scoring](src/main/include/subsystems/ScoringSubsystem.h) | Scores Notes                                              |
+| [Arm](src/main/include/subsystems/ArmSubsystem.h)         | Raises and lowers the amp arm, uses BaseSingleAxis        |
 | [LED](src/main/include/subsystems/LedSubsystem.h)         | Wrapper for the ConnectorX moduledriver, reads from State |
 | [Climb](src/main/include/subsystems/ClimbSubsystem.h)     | Climbs on the Stage                                       |
 | [State](src/main/include/subsystems/StateSubsystem.h)     | Finite state machine for the robot during teleop          |
@@ -88,8 +89,7 @@ Following the WPILib command based structure we have broken our robot up into a 
 |   Rear Right Turn   |   3    |     SparkMax      |    4     |
 |   Rear Left Turn    |   5    |     SparkMax      |    15    |
 |   Front Left Turn   |   7    |     SparkMax      |    12    |
-| Rear (right) Intake |   23   |     SparkMax      |    1     |
-| Front (left) Intake |   20   |     SparkMax      |    17    |
+|       Intake        |   20   |     SparkMax      |    17    |
 |       Vector        |   22   |     SparkMax      |    5     |
 |      Amp Lower      |   24   |     SparkFlex     |    19    |
 |      Amp Upper      |   21   |     SparkFlex     |    2     |
@@ -98,7 +98,7 @@ Following the WPILib command based structure we have broken our robot up into a 
 |    Left Climber     |   10   |     SparkMax      |    9     |
 |    Right Climber    |   11   |     SparkMax      |    10    |
 |    First Pigeon     |   9    |        N/A        |    22    |
-|    Second Pigeon    |   13   |        N/A        |    23    |
+|         Arm         |   62   |     SparkMax      |    1     |
 
 \* = Inverted
 
@@ -106,8 +106,9 @@ Following the WPILib command based structure we have broken our robot up into a 
 
 | Port  |            Device            |
 | :---: | :--------------------------: |
+|   1   |  Center Upper Beam Break     |
 |   2   | Lower Podium Side Beam Break |
-|   3   |       Center Beam Break      |
+|   3   |    Lower Center Beam Break   |
 |   4   |   Lower Amp Side Beam Break  |
 |   5   |   Upper Amp Side Beam Break  |
 |   6   | Upper Podium Side Beam Break |
@@ -122,25 +123,32 @@ Following the WPILib command based structure we have broken our robot up into a 
 | Laptop  |             Dynamic              |
 |   LL3   |           10.56.90.11            |
 |  LL2+   |           10.56.90.12            |
-| RPi 3B  |           10.56.90.13            |
+|   LL3   |           10.56.90.13            |
 
 ## State
 
-We have 9 states that each execute a function to schedule a command based on the desired state. This allows a secondary operator to perform sweeping, fully-autonomous functions such as scoring, intaking, and more. Each state also has a check to ensure one action cannot lead to another if there's a conflict. Furthermore, the robot's LEDs will indicate the current state with changing colors and patterns. States can be chained through use of `RunStateDeferred` to switch commands internally.
+We have 18 states that each execute a function to schedule a command based on the desired state. This allows a secondary operator to perform sweeping, fully-autonomous functions such as scoring, intaking, and more. Each state also has a check to ensure one action cannot lead to another if there's a conflict. Furthermore, the robot's LEDs will indicate the current state with changing colors and patterns. States can be chained through use of `RunStateDeferred` to switch commands internally.
 
-| Name                         | Purpose                                                |
-| :--------------------------- | :----------------------------------------------------- |
-| Manual                       | Do nothing                                             |
-| ScoringSpeaker               | Run to the podium location and score into the speaker  |
-| ScoringAmp                   | Run to the amp and score                               |
-| ScoringSubwoofer             | Run to the speaker location and score into the speaker |
-| Loaded                       | Note is loaded into the magazine                       |
-| Intaking                     | Drive forward while intaking until note is present     |
-| ClimbStage Left/Right/Center | Go to the stage location, climb, then balance          |
+| Name                         | Purpose                                                   |
+| :--------------------------- | :-------------------------------------------------------- |
+| Manual                       | Do nothing                                                |
+| ScoringSpeaker               | Run to the podium location and score into the speaker     |
+| ScoringAmp                   | Run to the amp and score                                  |
+| ScoringSubwoofer             | Run to the speaker location and score into the speaker    |
+| Loaded                       | Note is loaded into the magazine                          |
+| Intaking                     | Drive forward while intaking until note is present        |
+| ClimbStage Left/Right/Center | Go to the stage location, climb, then balance             |
+| Source Left/Center/Right     | Go to one of the three slots at the Source                |
+| Funni                        | Do a funni                                                |
+| AutoSequenceSpeaker          | Auto cycling sequence for the Speaker (Podium Scoring)    |
+| AutoSequenceAmp              | Auto cycling sequence for the Amp                         |
+| AutoSequenceSubwoofer        | Auto cycling sequence for the Speaker (Subwoofer Scoring) |
+| EnemyWing                    | Drives to the enemy wing, approximate pathing for Source  |
+| AllianceWing                 | Drives to own wing, approximate pathing for Scoring       |
 
 Notes:
 
-- Every automatic action can be interrupted by any input on the first operator's controller
+- Every automatic action can be interrupted by any input on the first operator's controller, as well as a panic button on the keypad
 - Every automatic action has a timeout
 - When moving to a location, on-the-fly pathplanner runs first for the approximate location from anywhere before a premade path is executed for a more accurate alignment with the target pose
 - Every automatic action completes by moving back into the Manual state
@@ -151,29 +159,30 @@ State actions are composed of underlying commands that are also called by the fi
 
 |                                     Command                                      |                                                 Purpose                                                 |
 | :------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------: |
-|           [BalanceCommand](src/main/include/commands/BalanceCommand.h)           |                      Automatically balance the robot while climbing based on gyro                       |
 |     [DriveVelocityCommand](src/main/include/commands/DriveVelocityCommand.h)     |                          Drives the robot at a set velocity in a set direction                          |
-|    [ExtendAbsoluteCommand](src/main/include/commands/ExtendAbsoluteCommand.h)    |                            Extends both ClimbSubsystems an absolute distance                            |
 |       [ExtendClimbCommand](src/main/include/commands/ExtendClimbCommand.h)       |                               Extends both ClimbSubsystems at a set speed                               |
 |      [FlywheelRampCommand](src/main/include/commands/FlywheelRampCommand.h)      | Ramps up one of the sides of the ScoringSubsystem to a predefined speed based on the `ScoringDirection` |
 |              [FeedCommand](src/main/include/commands/FeedCommand.h)              |     Feeds the note to one side of the robot using the vector motor based on the `ScoringDirection`      |
 |             [ShootCommand](src/main/include/commands/ShootCommand.h)             |                         Stops the shooting motors after the note has been shot                          |
-|          [IntakeInCommand](src/main/include/commands/IntakeInCommand.h)          |                           Spins the intake until the top beam break is broken                           |
-|   [IntakeInInitialCommand](src/main/include/commands/IntakeInInitialCommand.h)   |                      Spins the intake until **only** the top beam break is broken                       |
-| [IntakeInSecondaryCommand](src/main/include/commands/IntakeInSecondaryCommand.h) |                              Outakes until the bottom beam break is broken                              |
-|         [IntakeOutCommand](src/main/include/commands/IntakeOutCommand.h)         |                                    Evacuates a note out of the robot                                    |
-|      [RetractClimbCommand](src/main/include/commands/RetractClimbCommand.h)      |                         Retracts both ClimbSubsystems to a predefined position                          |
+|                  [Funni](src/main/include/commands/Funni.h)                      |                                                Does a funni                                             |
+|            [TurnToAngle](src/main/include/commands/TurnToAngle.h)                |                           Turns the robot to an angle using the gyro and PID                            |
 
 ## Command Compositions
 
-|       Command       |                                                                                        Purpose                                                                                        |  Timeout   |
-| :-----------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: |
-|       Rumble        |                                                                               Broken, Closed as wontfix                                                                               |    N/A     |
-|        Score        |           Shuffles the note down while running `FlywheelRampCommand`, runs `FeedCommand`, finally runs `ShootCommand`. If there is not a note present it exits immediately            | 5 Seconds  |
-|       Intake        | Runs `IntakeInInitialCommand`, waits a predefined delay, runs `IntakeInSecondaryCommand`, waits a predefined delay, stops the motors. If there is a note present it exits immediately | 5 seconds  |
-| FeedUntilNotPresent |                                                     Runs `FeedCommand` until the top beam break is not broken; stops the motors.                                                      |    N/A     |
-| DowntakeUntilPresent |                                                       Downtakes the note until the bottom beam break is broken; stops the motors.                                                       |    N/A     |
-|        Funni        |                                                                                     Does a Funni                                                                                      | 20 seconds |
+|       Command        |                                                                                        Purpose                                                                                        |  Timeout   |
+| :------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: |
+|       Intake         | Runs `IntakeInInitialCommand`, waits a predefined delay, runs `IntakeInSecondaryCommand`, waits a predefined delay, stops the motors. If there is a note present it exits immediately | 5 seconds  |
+| FeedUntilNotPresent  |                                                     Runs `FeedCommand` until the top beam break is not broken; stops the motors.                                                      |    N/A     |
+| DowntakeUntilPresent |                                                       Downtakes the note until the bottom beam break is broken; stops the motors.                                                     |    N/A     |
+|        Funni         |                                                                                     Does a Funni                                                                                      | 20 seconds |
+| StopIntakeAndScoring |                                                                Stops the intake and scoring motors; used to ensure nothing is left running.                                           |    N/A     |
+| RunUntilNotePresentUpper |                                                    Runs the intake until any of the upper beam breaks are broken; stops the motors.                                               |    N/A     |
+| RunUntilNotePresentLower |                                             Runs the intake until either the lower amp or podium beam breaks are broken; stops the motors.                                        |    N/A     |
+|    PreScoreShuffle   |                                                          Runs until note present upper, runs until note present lower, stops the motors.                                              |  1 second  |
+|    ArmScoringGoal    |    Takes in a ScoringDirection and decides which angle to set the arm to, returns a CommandPtr to set the arm's goal angle based on the ScoringDirection                              |    N/A     |
+|      ScoreRamp       |   Runs `ArmScoringGoal`, ramps the flywheel up to the speed based on the ScoringDirection. If there is not a note present it exits immediately.                                       |  3 seconds |
+|     ScoreShoot       |   Runs `FeedFeed`, waits a predefined delay, runs `ShootCommand`. If there is not a note present it exits immediately. Returns the arm to home                                        |  3 seconds |
+|        Score         |           Runs `ScoreRamp` and `ScoreShoot`                                                                                                                                           | 1.5 Seconds|
 
 ## Factory Commands
 
@@ -211,10 +220,10 @@ All robot states begin by calling `ShowFromState` with the `RobotState` on the L
 |       Loaded        |                                           Sets all zones to blink green                                            |
 |       Idling        |                                           Sets all zones to breathe blue                                           |
 |        Climb        |             Sets left and right zones to a blue sine roll, front and back zones to a yellow sine roll              |
-|AimbotEnable| Sets all LEDs to an acid green blink
-|OnTheFlyPP| Sets all LEDs to blue
-|SuccessfulIntake| Sets LEDs to green
-|VisionNoteDetected| Sets all LEDs chase orange
+|     AimbotEnable    |                                     Sets all LEDs to an acid green blink                                           |
+|     OnTheFlyPP      |                                              Sets all LEDs to blue                                                 |
+|   SuccessfulIntake  |                                               Sets LEDs to green                                                   |
+|  VisionNoteDetected |                                           Sets all LEDs chase orange                                               | 
 |        Error        |                                         Sets all zones to red and a blink                                          |
 | setZoneColorPattern |                                    Helper to set a zone to a color and pattern                                     |
 |     createZones     |                                      Helper to create a std::vector of zones                                       |
