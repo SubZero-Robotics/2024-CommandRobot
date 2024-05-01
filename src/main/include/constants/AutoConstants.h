@@ -68,8 +68,8 @@ static const std::vector<AutoChooser<AutoType>::AutoChooserEntry>
          {"3 notes", "high", "far", "source", "center"}},
         {{AutoType::EmptyAuto, "Empty Auto"},
          {"0 notes", "minimal", "close", "center"}},
-        {{AutoType::TwoNoteAuto, "2 Note Auto"},
-         {"2 notes", "decent", "far", "amp"}},
+        {{AutoType::TwoNoteAuto, "2 Note Auto++"},
+         {"3 notes", "decent", "far", "amp"}},
     };
 
 static const std::vector<AutoChooser<AutoType>::AutoChooserSelectorGroup>
@@ -88,8 +88,6 @@ extern const frc::TrapezoidProfile<units::degree>::Constraints
 
 extern const frc::TrapezoidProfile<units::meter>::Constraints
     kLinearAxisConstraints;
-
-const std::string kDefaultAutoName = "Leave Wing";
 
 const std::string kScoreSubwooferName = "Score Subwoofer";
 const std::string kShootSubwooferName = "Shoot Subwoofer";

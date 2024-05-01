@@ -70,7 +70,7 @@ frc2::CommandPtr GetAuto(AutoConstants::AutoType type) {
     case AutoType::TwoInSpeakerTwoInAmp:
       return PathPlannerPathFromName("2 In Speaker 2 In Amp");
     case AutoType::LeaveWing:
-      return PathPlannerPathFromName(AutoConstants::kDefaultAutoName);
+      return PathPlannerPathFromName("Leave Wing");
     default:
       ConsoleWriter.logWarning(
           "Auto Factory",
