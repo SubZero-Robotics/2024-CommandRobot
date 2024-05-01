@@ -97,9 +97,9 @@ const std::string kIntakeName = "Run Intake";
 const std::string kLedFunniName = "LedFunni";
 
 const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
-    pathplanner::PIDConstants(3.14, 0.0,
+    pathplanner::PIDConstants(1.5, 0.0,
                               0.0),             // Translation PID constants
-    pathplanner::PIDConstants(3.14, 0.0, 0.0),  // Rotation PID constants
+    pathplanner::PIDConstants(2, 0.0, 0.0),  // Rotation PID constants
     3.0_mps,                                    // Max module speed, in m/s
 #ifdef TEST_SWERVE_BOT
     0.4579874_m,  // Drive base radius in meters. Distance from robot center to
