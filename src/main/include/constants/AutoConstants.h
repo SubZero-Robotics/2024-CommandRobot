@@ -105,7 +105,7 @@ const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
     0.4579874_m,  // Drive base radius in meters. Distance from robot center to
 #endif
 #ifndef TEST_SWERVE_BOT
-    0.529844_m,
+    16.97_in,
 #endif
     // furthest module.
     pathplanner::ReplanningConfig()  // Default path replanning config.
