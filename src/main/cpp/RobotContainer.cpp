@@ -28,6 +28,7 @@
 #include "autos/AutoFactory.h"
 #include "commands/ExtendClimbCommand.h"
 #include "commands/Funni.h"
+#include "commands/IntakeOutCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "utils/InputUtils.h"
