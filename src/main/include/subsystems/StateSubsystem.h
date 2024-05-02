@@ -13,8 +13,6 @@
 #include "autos/PathFactory.h"
 #include "commands/ExtendClimbCommand.h"
 #include "commands/Funni.h"
-#include "commands/IntakeInCommand.h"
-#include "commands/IntakeOutCommand.h"
 #include "subsystems/ArmSubsystem.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"

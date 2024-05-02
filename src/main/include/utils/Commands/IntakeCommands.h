@@ -10,8 +10,6 @@
 #include "ScoreCommands.h"
 #include "commands/FeedCommand.h"
 #include "commands/FlywheelRampCommand.h"
-#include "commands/IntakeInInitialCommand.h"
-#include "commands/IntakeInSecondaryCommand.h"
 #include "commands/NoteShuffle.h"
 #include "commands/ShootCommand.h"
 #include "commands/TurnToAngleCommand.h"
@@ -114,54 +112,5 @@ static frc2::CommandPtr Intake(IntakeSubsystem* intake,
       .AndThen(ConsoleInfo("Intk", "%s", "DownShuffled"))
       .HandleInterrupt(
           [] { ConsoleWriter.logInfo("Intk", "AAAA INTERRUPTED EARLY"); });
-}
-
-static frc2::CommandPtr Intake2(IntakeSubsystem* intake,
-                                ScoringSubsystem* scoring) {
-  return frc2::InstantCommand([intake, scoring] {
-           //  intake->In(IntakingConstants::kIntakeAutoSpeed);
-           intake->In();
-           scoring->SpinVectorSide(ScoringDirection::AmpSide);
-         })
-      .ToPtr()
-      .AndThen(frc2::WaitCommand(0.02_s).ToPtr())
-      .AndThen(frc2::InstantCommand([intake, scoring] {
-                 intake->Stop();
-                 scoring->Stop();
-               }).ToPtr())
-      .AndThen(frc2::InstantCommand([intake, scoring] {
-                 intake->Out();
-                 scoring->SpinVectorSide(ScoringDirection::PodiumSide);
-                 scoring->SpinOutake(
-                     ScoringConstants::kScoringIntakingOutakeUpperSpeed,
-                     ScoringConstants::kScoringIntakingOutakeLowerSpeed);
-               }).ToPtr())
-      .AndThen(frc2::InstantCommand([intake, scoring] {
-                 intake->Stop();
-                 scoring->Stop();
-               }).ToPtr());
-}
-
-static frc2::CommandPtr IntakeAmpOnly(IntakeSubsystem* intake,
-                                      ScoringSubsystem* scoring) {
-  return frc2::FunctionalCommand(
-             // onInit
-             [] {},
-             // onExecute
-             [intake, scoring] {
-               //  intake->In(IntakingConstants::kIntakeAutoSpeed);
-               intake->In();
-               scoring->SpinVectorSide(ScoringDirection::AmpSide);
-               //  scoring->SpinOutake(
-               //      ScoringConstants::kScoringIntakingOutakeUpperSpeed,
-               //      ScoringConstants::kScoringIntakingOutakeLowerSpeed);
-             },
-             // onEnd
-             [intake, scoring](bool interupted) {},
-             // isFinished
-             [intake, scoring] { return intake->NotePresentUpper(); },
-             // req
-             {intake, scoring})
-      .ToPtr();
 }
 }  // namespace IntakingCommands

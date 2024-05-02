@@ -13,8 +13,6 @@
 #include "Constants.h"
 #include "commands/FeedCommand.h"
 #include "commands/FlywheelRampCommand.h"
-#include "commands/IntakeInInitialCommand.h"
-#include "commands/IntakeInSecondaryCommand.h"
 #include "commands/NoteShuffle.h"
 #include "commands/ShootCommand.h"
 #include "commands/TurnToAngleCommand.h"
