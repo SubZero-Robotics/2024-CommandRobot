@@ -292,14 +292,23 @@ All robot states begin by calling `ShowFromState` with the `RobotState` on the L
 |      Intaking       | Sets left and right zones to red and a chase pattern, sets the front and back zones to red and a sine roll pattern |
 |   ScoringSpeaker    |             Sets left and right and front zones to solid yellow, sets back zone to purple and a blink              |
 |     ScoringAmp      |               Sets left right and back zones to solid yellow, sets front zone to purple and a blink                |
+|  ScoringSubwoofer   |                                          Sets climbers to chasing yellow                                           |
 |       Loaded        |                                           Sets all zones to blink green                                            |
 |       Idling        |                                           Sets all zones to breathe blue                                           |
 |        Climb        |             Sets left and right zones to a blue sine roll, front and back zones to a yellow sine roll              |
+|        Funni        |                                                    Does a Funni                                                    |
+|      AngryFace      |                                    Plays an angry face animation on the matrix                                     |
+|      HappyFace      |                                     Plays a happy face animation on the matrix                                     |
+|    BlinkingFace     |                               Plays an idling, blinking face animation on the matrix                               |
+|    SurprisedFace    |                 Shows a surprised/dazed face; appears automatically when acceleration exceeds 7Gs                  |
+|     AmogusFace      |                                                ඞ It's A M O G U S ඞ                                                |
+|       OwOFace       |                                         \*_Notices LEDs_\* OwO what's this                                         |
 |    AimbotEnable     |                                        Sets all LEDs to an acid green blink                                        |
 |     OnTheFlyPP      |                                               Sets all LEDs to blue                                                |
 |  SuccessfulIntake   |                                                 Sets LEDs to green                                                 |
 | VisionNoteDetected  |                                             Sets all LEDs chase orange                                             |
 |        Error        |                                         Sets all zones to red and a blink                                          |
+|     AutoScoring     |                            Turns LEDs to a climbing purple to indicate imminent scoring                            |
 | setZoneColorPattern |                                    Helper to set a zone to a color and pattern                                     |
 |     createZones     |                                      Helper to create a std::vector of zones                                       |
 |    syncAllZones     |                                              Helper to sync all zones                                              |
