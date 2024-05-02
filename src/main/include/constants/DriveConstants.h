@@ -24,9 +24,9 @@ constexpr units::meter_t kWheelBase =
     0.5588_m;  // Distance between centers of front and back wheels on robot
 #else
 constexpr units::meter_t kTrackWidth =
-    0.66_m;  // Distance between centers of right and left wheels on robot
+    24_in;  // Distance between centers of right and left wheels on robot
 constexpr units::meter_t kWheelBase =
-    0.66_m;  // Distance between centers of front and back wheels on robot
+    24_in;  // Distance between centers of front and back wheels on robot
 #endif
 // Angular offsets of the modules relative to the chassis in radians
 constexpr double kFrontLeftChassisAngularOffset = -std::numbers::pi / 2;
