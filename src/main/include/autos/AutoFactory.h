@@ -69,6 +69,8 @@ frc2::CommandPtr GetAuto(AutoConstants::AutoType type) {
       return PathPlannerPathFromName("2 In Amp");
     case AutoType::TwoInSpeakerTwoInAmp:
       return PathPlannerPathFromName("2 In Speaker 2 In Amp");
+    case AutoType::ThreeNoteSimp:
+      return PathPlannerPathFromName("3 Note Simp");
     case AutoType::LeaveWing:
       return PathPlannerPathFromName("Leave Wing");
     default:

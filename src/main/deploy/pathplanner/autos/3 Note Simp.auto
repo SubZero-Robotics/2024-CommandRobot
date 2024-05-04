@@ -1,0 +1,67 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3769542042900886,
+      "y": 5.577308253853149
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Subwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Speaker to Note 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 2 to Speaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Subwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Speaker to Note 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 3 to Speaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Subwoofer"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Simp Path"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
