@@ -4,7 +4,8 @@
 
 class LeftClimbSubsystem : public ClimbSubsystem {
  public:
-  explicit LeftClimbSubsystem(frc::MechanismObject2d* node = nullptr)
+  explicit LeftClimbSubsystem(std::function<bool()> ignoreLimit,
+                              frc::MechanismObject2d* node = nullptr)
       : ClimbSubsystem(
             "Left Climber", m_controller,
             {// Min distance
@@ -33,7 +34,8 @@ class LeftClimbSubsystem : public ClimbSubsystem {
              [](units::meter_t from) {
                return std::to_string(from.convert<units::inch>().value()) +
                       " inches :(";
-             }},
+             },
+             ignoreLimit},
             node) {
     m_motor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
   }

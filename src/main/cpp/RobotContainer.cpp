@@ -99,6 +99,9 @@ void RobotContainer::RegisterAutos() {
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
 
   m_autoChooser.Initialize();
+  m_ignoreLimitChooser.SetDefaultOption("Don't Ignore", false);
+  m_ignoreLimitChooser.AddOption("Ignore", true);
+  frc::SmartDashboard::PutData("Climb Limits", &m_ignoreLimitChooser);
 }
 
 void RobotContainer::ConfigureButtonBindings() {
@@ -198,7 +201,13 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController
       .POVDown(frc2::CommandScheduler::GetInstance().GetActiveButtonLoop())
       .CastTo<frc2::Trigger>()
-      .OnTrue(frc2::InstantCommand([this] { ToggleAutoScoring(); }).ToPtr());
+      .OnTrue(m_leds.ScoringSpeaker()
+                  .AndThen(ScoringCommands::Score(
+                      [] { return ScoringDirection::FeedPodium; }, &m_scoring,
+                      &m_intake, &m_arm))
+                  .AndThen(m_leds.BlinkingFace())
+                  .AndThen(m_leds.Idling()));
+  // .OnTrue(frc2::InstantCommand([this] { ToggleAutoScoring(); }).ToPtr());
 
   ConfigureAutoBindings();
 #endif
@@ -383,6 +392,8 @@ units::degree_t RobotContainer::CurveRotation(double sensitivity, double val,
 }
 
 void RobotContainer::Periodic() {
+  frc::SmartDashboard::PutBoolean("Disable Climb Limits", m_ignoreClimbLimits);
+
   frc::SmartDashboard::PutData("Robot2d", &m_mech);
 
   frc::SmartDashboard::PutBoolean("TURN TO POSE AT GOAL",
@@ -476,6 +487,8 @@ void RobotContainer::Periodic() {
       m_shouldAim = false;
     }
   }
+
+  m_ignoreClimbLimits = m_ignoreLimitChooser.GetSelected();
 }
 
 std::optional<frc::Rotation2d> RobotContainer::GetRotationTargetOverride() {

@@ -73,22 +73,30 @@ class RobotContainer {
 
   LedSubsystem m_leds;
 
+  bool m_ignoreClimbLimits = false;
+
   // The chooser for the autonomous routines
   AutoChooser<AutoConstants::AutoType> m_autoChooser{
       AutoConstants::kChooserEntries, AutoConstants::kChooserGroups,
       "Auto Selector"};
+
+  frc::SendableChooser<bool> m_ignoreLimitChooser;
 
 #ifdef TEST_SWERVE_BOT
 
 #endif
 
 #ifndef TEST_SWERVE_BOT
-  LeftClimbSubsystem m_leftClimb{(frc::MechanismObject2d*)m_mech.GetRoot(
-      "Climber Left", MechanismConstants::kClimberLeftX,
-      MechanismConstants::kClimberLeftY)};
-  RightClimbSubsystem m_rightClimb{(frc::MechanismObject2d*)m_mech.GetRoot(
-      "Climber Right", MechanismConstants::kClimberRightX,
-      MechanismConstants::kClimberRightY)};
+  LeftClimbSubsystem m_leftClimb{
+      [this] { return m_ignoreClimbLimits; },
+      (frc::MechanismObject2d*)m_mech.GetRoot(
+          "Climber Left", MechanismConstants::kClimberLeftX,
+          MechanismConstants::kClimberLeftY)};
+  RightClimbSubsystem m_rightClimb{
+      [this] { return m_ignoreClimbLimits; },
+      (frc::MechanismObject2d*)m_mech.GetRoot(
+          "Climber Right", MechanismConstants::kClimberRightX,
+          MechanismConstants::kClimberRightY)};
   frc::MechanismRoot2d* armRoot = m_mech.GetRoot(
       "Arm Root", MechanismConstants::kArmRootX, MechanismConstants::kArmRootY);
   frc::MechanismLigament2d* armPost = armRoot->Append<frc::MechanismLigament2d>(
