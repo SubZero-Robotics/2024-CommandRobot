@@ -342,7 +342,7 @@ void RobotContainer::ConfigureAutoBindings() {
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
   auto autoType = m_autoChooser.GetSelectedValue();
-  autoCommand = AutoFactory::GetAuto(autoType);
+  autoCommand = m_autoFactory.GetAuto(autoType);
 
   return autoCommand.get();
 }

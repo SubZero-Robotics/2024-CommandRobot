@@ -19,6 +19,7 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 #include "Constants.h"
+#include "autos/AutoFactory.h"
 #include "subsystems/ArmSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
@@ -79,6 +80,8 @@ class RobotContainer {
   AutoChooser<AutoConstants::AutoType> m_autoChooser{
       AutoConstants::kChooserEntries, AutoConstants::kChooserGroups,
       "Auto Selector"};
+
+  AutoFactory<AutoConstants::AutoType> m_autoFactory{AutoConstants::kPpAutos};
 
   frc::SendableChooser<bool> m_ignoreLimitChooser;
 
