@@ -201,13 +201,7 @@ void RobotContainer::ConfigureButtonBindings() {
   m_driverController
       .POVDown(frc2::CommandScheduler::GetInstance().GetActiveButtonLoop())
       .CastTo<frc2::Trigger>()
-      .OnTrue(m_leds.ScoringSpeaker()
-                  .AndThen(ScoringCommands::Score(
-                      [] { return ScoringDirection::FeedPodium; }, &m_scoring,
-                      &m_intake, &m_arm))
-                  .AndThen(m_leds.BlinkingFace())
-                  .AndThen(m_leds.Idling()));
-  // .OnTrue(frc2::InstantCommand([this] { ToggleAutoScoring(); }).ToPtr());
+      .OnTrue(frc2::InstantCommand([this] { ToggleAutoScoring(); }).ToPtr());
 
   ConfigureAutoBindings();
 #endif
@@ -277,13 +271,25 @@ void RobotContainer::ConfigureAutoBindings() {
                                         }).ToPtr());
 
   // Maps to 4 on keyboard
-  m_operatorController.Button(7).OnTrue(frc2::InstantCommand([this] {
-                                          if (!m_state.m_active) {
-                                            m_state.m_currentState =
-                                                RobotState::AutoSequenceAmp;
-                                            m_state.SetDesiredState();
-                                          }
-                                        }).ToPtr());
+  m_operatorController.Button(7).OnTrue(
+      m_leds.OwOFace()
+          .AndThen(m_leds.Error())
+          .AndThen(m_rightClimb.MoveToPositionAbsolute(10_in).AlongWith(
+              m_leftClimb.MoveToPositionAbsolute(10_in)))
+          .AndThen(m_arm.MoveToPositionAbsolute(ArmConstants::kAmpRotation))
+          .AndThen(frc2::WaitCommand(8_s).ToPtr())
+          .AndThen(m_rightClimb.MoveToPositionAbsolute(1_in).AlongWith(
+              m_leftClimb.MoveToPositionAbsolute(1_in)))
+          .AndThen(m_arm.MoveToPositionAbsolute(ArmConstants::kHomeRotation))
+          .AndThen(m_leds.Idling()));
+
+  // .OnTrue(frc2::InstantCommand([this] {
+  //                                         if (!m_state.m_active) {
+  //                                           m_state.m_currentState =
+  //                                               RobotState::AutoSequenceAmp;
+  //                                           m_state.SetDesiredState();
+  //                                         }
+  //                                       }).ToPtr());
 
   // Maps to 5 on keyboard
   m_operatorController.Button(8).OnTrue(
@@ -291,8 +297,8 @@ void RobotContainer::ConfigureAutoBindings() {
 
   // Maps to 6 on keyboard
   m_operatorController.Button(9).OnTrue(
-      m_rightClimb.MoveToPositionAbsolute(18_in).AlongWith(
-          m_leftClimb.MoveToPositionAbsolute(18_in)));
+      m_rightClimb.MoveToPositionAbsolute(20_in).AlongWith(
+          m_leftClimb.MoveToPositionAbsolute(20_in)));
 
   // Maps to 1 on keyboard
   m_operatorController.Button(10).OnTrue(frc2::InstantCommand([this] {

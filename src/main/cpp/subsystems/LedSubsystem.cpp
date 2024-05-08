@@ -10,9 +10,12 @@ using namespace ConnectorX;
 using namespace LEDConstants;
 
 void LedSubsystem::Periodic() {
-  if (abs(m_accel.GetX()) >= kAccelThreshold ||
-      abs(m_accel.GetY()) >= kAccelThreshold) {
-    showFace(EyePattern::Surprised);
+  // if (abs(m_accel.GetX()) >= kAccelThreshold ||
+  //     abs(m_accel.GetY()) >= kAccelThreshold) {
+  //   showFace(EyePattern::Surprised);
+  // }
+  if (m_accel.GetY() <= -kAccelThreshold) {
+    showFace(EyePattern::OwO);
   }
 }
 
@@ -364,6 +367,14 @@ frc2::CommandPtr LedSubsystem::AmogusFace() {
            setZoneColorPatternAsync(LedZone::Back, LedPort::P1,
                                     ColorConstants::kRed, PatternType::Amogus,
                                     false, 125, false);
+         })
+      .ToPtr();
+}
+
+frc2::CommandPtr LedSubsystem::OwOFace() {
+  return frc2::InstantCommand([this] {
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s", "OwO");
+           showFace(EyePattern::OwO);
          })
       .ToPtr();
 }

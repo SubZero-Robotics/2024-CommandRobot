@@ -244,7 +244,7 @@ enum class PatternType {
   SetAll = 1,
   Blink = 2,
   RGBFade = 3,
-  HackerMode = 4, // No worky
+  HackerMode = 4,  // No worky
   Breathe = 5,
   SineRoll = 6,
   Chase = 7,
@@ -253,6 +253,7 @@ enum class PatternType {
   BlinkingEyes = 10,
   SurprisedEyes = 11,
   Amogus = 12,
+  OwOEyes = 14,
 };
 
 enum class PinMode {
