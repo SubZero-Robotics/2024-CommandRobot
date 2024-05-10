@@ -9,6 +9,7 @@
 
 #include <filesystem>
 #include <functional>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -19,7 +20,8 @@
 template <typename T>
 class AutoFactory {
  public:
-  AutoFactory(const std::map<T, std::string>& autos) : m_autos{autos} {}
+  explicit AutoFactory(const std::map<T, std::string>& autos)
+      : m_autos{autos} {}
 
  private:
   const std::map<T, std::string>& m_autos;

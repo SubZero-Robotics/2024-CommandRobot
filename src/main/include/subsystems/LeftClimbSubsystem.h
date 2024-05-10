@@ -2,6 +2,8 @@
 
 #include "ClimbSubsystem.h"
 
+#include <functional>
+
 class LeftClimbSubsystem : public ClimbSubsystem {
  public:
   explicit LeftClimbSubsystem(std::function<bool()> ignoreLimit,
