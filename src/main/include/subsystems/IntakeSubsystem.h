@@ -1,6 +1,7 @@
 #pragma once
 
 #include <frc/DigitalInput.h>
+#include <frc/filter/Debouncer.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
 #include <hal/SimDevice.h>
@@ -51,16 +52,28 @@ class IntakeSubsystem : public frc2::SubsystemBase {
 
   frc::DigitalInput m_centerLowerBeamBreak{
       IntakingConstants::kCenterLowerBeamBreakDigitalPort};
+  frc::Debouncer m_centerLowerDb{IntakingConstants::kDebounceTime,
+                               IntakingConstants::kDebounceType};
   frc::DigitalInput m_centerUpperBeamBreak{
       IntakingConstants::kCenterUpperBeamBreakDigitalPort};
+  frc::Debouncer m_centerUpperDb{IntakingConstants::kDebounceTime,
+                                 IntakingConstants::kDebounceType};
   frc::DigitalInput m_lowerPodiumBeamBreak{
       IntakingConstants::kLowerPodiumBeamBreakDigitalPort};
+  frc::Debouncer m_lowerPodiumDb{IntakingConstants::kDebounceTime,
+                                 IntakingConstants::kDebounceType};
   frc::DigitalInput m_upperPodiumBeamBreak{
       IntakingConstants::kUpperPodiumBeamBreakDigitalPort};
+  frc::Debouncer m_upperPodiumDb{IntakingConstants::kDebounceTime,
+                                 IntakingConstants::kDebounceType};
   frc::DigitalInput m_upperAmpBeamBreak{
       IntakingConstants::kUpperAmpBeamBreakDigitalPort};
+  frc::Debouncer m_upperAmpDb{IntakingConstants::kDebounceTime,
+                              IntakingConstants::kDebounceType};
   frc::DigitalInput m_lowerAmpBeamBreak{
       IntakingConstants::kLowerampBeamBreakDigitalPort};
+  frc::Debouncer m_lowerAmpDb{IntakingConstants::kDebounceTime,
+                              IntakingConstants::kDebounceType};
 
   hal::SimDevice m_simDevice;
   hal::SimBoolean m_notePresent;

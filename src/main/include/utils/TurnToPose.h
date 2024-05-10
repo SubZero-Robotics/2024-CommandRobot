@@ -12,9 +12,9 @@
 #include <functional>
 #include <memory>
 
-#include "Constants.h"
+#include "utils/ITurnToTarget.h"
 
-class TurnToPose {
+class TurnToPose : public ITurnToTarget {
  public:
   struct TurnToPoseConfig {
     frc::TrapezoidProfile<units::radians>::Constraints rotationConstraints;
@@ -25,14 +25,19 @@ class TurnToPose {
     frc::Pose2d poseTolerance;
   };
 
-  explicit TurnToPose(TurnToPoseConfig config, std::function<frc::Pose2d()> poseGetter,
+  explicit TurnToPose(TurnToPoseConfig config,
+                      std::function<frc::Pose2d()> poseGetter,
                       std::function<frc::Field2d*()> fieldGetter);
 
-  void Update();
+  void Update() override;
 
   void SetTargetPose(frc::Pose2d pose);
 
-  frc::ChassisSpeeds GetSpeedCorrection();
+  void SetTargetAngleRelative(units::degree_t angle);
+
+  void SetTargetAngleAbsolute(units::degree_t angle);
+
+  frc::ChassisSpeeds GetSpeedCorrection() override;
   /**
    * @param currentPose
    * @param targetPose
@@ -46,15 +51,23 @@ class TurnToPose {
    * correction to apply
    */
   frc::ChassisSpeeds BlendWithInput(const frc::ChassisSpeeds& other,
-                                    double correctionFactor);
+                                    double correctionFactor) override;
 
-  inline bool AtGoal() const { return m_driveController->AtReference(); }
+  inline bool AtGoal() override { return m_driveController->AtReference(); }
 
   inline std::optional<frc::Pose2d> GetTargetPose() const {
     return m_targetPose;
   }
 
+  inline std::optional<units::degree_t> GetTargetAngle() const {
+    return m_targetAngle;
+  }
+
   inline units::degree_t GetTargetHeading() const { return m_targetHeading; }
+
+  static double NormalizeScalar(double x, double from_min, double from_max, double to_min, double to_max) {
+    return (x - from_min) * (to_max - to_min) / (from_max - from_min) + to_min;
+  }
 
  private:
   TurnToPoseConfig m_config;
@@ -63,6 +76,7 @@ class TurnToPose {
   std::unique_ptr<frc::HolonomicDriveController> m_driveController;
   frc::Pose2d m_startPose;
   std::optional<frc::Pose2d> m_targetPose;
+  std::optional<units::degree_t> m_targetAngle;
   units::degree_t m_targetHeading;
   frc::ChassisSpeeds m_speeds;
 };

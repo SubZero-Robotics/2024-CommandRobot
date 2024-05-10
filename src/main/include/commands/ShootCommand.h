@@ -28,7 +28,6 @@ class Shoot : public frc2::CommandHelper<frc2::Command, Shoot> {
 
   void Execute() override {
     isFinished = true;
-    // isFinished = m_scoring->GetMotorFreeWheel(m_direction());
   }
 
   bool IsFinished() override { return isFinished; }

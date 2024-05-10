@@ -59,11 +59,11 @@ class PidMotorController {
 
   void Update() {
     if (m_absolutePositionEnabled) {
-      ConsoleWriter.logVerbose(
-          m_name,
-          "relative position %0.3f, absolute position %0.3f, absolute target"
-          "%0.3f",
-          GetEncoderPosition(), GetAbsoluteEncoderPosition(), m_absoluteTarget);
+      // ConsoleWriter.logVerbose(
+      //     m_name,
+      //     "relative position %0.3f, absolute position %0.3f, absolute target"
+      //     "%0.3f",
+      //     GetEncoderPosition(), GetAbsoluteEncoderPosition(), m_absoluteTarget);
       auto effort =
           m_pidController.Calculate(GetEncoderPosition(), m_absoluteTarget);
       double totalEffort = effort;
@@ -81,6 +81,7 @@ class PidMotorController {
   /// @param rpm The desired RPM
   void RunWithVelocity(units::revolutions_per_minute_t rpm) {
     m_absolutePositionEnabled = false;
+    frc::SmartDashboard::PutNumber(m_name + "commanded rpm", rpm.value());
     m_controller.SetReference(rpm.value(),
                               rev::CANSparkBase::ControlType::kVelocity);
   }
@@ -95,7 +96,6 @@ class PidMotorController {
       return;
     }
     auto rpm = units::revolutions_per_minute_t(m_maxRpm) * percentage;
-
     RunWithVelocity(rpm);
   }
 

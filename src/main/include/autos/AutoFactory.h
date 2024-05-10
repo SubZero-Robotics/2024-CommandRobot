@@ -9,69 +9,65 @@
 
 #include <filesystem>
 #include <functional>
+#include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "Constants.h"
 #include "utils/ConsoleLogger.h"
 
-namespace AutoFactory {
-frc2::CommandPtr GetEmptyCommand() { return frc2::WaitCommand(15_s).ToPtr(); }
+template <typename T>
+class AutoFactory {
+ public:
+  explicit AutoFactory(const std::map<T, std::string>& autos)
+      : m_autos{autos} {}
 
-bool AutoFileExists(std::string fileName) {
-  const std::string filePath = frc::filesystem::GetDeployDirectory() +
-                               "/pathplanner/autos/" + fileName + ".auto";
+ private:
+  const std::map<T, std::string>& m_autos;
 
-  std::error_code error_code;
-  std::unique_ptr<wpi::MemoryBuffer> fileBuffer =
-      wpi::MemoryBuffer::GetFile(filePath, error_code);
-
-  if (fileBuffer == nullptr || error_code) {
-    return false;
+  inline frc2::CommandPtr GetEmptyCommand() {
+    return frc2::WaitCommand(15_s).ToPtr();
   }
 
-  return true;
-}
+  bool AutoFileExists(const std::string fileName) {
+    const std::string filePath = frc::filesystem::GetDeployDirectory() +
+                                 "/pathplanner/autos/" + fileName + ".auto";
 
-frc2::CommandPtr PathPlannerPathFromName(std::string autoName) {
-  if (!AutoFileExists(autoName)) {
-    ConsoleWriter.logError(
-        "Auto Factory", "AUTO '%s' DOES NOT EXIST HELP US EVAN",
-        autoName.c_str());
-    return GetEmptyCommand();
+    std::error_code error_code;
+    std::unique_ptr<wpi::MemoryBuffer> fileBuffer =
+        wpi::MemoryBuffer::GetFile(filePath, error_code);
+
+    if (fileBuffer == nullptr || error_code) {
+      return false;
+    }
+
+    return true;
   }
-  return pathplanner::PathPlannerAuto(autoName).ToPtr();
-}
 
-frc2::CommandPtr GetAuto(AutoConstants::AutoType type) {
-  using namespace AutoConstants;
-
-  switch (type) {
-    case AutoType::EmptyAuto:
+  frc2::CommandPtr PathPlannerPathFromName(const std::string autoName) {
+    if (!AutoFileExists(autoName)) {
+      ConsoleWriter.logError("Auto Factory",
+                             "AUTO '%s' DOES NOT EXIST HELP US EVAN",
+                             autoName.c_str());
       return GetEmptyCommand();
-    case AutoType::FourNoteAuto:
-      return PathPlannerPathFromName("4 Note Auto");
-    case AutoType::PlaceAndLeave:
-      return PathPlannerPathFromName("Place and leave");
-    case AutoType::ThreeNoteAuto:
-      return PathPlannerPathFromName("3 Note Auto");
-    case AutoType::TwoNoteAuto:
-      return PathPlannerPathFromName("2 Note Amp Side");
-    case AutoType::TwoNoteCenter:
-      return PathPlannerPathFromName("2 Note Center Note 3");
-    case AutoType::TwoNoteSource:
-      return PathPlannerPathFromName("2 Note Source Side");
-    case AutoType::ThreeNoteCenter:
-      return PathPlannerPathFromName("3 Note Center Note 3 + 4");
-    case AutoType::LeaveWing:
-      return PathPlannerPathFromName(AutoConstants::kDefaultAutoName);
-    default:
+    }
+    return pathplanner::PathPlannerAuto(autoName).ToPtr();
+  }
+
+ public:
+  frc2::CommandPtr GetAuto(T type) {
+    using namespace AutoConstants;
+
+    if (!m_autos.contains(type)) {
       ConsoleWriter.logWarning(
           "Auto Factory",
           "Auto type %d does not exist, defaulting to empty "
           "auto",
           static_cast<int>(type));
       return GetEmptyCommand();
+    }
+
+    return PathPlannerPathFromName(m_autos.at(type));
   }
-}
-}  // namespace AutoFactory
+};

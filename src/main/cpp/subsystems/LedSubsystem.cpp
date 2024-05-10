@@ -7,11 +7,11 @@
 #include "utils/ConsoleLogger.h"
 
 using namespace ConnectorX;
+using namespace LEDConstants;
 
 void LedSubsystem::Periodic() {
-  if (abs(m_accel.GetX()) >= kAccelThreshold ||
-      abs(m_accel.GetY()) >= kAccelThreshold) {
-    showFace(EyePattern::Surprised);
+  if (m_accel.GetY() <= -kAccelThreshold) {
+    showFace(EyePattern::OwO);
   }
 }
 
@@ -367,6 +367,14 @@ frc2::CommandPtr LedSubsystem::AmogusFace() {
       .ToPtr();
 }
 
+frc2::CommandPtr LedSubsystem::OwOFace() {
+  return frc2::InstantCommand([this] {
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s", "OwO");
+           showFace(EyePattern::OwO);
+         })
+      .ToPtr();
+}
+
 frc2::CommandPtr LedSubsystem::setZoneColorPattern(LedZone zone, LedPort port,
                                                    frc::Color8Bit color,
                                                    PatternType pattern,
@@ -407,8 +415,8 @@ frc2::CommandPtr LedSubsystem::AimbotEnabled() {
   // Acid green
 
   return frc2::InstantCommand([this] {
-           ConsoleLogger::getInstance().logInfo(
-               "LedSubsystem", "Setting LEDs to %s\n", "AimbotEnabled");
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s\n",
+                                 "AimbotEnabled");
 
            setZoneColorPatternAsync(
                LedZone::LeftClimber, LedConstants::kIntakeLedPort,
@@ -506,6 +514,58 @@ frc2::CommandPtr LedSubsystem::SuccessfulIntake() {
            syncAllZones();
          })
       .ToPtr();
+}
+
+frc2::CommandPtr LedSubsystem::AutoScoring() {
+  return frc2::InstantCommand([this] {
+           ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s\n",
+                                 "AutoScoring");
+
+           setZoneColorPatternAsync(
+               LedZone::LeftClimber, LedConstants::kIntakeLedPort,
+               ColorConstants::kRed, PatternType::Blink, false, 250);
+           delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(
+               LedZone::RightClimber, LedConstants::kIntakeLedPort,
+               ColorConstants::kRed, PatternType::Blink, false, 250);
+           delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
+                                    ColorConstants::kRed, PatternType::Blink,
+                                    false, 250);
+           delaySeconds(kConnectorXDelay);
+           setZoneColorPatternAsync(
+               LedZone::Front, LedConstants::kIntakeLedPort,
+               ColorConstants::kRed, PatternType::Blink, false, 250);
+           delaySeconds(kConnectorXDelay);
+           syncAllZones();
+         })
+      .ToPtr();
+}
+
+void LedSubsystem::RampingAsync() {
+  ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s\n", "Ramping");
+
+  setZoneColorPatternAsync(LedZone::LeftClimber, LedConstants::kIntakeLedPort,
+                           ColorConstants::kOrange, PatternType::Chase, false,
+                           40, false);
+  delaySeconds(kConnectorXDelay);
+  setZoneColorPatternAsync(LedZone::RightClimber, LedConstants::kIntakeLedPort,
+                           ColorConstants::kOrange, PatternType::Chase, false,
+                           40, true);
+  delaySeconds(kConnectorXDelay);
+  setZoneColorPatternAsync(LedZone::Back, LedConstants::kIntakeLedPort,
+                           ColorConstants::kOrange, PatternType::SineRoll,
+                           false, 30, false);
+  delaySeconds(kConnectorXDelay);
+  setZoneColorPatternAsync(LedZone::Front, LedConstants::kIntakeLedPort,
+                           ColorConstants::kOrange, PatternType::SineRoll,
+                           false, 30, false);
+  delaySeconds(kConnectorXDelay);
+  m_connectorX.syncZones(LedConstants::kIntakeLedPort,
+                         {
+                             static_cast<uint8_t>(LedZone::LeftClimber),
+                             static_cast<uint8_t>(LedZone::RightClimber),
+                         });
 }
 
 void LedSubsystem::setZoneColorPatternAsync(LedZone zone, LedPort port,

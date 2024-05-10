@@ -2,9 +2,10 @@
 
 #include <hal/I2C.h>
 
-using namespace ConnectorX;
+#include "constants/LEDConstants.h"
 
-constexpr units::second_t kConnectorXDelay = 0.002_s;
+using namespace ConnectorX;
+using namespace LEDConstants;
 
 ConnectorX::ConnectorXBoard::ConnectorXBoard(uint8_t slaveAddress,
                                              frc::I2C::Port port)
@@ -110,9 +111,6 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
 
 void ConnectorX::ConnectorXBoard::syncZones(LedPort port,
                                             const std::vector<uint8_t>& zones) {
-  // setLedPort(port);
-
-  // delaySeconds(kConnectorXDelay);
 
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::SyncStates;
@@ -137,8 +135,6 @@ void ConnectorX::ConnectorXBoard::createZones(
   for (uint8_t i = 0; i < newZones.size(); i++) {
     cmd.commandData.commandSetNewZones.zones[i] = newZones[i];
   }
-
-  // sendCommand(cmd);
 
   auto& currentPort = getCurrentCachedPort();
 
@@ -413,14 +409,8 @@ Commands::Response ConnectorX::ConnectorXBoard::sendCommand(
   if (recSize == 0) {
     ConsoleWriter.logVerbose("ConnectorX", "FPGA TIMESTAMP BEFORE %f",
                              frc::Timer::GetFPGATimestamp().value());
-    // _i2c->WriteBulk(sendBuf, sendLen + 1);
-    // bool failure = _i2c->WriteBulk(sendBuf, sendLen + 1);
-
-    // int result;
     int result =
         HAL_WriteI2C(HAL_I2C_kMXP, _slaveAddress, sendBuf, sendLen + 1);
-
-    // int result = 0;
 
     if (result == -1) {
       ConsoleWriter.logError("ConnectorX", "Write Result Failed %d errno=%s",

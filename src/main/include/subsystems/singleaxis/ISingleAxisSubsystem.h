@@ -43,6 +43,7 @@ class ISingleAxisSubsystem {
     bool reversed;
     SingleAxisMechanism mechanismConfig;
     std::optional<std::function<std::string(Distance_t)>> conversionFunction;
+    std::function<bool()> ignoreLimit;
 
     SingleAxisConfig(
         Distance_t _minDistance, Distance_t _maxDistance,
@@ -53,7 +54,8 @@ class ISingleAxisSubsystem {
         std::optional<frc::DigitalInput *> _maxLimitSwitch, bool _reversed,
         SingleAxisMechanism _mechanismConfig,
         std::optional<std::function<std::string(Distance_t)>>
-            _conversionFunction)
+            _conversionFunction,
+        std::function<bool()> _ignoreLimit)
         : minDistance{_minDistance},
           maxDistance{_maxDistance},
           encoderDistancePerRevolution{_encoderDistancePerRevolution},
@@ -66,7 +68,8 @@ class ISingleAxisSubsystem {
           maxLimitSwitch{_maxLimitSwitch},
           reversed{_reversed},
           mechanismConfig{_mechanismConfig},
-          conversionFunction{_conversionFunction} {}
+          conversionFunction{_conversionFunction},
+          ignoreLimit{_ignoreLimit} {}
   };
 
   // Will disable position-based movements when called

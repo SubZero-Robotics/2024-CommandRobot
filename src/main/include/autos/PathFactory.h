@@ -11,6 +11,7 @@
 #include "OnTheFlyFactory.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/LedSubsystem.h"
+#include <pathplanner/lib/auto/AutoBuilder.h>
 
 class PathFactory {
  public:

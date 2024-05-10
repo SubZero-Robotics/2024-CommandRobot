@@ -3,15 +3,43 @@
 #include <frc/RobotBase.h>
 #include <frc2/command/DeferredCommand.h>
 
+#include <ranges>
+
 #include "commands/DriveVelocityCommand.h"
 #include "utils/Commands/IntakeCommands.h"
 
 TargetTracker::TargetTracker(TargetTrackerConfig config,
                              IntakeSubsystem* intake, ScoringSubsystem* scoring,
                              DriveSubsystem* drive)
-    : m_config{config}, m_intake{intake}, m_scoring{scoring}, m_drive{drive} {}
+    : m_config{config}, m_intake{intake}, m_scoring{scoring}, m_drive{drive} {
+  m_trackedTargets = std::vector<TrackedTarget>(m_config.maxTrackedItems);
+}
 
 std::vector<DetectedObject> TargetTracker::GetTargets() {
+  if (!frc::RobotBase::IsReal()) {
+    static int counter = 0;
+    return {
+        DetectedObject(1, 0.75,
+                       units::degree_t((counter++ % (31 * 20)) / 20 - 15),
+                       10_deg, 0.08,
+                       {
+                           {0, 0},
+                           {0, 0},
+                           {0, 0},
+                           {0, 0},
+                       }),
+        DetectedObject(1, 0.66,
+                       units::degree_t((counter++ % (51 * 30 + 40)) / 30 - 25),
+                       15_deg, 0.06,
+                       {
+                           {0, 0},
+                           {0, 0},
+                           {0, 0},
+                           {0, 0},
+                       }),
+    };
+  }
+
   auto llResult = LimelightHelpers::getLatestResults(m_config.limelightName);
   auto& detectionResults = llResult.targetingResults.DetectionResults;
 
@@ -24,7 +52,50 @@ std::vector<DetectedObject> TargetTracker::GetTargets() {
                    return DetectedObject(det);
                  });
 
+  std::vector<DetectedObject> filteredObjects;
+  std::copy_if(objects.begin(), objects.end(),
+               std::inserter(filteredObjects, filteredObjects.end()),
+               [this](const DetectedObject& object) {
+                 return object.areaPercentage >=
+                        m_config.areaPercentageThreshold;
+               });
+
   return objects;
+}
+
+void TargetTracker::UpdateTrackedTargets(
+    const std::vector<DetectedObject>& _objects) {
+  std::vector<DetectedObject> objects = _objects;
+  SortTargetsByProximity(objects);
+
+  // Update with the latest targets
+  for (auto i = 0; i < std::min(static_cast<size_t>(m_config.maxTrackedItems),
+                                objects.size());
+       i++) {
+    // TODO: split by class name
+    auto trackedPose = GetTargetPose(objects[i]);
+
+    m_trackedTargets[i] = {
+        .object = objects[i],
+        .currentPose = trackedPose.value_or(m_trackedTargets[i].currentPose),
+        .valid = true,
+    };
+  }
+
+  // Invalidate the old ones
+  for (auto i = objects.size(); i < m_config.maxTrackedItems; i++) {
+    m_trackedTargets[i] = {
+        .object = DetectedObject(),
+        .currentPose = m_config.invalidTrackedPose,
+        .valid = false,
+    };
+  }
+
+  // Push them all to NT
+  // TODO: Move to separate method
+  for (auto i = 0; i < m_trackedTargets.size(); i++) {
+    PublishTrackedTarget(m_trackedTargets[i], i);
+  }
 }
 
 std::optional<DetectedObject> TargetTracker::GetBestTarget(
@@ -55,10 +126,6 @@ bool TargetTracker::HasTargetLock(std::vector<DetectedObject>& targets) {
 
 std::optional<frc::Pose2d> TargetTracker::GetBestTargetPose(
     std::vector<DetectedObject>& targets) {
-  if (!frc::RobotBase::IsReal()) {
-    return m_config.simGamepiecePose;
-  }
-
   if (!HasTargetLock(targets)) {
     return std::nullopt;
   }
@@ -104,7 +171,9 @@ units::inch_t TargetTracker::GetDistanceToTarget(const DetectedObject& target) {
   frc::SmartDashboard::PutNumber("TargetTracker Pixel Width", pixelWidth);
 
   auto otherDistance =
-      pixelWidth > 0
+      // TODO: Replace with constant
+      // This ensures we don't get a wildly small width (= very far away) if bounding box is wrong/missing
+      pixelWidth > 3
           ? ((m_config.gamepieceWidth * m_config.focalLength) / pixelWidth)
           : 0_in;
 
@@ -120,4 +189,21 @@ units::inch_t TargetTracker::GetDistanceToTarget(const DetectedObject& target) {
                                  std::to_string(otherDistance.value()) + " in");
 
   return combinedDistance;
+}
+
+void TargetTracker::SortTargetsByProximity(
+    std::vector<DetectedObject>& objects) {
+  std::sort(objects.begin(), objects.end(),
+            [this](const auto& a, const auto& b) {
+              auto distanceA = GetDistanceToTarget(a);
+              auto distanceB = GetDistanceToTarget(b);
+
+              return distanceA < distanceB;
+            });
+}
+
+void TargetTracker::PublishTrackedTarget(const TrackedTarget& target,
+                                         int index) {
+  std::string key = "object[" + std::to_string(index) + "]";
+  m_drive->GetField()->GetObject(key)->SetPose(target.currentPose);
 }

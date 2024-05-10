@@ -2,9 +2,12 @@
 
 #include "ClimbSubsystem.h"
 
+#include <functional>
+
 class RightClimbSubsystem : public ClimbSubsystem {
  public:
-  explicit RightClimbSubsystem(frc::MechanismObject2d* node = nullptr)
+  explicit RightClimbSubsystem(std::function<bool()> ignoreLimit,
+                               frc::MechanismObject2d* node = nullptr)
       : ClimbSubsystem(
             "Right Climber", m_controller,
             {// Min distance
@@ -33,7 +36,8 @@ class RightClimbSubsystem : public ClimbSubsystem {
              [](units::meter_t from) {
                return std::to_string(from.convert<units::inch>().value()) +
                       " inches :(";
-             }},
+             },
+             ignoreLimit},
             node) {
     m_motor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
   }
