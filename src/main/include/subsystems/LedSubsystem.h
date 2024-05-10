@@ -50,6 +50,7 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr BlinkingFace();
   frc2::CommandPtr SurprisedFace();
   frc2::CommandPtr AmogusFace();
+  frc2::CommandPtr OwOFace();
   frc2::CommandPtr AimbotEnabled();
   frc2::CommandPtr OnTheFlyPP();
   frc2::CommandPtr VisionNoteDetected();
@@ -74,6 +75,7 @@ class LedSubsystem : public frc2::SubsystemBase {
     Blinking = 10,
     Surprised = 11,
     Amogus = 12,
+    OwO = 14,
   };
 
   frc2::CommandPtr setZoneColorPattern(LedZone zone, ConnectorX::LedPort port,

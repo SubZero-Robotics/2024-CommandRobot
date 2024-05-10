@@ -19,8 +19,8 @@ constexpr double kSubwooferVectorSpeed = 1;
 constexpr double kFeedPodiumVectorSpeed = -1;
 
 // These need to be different
-constexpr double kAmpLowerSpeed = -0.254 * 1.9;  // .264
-constexpr double kAmpUpperSpeed = -0.168 * 1.4;  // .278
+constexpr double kAmpLowerSpeed = -0.254 * 1.7;  // .264
+constexpr double kAmpUpperSpeed = -0.168 * 1.3;  // .278
 
 // These should match
 constexpr double kSpeakerLowerSpeed = 1;

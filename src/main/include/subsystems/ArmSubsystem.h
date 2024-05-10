@@ -37,7 +37,9 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<
              // Mechanism2d
              ArmConstants::kArmMechanism,
              // Conversion Function
-             std::nullopt},
+             std::nullopt,
+
+             [] { return false; }},
             ArmConstants::kArmLength,
             node} {
     m_SpinnyBoi.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);

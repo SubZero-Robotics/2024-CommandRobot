@@ -44,6 +44,10 @@ class BaseSingleAxisSubsystem
 
  protected:
   bool IsMovementAllowed(double speed, bool ignoreEncoder = false) {
+    if (m_config.ignoreLimit()) return true;
+
+    ConsoleVerbose("BaseSingleAxis", "Did not ignore limit%s", "");
+
     bool atMin = ignoreEncoder ? AtLimitSwitchMin() : AtHome();
     bool atMax = ignoreEncoder ? AtLimitSwitchMax() : AtMax();
 
@@ -62,6 +66,8 @@ class BaseSingleAxisSubsystem
   }
 
   bool IsMovementAllowed(bool ignoreEncoder = false) {
+    if (m_config.ignoreLimit()) return true;
+
     bool atMin = ignoreEncoder ? AtLimitSwitchMin() : AtHome();
     bool atMax = ignoreEncoder ? AtLimitSwitchMax() : AtMax();
 

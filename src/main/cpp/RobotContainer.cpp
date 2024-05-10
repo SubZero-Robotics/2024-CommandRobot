@@ -99,6 +99,9 @@ void RobotContainer::RegisterAutos() {
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring)));
 
   m_autoChooser.Initialize();
+  m_ignoreLimitChooser.SetDefaultOption("Don't Ignore", false);
+  m_ignoreLimitChooser.AddOption("Ignore", true);
+  frc::SmartDashboard::PutData("Climb Limits", &m_ignoreLimitChooser);
 }
 
 void RobotContainer::ConfigureButtonBindings() {
@@ -268,13 +271,25 @@ void RobotContainer::ConfigureAutoBindings() {
                                         }).ToPtr());
 
   // Maps to 4 on keyboard
-  m_operatorController.Button(7).OnTrue(frc2::InstantCommand([this] {
-                                          if (!m_state.m_active) {
-                                            m_state.m_currentState =
-                                                RobotState::AutoSequenceAmp;
-                                            m_state.SetDesiredState();
-                                          }
-                                        }).ToPtr());
+  m_operatorController.Button(7).OnTrue(
+      m_leds.OwOFace()
+          .AndThen(m_leds.Error())
+          .AndThen(m_rightClimb.MoveToPositionAbsolute(10_in).AlongWith(
+              m_leftClimb.MoveToPositionAbsolute(10_in)))
+          .AndThen(m_arm.MoveToPositionAbsolute(ArmConstants::kAmpRotation))
+          .AndThen(frc2::WaitCommand(8_s).ToPtr())
+          .AndThen(m_rightClimb.MoveToPositionAbsolute(1_in).AlongWith(
+              m_leftClimb.MoveToPositionAbsolute(1_in)))
+          .AndThen(m_arm.MoveToPositionAbsolute(ArmConstants::kHomeRotation))
+          .AndThen(m_leds.Idling()));
+
+  // .OnTrue(frc2::InstantCommand([this] {
+  //                                         if (!m_state.m_active) {
+  //                                           m_state.m_currentState =
+  //                                               RobotState::AutoSequenceAmp;
+  //                                           m_state.SetDesiredState();
+  //                                         }
+  //                                       }).ToPtr());
 
   // Maps to 5 on keyboard
   m_operatorController.Button(8).OnTrue(
@@ -282,8 +297,8 @@ void RobotContainer::ConfigureAutoBindings() {
 
   // Maps to 6 on keyboard
   m_operatorController.Button(9).OnTrue(
-      m_rightClimb.MoveToPositionAbsolute(18_in).AlongWith(
-          m_leftClimb.MoveToPositionAbsolute(18_in)));
+      m_rightClimb.MoveToPositionAbsolute(20_in).AlongWith(
+          m_leftClimb.MoveToPositionAbsolute(20_in)));
 
   // Maps to 1 on keyboard
   m_operatorController.Button(10).OnTrue(frc2::InstantCommand([this] {
@@ -333,7 +348,7 @@ void RobotContainer::ConfigureAutoBindings() {
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
   auto autoType = m_autoChooser.GetSelectedValue();
-  autoCommand = AutoFactory::GetAuto(autoType);
+  autoCommand = m_autoFactory.GetAuto(autoType);
 
   return autoCommand.get();
 }
@@ -383,6 +398,8 @@ units::degree_t RobotContainer::CurveRotation(double sensitivity, double val,
 }
 
 void RobotContainer::Periodic() {
+  frc::SmartDashboard::PutBoolean("Disable Climb Limits", m_ignoreClimbLimits);
+
   frc::SmartDashboard::PutData("Robot2d", &m_mech);
 
   frc::SmartDashboard::PutBoolean("TURN TO POSE AT GOAL",
@@ -476,6 +493,8 @@ void RobotContainer::Periodic() {
       m_shouldAim = false;
     }
   }
+
+  m_ignoreClimbLimits = m_ignoreLimitChooser.GetSelected();
 }
 
 std::optional<frc::Rotation2d> RobotContainer::GetRotationTargetOverride() {

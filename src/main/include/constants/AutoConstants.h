@@ -56,7 +56,7 @@ static const std::vector<AutoChooser<AutoType>::AutoChooserEntry>
         {{AutoType::ThreeNoteAuto, "3 Note Auto"},
          {"3 notes", "close", "decent", "center"}},
         {{AutoType::ThreeNoteSimp, "3 Note Simp Edition"},
-        {"3 notes", "close", "decent", "center"}},
+         {"3 notes", "close", "decent", "center"}},
         {{AutoType::TwoNoteCenter, "2 Note Center Note Under Stage"},
          {"2 notes", "far", "high", "center"}},
         {{AutoType::LeaveWing, "Leave Wing"},
@@ -83,6 +83,21 @@ static const std::vector<AutoChooser<AutoType>::AutoChooserSelectorGroup>
         {"Motion", {"amp", "center", "source", "complex"}},
     };
 
+static const std::map<AutoType, std::string> kPpAutos = {
+    {AutoType::FourNoteAuto, "4 Note Auto"},
+    {AutoType::ThreeNoteAuto, "3 Note Auto"},
+    {AutoType::ThreeNoteSimp, "3 Note Simp"},
+    {AutoType::TwoNoteCenter, "2 Note Center Note 3"},
+    {AutoType::LeaveWing, "Leave Wing"},
+    {AutoType::PlaceAndLeave, "Place and leave"},
+    {AutoType::TwoNoteAmpSide, "2 Note Amp Side"},
+    {AutoType::TwoNoteSource, "2 Note Center Note 3"},
+    {AutoType::ThreeNoteCenter, "3 Note Center Note 3 + 4"},
+    {AutoType::TwoNoteAuto, "2 Note Auto"},
+    {AutoType::TwoNoteInAmp, "2 In Amp"},
+    {AutoType::TwoInSpeakerTwoInAmp, "2 In Speaker 2 In Amp"},
+};
+
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
 
@@ -99,9 +114,9 @@ const std::string kLedFunniName = "LedFunni";
 
 const auto PathConfig = pathplanner::HolonomicPathFollowerConfig(
     pathplanner::PIDConstants(1.5, 0.0,
-                              0.0),             // Translation PID constants
+                              0.0),          // Translation PID constants
     pathplanner::PIDConstants(2, 0.0, 0.0),  // Rotation PID constants
-    3.0_mps,                                    // Max module speed, in m/s
+    3.0_mps,                                 // Max module speed, in m/s
 #ifdef TEST_SWERVE_BOT
     0.4579874_m,  // Drive base radius in meters. Distance from robot center to
 #endif
