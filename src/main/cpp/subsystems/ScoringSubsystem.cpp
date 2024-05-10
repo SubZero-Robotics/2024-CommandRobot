@@ -105,8 +105,6 @@ void ScoringSubsystem::SpinAmp(double upperPercentage, double lowerPercentage) {
 
 void ScoringSubsystem::SpinSpeaker(double upperPercentage,
                                    double lowerPercentage) {
-  // m_speakerLowerSpinnyBoi.Set(-lowerPercentage);
-  // m_speakerUpperSpinnyBoi.Set(-upperPercentage);
   ConsoleWriter.logVerbose("Scoring sbubby", "percentage: %f", upperPercentage);
   speakerUpperController.RunWithVelocity(-lowerPercentage);
   speakerLowerController.RunWithVelocity(-upperPercentage);

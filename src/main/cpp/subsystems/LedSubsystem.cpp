@@ -10,10 +10,6 @@ using namespace ConnectorX;
 using namespace LEDConstants;
 
 void LedSubsystem::Periodic() {
-  // if (abs(m_accel.GetX()) >= kAccelThreshold ||
-  //     abs(m_accel.GetY()) >= kAccelThreshold) {
-  //   showFace(EyePattern::Surprised);
-  // }
   if (m_accel.GetY() <= -kAccelThreshold) {
     showFace(EyePattern::OwO);
   }

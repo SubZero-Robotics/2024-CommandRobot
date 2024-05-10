@@ -134,10 +134,6 @@ frc2::CommandPtr StateSubsystem::StartIntaking() {
                     0_mps, 0_mps, 0_deg_per_s, DriveConstants::kLoopTime);
                 m_subsystems.drive->Drive(chassisSpeeds);
               })
-              // TODO: Put this in the "Loaded" state also have the intensity
-              // vary based on if a note was successfully intooketh or not
-              // .AndThen(ControllerCommands::Rumble(&m_driverController,
-              //                                     [] { return 1_s; }))
               .WithTimeout(5_s));
 }
 

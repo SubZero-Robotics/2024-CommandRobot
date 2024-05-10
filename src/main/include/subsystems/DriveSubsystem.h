@@ -176,11 +176,6 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   ctre::phoenix6::hardware::Pigeon2 m_gyro1{CANConstants::kPigeonCanId1, "rio"};
 
-  // HAL_SimDeviceHandle m_gyroSimHandle =
-  //     HALSIM_GetSimDeviceHandle("navX-Sensor[4]");
-  // hal::SimDouble m_gyroSimAngle =
-  //     HALSIM_GetSimValueHandle(m_gyroSimHandle, "Yaw");
-
   ctre::phoenix6::sim::Pigeon2SimState& m_gyro1Sim = m_gyro1.GetSimState();
 
   // time last loop took, "deltatime"

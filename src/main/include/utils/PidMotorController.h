@@ -96,7 +96,6 @@ class PidMotorController {
       return;
     }
     auto rpm = units::revolutions_per_minute_t(m_maxRpm) * percentage;
-    ConsoleWriter.logVerbose("pidmotor", "%s: %f", m_name.c_str(), percentage);
     RunWithVelocity(rpm);
   }
 

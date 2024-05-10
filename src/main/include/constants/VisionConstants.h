@@ -37,6 +37,7 @@ constexpr units::inch_t kCameraLensHeight = 15_in;
 constexpr double kConfidenceThreshold = 0.3;
 constexpr double kTrigDistancePercentage = 0.5;
 constexpr double kAreaPercentageThreshold = 0.04;
+constexpr uint8_t kMaxTrackedTargets = 10;
 
 constexpr double kMinAngleDeg = -30.0;
 constexpr double kMaxAngleDeg = 30.0;

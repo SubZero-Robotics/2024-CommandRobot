@@ -8,7 +8,6 @@ enum class ScoringDirection { AmpSide = 0, PodiumSide, Subwoofer, FeedPodium };
 
 namespace ScoringConstants {
 constexpr double kFreeSpinCurrentThreshold = 90;
-// constexpr double kMaxSpinRpm = 5676;
 constexpr units::revolutions_per_minute_t kMaxSpinRpm = 6784_rpm;
 
 constexpr double kShuffleSpeed = 0.05;
@@ -19,8 +18,8 @@ constexpr double kSubwooferVectorSpeed = 1;
 constexpr double kFeedPodiumVectorSpeed = -1;
 
 // These need to be different
-constexpr double kAmpLowerSpeed = -0.254 * 1.7;  // .264
-constexpr double kAmpUpperSpeed = -0.168 * 1.3;  // .278
+constexpr double kAmpLowerSpeed = -0.254 * 1.7;
+constexpr double kAmpUpperSpeed = -0.168 * 1.3;
 
 // These should match
 constexpr double kSpeakerLowerSpeed = 1;

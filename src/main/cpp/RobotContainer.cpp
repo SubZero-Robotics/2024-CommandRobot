@@ -526,12 +526,6 @@ frc2::CommandPtr RobotContainer::MoveToIntakePose() {
                auto targets = m_tracker.GetTargets();
                auto targetPose = m_tracker.GetBestTargetPose(targets);
 
-               //  if (!targetPose) {
-               //    ConsoleLogger::getInstance().logWarning("TargetTracker",
-               //                                            "NO TARGET FOUND");
-               //    return frc2::InstantCommand([] {}).ToPtr();
-               //  }
-
                targetPose = frc::Pose2d(targetPose.value().Translation(),
                                         m_turnToPose.GetTargetHeading());
 
@@ -550,14 +544,6 @@ frc2::CommandPtr RobotContainer::MoveToIntakePose() {
 frc2::CommandPtr RobotContainer::IntakeTarget() {
   return frc2::DeferredCommand(
              [this] {
-               //  auto targets = GetTargets();
-               //  bool hasTarget = HasTargetLock(targets);
-
-               //  if (!hasTarget) {
-               //    ConsoleLogger::getInstance().logWarning("TargetTracker",
-               //                                            "NO TARGET FOUND");
-               //    return frc2::InstantCommand([] {}).ToPtr();
-               //  }
 
                return (MoveToIntakePose().AlongWith(
                            IntakingCommands::Intake(&m_intake, &m_scoring)))

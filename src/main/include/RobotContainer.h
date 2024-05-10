@@ -145,7 +145,7 @@ class RobotContainer {
        // Area percentage threshold
        VisionConstants::kAreaPercentageThreshold,
        // Max # of tracked objects
-       10,
+       VisionConstants::kMaxTrackedTargets,
        // Default pose to use when tracked target isn't found
        frc::Pose2d{100_m, 100_m, frc::Rotation2d{0_deg}}},
       &m_intake,
