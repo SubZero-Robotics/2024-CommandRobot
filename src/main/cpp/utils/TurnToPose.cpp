@@ -4,20 +4,14 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/trajectory/TrajectoryGenerator.h>
 
-#include "Constants.h"
-
 TurnToPose::TurnToPose(TurnToPoseConfig config,
                        std::function<frc::Pose2d()> poseGetter,
                        std::function<frc::Field2d*()> fieldGetter)
     : m_config{config}, m_poseGetter{poseGetter}, m_fieldGetter{fieldGetter} {
-  using namespace AutoConstants;
-
-  auto xController = frc::PIDController(TurnToPoseConstants::kTurnTranslationP,
-                                        TurnToPoseConstants::kTurnTranslationI,
-                                        TurnToPoseConstants::kTurnTranslationD);
-  auto yController = frc::PIDController(TurnToPoseConstants::kTurnTranslationP,
-                                        TurnToPoseConstants::kTurnTranslationI,
-                                        TurnToPoseConstants::kTurnTranslationD);
+  auto xController = frc::PIDController(
+      m_config.translationP, m_config.translationI, m_config.translationD);
+  auto yController = frc::PIDController(
+      m_config.translationP, m_config.translationI, m_config.translationD);
   auto profile = m_config.rotationConstraints;
   auto profiledController = frc::ProfiledPIDController<units::radians>(
       m_config.turnP, m_config.turnI, m_config.turnD, profile);

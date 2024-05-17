@@ -21,6 +21,9 @@ class TurnToPose : public ITurnToTarget {
     double turnP;
     double turnI;
     double turnD;
+    double translationP;
+    double translationI;
+    double translationD;
     /// @brief A pose within this range will be considered at-goal
     frc::Pose2d poseTolerance;
   };
@@ -65,7 +68,8 @@ class TurnToPose : public ITurnToTarget {
 
   inline units::degree_t GetTargetHeading() const { return m_targetHeading; }
 
-  static double NormalizeScalar(double x, double from_min, double from_max, double to_min, double to_max) {
+  static double NormalizeScalar(double x, double from_min, double from_max,
+                                double to_min, double to_max) {
     return (x - from_min) * (to_max - to_min) / (from_max - from_min) + to_min;
   }
 

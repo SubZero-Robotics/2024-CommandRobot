@@ -162,6 +162,12 @@ class RobotContainer {
                            TurnToPoseConstants::kTurnI,
                            // Turn D
                            TurnToPoseConstants::kTurnD,
+                           // Translation P
+                           TurnToPoseConstants::kTurnTranslationP,
+                           // Translation I
+                           TurnToPoseConstants::kTurnTranslationI,
+                           // Translation D
+                           TurnToPoseConstants::kTurnTranslationD,
                            // Pose tolerance
                            TurnToPoseConstants::kPoseTolerance},
                           [this] { return m_drive.GetPose(); },
