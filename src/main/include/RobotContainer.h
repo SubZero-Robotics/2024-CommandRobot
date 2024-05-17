@@ -18,6 +18,8 @@
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
+#include <vector>
+
 #include "Constants.h"
 #include "autos/AutoFactory.h"
 #include "subsystems/ArmSubsystem.h"

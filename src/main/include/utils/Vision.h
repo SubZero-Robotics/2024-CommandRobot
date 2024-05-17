@@ -26,7 +26,7 @@ class Vision {
     std::shared_ptr<photon::PhotonCamera> camera;
   };
 
-  Vision(std::vector<PhotonCameraEstimator>& estms)
+  explicit Vision(std::vector<PhotonCameraEstimator>& estms)
       : m_cameraEstimators{estms} {
     for (auto& est : m_cameraEstimators) {
       est.estimator.SetMultiTagFallbackStrategy(
