@@ -90,7 +90,7 @@ void DriveSubsystem::Periodic() {
                                  GetModulePositions());
     logDrivebase();
 
-    auto visionPoses = m_vision->UpdateEstimatedGlobalPose(poseEstimator);
+    m_vision->UpdateEstimatedGlobalPose(poseEstimator, true);
 
     auto updatedPose = poseEstimator.GetEstimatedPosition();
     // https://github.com/Hemlock5712/2023-Robot/blob/dd5ac64587a3839492cfdb0a28d21677d465584a/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java#L149
