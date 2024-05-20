@@ -312,7 +312,8 @@ struct CachedDevice {
 class ConnectorXBoard : public frc2::SubsystemBase {
  public:
   explicit ConnectorXBoard(uint8_t slaveAddress,
-                           frc::I2C::Port port = frc::I2C::kMXP);
+                           frc::I2C::Port port = frc::I2C::kMXP,
+                           units::second_t connectorXDelay = 0.002_s);
 
   /**
    * @brief Start communication with the controller
@@ -503,6 +504,7 @@ class ConnectorXBoard : public frc2::SubsystemBase {
   std::unique_ptr<frc::I2C> _i2c;
   uint8_t _slaveAddress;
   LedPort _currentLedPort = LedPort::P0;
+  units::second_t _delay;
   CachedDevice m_device;
   Commands::CommandType _lastCommand;
   hal::SimDevice m_simDevice;

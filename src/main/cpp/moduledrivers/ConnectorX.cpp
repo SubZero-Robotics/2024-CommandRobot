@@ -2,15 +2,14 @@
 
 #include <hal/I2C.h>
 
-#include "constants/LEDConstants.h"
-
 using namespace ConnectorX;
-using namespace LEDConstants;
 
 ConnectorX::ConnectorXBoard::ConnectorXBoard(uint8_t slaveAddress,
-                                             frc::I2C::Port port)
+                                             frc::I2C::Port port,
+                                             units::second_t connectorXDelay)
     : _i2c(std::make_unique<frc::I2C>(port, slaveAddress)),
       _slaveAddress(slaveAddress),
+      _delay{connectorXDelay},
       m_simDevice("Connector-X", static_cast<int>(port), slaveAddress) {
   // TODO: read config from device to get # of LEDs per port
   m_device.ports = {
@@ -79,7 +78,7 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
                                                         bool reversed,
                                                         bool setReversed) {
   setLedPort(port);
-  delaySeconds(kConnectorXDelay);
+  delaySeconds(_delay);
   auto& currentPort = getCurrentCachedPort();
   auto& currentZone = getCurrentZone();
 
@@ -111,7 +110,6 @@ CachedZone& ConnectorX::ConnectorXBoard::setCurrentZone(LedPort port,
 
 void ConnectorX::ConnectorXBoard::syncZones(LedPort port,
                                             const std::vector<uint8_t>& zones) {
-
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::SyncStates;
   cmd.commandData.commandSyncZoneStates.zoneCount = zones.size();
@@ -126,7 +124,7 @@ void ConnectorX::ConnectorXBoard::syncZones(LedPort port,
 void ConnectorX::ConnectorXBoard::createZones(
     LedPort port, std::vector<ConnectorX::Commands::NewZone>&& newZones) {
   setLedPort(port);
-  delaySeconds(kConnectorXDelay);
+  delaySeconds(_delay);
 
   Commands::Command cmd;
   cmd.commandType = Commands::CommandType::SetNewZones;
@@ -188,11 +186,11 @@ void ConnectorX::ConnectorXBoard::setOn() {
 
     // TODO: move into a loop
     setLedPort(LedPort::P0);
-    delaySeconds(kConnectorXDelay);
+    delaySeconds(_delay);
     sendCommand(cmd);
 
     setLedPort(LedPort::P1);
-    delaySeconds(kConnectorXDelay);
+    delaySeconds(_delay);
     sendCommand(cmd);
   }
 }
@@ -226,7 +224,7 @@ void ConnectorX::ConnectorXBoard::setPattern(LedPort port, PatternType pattern,
                                              uint8_t zoneIndex, bool reversed) {
   auto& zone = setCurrentZone(port, zoneIndex, reversed, true);
 
-  delaySeconds(kConnectorXDelay);
+  delaySeconds(_delay);
 
   if (zone.pattern != pattern) {
     ConsoleWriter.logVerbose("ConnectorX", "Setting new pattern to %u",
@@ -254,7 +252,7 @@ void ConnectorX::ConnectorXBoard::setColor(LedPort port, uint8_t red,
   auto newColor = frc::Color8Bit(red, green, blue);
 
   setLedPort(port);
-  delaySeconds(kConnectorXDelay);
+  delaySeconds(_delay);
 
   ConsoleWriter.logVerbose("ConnectorX", "Zone %u cur color=%s | new color=%s",
                            zoneIndex, zone.color.HexString().c_str(),

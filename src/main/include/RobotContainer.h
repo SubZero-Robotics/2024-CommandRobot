@@ -18,6 +18,8 @@
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
+#include <vector>
+
 #include "Constants.h"
 #include "autos/AutoFactory.h"
 #include "subsystems/ArmSubsystem.h"
@@ -162,15 +164,46 @@ class RobotContainer {
                            TurnToPoseConstants::kTurnI,
                            // Turn D
                            TurnToPoseConstants::kTurnD,
+                           // Translation P
+                           TurnToPoseConstants::kTurnTranslationP,
+                           // Translation I
+                           TurnToPoseConstants::kTurnTranslationI,
+                           // Translation D
+                           TurnToPoseConstants::kTurnTranslationD,
                            // Pose tolerance
                            TurnToPoseConstants::kPoseTolerance},
                           [this] { return m_drive.GetPose(); },
                           [this] { return m_drive.GetField(); }};
 
+  photon::PhotonPoseEstimator poseFront{
+      // layout
+      VisionConstants::kTagLayout,
+      // strategy
+      VisionConstants::kPoseStrategy,
+      // camera name
+      photon::PhotonCamera{VisionConstants::kFrontCamera},
+      // offsets
+      VisionConstants::kRobotToCam};
+
+  photon::PhotonPoseEstimator poseRear{
+      // layout
+      VisionConstants::kTagLayout,
+      // strategy
+      VisionConstants::kPoseStrategy,
+      // camera name
+      photon::PhotonCamera{VisionConstants::kRearCamera},
+      // offsets
+      VisionConstants::kRobotToCam2};
+
+  std::vector<Vision::PhotonCameraEstimator> poseCameras{
+      Vision::PhotonCameraEstimator(poseFront),
+      Vision::PhotonCameraEstimator(poseRear),
+  };
+
   void ConfigureAutoBindings();
 #endif
 
-  Vision m_vision;
+  Vision m_vision{poseCameras};
 
   void RegisterAutos();
   void ConfigureButtonBindings();
