@@ -7,6 +7,7 @@
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/WaitCommand.h>
+#include <subzero/moduledrivers/ConnectorX.h>
 
 #include <chrono>
 #include <string>
@@ -15,7 +16,6 @@
 #include <vector>
 
 #include "Constants.h"
-#include "moduledrivers/ConnectorX.h"
 
 class LedSubsystem : public frc2::SubsystemBase {
  public:

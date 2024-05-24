@@ -2,13 +2,12 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandPtr.h>
-#include <rev/CANSparkFlex.h>
+#include <subzero/constants/ColorConstants.h>
 #include <subzero/motor/PidMotorControllerPair.h>
 
 #include <map>
 #include <string>
 
-#include "ColorConstants.h"
 #include "Constants.h"
 
 class ScoringSubsystem : public frc2::SubsystemBase {
@@ -90,59 +89,51 @@ class ScoringSubsystem : public frc2::SubsystemBase {
       m_ampLowerSpinnyBoi.GetPIDController();
   rev::SparkRelativeEncoder m_ampLowerEnc = m_ampLowerSpinnyBoi.GetEncoder();
 
-  PidSettings speakerPidSettings = {
+  subzero::PidSettings speakerPidSettings = {
       .p = ScoringConstants::ScoringPID::kSpeakerP,
       .i = ScoringConstants::ScoringPID::kSpeakerI,
       .d = ScoringConstants::ScoringPID::kSpeakerD,
       .iZone = ScoringConstants::ScoringPID::kSpeakerIZone,
       .ff = ScoringConstants::ScoringPID::kSpeakerFF};
 
-  PidSettings ampPidSettings = {
+  subzero::PidSettings ampPidSettings = {
       .p = ScoringConstants::ScoringPID::kAmpP,
       .i = ScoringConstants::ScoringPID::kAmpI,
       .d = ScoringConstants::ScoringPID::kAmpD,
       .iZone = ScoringConstants::ScoringPID::kAmpIZone,
       .ff = ScoringConstants::ScoringPID::kAmpFF};
 
-  PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
-                     rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      speakerUpperController{"Speaker Upper",
-                             m_speakerUpperSpinnyBoi,
-                             m_speakerUpperEnc,
-                             m_speakerUpperPidController,
-                             speakerPidSettings,
-                             nullptr,
-                             ScoringConstants::kMaxSpinRpm};
+  SparkFlexController speakerUpperController{"Speaker Upper",
+                                             m_speakerUpperSpinnyBoi,
+                                             m_speakerUpperEnc,
+                                             m_speakerUpperPidController,
+                                             speakerPidSettings,
+                                             nullptr,
+                                             ScoringConstants::kMaxSpinRpm};
 
-  PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
-                     rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      speakerLowerController{"Speaker Lower",
-                             m_speakerLowerSpinnyBoi,
-                             m_speakerLowerEnc,
-                             m_speakerLowerPidController,
-                             speakerPidSettings,
-                             nullptr,
-                             ScoringConstants::kMaxSpinRpm};
+  SparkFlexController speakerLowerController{"Speaker Lower",
+                                             m_speakerLowerSpinnyBoi,
+                                             m_speakerLowerEnc,
+                                             m_speakerLowerPidController,
+                                             speakerPidSettings,
+                                             nullptr,
+                                             ScoringConstants::kMaxSpinRpm};
 
-  PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
-                     rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      ampUpperController{"Amp Upper",
-                         m_ampUpperSpinnyBoi,
-                         m_ampUpperEnc,
-                         m_ampUpperPidController,
-                         ampPidSettings,
-                         nullptr,
-                         ScoringConstants::kMaxSpinRpm};
+  SparkFlexController ampUpperController{"Amp Upper",
+                                         m_ampUpperSpinnyBoi,
+                                         m_ampUpperEnc,
+                                         m_ampUpperPidController,
+                                         ampPidSettings,
+                                         nullptr,
+                                         ScoringConstants::kMaxSpinRpm};
 
-  PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
-                     rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      ampLowerController{"Amp Lower",
-                         m_ampLowerSpinnyBoi,
-                         m_ampLowerEnc,
-                         m_ampLowerPidController,
-                         ampPidSettings,
-                         nullptr,
-                         ScoringConstants::kMaxSpinRpm};
+  SparkFlexController ampLowerController{"Amp Lower",
+                                         m_ampLowerSpinnyBoi,
+                                         m_ampLowerEnc,
+                                         m_ampLowerPidController,
+                                         ampPidSettings,
+                                         nullptr,
+                                         ScoringConstants::kMaxSpinRpm};
 
   //   double m_ampUpperVelocity;
   //   double m_ampLowerVelocity;

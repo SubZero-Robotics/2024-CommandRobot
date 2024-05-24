@@ -17,6 +17,9 @@
 #include <hal/SimDevice.h>
 #include <hal/simulation/SimDeviceData.h>
 #include <networktables/StructArrayTopic.h>
+#include <subzero/logging/ConsoleLogger.h>
+#include <subzero/target/ITurnToTarget.h>
+#include <subzero/vision/PhotonVisionEstimators.h>
 
 #include <ctre/phoenix6/Pigeon2.hpp>
 #include <ctre/phoenix6/sim/Pigeon2SimState.hpp>
@@ -24,9 +27,6 @@
 
 #include "Constants.h"
 #include "MAXSwerveModule.h"
-#include "utils/ConsoleLogger.h"
-#include "utils/ITurnToTarget.h"
-#include "utils/Vision.h"
 
 // For sim to work
 #ifndef M_PI

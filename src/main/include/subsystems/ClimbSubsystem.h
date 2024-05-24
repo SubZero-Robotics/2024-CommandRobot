@@ -2,13 +2,13 @@
 
 #include <frc/controller/PIDController.h>
 #include <rev/CANSparkMax.h>
+#include <subzero/logging/ConsoleLogger.h>
 
 #include <memory>
 #include <string>
 #include <subzero/singleaxis/LinearSingleAxisSubsystem.cpp>
 
 #include "Constants.h"
-#include "utils/ConsoleLogger.h"
 
 class ClimbSubsystem : public LinearSingleAxisSubsystem<SparkMaxController> {
  public:

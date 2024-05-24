@@ -1,10 +1,9 @@
 #pragma once
 
+#include <subzero/constants/ColorConstants.h>
 #include <subzero/singleaxis/ISingleAxisSubsystem.h>
 #include <units/angular_velocity.h>
 #include <units/length.h>
-
-#include "ColorConstants.h"
 
 namespace ArmConstants {
 // Motor Constants
@@ -40,5 +39,5 @@ static const subzero::SingleAxisMechanism kArmMechanism = {
     // line width
     6,
     // color
-    ColorConstants::kBlue};
+    subzero::ColorConstants::kBlue};
 }  // namespace ArmConstants

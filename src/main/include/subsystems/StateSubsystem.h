@@ -5,10 +5,10 @@
 #include <frc2/command/CommandScheduler.h>
 #include <frc2/command/button/CommandXboxController.h>
 #include <rev/CANSparkFlex.h>
+#include <subzero/constants/ColorConstants.h>
 
 #include <functional>
 
-#include "ColorConstants.h"
 #include "Constants.h"
 #include "autos/PathFactory.h"
 #include "commands/ExtendClimbCommand.h"

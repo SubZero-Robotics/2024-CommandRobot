@@ -16,6 +16,7 @@
  * they are needed.
  */
 
+#include <rev/CANSparkFlex.h>
 #include <subzero/motor/PidMotorController.h>
 
 #include "constants/ArmConstants.h"
@@ -36,5 +37,9 @@
 
 using SparkMaxController =
     subzero::PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
+                                rev::SparkRelativeEncoder,
+                                rev::SparkAbsoluteEncoder>;
+using SparkFlexController =
+    subzero::PidMotorController<rev::CANSparkFlex, rev::SparkPIDController,
                                 rev::SparkRelativeEncoder,
                                 rev::SparkAbsoluteEncoder>;
