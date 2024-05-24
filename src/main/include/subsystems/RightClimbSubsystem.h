@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ClimbSubsystem.h"
-
 #include <functional>
+
+#include "ClimbSubsystem.h"
 
 class RightClimbSubsystem : public ClimbSubsystem {
  public:
@@ -51,13 +51,11 @@ class RightClimbSubsystem : public ClimbSubsystem {
       ClimbConstants::kClimberSetP, ClimbConstants::kClimberSetI,
       ClimbConstants::kClimberSetD, ClimbConstants::kClimberSetIZone,
       ClimbConstants::kClimberSetFF};
-  PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
-                     rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      m_controller{"Right Climb Motor",
-                   m_motor,
-                   m_encoder,
-                   m_pidController,
-                   m_climberPidSettings,
-                   nullptr,
-                   IntakingConstants::kMaxRpm};
+  SparkMaxController m_controller{"Right Climb Motor",
+                                  m_motor,
+                                  m_encoder,
+                                  m_pidController,
+                                  m_climberPidSettings,
+                                  nullptr,
+                                  IntakingConstants::kMaxRpm};
 };

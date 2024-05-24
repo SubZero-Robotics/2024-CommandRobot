@@ -5,29 +5,19 @@
 
 #include <memory>
 #include <string>
+#include <subzero/singleaxis/LinearSingleAxisSubsystem.cpp>
 
 #include "Constants.h"
-#include "subsystems/singleaxis/LinearSingleAxisSubsystem.h"
 #include "utils/ConsoleLogger.h"
 
-class ClimbSubsystem
-    : public LinearSingleAxisSubsystem<
-          rev::CANSparkMax, rev::SparkPIDController, rev::SparkRelativeEncoder,
-          rev::SparkAbsoluteEncoder> {
+class ClimbSubsystem : public LinearSingleAxisSubsystem<SparkMaxController> {
  public:
-  ClimbSubsystem(std::string name,
-                 PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
-                                    rev::SparkRelativeEncoder,
-                                    rev::SparkAbsoluteEncoder>& controller,
+  ClimbSubsystem(std::string name, SparkMaxController& controller,
                  ISingleAxisSubsystem<units::meter>::SingleAxisConfig config,
                  frc::MechanismObject2d* node = nullptr)
-      : LinearSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
-                                  rev::SparkRelativeEncoder,
-                                  rev::SparkAbsoluteEncoder>(name, controller,
-                                                             config, node) {}
+      : LinearSingleAxisSubsystem<SparkMaxController>(name, controller, config,
+                                                      node) {}
   void Periodic() override {
-    LinearSingleAxisSubsystem<rev::CANSparkMax, rev::SparkPIDController,
-                              rev::SparkRelativeEncoder,
-                              rev::SparkAbsoluteEncoder>::Periodic();
+    LinearSingleAxisSubsystem<SparkMaxController>::Periodic();
   }
 };

@@ -16,6 +16,8 @@
  * they are needed.
  */
 
+#include <subzero/motor/PidMotorController.h>
+
 #include "constants/ArmConstants.h"
 #include "constants/AutoConstants.h"
 #include "constants/BaseSingleAxisSubsystemConstants.h"
@@ -31,3 +33,8 @@
 #include "constants/ScoringConstants.h"
 #include "constants/TurnToPoseConstants.h"
 #include "constants/VisionConstants.h"
+
+using SparkMaxController =
+    subzero::PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
+                                rev::SparkRelativeEncoder,
+                                rev::SparkAbsoluteEncoder>;

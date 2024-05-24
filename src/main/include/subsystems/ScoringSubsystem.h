@@ -3,13 +3,13 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandPtr.h>
 #include <rev/CANSparkFlex.h>
+#include <subzero/motor/PidMotorControllerPair.h>
 
 #include <map>
 #include <string>
 
 #include "ColorConstants.h"
 #include "Constants.h"
-#include "utils/PidMotorControllerPair.h"
 
 class ScoringSubsystem : public frc2::SubsystemBase {
  public:
