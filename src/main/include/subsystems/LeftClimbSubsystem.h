@@ -37,7 +37,7 @@ class LeftClimbSubsystem : public ClimbSubsystem {
                return std::to_string(from.convert<units::inch>().value()) +
                       " inches :(";
              },
-             ignoreLimit},
+             ignoreLimit, AutoConstants::kLinearAxisConstraints},
             node) {
     m_motor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
   }

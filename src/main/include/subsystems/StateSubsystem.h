@@ -6,6 +6,7 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include <rev/CANSparkFlex.h>
 #include <subzero/constants/ColorConstants.h>
+#include <subzero/logging/ShuffleboardLogger.h>
 
 #include <functional>
 
@@ -23,7 +24,6 @@
 #include "utils/Commands/FunniCommands.h"
 #include "utils/Commands/IntakeCommands.h"
 #include "utils/Commands/ScoreCommands.h"
-#include "utils/ShuffleboardLogger.h"
 
 typedef struct {
   DriveSubsystem *drive;

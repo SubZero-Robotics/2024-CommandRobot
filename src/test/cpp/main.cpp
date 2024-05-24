@@ -1,4 +1,4 @@
-#include "utils/ConsoleLogger.h"
+#include <subzero/logging/ConsoleLogger.h>
 
 int main(int argc, char** argv) {
   auto& instance = ConsoleWriter;

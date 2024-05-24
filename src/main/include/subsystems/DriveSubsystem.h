@@ -35,7 +35,7 @@
 
 class DriveSubsystem : public frc2::SubsystemBase {
  public:
-  explicit DriveSubsystem(Vision* vision);
+  explicit DriveSubsystem(subzero::PhotonVisionEstimators* vision);
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -209,5 +209,5 @@ class DriveSubsystem : public frc2::SubsystemBase {
   frc::Field2d m_field;
   frc::Pose2d m_lastGoodPosition;
 
-  Vision* m_vision;
+  subzero::PhotonVisionEstimators* m_vision;
 };

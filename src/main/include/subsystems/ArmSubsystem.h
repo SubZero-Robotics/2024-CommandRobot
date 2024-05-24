@@ -36,7 +36,7 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<SparkMaxController> {
              // Conversion Function
              std::nullopt,
 
-             [] { return false; }},
+             [] { return false; }, AutoConstants::kRotationalAxisConstraints},
             ArmConstants::kArmLength,
             node} {
     m_SpinnyBoi.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);

@@ -7,6 +7,7 @@
 
 #include <map>
 #include <string>
+#include <subzero/motor/PidMotorController.cpp>
 
 #include "Constants.h"
 

@@ -19,20 +19,20 @@
 #include <frc2/command/button/JoystickButton.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/util/PathPlannerLogging.h>
+#include <subzero/logging/ShuffleboardLogger.h>
+#include <subzero/utils/InputUtils.h>
 #include <units/angle.h>
 #include <units/velocity.h>
 
+#include <subzero/autonomous/AutoFactory.cpp>
 #include <utility>
 
 #include "Constants.h"
-#include "autos/AutoFactory.h"
 #include "commands/ExtendClimbCommand.h"
 #include "commands/Funni.h"
 #include "commands/IntakeOutCommand.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
-#include "utils/InputUtils.h"
-#include "utils/ShuffleboardLogger.h"
 
 using namespace DriveConstants;
 
@@ -544,7 +544,6 @@ frc2::CommandPtr RobotContainer::MoveToIntakePose() {
 frc2::CommandPtr RobotContainer::IntakeTarget() {
   return frc2::DeferredCommand(
              [this] {
-
                return (MoveToIntakePose().AlongWith(
                            IntakingCommands::Intake(&m_intake, &m_scoring)))
                    .WithTimeout(10_s)

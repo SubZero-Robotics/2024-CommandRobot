@@ -17,11 +17,15 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <subzero/target/TurnToPose.h>
+#include <subzero/vision/PhotonVisionEstimators.h>
+#include <subzero/vision/TargetTracker.h>
 
+#include <subzero/autonomous/AutoFactory.cpp>
+#include <subzero/frc/smartdashboard/TaggedChooser.cpp>
 #include <vector>
 
 #include "Constants.h"
-#include "autos/AutoFactory.h"
 #include "subsystems/ArmSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
@@ -30,14 +34,10 @@
 #include "subsystems/RightClimbSubsystem.h"
 #include "subsystems/ScoringSubsystem.h"
 #include "subsystems/StateSubsystem.h"
-#include "utils/AutoChooser.h"
 #include "utils/Commands/DriveCommands.h"
 #include "utils/Commands/FunniCommands.h"
 #include "utils/Commands/IntakeCommands.h"
 #include "utils/Commands/ScoreCommands.h"
-#include "utils/TargetTracker.h"
-#include "utils/TurnToPose.h"
-#include "utils/Vision.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -79,11 +79,12 @@ class RobotContainer {
   bool m_ignoreClimbLimits = false;
 
   // The chooser for the autonomous routines
-  AutoChooser<AutoConstants::AutoType> m_autoChooser{
+  subzero::TaggedChooser<AutoConstants::AutoType> m_autoChooser{
       AutoConstants::kChooserEntries, AutoConstants::kChooserGroups,
       "Auto Selector"};
 
-  AutoFactory<AutoConstants::AutoType> m_autoFactory{AutoConstants::kPpAutos};
+  subzero::AutoFactory<AutoConstants::AutoType> m_autoFactory{
+      AutoConstants::kPpAutos};
 
   frc::SendableChooser<bool> m_ignoreLimitChooser;
 
@@ -125,7 +126,7 @@ class RobotContainer {
   StateSubsystem m_state{m_subsystems, m_driverController,
                          m_operatorController};
 
-  TargetTracker m_tracker{
+  subzero::TargetTracker m_tracker{
       {// Camera angle
        VisionConstants::kCameraAngle,
        // Camera lens height
@@ -150,30 +151,30 @@ class RobotContainer {
        VisionConstants::kMaxTrackedTargets,
        // Default pose to use when tracked target isn't found
        frc::Pose2d{100_m, 100_m, frc::Rotation2d{0_deg}}},
-      &m_intake,
-      &m_scoring,
-      &m_drive};
+      [this] { return m_drive.GetPose(); },
+      [this] { return m_drive.GetField(); }};
 
-  TurnToPose m_turnToPose{{// Rotation constraints
-                           frc::TrapezoidProfile<units::radians>::Constraints{
-                               TurnToPoseConstants::kProfileVelocity,
-                               TurnToPoseConstants::kProfileAcceleration},
-                           // Turn P
-                           TurnToPoseConstants::kTurnP,
-                           // Turn I
-                           TurnToPoseConstants::kTurnI,
-                           // Turn D
-                           TurnToPoseConstants::kTurnD,
-                           // Translation P
-                           TurnToPoseConstants::kTurnTranslationP,
-                           // Translation I
-                           TurnToPoseConstants::kTurnTranslationI,
-                           // Translation D
-                           TurnToPoseConstants::kTurnTranslationD,
-                           // Pose tolerance
-                           TurnToPoseConstants::kPoseTolerance},
-                          [this] { return m_drive.GetPose(); },
-                          [this] { return m_drive.GetField(); }};
+  subzero::TurnToPose m_turnToPose{
+      {// Rotation constraints
+       frc::TrapezoidProfile<units::radians>::Constraints{
+           TurnToPoseConstants::kProfileVelocity,
+           TurnToPoseConstants::kProfileAcceleration},
+       // Turn P
+       TurnToPoseConstants::kTurnP,
+       // Turn I
+       TurnToPoseConstants::kTurnI,
+       // Turn D
+       TurnToPoseConstants::kTurnD,
+       // Translation P
+       TurnToPoseConstants::kTurnTranslationP,
+       // Translation I
+       TurnToPoseConstants::kTurnTranslationI,
+       // Translation D
+       TurnToPoseConstants::kTurnTranslationD,
+       // Pose tolerance
+       TurnToPoseConstants::kPoseTolerance},
+      [this] { return m_drive.GetPose(); },
+      [this] { return m_drive.GetField(); }};
 
   photon::PhotonPoseEstimator poseFront{
       // layout
@@ -195,15 +196,18 @@ class RobotContainer {
       // offsets
       VisionConstants::kRobotToCam2};
 
-  std::vector<Vision::PhotonCameraEstimator> poseCameras{
-      Vision::PhotonCameraEstimator(poseFront),
-      Vision::PhotonCameraEstimator(poseRear),
-  };
+  std::vector<subzero::PhotonVisionEstimators::PhotonCameraEstimator>
+      poseCameras{
+          subzero::PhotonVisionEstimators::PhotonCameraEstimator(poseFront),
+          subzero::PhotonVisionEstimators::PhotonCameraEstimator(poseRear),
+      };
 
   void ConfigureAutoBindings();
 #endif
 
-  Vision m_vision{poseCameras};
+  subzero::PhotonVisionEstimators m_vision{poseCameras,
+                                           VisionConstants::kSingleTagStdDevs,
+                                           VisionConstants::kMultiTagStdDevs};
 
   void RegisterAutos();
   void ConfigureButtonBindings();
