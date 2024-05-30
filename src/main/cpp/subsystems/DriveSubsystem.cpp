@@ -64,6 +64,27 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
       nt::NetworkTableInstance::GetDefault()
           .GetStructArrayTopic<frc::SwerveModuleState>("/SwerveStates")
           .Publish();
+
+  m_sysIdRoutine = std::make_unique<frc2::sysid::SysIdRoutin>(
+      frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt, nullptr},
+      frc2::sysid::Mechanism{
+          [this](units::volt_t driveVoltage) {
+            m_leftMotor.SetVoltage(driveVoltage);
+            m_rightMotor.SetVoltage(driveVoltage);
+          },
+          [this](frc::sysid::SysIdRoutineLog* log) {
+            log->Motor("drive-left")
+                .voltage(m_leftMotor.Get() *
+                         frc::RobotController::GetBatteryVoltage())
+                .position(units::meter_t{m_leftEncoder.GetDistance()})
+                .velocity(units::meters_per_second_t{m_leftEncoder.GetRate()});
+            log->Motor("drive-right")
+                .voltage(m_rightMotor.Get() *
+                         frc::RobotController::GetBatteryVoltage())
+                .position(units::meter_t{m_rightEncoder.GetDistance()})
+                .velocity(units::meters_per_second_t{m_rightEncoder.GetRate()});
+          },
+          this});
 }
 
 void DriveSubsystem::SimulationPeriodic() {

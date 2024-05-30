@@ -14,6 +14,7 @@
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/smartdashboard/Field2d.h>
 #include <frc2/command/SubsystemBase.h>
+#include <frc2/command/sysid/SysIdRoutine.h>
 #include <hal/SimDevice.h>
 #include <hal/simulation/SimDeviceData.h>
 #include <networktables/StructArrayTopic.h>
@@ -156,6 +157,9 @@ class DriveSubsystem : public frc2::SubsystemBase {
       frc::Translation2d{-DriveConstants::kWheelBase / 2,
                          -DriveConstants::kTrackWidth / 2}};
 
+  frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction);
+  frc2::CommandPtr SysIdDynamic(frc2::sysid::Direction direction);
+
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -210,4 +214,6 @@ class DriveSubsystem : public frc2::SubsystemBase {
   frc::Pose2d m_lastGoodPosition;
 
   Vision* m_vision;
+
+  std::unique_ptr<frc2::sysid::SysIdRoutin> m_sysIdRoutine;
 };
