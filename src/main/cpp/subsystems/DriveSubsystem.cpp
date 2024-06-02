@@ -75,20 +75,13 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
             m_rearRight.SetMotorVoltage(MotorType::DriveMotor, driveVoltage);
           },
           [this](frc::sysid::SysIdRoutineLog* log) {
-            log->Motor("drive-left")
+            log->Motor("drive-front-left")
                 .voltage(m_frontLeft.Get(MotorType::DriveMotor) *
                          frc::RobotController::GetBatteryVoltage())
                 .position(units::meter_t{
                     m_frontLeft.GetDistance(MotorType::DriveMotor)})
                 .velocity(units::meters_per_second_t{
                     m_frontLeft.GetRate(MotorType::DriveMotor)});
-            log->Motor("drive-right")
-                .voltage(m_frontRight.Get(MotorType::DriveMotor) *
-                         frc::RobotController::GetBatteryVoltage())
-                .position(units::meter_t{
-                    m_frontRight.GetDistance(MotorType::DriveMotor)})
-                .velocity(units::meters_per_second_t{
-                    m_frontRight.GetRate(MotorType::DriveMotor)});
           },
           this});
 }
