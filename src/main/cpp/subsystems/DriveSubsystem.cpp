@@ -65,24 +65,30 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
           .GetStructArrayTopic<frc::SwerveModuleState>("/SwerveStates")
           .Publish();
 
-  m_sysIdRoutine = std::make_unique<frc2::sysid::SysIdRoutin>(
+  m_sysIdRoutine = std::make_unique<frc2::sysid::SysIdRoutine>(
       frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt, nullptr},
       frc2::sysid::Mechanism{
           [this](units::volt_t driveVoltage) {
-            m_leftMotor.SetVoltage(driveVoltage);
-            m_rightMotor.SetVoltage(driveVoltage);
+            m_frontLeft.SetMotorVoltage(MotorType::DriveMotor, driveVoltage);
+            m_rearLeft.SetMotorVoltage(MotorType::DriveMotor, driveVoltage);
+            m_frontRight.SetMotorVoltage(MotorType::DriveMotor, driveVoltage);
+            m_rearRight.SetMotorVoltage(MotorType::DriveMotor, driveVoltage);
           },
           [this](frc::sysid::SysIdRoutineLog* log) {
             log->Motor("drive-left")
-                .voltage(m_leftMotor.Get() *
+                .voltage(m_frontLeft.Get(MotorType::DriveMotor) *
                          frc::RobotController::GetBatteryVoltage())
-                .position(units::meter_t{m_leftEncoder.GetDistance()})
-                .velocity(units::meters_per_second_t{m_leftEncoder.GetRate()});
+                .position(units::meter_t{
+                    m_frontLeft.GetDistance(MotorType::DriveMotor)})
+                .velocity(units::meters_per_second_t{
+                    m_frontLeft.GetRate(MotorType::DriveMotor)});
             log->Motor("drive-right")
-                .voltage(m_rightMotor.Get() *
+                .voltage(m_frontRight.Get(MotorType::DriveMotor) *
                          frc::RobotController::GetBatteryVoltage())
-                .position(units::meter_t{m_rightEncoder.GetDistance()})
-                .velocity(units::meters_per_second_t{m_rightEncoder.GetRate()});
+                .position(units::meter_t{
+                    m_frontRight.GetDistance(MotorType::DriveMotor)})
+                .velocity(units::meters_per_second_t{
+                    m_frontRight.GetRate(MotorType::DriveMotor)});
           },
           this});
 }
@@ -264,4 +270,13 @@ frc::Pose2d DriveSubsystem::GetPose() {
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
   m_lastGoodPosition = pose;
   poseEstimator.ResetPosition(GetHeading(), GetModulePositions(), pose);
+}
+
+frc2::CommandPtr DriveSubsystem::SysIdQuasistatic(
+    frc2::sysid::Direction direction) {
+  return m_sysIdRoutine->Quasistatic(direction);
+}
+frc2::CommandPtr DriveSubsystem::SysIdDynamic(
+    frc2::sysid::Direction direction) {
+  return m_sysIdRoutine->Dynamic(direction);
 }

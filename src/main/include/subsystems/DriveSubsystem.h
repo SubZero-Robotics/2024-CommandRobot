@@ -215,5 +215,5 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   Vision* m_vision;
 
-  std::unique_ptr<frc2::sysid::SysIdRoutin> m_sysIdRoutine;
+  std::unique_ptr<frc2::sysid::SysIdRoutine> m_sysIdRoutine;
 };
