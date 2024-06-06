@@ -64,6 +64,37 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
       nt::NetworkTableInstance::GetDefault()
           .GetStructArrayTopic<frc::SwerveModuleState>("/SwerveStates")
           .Publish();
+
+  m_driveModules = {&m_frontLeft, &m_rearLeft, &m_frontRight, &m_rearRight};
+
+  m_sysIdRoutine = std::make_unique<frc2::sysid::SysIdRoutine>(
+      makeSysIdRoutine(kMotorNames, m_driveModules, MotorType::DriveMotor));
+}
+
+frc2::sysid::SysIdRoutine DriveSubsystem::makeSysIdRoutine(
+    std::vector<std::string> motorNames, std::vector<MAXSwerveModule*> modules,
+    MotorType motorType) {
+  return frc2::sysid::SysIdRoutine(
+      frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt, nullptr},
+      frc2::sysid::Mechanism{
+          [this, motorType](units::volt_t driveVoltage) {
+            for (auto* module : m_driveModules) {
+              module->SetMotorVoltage(motorType, driveVoltage);
+            }
+          },
+          [this, motorNames, motorType](frc::sysid::SysIdRoutineLog* log) {
+            for (size_t i = 0; i < m_driveModules.size() && i < motorNames.size();
+                 i++) {
+              log->Motor(motorNames[i])
+                  .voltage(m_driveModules[i]->Get(motorType) *
+                           frc::RobotController::GetBatteryVoltage())
+                  .position(
+                      units::meter_t{m_driveModules[i]->GetDistance(motorType)})
+                  .velocity(units::meters_per_second_t{
+                      m_driveModules[i]->GetRate(motorType)});
+            }
+          },
+          this});
 }
 
 void DriveSubsystem::SimulationPeriodic() {
@@ -243,4 +274,13 @@ frc::Pose2d DriveSubsystem::GetPose() {
 void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
   m_lastGoodPosition = pose;
   poseEstimator.ResetPosition(GetHeading(), GetModulePositions(), pose);
+}
+
+frc2::CommandPtr DriveSubsystem::SysIdQuasistatic(
+    frc2::sysid::Direction direction) {
+  return m_sysIdRoutine->Quasistatic(direction);
+}
+frc2::CommandPtr DriveSubsystem::SysIdDynamic(
+    frc2::sysid::Direction direction) {
+  return m_sysIdRoutine->Dynamic(direction);
 }

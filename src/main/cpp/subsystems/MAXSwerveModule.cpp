@@ -170,3 +170,32 @@ void MAXSwerveModule::simUpdateDrivePosition(
 }
 
 void MAXSwerveModule::ResetEncoders() { m_drivingEncoder.SetPosition(0); }
+
+void MAXSwerveModule::SetMotorVoltage(MotorType type, units::volt_t voltage) {
+  if (type == MotorType::DriveMotor) {
+    m_drivingSparkMax.SetVoltage(voltage);
+    return;
+  }
+  m_turningSparkMax.SetVoltage(voltage);
+}
+
+double MAXSwerveModule::Get(MotorType type) {
+  if (type == MotorType::DriveMotor) {
+    return m_drivingSparkMax.Get();
+  }
+  return m_turningSparkMax.Get();
+}
+
+double MAXSwerveModule::GetDistance(MotorType type) {
+  if (type == MotorType::DriveMotor) {
+    return m_drivingEncoder.GetPosition();
+  }
+  return m_turningAbsoluteEncoder.GetPosition();
+}
+
+double MAXSwerveModule::GetRate(MotorType type) {
+  if (type == MotorType::DriveMotor) {
+    return m_drivingEncoder.GetVelocity();
+  }
+  return m_turningAbsoluteEncoder.GetVelocity();
+}

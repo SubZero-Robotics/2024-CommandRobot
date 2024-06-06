@@ -130,6 +130,7 @@ void RobotContainer::ConfigureButtonBindings() {
               [this] { return 0; })
               .ToPtr());
 
+#ifndef USING_SYSID
   m_driverController.B().OnTrue(
       m_leds.Intaking()
           .AndThen(m_leds.AngryFace())
@@ -161,6 +162,23 @@ void RobotContainer::ConfigureButtonBindings() {
                                      &m_scoring, &m_intake, &m_arm))
           .AndThen(m_leds.BlinkingFace())
           .AndThen(m_leds.Idling()));
+#endif
+
+#ifdef USING_SYSID
+
+  m_driverController.A().WhileTrue(
+      m_drive.SysIdQuasistatic(frc2::sysid::Direction::kForward));
+
+  m_driverController.B().WhileTrue(
+      m_drive.SysIdQuasistatic(frc2::sysid::Direction::kReverse));
+
+  m_driverController.X().WhileTrue(
+      m_drive.SysIdDynamic(frc2::sysid::Direction::kForward));
+
+  m_driverController.Y().WhileTrue(
+      m_drive.SysIdDynamic(frc2::sysid::Direction::kReverse));
+
+#endif
 
   m_driverController.LeftBumper()
       .OnTrue(m_leds.Climbing().AndThen(m_leds.AmogusFace()))
@@ -544,7 +562,6 @@ frc2::CommandPtr RobotContainer::MoveToIntakePose() {
 frc2::CommandPtr RobotContainer::IntakeTarget() {
   return frc2::DeferredCommand(
              [this] {
-
                return (MoveToIntakePose().AlongWith(
                            IntakingCommands::Intake(&m_intake, &m_scoring)))
                    .WithTimeout(10_s)
