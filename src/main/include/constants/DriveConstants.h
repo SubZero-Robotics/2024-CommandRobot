@@ -47,4 +47,8 @@ constexpr int kRearLeftTurningCanId = 5;
 
 constexpr units::second_t kLoopTime = 0.022_s;
 constexpr double kLoopsPerSecond = 1_s / kLoopTime;
+
+const std::vector<std::string> kMotorNames = {
+    "Front-Left-Drive", "Rear-Left-Drive", "Front-Right-Drive",
+    "Rear-Right-Drive"};
 }  // namespace DriveConstants

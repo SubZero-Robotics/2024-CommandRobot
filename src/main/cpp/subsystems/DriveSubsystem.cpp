@@ -65,23 +65,33 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
           .GetStructArrayTopic<frc::SwerveModuleState>("/SwerveStates")
           .Publish();
 
+  m_driveModules = {&m_frontLeft, &m_rearLeft, &m_frontRight, &m_rearRight};
+
   m_sysIdRoutine = std::make_unique<frc2::sysid::SysIdRoutine>(
+      makeSysIdRoutine(kMotorNames, m_driveModules, MotorType::DriveMotor));
+}
+
+frc2::sysid::SysIdRoutine DriveSubsystem::makeSysIdRoutine(
+    std::vector<std::string> names, std::vector<MAXSwerveModule*> modules,
+    MotorType motorType) {
+  return frc2::sysid::SysIdRoutine(
       frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt, nullptr},
       frc2::sysid::Mechanism{
-          [this](units::volt_t driveVoltage) {
-            m_frontLeft.SetMotorVoltage(MotorType::DriveMotor, driveVoltage);
-            m_rearLeft.SetMotorVoltage(MotorType::DriveMotor, driveVoltage);
-            m_frontRight.SetMotorVoltage(MotorType::DriveMotor, driveVoltage);
-            m_rearRight.SetMotorVoltage(MotorType::DriveMotor, driveVoltage);
+          [&modules, &motorType](units::volt_t driveVoltage) {
+            for (MAXSwerveModule* module : modules) {
+              module->SetMotorVoltage(motorType, driveVoltage);
+            }
           },
-          [this](frc::sysid::SysIdRoutineLog* log) {
-            log->Motor("drive-front-left")
-                .voltage(m_frontLeft.Get(MotorType::DriveMotor) *
-                         frc::RobotController::GetBatteryVoltage())
-                .position(units::meter_t{
-                    m_frontLeft.GetDistance(MotorType::DriveMotor)})
-                .velocity(units::meters_per_second_t{
-                    m_frontLeft.GetRate(MotorType::DriveMotor)});
+          [&modules, &names, &motorType](frc::sysid::SysIdRoutineLog* log) {
+            for (int i = 0; i < modules.size() && i < names.size(); i++) {
+              log->Motor(names[i])
+                  .voltage(modules[i]->Get(motorType) *
+                           frc::RobotController::GetBatteryVoltage())
+                  .position(units::meter_t{
+                      modules[i]->GetDistance(MotorType::DriveMotor)})
+                  .velocity(units::meters_per_second_t{
+                      modules[i]->GetRate(MotorType::DriveMotor)});
+            }
           },
           this});
 }

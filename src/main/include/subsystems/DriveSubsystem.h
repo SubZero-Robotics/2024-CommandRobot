@@ -171,10 +171,16 @@ class DriveSubsystem : public frc2::SubsystemBase {
                                            units::radians_per_second_t rot,
                                            bool fieldRelative);
 
+  frc2::sysid::SysIdRoutine makeSysIdRoutine(
+      std::vector<std::string> names, std::vector<MAXSwerveModule*> modules,
+      MotorType motorType);
+
   MAXSwerveModule m_frontLeft;
   MAXSwerveModule m_rearLeft;
   MAXSwerveModule m_frontRight;
   MAXSwerveModule m_rearRight;
+
+  std::vector<MAXSwerveModule*> m_driveModules;
 
   uint8_t logCounter = 0;
 
