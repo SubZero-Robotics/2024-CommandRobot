@@ -3,6 +3,8 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <subzero/logging/ShuffleboardLogger.h>
 
+#include <subzero/motor/PidMotorController.cpp>
+
 using namespace ScoringConstants;
 
 ScoringSubsystem::ScoringSubsystem() {}

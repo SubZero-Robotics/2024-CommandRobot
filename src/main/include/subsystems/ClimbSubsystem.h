@@ -3,10 +3,10 @@
 #include <frc/controller/PIDController.h>
 #include <rev/CANSparkMax.h>
 #include <subzero/logging/ConsoleLogger.h>
+#include <subzero/singleaxis/LinearSingleAxisSubsystem.h>
 
 #include <memory>
 #include <string>
-#include <subzero/singleaxis/LinearSingleAxisSubsystem.cpp>
 
 #include "Constants.h"
 
@@ -17,7 +17,4 @@ class ClimbSubsystem : public LinearSingleAxisSubsystem<SparkMaxController> {
                  frc::MechanismObject2d* node = nullptr)
       : LinearSingleAxisSubsystem<SparkMaxController>(name, controller, config,
                                                       node) {}
-  void Periodic() override {
-    LinearSingleAxisSubsystem<SparkMaxController>::Periodic();
-  }
 };

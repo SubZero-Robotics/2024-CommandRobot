@@ -3,11 +3,11 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandPtr.h>
 #include <subzero/constants/ColorConstants.h>
+#include <subzero/motor/PidMotorController.h>
 #include <subzero/motor/PidMotorControllerPair.h>
 
 #include <map>
 #include <string>
-#include <subzero/motor/PidMotorController.cpp>
 
 #include "Constants.h"
 

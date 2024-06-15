@@ -25,6 +25,9 @@
 #include <units/velocity.h>
 
 #include <subzero/autonomous/AutoFactory.cpp>
+#include <subzero/frc/smartdashboard/TaggedChooser.cpp>
+#include <subzero/singleaxis/LinearSingleAxisSubsystem.cpp>
+#include <subzero/singleaxis/RotationalSingleAxisSubsystem.cpp>
 #include <utility>
 
 #include "Constants.h"
@@ -437,9 +440,10 @@ void RobotContainer::Periodic() {
         } else if (inRange && m_autoScoringEnabled &&
                    location.scoringDirection &&
                    !autoScoreCommand.IsScheduled() && !m_ramping) {
-          ScoringDirection direction = location.scoringDirection
-                                           ? location.scoringDirection.value()
-                                           : ScoringDirection::AmpSide;
+          // ScoringDirection direction = location.scoringDirection
+          //                                  ?
+          //                                  location.scoringDirection.value()
+          //                                  : ScoringDirection::AmpSide;
           m_leds.RampingAsync();
           // m_scoring.StartScoringRamp(direction);
           m_ramping = true;

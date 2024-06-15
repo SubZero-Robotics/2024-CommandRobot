@@ -1,7 +1,7 @@
 #pragma once
 
-#include <subzero/motor/PidMotorController.cpp>
-#include <subzero/singleaxis/RotationalSingleAxisSubsystem.cpp>
+#include <subzero/motor/PidMotorController.h>
+#include <subzero/singleaxis/RotationalSingleAxisSubsystem.h>
 
 #include "Constants.h"
 
@@ -40,10 +40,6 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<SparkMaxController> {
             ArmConstants::kArmLength,
             node} {
     m_SpinnyBoi.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
-  }
-
-  void Periodic() override {
-    RotationalSingleAxisSubsystem<SparkMaxController>::Periodic();
   }
 
  private:

@@ -17,12 +17,12 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <subzero/autonomous/AutoFactory.h>
+#include <subzero/frc/smartdashboard/TaggedChooser.h>
 #include <subzero/target/TurnToPose.h>
 #include <subzero/vision/PhotonVisionEstimators.h>
 #include <subzero/vision/TargetTracker.h>
 
-#include <subzero/autonomous/AutoFactory.cpp>
-#include <subzero/frc/smartdashboard/TaggedChooser.cpp>
 #include <vector>
 
 #include "Constants.h"
