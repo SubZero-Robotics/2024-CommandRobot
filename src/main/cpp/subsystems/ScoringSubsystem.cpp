@@ -1,6 +1,9 @@
 #include "subsystems/ScoringSubsystem.h"
 
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <subzero/logging/ShuffleboardLogger.h>
+
+#include <subzero/motor/PidMotorController.cpp>
 
 using namespace ScoringConstants;
 
@@ -123,8 +126,8 @@ bool ScoringSubsystem::CheckAmpSpeed() {
 bool ScoringSubsystem::CheckSpeakerSpeed() {
   ConsoleWriter.logVerbose("Scoring Subsystem", "Speaker Velocity %.3f",
                            m_speakerLowerEnc.GetVelocity());
-  ShuffleboardLogger::getInstance().logVerbose("Speaker Ramp Speed",
-                                               m_speakerLowerEnc.GetVelocity());
+  subzero::ShuffleboardLogger::getInstance().logVerbose(
+      "Speaker Ramp Speed", m_speakerLowerEnc.GetVelocity());
   return abs(m_speakerLowerEnc.GetVelocity()) >=
          abs(MaxSpeedToRpm(kSpeakerLowerSpeed));
 }
@@ -132,8 +135,8 @@ bool ScoringSubsystem::CheckSpeakerSpeed() {
 bool ScoringSubsystem::CheckSubwooferSpeed() {
   ConsoleWriter.logVerbose("Scoring Subsystem", "Subwoofer Velocity %.3f",
                            m_ampLowerEnc.GetVelocity());
-  ShuffleboardLogger::getInstance().logVerbose("Subwoofer Ramp Speed",
-                                               m_ampLowerEnc.GetVelocity());
+  subzero::ShuffleboardLogger::getInstance().logVerbose(
+      "Subwoofer Ramp Speed", m_ampLowerEnc.GetVelocity());
   return abs(m_ampLowerEnc.GetVelocity()) >=
          abs(MaxSpeedToRpm(kSubwooferLowerSpeed));
 }

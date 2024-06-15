@@ -1,5 +1,7 @@
 #include "subsystems/StateSubsystem.h"
 
+#include <subzero/logging/ShuffleboardLogger.h>
+
 #include "Constants.h"
 #include "autos/PathFactory.h"
 #include "commands/DriveVelocityCommand.h"
@@ -7,7 +9,6 @@
 #include "commands/Funni.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
-#include "utils/ShuffleboardLogger.h"
 
 using namespace AutoConstants::Locations;
 

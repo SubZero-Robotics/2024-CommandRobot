@@ -1,10 +1,9 @@
 #pragma once
 
+#include <subzero/constants/ColorConstants.h>
+#include <subzero/singleaxis/ISingleAxisSubsystem.h>
 #include <units/length.h>
 #include <units/velocity.h>
-
-#include "ColorConstants.h"
-#include "subsystems/singleaxis/ISingleAxisSubsystem.h"
 
 namespace ClimbConstants {
 constexpr int kClimberLeftMotorId = 10;
@@ -37,7 +36,7 @@ constexpr double kClimberVelocityScalar = 1.0;
 // Distance between left and right arm centers
 constexpr units::meter_t kClimberOffsetDistance = 4_m;
 
-static const SingleAxisMechanism kLeftClimberMechanism = {
+static const subzero::SingleAxisMechanism kLeftClimberMechanism = {
     // min length
     24_in,
     // angle
@@ -45,9 +44,9 @@ static const SingleAxisMechanism kLeftClimberMechanism = {
     // line width
     6.0,
     // color
-    ColorConstants::kGreen};
+    subzero::ColorConstants::kGreen};
 
-static const SingleAxisMechanism kRightClimberMechanism = {
+static const subzero::SingleAxisMechanism kRightClimberMechanism = {
     // min length
     24_in,
     // angle
@@ -55,5 +54,5 @@ static const SingleAxisMechanism kRightClimberMechanism = {
     // line width
     6.0,
     // color
-    ColorConstants::kRed};
+    subzero::ColorConstants::kRed};
 }  // namespace ClimbConstants

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ClimbSubsystem.h"
-
 #include <functional>
+
+#include "ClimbSubsystem.h"
 
 class LeftClimbSubsystem : public ClimbSubsystem {
  public:
@@ -37,7 +37,7 @@ class LeftClimbSubsystem : public ClimbSubsystem {
                return std::to_string(from.convert<units::inch>().value()) +
                       " inches :(";
              },
-             ignoreLimit},
+             ignoreLimit, AutoConstants::kLinearAxisConstraints},
             node) {
     m_motor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
   }
@@ -51,13 +51,11 @@ class LeftClimbSubsystem : public ClimbSubsystem {
       ClimbConstants::kClimberSetP, ClimbConstants::kClimberSetI,
       ClimbConstants::kClimberSetD, ClimbConstants::kClimberSetIZone,
       ClimbConstants::kClimberSetFF};
-  PidMotorController<rev::CANSparkMax, rev::SparkPIDController,
-                     rev::SparkRelativeEncoder, rev::SparkAbsoluteEncoder>
-      m_controller{"Left Climb Motor",
-                   m_motor,
-                   m_encoder,
-                   m_pidController,
-                   m_climberPidSettings,
-                   nullptr,
-                   IntakingConstants::kMaxRpm};
+  SparkMaxController m_controller{"Left Climb Motor",
+                                  m_motor,
+                                  m_encoder,
+                                  m_pidController,
+                                  m_climberPidSettings,
+                                  nullptr,
+                                  IntakingConstants::kMaxRpm};
 };

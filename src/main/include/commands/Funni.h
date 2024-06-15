@@ -3,8 +3,7 @@
 #include <frc/Timer.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
-
-#include "moduledrivers/ConnectorX.h"
+#include <subzero/moduledrivers/ConnectorX.h>
 
 class GamepieceFunni
     : public frc2::CommandHelper<frc2::Command, GamepieceFunni> {

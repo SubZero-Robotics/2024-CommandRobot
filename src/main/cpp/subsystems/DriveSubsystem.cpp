@@ -16,6 +16,8 @@
 #include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
 #include <pathplanner/lib/util/PIDConstants.h>
 #include <pathplanner/lib/util/ReplanningConfig.h>
+#include <subzero/drivetrain/SwerveUtils.h>
+#include <subzero/logging/ShuffleboardLogger.h>
 #include <units/angle.h>
 #include <units/angular_velocity.h>
 #include <units/length.h>
@@ -23,12 +25,11 @@
 
 #include "Constants.h"
 #include "frc/DataLogManager.h"
-#include "utils/ShuffleboardLogger.h"
-#include "utils/SwerveUtils.h"
 
+using namespace subzero;
 using namespace DriveConstants;
 
-DriveSubsystem::DriveSubsystem(Vision* vision)
+DriveSubsystem::DriveSubsystem(PhotonVisionEstimators* vision)
     : m_frontLeft{kFrontLeftDrivingCanId, kFrontLeftTurningCanId,
                   kFrontLeftChassisAngularOffset},
       m_rearLeft{kRearLeftDrivingCanId, kRearLeftTurningCanId,

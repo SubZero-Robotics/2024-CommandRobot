@@ -4,6 +4,7 @@
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
 #include <pathplanner/lib/util/PIDConstants.h>
+#include <subzero/frc/smartdashboard/TaggedChooser.h>
 #include <units/acceleration.h>
 #include <units/angular_acceleration.h>
 #include <units/angular_velocity.h>
@@ -14,7 +15,6 @@
 #include <vector>
 
 #include "constants/ScoringConstants.h"
-#include "utils/AutoChooser.h"
 
 namespace AutoConstants {
 constexpr auto kMaxSpeed = 3_mps;
@@ -49,7 +49,7 @@ enum class AutoType {
   ThreeNoteSimp,
 };
 
-static const std::vector<AutoChooser<AutoType>::AutoChooserEntry>
+static const std::vector<subzero::TaggedChooser<AutoType>::TaggedChooserEntry>
     kChooserEntries{
         {{AutoType::FourNoteAuto, "4 Note Auto"},
          {"4 notes", "close", "high", "amp", "center"}},
@@ -75,7 +75,8 @@ static const std::vector<AutoChooser<AutoType>::AutoChooserEntry>
          {"3 notes", "decent", "far", "amp"}},
     };
 
-static const std::vector<AutoChooser<AutoType>::AutoChooserSelectorGroup>
+static const std::vector<
+    subzero::TaggedChooser<AutoType>::TaggedChooserSelectorGroup>
     kChooserGroups{
         {"Note Count", {"0 notes", "1 note", "2 notes", "3 notes", "4 notes"}},
         {"Proximity", {"close", "mid", "far"}},
@@ -217,6 +218,8 @@ const std::vector<FixtureLocation> RedFixtureLocations{
     // Amp (ScoreAmp)
     {.fixtureLocation = frc::Pose2d(14.64_m, 8.5_m, frc::Rotation2d(0_deg)),
      .locationRadius = 6_ft,
+     .scoringRadius = std::nullopt,
+     .scoringDirection = std::nullopt,
      .trackedPose = frc::Pose2d(14.75_m, 20_m, frc::Rotation2d(180_deg))},
     // Speaker (ScoreSubwoofer)
     {.fixtureLocation = frc::Pose2d(15.34_m, 5.6_m, frc::Rotation2d(0_deg)),
@@ -242,6 +245,8 @@ const std::vector<FixtureLocation> BlueFixtureLocations{
     // Amp (ScoreAmp)
     {.fixtureLocation = frc::Pose2d(1.82_m, 8.5_m, frc::Rotation2d(0_deg)),
      .locationRadius = 6_ft,
+     .scoringRadius = std::nullopt,
+     .scoringDirection = std::nullopt,
      .trackedPose = frc::Pose2d(1.82_m, 20_m, frc::Rotation2d(180_deg))},
     // Speaker (ScoreSubwoofer)
     {.fixtureLocation = frc::Pose2d(0.5_m, 5.6_m, frc::Rotation2d(0_deg)),
