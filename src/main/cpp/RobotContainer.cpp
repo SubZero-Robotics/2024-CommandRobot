@@ -2,6 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+#define USING_SYSID
+
 #include "RobotContainer.h"
 
 #include <frc/IterativeRobotBase.h>
@@ -166,7 +168,7 @@ void RobotContainer::ConfigureButtonBindings() {
 
 #ifdef USING_SYSID
 
-  m_driverController.A().WhileTrue(
+  m_driverController.A().OnTrue(
       m_drive.SysIdQuasistatic(frc2::sysid::Direction::kForward));
 
   m_driverController.B().WhileTrue(
