@@ -34,6 +34,8 @@
 #include "utils/InputUtils.h"
 #include "utils/ShuffleboardLogger.h"
 
+#define USING_SYSID
+
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer() {
@@ -164,17 +166,15 @@ void RobotContainer::ConfigureButtonBindings() {
           .AndThen(m_leds.Idling()));
 #endif
 
-#define USING_SYSID
-
 #ifdef USING_SYSID
 
-  m_driverController.A().WhileTrue(
+  m_driverController.A().OnTrue(
       m_drive.SysIdQuasistatic(frc2::sysid::Direction::kForward));
 
   m_driverController.B().WhileTrue(
       m_drive.SysIdQuasistatic(frc2::sysid::Direction::kReverse));
 
-  m_driverController.X().WhileTrue(
+  m_driverController.X().OnTrue(
       m_drive.SysIdDynamic(frc2::sysid::Direction::kForward));
 
   m_driverController.Y().WhileTrue(

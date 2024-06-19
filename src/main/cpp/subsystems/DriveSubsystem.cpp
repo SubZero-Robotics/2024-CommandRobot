@@ -79,19 +79,25 @@ std::unique_ptr<frc2::sysid::SysIdRoutine> DriveSubsystem::makeSysIdRoutine(
       frc2::sysid::Mechanism{
           [this, motorType](units::volt_t driveVoltage) {
             for (auto* module : m_driveModules) {
-              module->SetMotorVoltage(motorType, driveVoltage);
+              // module->SetMotorVoltage(motorType, driveVoltage);
             }
           },
           [this, motorNames, motorType](frc::sysid::SysIdRoutineLog* log) {
-            for (size_t i = 0;
-                 i < m_driveModules.size() && i < motorNames.size(); i++) {
+            ConsoleWriter.logVerbose("LOG WRITE", "log write called%s", "");
+            for (size_t i = 0; i < motorNames.size(); i++) {
+              // log->Motor(motorNames[i])
+              //     .voltage(m_driveModules[i]->Get(motorType) *
+              //              frc::RobotController::GetBatteryVoltage())
+              //     .position(
+              //         units::meter_t{m_driveModules[i]->GetDistance(motorType)})
+              //     .velocity(units::meters_per_second_t{
+              //         m_driveModules[i]->GetRate(motorType)});
               log->Motor(motorNames[i])
-                  .voltage(m_driveModules[i]->Get(motorType) *
-                           frc::RobotController::GetBatteryVoltage())
-                  .position(
-                      units::meter_t{m_driveModules[i]->GetDistance(motorType)})
+                  .voltage(units::volt_t{1 + i})
+                  .position(units::meter_t{
+                      1.2 + frc::Timer::GetFPGATimestamp().value()})
                   .velocity(units::meters_per_second_t{
-                      m_driveModules[i]->GetRate(motorType)});
+                      1.2 + frc::Timer::GetFPGATimestamp().value()});
             }
           },
           this});
