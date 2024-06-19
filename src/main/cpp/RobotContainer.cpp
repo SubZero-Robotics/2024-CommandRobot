@@ -34,7 +34,7 @@
 #include "utils/InputUtils.h"
 #include "utils/ShuffleboardLogger.h"
 
-#define USING_SYSID
+// #define USING_SYSID
 
 using namespace DriveConstants;
 
@@ -149,13 +149,20 @@ void RobotContainer::ConfigureButtonBindings() {
           .AndThen(m_leds.BlinkingFace())
           .AndThen(m_leds.Idling()));
 
-  m_driverController.A().OnTrue(
-      m_leds.ScoringAmp()
-          .AndThen(
-              ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
-                                     &m_scoring, &m_intake, &m_arm))
-          .AndThen(m_leds.BlinkingFace())
-          .AndThen(m_leds.Idling()));
+  // m_driverController.A().OnTrue(
+  //     m_leds.ScoringAmp()
+  //         .AndThen(
+  //             ScoringCommands::Score([] { return ScoringDirection::AmpSide;
+  //             },
+  //                                    &m_scoring, &m_intake, &m_arm))
+  //         .AndThen(m_leds.BlinkingFace())
+  //         .AndThen(m_leds.Idling()));
+  m_driverController.A().OnTrue(frc2::InstantCommand([this] {
+                                  char* data = "Hello";
+                                  m_canCX.WritePacket(
+                                      reinterpret_cast<uint8_t*>(data),
+                                      sizeof(data), 0x44);
+                                }).ToPtr());
 
   m_driverController.Y().OnTrue(
       m_leds.ScoringSubwoofer()

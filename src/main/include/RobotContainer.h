@@ -5,6 +5,7 @@
 #pragma once
 
 #include <AHRS.h>
+#include <frc/CAN.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/smartdashboard/Mechanism2d.h>
@@ -221,4 +222,5 @@ class RobotContainer {
   void ToggleAimbot();
   void ToggleAutoScoring();
   std::optional<frc::Rotation2d> GetRotationTargetOverride();
+  frc::CAN m_canCX{1, 8, 10};
 };
