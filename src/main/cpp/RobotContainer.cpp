@@ -164,6 +164,8 @@ void RobotContainer::ConfigureButtonBindings() {
           .AndThen(m_leds.Idling()));
 #endif
 
+#define USING_SYSID
+
 #ifdef USING_SYSID
 
   m_driverController.A().WhileTrue(

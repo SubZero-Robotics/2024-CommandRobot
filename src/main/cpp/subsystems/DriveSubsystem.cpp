@@ -67,14 +67,14 @@ DriveSubsystem::DriveSubsystem(Vision* vision)
 
   m_driveModules = {&m_frontLeft, &m_rearLeft, &m_frontRight, &m_rearRight};
 
-  m_sysIdRoutine = std::make_unique<frc2::sysid::SysIdRoutine>(
-      makeSysIdRoutine(kMotorNames, m_driveModules, MotorType::DriveMotor));
+  m_sysIdRoutine =
+      makeSysIdRoutine(kMotorNames, m_driveModules, MotorType::DriveMotor);
 }
 
-frc2::sysid::SysIdRoutine DriveSubsystem::makeSysIdRoutine(
+std::unique_ptr<frc2::sysid::SysIdRoutine> DriveSubsystem::makeSysIdRoutine(
     std::vector<std::string> motorNames, std::vector<MAXSwerveModule*> modules,
     MotorType motorType) {
-  return frc2::sysid::SysIdRoutine(
+  return std::make_unique<frc2::sysid::SysIdRoutine>(
       frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt, nullptr},
       frc2::sysid::Mechanism{
           [this, motorType](units::volt_t driveVoltage) {
@@ -83,8 +83,8 @@ frc2::sysid::SysIdRoutine DriveSubsystem::makeSysIdRoutine(
             }
           },
           [this, motorNames, motorType](frc::sysid::SysIdRoutineLog* log) {
-            for (size_t i = 0; i < m_driveModules.size() && i < motorNames.size();
-                 i++) {
+            for (size_t i = 0;
+                 i < m_driveModules.size() && i < motorNames.size(); i++) {
               log->Motor(motorNames[i])
                   .voltage(m_driveModules[i]->Get(motorType) *
                            frc::RobotController::GetBatteryVoltage())
