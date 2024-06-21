@@ -18,6 +18,8 @@
 #include <frc2/command/WaitCommand.h>
 #include <frc2/command/button/JoystickButton.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/pathfinding/Pathfinding.h>
+#include <pathplanner/lib/pathfinding/RemoteADStar.h>
 #include <pathplanner/lib/util/PathPlannerLogging.h>
 #include <subzero/logging/ShuffleboardLogger.h>
 #include <subzero/utils/InputUtils.h>
@@ -80,6 +82,11 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::RegisterAutos() {
+#ifdef USE_REMOTE_AD_STAR
+  pathplanner::Pathfinding::setPathfinder(
+      std::make_unique<pathplanner::RemoteADStar>());
+#endif
+
   pathplanner::NamedCommands::registerCommand(AutoConstants::kLedFunniName,
                                               m_leds.Intaking());
   pathplanner::NamedCommands::registerCommand(

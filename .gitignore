@@ -34,6 +34,7 @@ logs
 
 # Executables
 *.exe
+!pplib_coprocessor.exe
 *.out
 *.app
 
