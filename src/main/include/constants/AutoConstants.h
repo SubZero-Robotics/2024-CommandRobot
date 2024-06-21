@@ -16,6 +16,10 @@
 
 #include "constants/ScoringConstants.h"
 
+// See https://github.com/mjansen4857/pplib_coprocessor
+// Ensure run_pplib.bat is running from the root of this repo too if in-use
+#define USE_REMOTE_AD_STAR
+
 namespace AutoConstants {
 constexpr auto kMaxSpeed = 3_mps;
 constexpr auto kMaxAcceleration = 1.5_mps_sq;
