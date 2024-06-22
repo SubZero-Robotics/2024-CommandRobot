@@ -38,9 +38,9 @@ constexpr units::meter_t kClimberOffsetDistance = 4_m;
 
 static const subzero::SingleAxisMechanism kLeftClimberMechanism = {
     // min length
-    24_in,
+    12_in,
     // angle
-    70_deg,
+    80_deg,
     // line width
     6.0,
     // color
@@ -48,9 +48,9 @@ static const subzero::SingleAxisMechanism kLeftClimberMechanism = {
 
 static const subzero::SingleAxisMechanism kRightClimberMechanism = {
     // min length
-    24_in,
+    12_in,
     // angle
-    70_deg,
+    80_deg,
     // line width
     6.0,
     // color
