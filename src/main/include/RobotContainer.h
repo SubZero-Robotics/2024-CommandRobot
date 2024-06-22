@@ -63,7 +63,7 @@ class RobotContainer {
                                 double inMax, double outMin, double outMax);
 
  private:
-  frc::Mechanism2d m_mech{1, 1};
+  frc::Mechanism2d m_mech{0.5, 0.5};
 
   // The driver's controller
   frc2::CommandXboxController m_driverController{

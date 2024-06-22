@@ -9,7 +9,10 @@ class RightClimbSubsystem : public ClimbSubsystem {
   explicit RightClimbSubsystem(std::function<bool()> ignoreLimit,
                                frc::MechanismObject2d* node = nullptr)
       : ClimbSubsystem(
-            "Right Climber", m_controller,
+            "Right Climber",
+            frc::RobotBase::IsReal()
+                ? dynamic_cast<IPidMotorController&>(m_controller)
+                : dynamic_cast<IPidMotorController&>(simClimbController),
             {// Min distance
              ClimbConstants::kMinClimberDistance,
              // Max distance
@@ -58,4 +61,6 @@ class RightClimbSubsystem : public ClimbSubsystem {
                                   m_climberPidSettings,
                                   nullptr,
                                   IntakingConstants::kMaxRpm};
+  subzero::SimPidMotorController simClimbController{
+      "Sim Right Climb", m_climberPidSettings, IntakingConstants::kMaxRpm};
 };

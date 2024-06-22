@@ -1,16 +1,20 @@
 #pragma once
 
+#include <frc/RobotBase.h>
 #include <subzero/motor/PidMotorController.h>
+#include <subzero/motor/SimPidMotorController.h>
 #include <subzero/singleaxis/RotationalSingleAxisSubsystem.h>
 
 #include "Constants.h"
 
-class ArmSubsystem : public RotationalSingleAxisSubsystem<SparkMaxController> {
+class ArmSubsystem : public RotationalSingleAxisSubsystem<IPidMotorController> {
  public:
   explicit ArmSubsystem(frc::MechanismObject2d* node = nullptr)
-      : RotationalSingleAxisSubsystem<SparkMaxController>{
+      : RotationalSingleAxisSubsystem<IPidMotorController>{
             "Arm",
-            armController,
+            frc::RobotBase::IsReal()
+                ? dynamic_cast<IPidMotorController&>(armController)
+                : dynamic_cast<IPidMotorController&>(simArmController),
             {// Min distance
              ArmConstants::kHomeRotation,
              // Max distance
@@ -30,7 +34,7 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<SparkMaxController> {
              // Max limit switch
              std::nullopt,
              // Reversed
-             false,
+             true,
              // Mechanism2d
              ArmConstants::kArmMechanism,
              // Conversion Function
@@ -58,4 +62,6 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<SparkMaxController> {
                                    armPidSettings,
                                    &m_absEnc,
                                    IntakingConstants::kMaxRpm};
+  subzero::SimPidMotorController simArmController{"Sim Arm", armPidSettings,
+                                                  IntakingConstants::kMaxRpm};
 };
