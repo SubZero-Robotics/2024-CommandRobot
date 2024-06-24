@@ -1,0 +1,127 @@
+{
+	"name": "Robot",
+	"sourceUrl": "https://esko.onshape.com/documents/ed824b879f12a1905be71511/w/b6d4967fdcca0e3c193bd4dc/e/f9e6220adc6e2fa74aa1afa4",
+	"rotations": [
+		{
+			"axis": "x",
+			"degrees": 0
+		},
+		{
+			"axis": "y",
+			"degrees": 0
+		},
+		{
+			"axis": "z",
+			"degrees": 0
+		}
+	],
+	"position": [ 0, 0, 0 ],
+	"cameras": [],
+	"components": [
+		{
+			"zeroedRotations": [
+				{
+					"axis": "x",
+					"degrees": 0
+				},
+				{
+					"axis": "y",
+					"degrees": 0
+				},
+				{
+					"axis": "z",
+					"degrees": 0
+				}
+			],
+			"zeroedPosition": [
+				0,
+				0,
+				0
+			]
+		},
+		{
+			"zeroedRotations": [
+				{
+					"axis": "x",
+					"degrees": 0
+				},
+				{
+					"axis": "y",
+					"degrees": 0
+				},
+				{
+					"axis": "z",
+					"degrees": 0
+				}
+			],
+			"zeroedPosition": [
+				0,
+				0,
+				0
+			]
+		},
+		{
+			"zeroedRotations": [
+				{
+					"axis": "x",
+					"degrees": 0
+				},
+				{
+					"axis": "y",
+					"degrees": 0
+				},
+				{
+					"axis": "z",
+					"degrees": 0
+				}
+			],
+			"zeroedPosition": [
+				0,
+				0,
+				0
+			]
+		},
+		{
+			"zeroedRotations": [
+				{
+					"axis": "x",
+					"degrees": 0
+				},
+				{
+					"axis": "y",
+					"degrees": 0
+				},
+				{
+					"axis": "z",
+					"degrees": 0
+				}
+			],
+			"zeroedPosition": [
+				0,
+				0,
+				0
+			]
+		},
+		{
+			"zeroedRotations": [
+				{
+					"axis": "x",
+					"degrees": 0
+				},
+				{
+					"axis": "y",
+					"degrees": 0
+				},
+				{
+					"axis": "z",
+					"degrees": 0
+				}
+			],
+			"zeroedPosition": [
+				0,
+				0,
+				0
+			]
+		}
+	]
+}
