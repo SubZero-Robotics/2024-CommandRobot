@@ -4,6 +4,8 @@
 
 #pragma once
 
+#define USING_SYSID
+
 // Don't define as TEST_SWERVE_BOT if not using the testing swerve robot
 // #define TEST_SWERVE_BOT
 
