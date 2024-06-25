@@ -80,6 +80,17 @@ class DriveSubsystem : public frc2::SubsystemBase {
    */
   void SetX();
 
+  void MakeStraight() {
+    m_frontLeft.SetDesiredState(
+        frc::SwerveModuleState{0_mps, frc::Rotation2d{0_deg}});
+    m_frontRight.SetDesiredState(
+        frc::SwerveModuleState{0_mps, frc::Rotation2d{180_deg}});
+    m_rearLeft.SetDesiredState(
+        frc::SwerveModuleState{0_mps, frc::Rotation2d{0_deg}});
+    m_rearRight.SetDesiredState(
+        frc::SwerveModuleState{0_mps, frc::Rotation2d{0_deg}});
+  }
+
   /**
    * Resets the drive encoders to currently read a position of 0.
    */

@@ -169,13 +169,19 @@ void RobotContainer::ConfigureButtonBindings() {
 #ifdef USING_SYSID
 
   m_driverController.A().OnTrue(
-      m_drive.SysIdQuasistatic(frc2::sysid::Direction::kForward));
+      frc2::InstantCommand([this] { m_drive.MakeStraight(); })
+          .ToPtr()
+          .AndThen(frc2::WaitCommand(2_s).ToPtr())
+          .AndThen(m_drive.SysIdQuasistatic(frc2::sysid::Direction::kForward)));
 
   m_driverController.B().WhileTrue(
       m_drive.SysIdQuasistatic(frc2::sysid::Direction::kReverse));
 
-  m_driverController.X().WhileTrue(
-      m_drive.SysIdDynamic(frc2::sysid::Direction::kForward));
+  m_driverController.X().OnTrue(
+      frc2::InstantCommand([this] { m_drive.MakeStraight(); })
+          .ToPtr()
+          .AndThen(frc2::WaitCommand(2_s).ToPtr())
+          .AndThen(m_drive.SysIdDynamic(frc2::sysid::Direction::kForward)));
 
   m_driverController.Y().WhileTrue(
       m_drive.SysIdDynamic(frc2::sysid::Direction::kReverse));
