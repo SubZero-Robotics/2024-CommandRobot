@@ -22,6 +22,7 @@
 #include "constants/AutoConstants.h"
 #include "constants/BaseSingleAxisSubsystemConstants.h"
 #include "constants/CANConstants.h"
+#include "constants/CharacterizationConstants.h"
 #include "constants/ClimbConstants.h"
 #include "constants/DriveConstants.h"
 #include "constants/IntakingConstants.h"
