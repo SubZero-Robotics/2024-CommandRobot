@@ -151,7 +151,7 @@ frc2::CommandPtr DriveSubsystem::SysIdQuasistatic(
 frc2::CommandPtr DriveSubsystem::SysIdDynamic(
     frc2::sysid::Direction direction) {
   return m_sysIdRoutine->Dynamic(direction);
-};
+}
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
                            units::meters_per_second_t ySpeed,
