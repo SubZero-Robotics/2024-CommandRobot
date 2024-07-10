@@ -90,13 +90,6 @@ std::unique_ptr<frc2::sysid::SysIdRoutine> DriveSubsystem::makeSysIdRoutine(
           [this, motorNames, motorType](frc::sysid::SysIdRoutineLog* log) {
             ConsoleWriter.logVerbose("LOG WRITE", "log write called%s", "");
             for (size_t i = 0; i < motorNames.size(); i++) {
-              // log->Motor(motorNames[i])
-              //     .voltage(m_driveModules[i]->Get(motorType) *
-              //              frc::RobotController::GetBatteryVoltage())
-              //     .position(
-              //         units::meter_t{m_driveModules[i]->GetDistance(motorType)})
-              //     .velocity(units::meters_per_second_t{
-              //         m_driveModules[i]->GetRate(motorType)});
               log->Motor(motorNames[i])
                   .voltage(
                       units::volt_t{m_driveModules[i]->Get(motorType) *
