@@ -139,7 +139,7 @@ void RobotContainer::ConfigureButtonBindings() {
               [this] { return m_driverController.GetRightTriggerAxis(); },
               [this] { return 0; })
               .ToPtr());
-
+#ifndef USING_SYSID
   m_driverController.B().OnTrue(
       m_leds.Intaking()
           .AndThen(m_leds.AngryFace())
@@ -171,6 +171,19 @@ void RobotContainer::ConfigureButtonBindings() {
                                      &m_scoring, &m_intake, &m_arm))
           .AndThen(m_leds.BlinkingFace())
           .AndThen(m_leds.Idling()));
+#elif USING_SYSID
+  m_driverController.A().OnTrue(
+      m_drive.SysIdQuasistatic(frc2::sysid::Direction::kForward));
+
+  m_driverController.B().OnTrue(
+      m_drive.SysIdQuasistatic(frc2::sysid::Direction::kReverse));
+
+  m_driverController.X().OnTrue(
+      m_drive.SysIdDynamic(frc2::sysid::Direction::kForward));
+
+  m_driverController.Y().OnTrue(
+      m_drive.SysIdDynamic(frc2::sysid::Direction::kReverse));
+#endif
 
   m_driverController.LeftBumper()
       .OnTrue(m_leds.Climbing().AndThen(m_leds.AmogusFace()))
