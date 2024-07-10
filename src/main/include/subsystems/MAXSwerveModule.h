@@ -15,6 +15,8 @@
 
 #include "Constants.h"
 
+enum class MotorType { DriveMotor = 0, TurnMotor };
+
 class MAXSwerveModule {
  public:
   /**
@@ -61,6 +63,14 @@ class MAXSwerveModule {
    * Zeroes all the SwerveModule encoders.
    */
   void ResetEncoders();
+
+  void SetMotorVoltage(MotorType type, units::volt_t voltage);
+
+  double Get(MotorType type);
+
+  double GetDistance(MotorType type);
+
+  double GetRate(MotorType type);
 
  private:
   rev::CANSparkMax m_drivingSparkMax;
