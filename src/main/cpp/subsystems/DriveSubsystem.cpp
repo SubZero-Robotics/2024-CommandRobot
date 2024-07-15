@@ -61,6 +61,11 @@ DriveSubsystem::DriveSubsystem(PhotonVisionEstimators* vision)
       },
       this);
 
+  m_driveModules = {&m_frontLeft, &m_rearLeft, &m_frontRight, &m_rearRight};
+
+  m_sysIdRoutine =
+      makeSysIdRoutine(kMotorNames, m_driveModules, MotorType::DriveMotor);
+
   m_publisher =
       nt::NetworkTableInstance::GetDefault()
           .GetStructArrayTopic<frc::SwerveModuleState>("/SwerveStates")
@@ -69,6 +74,33 @@ DriveSubsystem::DriveSubsystem(PhotonVisionEstimators* vision)
       nt::NetworkTableInstance::GetDefault()
           .GetStructArrayTopic<frc::SwerveModuleState>("/SwerveDesiredStates")
           .Publish();
+}
+
+std::unique_ptr<frc2::sysid::SysIdRoutine> DriveSubsystem::makeSysIdRoutine(
+    std::vector<std::string> motorNames, std::vector<MAXSwerveModule*> modules,
+    MotorType motorType) {
+  return std::make_unique<frc2::sysid::SysIdRoutine>(
+      frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt, nullptr},
+      frc2::sysid::Mechanism{
+          [this, motorType](units::volt_t driveVoltage) {
+            for (auto* module : m_driveModules) {
+              module->SetMotorVoltage(motorType, driveVoltage);
+            }
+          },
+          [this, motorNames, motorType](frc::sysid::SysIdRoutineLog* log) {
+            ConsoleWriter.logVerbose("LOG WRITE", "log write called%s", "");
+            for (size_t i = 0; i < motorNames.size(); i++) {
+              log->Motor(motorNames[i])
+                  .voltage(
+                      units::volt_t{m_driveModules[i]->Get(motorType) *
+                                    frc::RobotController::GetBatteryVoltage()})
+                  .position(
+                      units::meter_t{m_driveModules[i]->GetDistance(motorType)})
+                  .velocity(units::meters_per_second_t{
+                      m_driveModules[i]->GetRate(motorType)});
+            }
+          },
+          this});
 }
 
 void DriveSubsystem::SimulationPeriodic() {
@@ -102,6 +134,16 @@ void DriveSubsystem::Periodic() {
     m_lastGoodPosition = updatedPose;
     m_field.SetRobotPose(updatedPose);
   }
+}
+
+frc2::CommandPtr DriveSubsystem::SysIdQuasistatic(
+    frc2::sysid::Direction direction) {
+  return m_sysIdRoutine->Quasistatic(direction);
+}
+
+frc2::CommandPtr DriveSubsystem::SysIdDynamic(
+    frc2::sysid::Direction direction) {
+  return m_sysIdRoutine->Dynamic(direction);
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
@@ -194,10 +236,11 @@ void DriveSubsystem::logDrivebase() {
                             m_rearLeft.GetState(), m_rearRight.GetState()};
   std::span<frc::SwerveModuleState, 4> states(states_vec.begin(),
                                               states_vec.end());
-  std::vector desired_vec = {m_frontLeft.GetDesiredState(), m_frontRight.GetDesiredState(),
-                            m_rearLeft.GetDesiredState(), m_rearRight.GetDesiredState()};
+  std::vector desired_vec = {
+      m_frontLeft.GetDesiredState(), m_frontRight.GetDesiredState(),
+      m_rearLeft.GetDesiredState(), m_rearRight.GetDesiredState()};
   std::span<frc::SwerveModuleState, 4> desiredStates(desired_vec.begin(),
-                                              desired_vec.end());
+                                                     desired_vec.end());
 
   m_publisher.Set(states);
   m_desiredPublisher.Set(desiredStates);
