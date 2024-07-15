@@ -183,6 +183,26 @@ class DriveSubsystem : public frc2::SubsystemBase {
   MAXSwerveModule m_frontRight;
   MAXSwerveModule m_rearRight;
 
+  frc::SimpleMotorFeedforward<units::meter> m_frontLeftFF{
+      CharacterizationConstants::FrontLeftDrive::kS,
+      CharacterizationConstants::FrontLeftDrive::kV,
+      CharacterizationConstants::FrontLeftDrive::kA};
+
+  frc::SimpleMotorFeedforward<units::meter> m_frontRightFF{
+      CharacterizationConstants::FrontRightDrive::kS,
+      CharacterizationConstants::FrontRightDrive::kV,
+      CharacterizationConstants::FrontRightDrive::kA};
+
+  frc::SimpleMotorFeedforward<units::meter> m_rearLeftFF{
+      CharacterizationConstants::RearLeftDrive::kS,
+      CharacterizationConstants::RearLeftDrive::kV,
+      CharacterizationConstants::RearLeftDrive::kA};
+
+  frc::SimpleMotorFeedforward<units::meter> m_rearRightFF{
+      CharacterizationConstants::RearRightDrive::kS,
+      CharacterizationConstants::RearRightDrive::kV,
+      CharacterizationConstants::RearRightDrive::kA};
+
   uint8_t logCounter = 0;
 
   ctre::phoenix6::hardware::Pigeon2 m_gyro1{CANConstants::kPigeonCanId1, "rio"};

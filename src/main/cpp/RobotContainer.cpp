@@ -144,7 +144,7 @@ void RobotContainer::ConfigureButtonBindings() {
       m_leds.Intaking()
           .AndThen(m_leds.AngryFace())
           .AndThen(IntakingCommands::Intake(&m_intake, &m_scoring))
-          .AndThen((m_leds.Loaded().AndThen(m_leds.HappyFace())).Unless([this] {
+          .AndThen((m_leds.Loaded().AndThen(m_leds.OwOFace())).Unless([this] {
             return !m_intake.NotePresent();
           })));
 

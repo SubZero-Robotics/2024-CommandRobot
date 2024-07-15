@@ -31,13 +31,13 @@ using namespace DriveConstants;
 
 DriveSubsystem::DriveSubsystem(PhotonVisionEstimators* vision)
     : m_frontLeft{kFrontLeftDrivingCanId, kFrontLeftTurningCanId,
-                  kFrontLeftChassisAngularOffset},
+                  kFrontLeftChassisAngularOffset, m_frontLeftFF},
       m_rearLeft{kRearLeftDrivingCanId, kRearLeftTurningCanId,
-                 kRearLeftChassisAngularOffset},
+                 kRearLeftChassisAngularOffset, m_rearLeftFF},
       m_frontRight{kFrontRightDrivingCanId, kFrontRightTurningCanId,
-                   kFrontRightChassisAngularOffset},
+                   kFrontRightChassisAngularOffset, m_frontRightFF},
       m_rearRight{kRearRightDrivingCanId, kRearRightTurningCanId,
-                  kRearRightChassisAngularOffset},
+                  kRearRightChassisAngularOffset, m_rearRightFF},
       m_vision{vision} {
   // put a field2d in NT
   frc::SmartDashboard::PutData("Field", &m_field);
