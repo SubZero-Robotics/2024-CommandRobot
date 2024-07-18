@@ -66,8 +66,9 @@ MAXSwerveModule::MAXSwerveModule(
   m_drivingPIDController.SetI(kDrivingI);
   m_drivingPIDController.SetD(kDrivingD);
 
-  // TODO: constant for max accel; might want to change the values here...
-  auto gain = m_feedForward.Calculate(DriveConstants::kMaxSpeed, 3_mps_sq);
+  // TODO: might want to change the values here...
+  auto gain = m_feedForward.Calculate(DriveConstants::kMaxSpeed,
+                                      ModuleConstants::kMaxAccel);
   m_drivingPIDController.SetFF(kDrivingFF + gain.value());
   m_drivingPIDController.SetOutputRange(kDrivingMinOutput, kDrivingMaxOutput);
 
