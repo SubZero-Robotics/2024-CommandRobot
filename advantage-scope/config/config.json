@@ -1,0 +1,85 @@
+{
+	"name": "Scoots",
+	"sourceUrl": "https://esko.onshape.com/documents/ed824b879f12a1905be71511/w/b6d4967fdcca0e3c193bd4dc/e/f9e6220adc6e2fa74aa1afa4",
+	"rotations": [
+		{
+			"axis": "x",
+			"degrees": 90
+		},
+		{
+			"axis": "y",
+			"degrees": 0
+		},
+		{
+			"axis": "z",
+			"degrees": -90
+		}
+	],
+	"position": [ 0, 0, 0 ],
+	"cameras": [],
+	"components": [
+		{
+			"zeroedRotations": [
+				{
+					"axis": "x",
+					"degrees": -90
+				},
+				{
+					"axis": "y",
+					"degrees": -90
+				},
+				{
+					"axis": "z",
+					"degrees": -90
+				}
+			],
+			"zeroedPosition": [
+				0.8,
+				0.2,
+				0.2
+			]
+		},
+		{
+			"zeroedRotations": [
+				{
+					"axis": "x",
+					"degrees": 90
+				},
+				{
+					"axis": "y",
+					"degrees": -15
+				},
+				{
+					"axis": "z",
+					"degrees": 180
+				}
+			],
+			"zeroedPosition": [
+				-0.12,
+				0.3,
+				0.07
+			]
+		},
+		{
+			"zeroedRotations": [
+				{
+					"axis": "x",
+					"degrees": 90
+				},
+				{
+					"axis": "y",
+					"degrees": -12
+				},
+				{
+					"axis": "z",
+					"degrees": 180
+				}
+			],
+			"zeroedPosition": [
+				-0.1,
+				-0.3,
+				0.07
+			]
+		}
+	]
+}

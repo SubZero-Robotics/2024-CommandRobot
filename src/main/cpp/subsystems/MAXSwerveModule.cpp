@@ -6,6 +6,7 @@
 
 #include <frc/RobotBase.h>
 #include <frc/geometry/Rotation2d.h>
+#include <units/acceleration.h>
 
 #include <numbers>
 
@@ -13,11 +14,13 @@
 
 using namespace ModuleConstants;
 
-MAXSwerveModule::MAXSwerveModule(const int drivingCANId, const int turningCANId,
-                                 const double chassisAngularOffset)
+MAXSwerveModule::MAXSwerveModule(
+    const int drivingCANId, const int turningCANId,
+    const double chassisAngularOffset,
+    frc::SimpleMotorFeedforward<units::meters>& feedForward)
     : m_drivingSparkMax(drivingCANId, rev::CANSparkBase::MotorType::kBrushless),
-      m_turningSparkMax(turningCANId,
-                        rev::CANSparkBase::MotorType::kBrushless) {
+      m_turningSparkMax(turningCANId, rev::CANSparkBase::MotorType::kBrushless),
+      m_feedForward{feedForward} {
   // Factory reset, so we get the SPARKS MAX to a known state before configuring
   // them. This is useful in case a SPARK MAX is swapped out.
 
@@ -62,7 +65,11 @@ MAXSwerveModule::MAXSwerveModule(const int drivingCANId, const int turningCANId,
   m_drivingPIDController.SetP(kDrivingP);
   m_drivingPIDController.SetI(kDrivingI);
   m_drivingPIDController.SetD(kDrivingD);
-  m_drivingPIDController.SetFF(kDrivingFF);
+
+  // TODO: might want to change the values here...
+  auto gain = m_feedForward.Calculate(DriveConstants::kMaxSpeed,
+                                      ModuleConstants::kMaxAccel);
+  m_drivingPIDController.SetFF(kDrivingFF + gain.value());
   m_drivingPIDController.SetOutputRange(kDrivingMinOutput, kDrivingMaxOutput);
 
   // Set the PID gains for the turning motor. Note these are example gains, and

@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <frc/controller/SimpleMotorFeedforward.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/kinematics/SwerveModulePosition.h>
 #include <frc/kinematics/SwerveModuleState.h>
@@ -25,8 +26,8 @@ class MAXSwerveModule {
    * MAXSwerve Module built with NEOs, SPARKS MAX, and a Through Bore
    * Encoder.
    */
-  MAXSwerveModule(int driveCANId, int turningCANId,
-                  double chassisAngularOffset);
+  MAXSwerveModule(int driveCANId, int turningCANId, double chassisAngularOffset,
+                  frc::SimpleMotorFeedforward<units::meters>&);
 
   /**
    * Returns the current state of the module.
@@ -91,6 +92,8 @@ class MAXSwerveModule {
   double m_chassisAngularOffset = 0;
   frc::SwerveModuleState m_desiredState{units::meters_per_second_t{0.0},
                                         frc::Rotation2d()};
+
+  frc::SimpleMotorFeedforward<units::meters>& m_feedForward;
 
   // Values for simulation
   units::meter_t m_simDriveEncoderPosition;

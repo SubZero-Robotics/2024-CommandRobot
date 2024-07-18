@@ -73,4 +73,6 @@ constexpr rev::CANSparkMax::IdleMode kTurningMotorIdleMode =
 
 constexpr units::ampere_t kDrivingMotorCurrentLimit = 50_A;
 constexpr units::ampere_t kTurningMotorCurrentLimit = 20_A;
+
+constexpr units::acceleration::meters_per_second_squared_t kMaxAccel = 3_mps_sq;
 }  // namespace ModuleConstants

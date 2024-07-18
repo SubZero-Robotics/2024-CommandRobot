@@ -1,27 +1,30 @@
 #pragma once
 
+#include <units/length.h>
+#include <units/voltage.h>
+
 namespace CharacterizationConstants {
 namespace FrontLeftDrive {
-constexpr double kS = 0.43779;
-constexpr double kV = 2.4439;
-constexpr double kA = 0.36441;
+constexpr units::volt_t kS = 0.43779_V;
+constexpr auto kV = 2.4439_V / 1_mps;
+constexpr auto kA = 0.36441_V / 1_mps_sq;
 }  // namespace FrontLeftDrive
 
 namespace FrontRightDrive {
-constexpr double kS = 0.47478;
-constexpr double kV = 2.4511;
-constexpr double kA = 0.36441;
+constexpr units::volt_t kS = 0.47478_V;
+constexpr auto kV = 2.4511_V / 1_mps;
+constexpr auto kA = 0.36441_V / 1_mps_sq;
 }  // namespace FrontRightDrive
 
 namespace RearLeftDrive {
-constexpr double kS = 0.43972;
-constexpr double kV = 2.4352;
-constexpr double kA = 0.35057;
+constexpr units::volt_t kS = 0.43972_V;
+constexpr auto kV = 2.4352_V / 1_mps;
+constexpr auto kA = 0.35057_V / 1_mps_sq;
 }  // namespace RearLeftDrive
 
 namespace RearRightDrive {
-constexpr double kS = 0.41185;
-constexpr double kV = 2.4218;
-constexpr double kA = 0.41332;
+constexpr units::volt_t kS = 0.41185_V;
+constexpr auto kV = 2.4218_V / 1_mps;
+constexpr auto kA = 0.41332_V / 1_mps_sq;
 }  // namespace RearRightDrive
 }  // namespace CharacterizationConstants
