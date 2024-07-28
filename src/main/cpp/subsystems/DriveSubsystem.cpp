@@ -173,7 +173,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   double xSpeedCommanded;
   double ySpeedCommanded;
 
-  if (true) {  // Could be replaced by a parameter
+  if (rateLimit) {  // Could be replaced by a parameter
 
     // Convers X and Y coordinates to polar coordinates; direction for vector
     double polarTranslationDirectionInput =
