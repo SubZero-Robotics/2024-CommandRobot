@@ -185,7 +185,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
     double slewRateDirection;
 
     // Adapts slew rate depending on speed. If the translation magnitude (if the
-    // robot is going fast) is quite hight for example, a change in intended
+    // robot is going fast) is quite high for example, a change in intended
     // magnitude will take longer as to not damage wheels
     if (m_currentTranslationMagnitude != 0.0) {
       slewRateDirection =
@@ -196,7 +196,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
       slewRateDirection = kPlaceHolderSlewRate;
     }
 
-    double currentTime = wpi::Now() * 1e-6;
+    double currentTime = wpi::Now() * kMicrosecondsToSecondsCoefficient;
     double elapsedTime = currentTime - m_prevTime;
 
     double angleDif = SwerveUtils::AngleDifference(
@@ -213,7 +213,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
       m_currentTranslationMagnitude =
           m_magLimiter.Calculate(translationMagnitudeInput);
     } else if (angleDif > kLargeAngleDif) {
-      if (m_currentTranslationMagnitude > 1e-4) {
+      if (m_currentTranslationMagnitude > kSignificantMagnitudeThreshold) {
         // Avoids floating point errors, keeps the translation direction
         // unchanged. Movement is significant so allows slow down to be gradual
         m_currentTranslationMagnitude = m_magLimiter.Calculate(0.0);

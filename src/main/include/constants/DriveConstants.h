@@ -55,4 +55,6 @@ const std::vector<std::string> kMotorNames = {
 constexpr double kSmallAngleDif = 0.45 * std::numbers::pi;
 constexpr double kLargeAngleDif = 0.85 * std::numbers::pi;
 constexpr double kPlaceHolderSlewRate = 500.0;
+constexpr double kSignificantMagnitudeThreshold = 1e-4;
+constexpr double kMicrosecondsToSecondsCoefficient = 1e-6;
 }  // namespace DriveConstants
