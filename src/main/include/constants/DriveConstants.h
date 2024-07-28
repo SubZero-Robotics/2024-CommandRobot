@@ -51,4 +51,8 @@ constexpr double kLoopsPerSecond = 1_s / kLoopTime;
 const std::vector<std::string> kMotorNames = {
     "Front-Left-Drive", "Rear-Left-Drive", "Front-Right-Drive",
     "Rear-Right-Drive"};
+
+constexpr double kSmallAngleDif = 0.45 * std::numbers::pi;
+constexpr double kLargeAngleDif = 0.85 * std::numbers::pi;
+constexpr double kPlaceHolderSlewRate = 500.0;
 }  // namespace DriveConstants

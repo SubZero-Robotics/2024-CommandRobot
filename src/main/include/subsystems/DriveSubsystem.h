@@ -192,10 +192,15 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // time last loop took, "deltatime"
   units::second_t driveLoopTime = DriveConstants::kLoopTime;
 
+  frc::SlewRateLimiter<units::scalar> m_magnitudeLimiter{
+      DriveConstants::kMagnitudeSlewRate / 1_s};
+  frc::SlewRateLimiter<units::scalar> m_rotationLimiter{
+      DriveConstants::kRotationalSlewRate / 1_s};
+
   // Slew rate filter variables for controlling lateral acceleration
   double m_currentRotation = 0.0;
-  double m_currentTranslationDir = 0.0;
-  double m_currentTranslationMag = 0.0;
+  double m_currentTranslationDirection = 0.0;
+  double m_currentTranslationMagnitude = 0.0;
 
   frc::SlewRateLimiter<units::scalar> m_magLimiter{
       DriveConstants::kMagnitudeSlewRate / 1_s};

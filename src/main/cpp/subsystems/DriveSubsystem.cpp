@@ -170,8 +170,95 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
     }
   }
 
+  double xSpeedCommanded;
+  double ySpeedCommanded;
+
+  if (true) {  // Could be replaced by a parameter
+
+    // Convers X and Y coordinates to polar coordinates; direction for vector
+    double polarTranslationDirectionInput =
+        atan2(ySpeed.value(), xSpeed.value());
+
+    double translationMagnitudeInput =
+        std::hypot(xSpeed.value(), ySpeed.value());
+
+    double slewRateDirection;
+
+    // Adapts slew rate depending on speed. If the translation magnitude (if the
+    // robot is going fast) is quite hight for example, a change in intended
+    // magnitude will take longer as to not damage wheels
+    if (m_currentTranslationMagnitude != 0.0) {
+      slewRateDirection =
+          abs(kDirectionSlewRate / m_currentTranslationMagnitude);
+    } else {
+      // Some arbitarily high value so the robot can move from a sitting
+      // position quickly
+      slewRateDirection = kPlaceHolderSlewRate;
+    }
+
+    double currentTime = wpi::Now() * 1e-6;
+    double elapsedTime = currentTime - m_prevTime;
+
+    double angleDif = SwerveUtils::AngleDifference(
+        polarTranslationDirectionInput, m_currentTranslationDirection);
+
+    if (angleDif < kSmallAngleDif) {
+      // Sets a target direction with a step size calculated to ensure that the
+      // slew rate with increase as time does so the robot's acceleration is
+      // limited by the amount of time it has been making a manuver
+      m_currentTranslationDirection = SwerveUtils::StepTowardsCircular(
+          m_currentTranslationDirection, polarTranslationDirectionInput,
+          slewRateDirection * elapsedTime);
+
+      m_currentTranslationMagnitude =
+          m_magLimiter.Calculate(translationMagnitudeInput);
+    } else if (angleDif > kLargeAngleDif) {
+      if (m_currentTranslationMagnitude > 1e-4) {
+        // Avoids floating point errors, keeps the translation direction
+        // unchanged. Movement is significant so allows slow down to be gradual
+        m_currentTranslationMagnitude = m_magLimiter.Calculate(0.0);
+      } else {
+        // Wraps 180 degrees from the current robot directions, calculates
+        // magnitude slew rate because the current translation magnitude is
+        // not significant
+        m_currentTranslationDirection = SwerveUtils::WrapAngle(
+            m_currentTranslationDirection + std::numbers::pi);
+        m_currentTranslationMagnitude =
+            m_magLimiter.Calculate(translationMagnitudeInput);
+      }
+    } else {
+      m_currentTranslationDirection = SwerveUtils::StepTowardsCircular(
+          m_currentTranslationDirection, polarTranslationDirectionInput,
+          slewRateDirection * elapsedTime);
+      m_currentTranslationMagnitude = m_magLimiter.Calculate(0.0);
+    }
+    m_prevTime = currentTime;
+
+    xSpeedCommanded =
+        m_currentTranslationMagnitude * cos(m_currentTranslationDirection);
+    ySpeedCommanded =
+        m_currentTranslationMagnitude * sin(m_currentTranslationDirection);
+    m_currentRotation = m_rotLimiter.Calculate(rot.value());
+
+  } else {
+    xSpeedCommanded = xSpeed.value();
+    ySpeedCommanded = ySpeed.value();
+    m_currentRotation = rot.value();
+  }
+
+  units::meters_per_second_t xSpeedDelivered =
+      xSpeedCommanded * DriveConstants::kMaxSpeed;
+  units::meters_per_second_t ySpeedDelivered =
+      ySpeedCommanded * DriveConstants::kMaxSpeed;
+  units::radians_per_second_t rotDelivered =
+      m_currentRotation * DriveConstants::kMaxAngularSpeed;
+
   auto states = m_driveKinematics.ToSwerveModuleStates(
-      frc::ChassisSpeeds::Discretize(joystickSpeeds, dif));
+      fieldRelative
+          ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                xSpeedDelivered, ySpeedDelivered, rotDelivered,
+                frc::Rotation2d(units::radian_t{m_gyro1.GetAngle()}))
+          : frc::ChassisSpeeds{xSpeedDelivered, ySpeedDelivered, rotDelivered});
 
   driveLoopTime = now;
 
@@ -183,6 +270,8 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
   m_frontRight.SetDesiredState(fr);
   m_rearLeft.SetDesiredState(bl);
   m_rearRight.SetDesiredState(br);
+
+  driveLoopTime = now;
 
   logMotorState(m_frontLeft, std::string("Front Left Motor"));
   logMotorState(m_frontRight, std::string("Front Right Motor"));
