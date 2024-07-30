@@ -175,11 +175,9 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
 
   if (rateLimit) {
     // Convers X and Y coordinates to polar coordinates; direction for vector
-    double polarTranslationDirectionInput =
-        atan2(ySpeed.value(), xSpeed.value());
+    double inputTranslationDir = atan2(ySpeed.value(), xSpeed.value());
 
-    double translationMagnitudeInput =
-        std::hypot(xSpeed.value(), ySpeed.value());
+    double inputTranslationMag = std::hypot(xSpeed.value(), ySpeed.value());
 
     double slewRateDirection;
 
@@ -199,18 +197,18 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
     double elapsedTime = currentTime - m_prevTime;
 
     double angleDif = SwerveUtils::AngleDifference(
-        polarTranslationDirectionInput, m_currentTranslationDirection);
+        inputTranslationDir, m_currentTranslationDirection);
 
     if (angleDif < kSmallAngleDif) {
       // Sets a target direction with a step size calculated to ensure that the
       // slew rate with increase as time does so the robot's acceleration is
       // limited by the amount of time it has been making a manuver
       m_currentTranslationDirection = SwerveUtils::StepTowardsCircular(
-          m_currentTranslationDirection, polarTranslationDirectionInput,
+          m_currentTranslationDirection, inputTranslationDir,
           slewRateDirection * elapsedTime);
 
       m_currentTranslationMagnitude =
-          m_magLimiter.Calculate(translationMagnitudeInput);
+          m_magLimiter.Calculate(inputTranslationMag);
     } else if (angleDif > kLargeAngleDif) {
       if (m_currentTranslationMagnitude > kSignificantMagnitudeThreshold) {
         // Avoids floating point errors, keeps the translation direction
@@ -223,11 +221,11 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
         m_currentTranslationDirection = SwerveUtils::WrapAngle(
             m_currentTranslationDirection + std::numbers::pi);
         m_currentTranslationMagnitude =
-            m_magLimiter.Calculate(translationMagnitudeInput);
+            m_magLimiter.Calculate(inputTranslationMag);
       }
     } else {
       m_currentTranslationDirection = SwerveUtils::StepTowardsCircular(
-          m_currentTranslationDirection, polarTranslationDirectionInput,
+          m_currentTranslationDirection, inputTranslationDir,
           slewRateDirection * elapsedTime);
       m_currentTranslationMagnitude = m_magLimiter.Calculate(0.0);
     }
@@ -256,7 +254,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
       fieldRelative
           ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
                 xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                frc::Rotation2d(units::radian_t{m_gyro1.GetAngle()}))
+                frc::Rotation2d(units::degree_t{m_gyro1.GetAngle()}))
           : frc::ChassisSpeeds{xSpeedDelivered, ySpeedDelivered, rotDelivered});
 
   driveLoopTime = now;

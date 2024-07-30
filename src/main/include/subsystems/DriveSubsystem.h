@@ -206,7 +206,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
       DriveConstants::kMagnitudeSlewRate / 1_s};
   frc::SlewRateLimiter<units::scalar> m_rotLimiter{
       DriveConstants::kRotationalSlewRate / 1_s};
-  double m_prevTime = wpi::Now() * 1e-6;
+  double m_prevTime =
+      wpi::Now() * DriveConstants::kMicrosecondsToSecondsCoefficient;
 
   // Odometry class for tracking robot pose
   // 4 defines the number of modules
