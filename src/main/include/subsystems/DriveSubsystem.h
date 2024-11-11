@@ -192,22 +192,16 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // time last loop took, "deltatime"
   units::second_t driveLoopTime = DriveConstants::kLoopTime;
 
-  frc::SlewRateLimiter<units::scalar> m_magnitudeLimiter{
-      DriveConstants::kMagnitudeSlewRate / 1_s};
-  frc::SlewRateLimiter<units::scalar> m_rotationLimiter{
-      DriveConstants::kRotationalSlewRate / 1_s};
-
   // Slew rate filter variables for controlling lateral acceleration
   double m_currentRotation = 0.0;
-  double m_currentTranslationDirection = 0.0;
-  double m_currentTranslationMagnitude = 0.0;
+  double m_currentTranslationDir = 0.0;
+  double m_currentTranslationMag = 0.0;
 
   frc::SlewRateLimiter<units::scalar> m_magLimiter{
       DriveConstants::kMagnitudeSlewRate / 1_s};
   frc::SlewRateLimiter<units::scalar> m_rotLimiter{
       DriveConstants::kRotationalSlewRate / 1_s};
-  double m_prevTime =
-      wpi::Now() * DriveConstants::kMicrosecondsToSecondsCoefficient;
+  double m_prevTime = wpi::Now() * 1e-6;
 
   // Odometry class for tracking robot pose
   // 4 defines the number of modules
