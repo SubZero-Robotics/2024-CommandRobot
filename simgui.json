@@ -5,13 +5,28 @@
         "header": {
           "open": true
         }
+      },
+      "IntakeSubsystem": {
+        "header": {
+          "open": true
+        }
       }
     }
   },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Arm Reset Encoder": "Command",
+      "/SmartDashboard/Auto Selector": "String Chooser",
+      "/SmartDashboard/Climb Limits": "String Chooser",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Impact": "String Chooser",
+      "/SmartDashboard/Left Climber Reset Encoder": "Command",
+      "/SmartDashboard/Motion": "String Chooser",
+      "/SmartDashboard/Note Count": "String Chooser",
+      "/SmartDashboard/Proximity": "String Chooser",
+      "/SmartDashboard/Right Climber Reset Encoder": "Command",
+      "/SmartDashboard/Robot2d": "Mechanism2d"
     },
     "windows": {
       "/FMSInfo": {
@@ -20,6 +35,12 @@
         }
       },
       "/SmartDashboard/Field": {
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "width": 16.541748046875,
         "window": {
           "visible": true
         }
@@ -43,5 +64,8 @@
     "Server": {
       "open": true
     }
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }
