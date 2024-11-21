@@ -131,6 +131,10 @@ void LedSubsystem::IdlingAsync() {
   ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s", "Idling");
   m_connectorX.SetGroupAnimation("all", lumyn::led::Animation::Breathe,
                                  ColorConstants::kBlue, 15_ms);
+  // m_connectorX.SetMatrixText(
+  //     "upper-matrix", "Visit lumynlabs.com", ColorConstants::kRed,
+  //     lumyn::internal::Command::LED::MatrixTextScrollDirection::LEFT,
+  //     200_ms);
 }
 
 frc2::CommandPtr LedSubsystem::Climbing() {
@@ -299,27 +303,27 @@ void LedSubsystem::RampingAsync() {
 void LedSubsystem::showFace(EyePattern pattern) {
   switch (pattern) {
     case EyePattern::Amogus:
-      m_connectorX.SetImageSequence("front-matrix", "amogus",
+      m_connectorX.SetImageSequence("upper-matrix", "amogus",
                                     ColorConstants::kOrange);
       break;
     case EyePattern::Angry:
-      m_connectorX.SetImageSequence("front-matrix", "angry_eyes",
+      m_connectorX.SetImageSequence("upper-matrix", "angry_eyes",
                                     ColorConstants::kOrange);
       break;
     case EyePattern::Blinking:
-      m_connectorX.SetImageSequence("front-matrix", "blinking_eyes",
+      m_connectorX.SetImageSequence("upper-matrix", "blinking_eyes",
                                     ColorConstants::kOrange);
       break;
     case EyePattern::OwO:
-      m_connectorX.SetImageSequence("front-matrix", "owo_eyes",
+      m_connectorX.SetImageSequence("upper-matrix", "owo_eyes",
                                     ColorConstants::kOrange);
       break;
     case EyePattern::Surprised:
-      m_connectorX.SetImageSequence("front-matrix", "surprised_eyes",
+      m_connectorX.SetImageSequence("upper-matrix", "surprised_eyes",
                                     ColorConstants::kOrange);
       break;
     case EyePattern::BadApple:
-      m_connectorX.SetImageSequence("front-matrix", "bad-apple_32x8",
+      m_connectorX.SetImageSequence("lower-matrix", "bad-apple_16x16",
                                     ColorConstants::kOrange);
       break;
   }
