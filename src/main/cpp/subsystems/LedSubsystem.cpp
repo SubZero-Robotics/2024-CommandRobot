@@ -323,7 +323,7 @@ void LedSubsystem::showFace(EyePattern pattern) {
                                     ColorConstants::kOrange);
       break;
     case EyePattern::BadApple:
-      m_connectorX.SetImageSequence("lower-matrix", "bad-apple_16x16",
+      m_connectorX.SetImageSequence("lower-matrix", "banana_16x16",
                                     ColorConstants::kOrange);
       break;
   }
