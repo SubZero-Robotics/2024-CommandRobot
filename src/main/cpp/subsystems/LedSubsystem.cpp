@@ -209,7 +209,7 @@ frc2::CommandPtr LedSubsystem::AmogusFace() {
   return frc2::InstantCommand([this] {
            ConsoleWriter.logInfo("LedSubsystem", "Setting LEDs to %s",
                                  "Amogus");
-           showFace(EyePattern::BadApple);
+           showFace(EyePattern::Amogus);
          })
       .ToPtr();
 }
