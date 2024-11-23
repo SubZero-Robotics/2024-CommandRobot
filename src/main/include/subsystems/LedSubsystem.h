@@ -7,7 +7,7 @@
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/WaitCommand.h>
-#include <subzero/moduledrivers/ConnectorX.h>
+#include <lumyn/device/ConnectorXAnimate.h>
 
 #include <chrono>
 #include <string>
@@ -19,12 +19,8 @@
 
 class LedSubsystem : public frc2::SubsystemBase {
  public:
-  LedSubsystem()
-      : m_connectorX(ConnectorX::ConnectorXBoard(LEDConstants::kLedAddress)) {
-    ConsoleWriter.logVerbose("LedSubsystem", "LEDs init%s", "");
-    createZones(ConnectorX::LedPort::P0, std::move(m_ledZones0));
-    createZones(ConnectorX::LedPort::P1, std::move(m_ledZones1));
-    m_connectorX.setOn();
+  LedSubsystem() {
+    m_connectorX.Connect(HAL_SerialPort_USB1);
   }
 
   void Periodic() override;
@@ -51,6 +47,7 @@ class LedSubsystem : public frc2::SubsystemBase {
   frc2::CommandPtr SurprisedFace();
   frc2::CommandPtr AmogusFace();
   frc2::CommandPtr OwOFace();
+  frc2::CommandPtr BadApple();
   frc2::CommandPtr AimbotEnabled();
   frc2::CommandPtr OnTheFlyPP();
   frc2::CommandPtr VisionNoteDetected();
@@ -70,48 +67,18 @@ class LedSubsystem : public frc2::SubsystemBase {
   };
 
   enum class EyePattern {
-    Angry = 8,
-    Happy = 9,
-    Blinking = 10,
-    Surprised = 11,
-    Amogus = 12,
-    OwO = 14,
+    Angry = 0,
+    Happy,
+    Blinking,
+    Surprised,
+    Amogus,
+    OwO,
+    BadApple,
   };
-
-  frc2::CommandPtr setZoneColorPattern(LedZone zone, ConnectorX::LedPort port,
-                                       frc::Color8Bit color,
-                                       ConnectorX::PatternType pattern,
-                                       bool oneShot = false, int16_t delay = -1,
-                                       bool reversed = false);
-
-  void setZoneColorPatternAsync(LedZone zone, ConnectorX::LedPort port,
-                                frc::Color8Bit color,
-                                ConnectorX::PatternType pattern,
-                                bool oneShot = false, int16_t delay = -1,
-                                bool reversed = false);
-
-  void delaySeconds(units::second_t delaySeconds);
 
   void showFace(EyePattern pattern);
 
-  void createZones(ConnectorX::LedPort port,
-                   std::vector<ConnectorX::Commands::NewZone> &&zones);
-
-  void syncAllZones();
-
-  ConnectorX::ConnectorXBoard m_connectorX;
+  lumyn::device::ConnectorXAnimate m_connectorX;
 
   frc::BuiltInAccelerometer m_accel;
-
-  const uint16_t m_totalLeds = 67;
-  std::vector<ConnectorX::Commands::NewZone> m_ledZones0 = {
-      {.offset = 0, .count = 18},
-      {.offset = 18, .count = 32},
-      {.offset = 50, .count = 17},
-      {.offset = 67, .count = 19},
-  };
-  std::vector<ConnectorX::Commands::NewZone> m_ledZones1 = {
-      {.offset = 0, .count = 1},
-      {.offset = 1, .count = 256},
-  };
 };

@@ -1,0 +1,164 @@
+{
+  "team": null,
+  "network": {
+    "mode": "USB"
+  },
+  "channels": {
+    "3": {
+      "id": "strips",
+      "length": 85,
+      "brightness": null,
+      "zones": [
+        {
+          "id": "left-climber",
+          "type": "strip",
+          "length": 17,
+          "brightness": 255,
+          "reversed": false
+        },
+        {
+          "id": "back",
+          "type": "strip",
+          "length": 32,
+          "brightness": 255,
+          "reversed": false
+        },
+        {
+          "id": "right-climber",
+          "type": "strip",
+          "length": 17,
+          "brightness": 255,
+          "reversed": true
+        },
+        {
+          "id": "front",
+          "type": "strip",
+          "length": 19,
+          "brightness": 255,
+          "reversed": false
+        }
+      ]
+    },
+    "4": {
+      "id": "matrices",
+      "length": 512,
+      "brightness": null,
+      "zones": [
+        {
+          "id": "upper-matrix",
+          "type": "matrix",
+          "rows": 8,
+          "cols": 32,
+          "brightness": 255,
+          "orientation": {
+            "cornerTopBottom": "bottom",
+            "cornerLeftRight": "left",
+            "axisLayout": "cols",
+            "sequenceLayout": "zigzag"
+          }
+        },
+        {
+          "id": "lower-matrix",
+          "type": "matrix",
+          "rows": 16,
+          "cols": 16,
+          "brightness": 255,
+          "orientation": {
+            "cornerTopBottom": "top",
+            "cornerLeftRight": "left",
+            "axisLayout": "cols",
+            "sequenceLayout": "zigzag"
+          }
+        }
+      ]
+    }
+  },
+  "sequences": [],
+  "bitmaps": [
+    {
+      "type": "animated",
+      "folder": "banana_16x16",
+      "delay": 100,
+      "id": "banana_16x16"
+    },
+    {
+      "type": "animated",
+      "folder": "among-us-dance_16x16",
+      "delay": 100,
+      "id": "among-us-dance_16x16"
+    },
+    {
+      "type": "animated",
+      "folder": "bad-apple_32x8",
+      "delay": 75,
+      "id": "bad-apple_32x8"
+    },
+    {
+      "type": "animated",
+      "folder": "amogus",
+      "delay": 150,
+      "id": "amogus"
+    },
+    {
+      "type": "animated",
+      "folder": "angry_eyes",
+      "delay": 250,
+      "id": "angry_eyes"
+    },
+    {
+      "type": "animated",
+      "folder": "blinking_eyes",
+      "delay": 250,
+      "id": "blinking_eyes"
+    },
+    {
+      "type": "animated",
+      "folder": "happy_eyes",
+      "delay": 250,
+      "id": "happy_eyes"
+    },
+    {
+      "type": "animated",
+      "folder": "owo_eyes",
+      "delay": 200,
+      "id": "owo_eyes"
+    },
+    {
+      "type": "animated",
+      "folder": "surprised_eyes",
+      "delay": 250,
+      "id": "surprised_eyes"
+    },
+    {
+      "type": "animated",
+      "folder": "bad-apple_16x16",
+      "delay": 30,
+      "id": "bad-apple_16x16"
+    }
+  ],
+  "groups": [
+    {
+      "id": "climbers",
+      "zoneIds": [
+        "left-climber",
+        "right-climber"
+      ]
+    },
+    {
+      "id": "frontback",
+      "zoneIds": [
+        "back",
+        "front"
+      ]
+    },
+    {
+      "id": "all",
+      "zoneIds": [
+        "left-climber",
+        "back",
+        "right-climber",
+        "front"
+      ]
+    }
+  ]
+}
