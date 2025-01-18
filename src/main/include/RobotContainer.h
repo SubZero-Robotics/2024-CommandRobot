@@ -225,4 +225,9 @@ class RobotContainer {
   void ToggleAimbot();
   void ToggleAutoScoring();
   std::optional<frc::Rotation2d> GetRotationTargetOverride();
+
+  units::degree_t m_intendedArmAngle;
+  double m_armPGain;
+  double m_armIGain;
+  double m_armDGain;
 };

@@ -41,7 +41,8 @@
 
 using namespace DriveConstants;
 
-RobotContainer::RobotContainer() {
+RobotContainer::RobotContainer()
+    : m_intendedArmAngle{0}, m_armPGain{0}, m_armIGain{0}, m_armDGain{0} {
   // Initialize all of your commands and subsystems here
 
   // Configure the button bindings
@@ -76,6 +77,13 @@ RobotContainer::RobotContainer() {
             true, true, kLoopTime, turnToTarget);
       },
       {&m_drive}));
+
+  frc::SmartDashboard::PutNumber("Target Angle (in depgrees)",
+                                 m_intendedArmAngle.value());
+  frc::SmartDashboard::PutNumber("Proportion Arm Gain", m_armPGain);
+  frc::SmartDashboard::PutNumber("Integral Arm Gain", m_armIGain);
+  frc::SmartDashboard::PutNumber("Derivative Arm Gain", m_armDGain);
+
 #ifndef TEST_SWERVE_BOT
   RegisterAutos();
 #endif
@@ -427,6 +435,29 @@ void RobotContainer::Periodic() {
 
   frc::SmartDashboard::PutBoolean("TURN TO POSE AT GOAL",
                                   m_turnToPose.AtGoal());
+
+  m_intendedArmAngle = units::degree_t{
+      frc::SmartDashboard::GetNumber("Target Angle (in degrees)", 0)};
+
+  m_armPGain = frc::SmartDashboard::GetNumber("Proportion Arm Gain", 0);
+
+  m_armIGain = frc::SmartDashboard::GetNumber("Integral Arm Gain", 0);
+
+  m_armDGain = frc::SmartDashboard::GetNumber("Derivative Arm Gain", 0);
+
+  double p = frc::SmartDashboard::GetNumber("P Gain", 0);
+  double i = frc::SmartDashboard::GetNumber("I Gain", 0);
+  double d = frc::SmartDashboard::GetNumber("D Gain", 0);
+  double iz = frc::SmartDashboard::GetNumber("I Zone", 0);
+  double ff = frc::SmartDashboard::GetNumber("Feed Forward", 0);
+  double max = frc::SmartDashboard::GetNumber("Max Output", 0);
+  double min = frc::SmartDashboard::GetNumber("Min Output", 0);
+  double rotations = frc::SmartDashboard::GetNumber("Set Rotations", 0);
+
+  std::cout << "Arm P Gain: " << m_armPGain << " Arm I Gain: " << m_armIGain
+            << " Arm D Gain: " << m_armDGain
+            << " Intended Arm Angle: " << m_intendedArmAngle.value()
+            << std::endl;
 
   m_turnToPose.Update();
   auto targets = m_tracker.GetTargets();
