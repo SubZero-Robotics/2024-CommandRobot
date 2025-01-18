@@ -8,7 +8,6 @@
 #include <frc/RobotController.h>
 #include <frc/controller/PIDController.h>
 #include <frc/geometry/Translation2d.h>
-#include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/trajectory/Trajectory.h>
 #include <frc/trajectory/TrajectoryGenerator.h>
@@ -26,6 +25,7 @@
 #include <units/angle.h>
 #include <units/velocity.h>
 
+#include <algorithm>
 #include <subzero/autonomous/AutoFactory.cpp>
 #include <subzero/frc/smartdashboard/TaggedChooser.cpp>
 #include <subzero/singleaxis/LinearSingleAxisSubsystem.cpp>
@@ -39,10 +39,22 @@
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/DriveSubsystem.h"
 
+#define EPSILON 2.2204460492503131e-16
+
+#define FABS(n) n > 0 ? n : -(n)
+
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer()
-    : m_intendedArmAngle{0}, m_armPGain{0}, m_armIGain{0}, m_armDGain{0} {
+    : m_intendedArmAngle{0},
+      m_armPGain{0},
+      m_armIGain{0},
+      m_armDGain{0},
+      m_tab{frc::Shuffleboard::GetTab("Stuff")},
+      m_entryP{m_tab.Add("Arm PID P Gain", m_armPGain).GetEntry()},
+      m_entryI{m_tab.Add("Arm PID I Gain", m_armIGain).GetEntry()},
+      m_entryD{m_tab.Add("Arm PID D Gain", m_armDGain).GetEntry()},
+      m_entryFF{m_tab.Add("Arm PID FF Gain", m_armFFGain).GetEntry()} {
   // Initialize all of your commands and subsystems here
 
   // Configure the button bindings
@@ -77,12 +89,6 @@ RobotContainer::RobotContainer()
             true, true, kLoopTime, turnToTarget);
       },
       {&m_drive}));
-
-  frc::SmartDashboard::PutNumber("Target Angle (in depgrees)",
-                                 m_intendedArmAngle.value());
-  frc::SmartDashboard::PutNumber("Proportion Arm Gain", m_armPGain);
-  frc::SmartDashboard::PutNumber("Integral Arm Gain", m_armIGain);
-  frc::SmartDashboard::PutNumber("Derivative Arm Gain", m_armDGain);
 
 #ifndef TEST_SWERVE_BOT
   RegisterAutos();
@@ -436,30 +442,25 @@ void RobotContainer::Periodic() {
   frc::SmartDashboard::PutBoolean("TURN TO POSE AT GOAL",
                                   m_turnToPose.AtGoal());
 
-  m_intendedArmAngle = units::degree_t{
-      frc::SmartDashboard::GetNumber("Target Angle (in degrees)", 0)};
+  m_armPGain = m_entryP->GetDouble(0.0);
+  m_armIGain = m_entryI->GetDouble(0.0);
+  m_armDGain = m_entryD->GetDouble(0.0);
+  m_armFFGain = m_entryFF->GetDouble(0.0);
 
-  m_armPGain = frc::SmartDashboard::GetNumber("Proportion Arm Gain", 0);
+  if (FABS(m_armPGain - m_arm.GetP()) > EPSILON) {
+    m_arm.SetP(m_armPGain);
+  } else if (FABS(m_armIGain - m_arm.GetI()) > EPSILON) {
+    m_arm.SetI(m_armIGain);
+  } else if (FABS(m_armDGain - m_arm.GetD()) > EPSILON) {
+    m_arm.SetD(m_armDGain);
+  } else if (FABS(m_armFFGain - m_arm.GetFF()) > EPSILON) {
+    m_arm.SetFF(m_armFFGain);
+  }
 
-  m_armIGain = frc::SmartDashboard::GetNumber("Integral Arm Gain", 0);
-
-  m_armDGain = frc::SmartDashboard::GetNumber("Derivative Arm Gain", 0);
-
-  double p = frc::SmartDashboard::GetNumber("P Gain", 0);
-  double i = frc::SmartDashboard::GetNumber("I Gain", 0);
-  double d = frc::SmartDashboard::GetNumber("D Gain", 0);
-  double iz = frc::SmartDashboard::GetNumber("I Zone", 0);
-  double ff = frc::SmartDashboard::GetNumber("Feed Forward", 0);
-  double max = frc::SmartDashboard::GetNumber("Max Output", 0);
-  double min = frc::SmartDashboard::GetNumber("Min Output", 0);
-  double rotations = frc::SmartDashboard::GetNumber("Set Rotations", 0);
-
-  std::cout << "Arm P Gain: " << m_armPGain << " Arm I Gain: " << m_armIGain
-            << " Arm D Gain: " << m_armDGain
-            << " Intended Arm Angle: " << m_intendedArmAngle.value()
+  std::cout << "P Gain: " << m_armPGain << " I Gain: " << m_armIGain
+            << " D Gain: " << m_armDGain << " FF Gain: " << m_armFFGain
             << std::endl;
 
-  m_turnToPose.Update();
   auto targets = m_tracker.GetTargets();
   m_tracker.UpdateTrackedTargets(targets);
 

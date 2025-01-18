@@ -7,6 +7,7 @@
 #include <AHRS.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
+#include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/Mechanism2d.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc2/command/Command.h>
@@ -230,4 +231,11 @@ class RobotContainer {
   double m_armPGain;
   double m_armIGain;
   double m_armDGain;
+  double m_armFFGain;
+
+  frc::ShuffleboardTab& m_tab;
+  nt::GenericEntry* m_entryP;
+  nt::GenericEntry* m_entryI;
+  nt::GenericEntry* m_entryD;
+  nt::GenericEntry* m_entryFF;
 };

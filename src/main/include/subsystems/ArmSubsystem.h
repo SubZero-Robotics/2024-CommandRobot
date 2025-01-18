@@ -46,6 +46,16 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<IPidMotorController> {
     m_SpinnyBoi.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
   }
 
+  void SetP(double p);
+  void SetI(double i);
+  void SetD(double d);
+  void SetFF(double ff);
+
+  double GetP();
+  double GetI();
+  double GetD();
+  double GetFF();
+
  private:
   rev::CANSparkMax m_SpinnyBoi{CANConstants::kArmSpinnyBoiId,
                                rev::CANSparkLowLevel::MotorType::kBrushless};
