@@ -227,7 +227,8 @@ class RobotContainer {
   void ToggleAutoScoring();
   std::optional<frc::Rotation2d> GetRotationTargetOverride();
 
-  units::degree_t m_intendedArmAngle;
+  units::degree_t m_currentIntendedArmAngle;
+  units::degree_t m_previousIntendedArmAngle;
   double m_armPGain;
   double m_armIGain;
   double m_armDGain;
@@ -238,4 +239,5 @@ class RobotContainer {
   nt::GenericEntry* m_entryI;
   nt::GenericEntry* m_entryD;
   nt::GenericEntry* m_entryFF;
+  nt::GenericEntry* m_entryAngle;
 };

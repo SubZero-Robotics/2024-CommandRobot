@@ -46,7 +46,7 @@
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer()
-    : m_intendedArmAngle{0},
+    : m_currentIntendedArmAngle{0},
       m_armPGain{0},
       m_armIGain{0},
       m_armDGain{0},
@@ -54,7 +54,10 @@ RobotContainer::RobotContainer()
       m_entryP{m_tab.Add("Arm PID P Gain", m_armPGain).GetEntry()},
       m_entryI{m_tab.Add("Arm PID I Gain", m_armIGain).GetEntry()},
       m_entryD{m_tab.Add("Arm PID D Gain", m_armDGain).GetEntry()},
-      m_entryFF{m_tab.Add("Arm PID FF Gain", m_armFFGain).GetEntry()} {
+      m_entryFF{m_tab.Add("Arm PID FF Gain", m_armFFGain).GetEntry()},
+      m_entryAngle{
+          m_tab.Add("Intended arm angle", m_currentIntendedArmAngle.value())
+              .GetEntry()} {
   // Initialize all of your commands and subsystems here
 
   // Configure the button bindings
@@ -89,6 +92,19 @@ RobotContainer::RobotContainer()
             true, true, kLoopTime, turnToTarget);
       },
       {&m_drive}));
+
+  // m_arm.SetDefaultCommand(
+  //     m_arm.MoveToPositionAbsolute(m_currentIntendedArmAngle).OnlyIf([this]()
+  //     {
+  //       if (m_currentIntendedArmAngle != m_previousIntendedArmAngle) {
+  //         m_previousIntendedArmAngle = m_currentIntendedArmAngle;
+  //         return true;
+  //       }
+  //       return false;
+  //     }));
+
+  m_arm.SetDefaultCommand(
+      m_arm.MoveToPositionAbsolute(m_currentIntendedArmAngle));
 
 #ifndef TEST_SWERVE_BOT
   RegisterAutos();
@@ -446,7 +462,7 @@ void RobotContainer::Periodic() {
   m_armIGain = m_entryI->GetDouble(0.0);
   m_armDGain = m_entryD->GetDouble(0.0);
   m_armFFGain = m_entryFF->GetDouble(0.0);
-
+  m_currentIntendedArmAngle = units::degree_t(m_entryAngle->GetDouble(0.0));
   if (FABS(m_armPGain - m_arm.GetP()) > EPSILON) {
     m_arm.SetP(m_armPGain);
   } else if (FABS(m_armIGain - m_arm.GetI()) > EPSILON) {

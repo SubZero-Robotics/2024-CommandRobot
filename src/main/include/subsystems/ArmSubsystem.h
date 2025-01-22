@@ -56,6 +56,8 @@ class ArmSubsystem : public RotationalSingleAxisSubsystem<IPidMotorController> {
   double GetD();
   double GetFF();
 
+  void MoveArmAbsolute(units::degree_t angle);
+
  private:
   rev::CANSparkMax m_SpinnyBoi{CANConstants::kArmSpinnyBoiId,
                                rev::CANSparkLowLevel::MotorType::kBrushless};
