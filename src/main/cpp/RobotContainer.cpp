@@ -103,8 +103,7 @@ RobotContainer::RobotContainer()
   //       return false;
   //     }));
 
-  m_arm.SetDefaultCommand(
-      m_arm.MoveToPositionAbsolute(m_currentIntendedArmAngle));
+  m_arm.SetDefaultCommand(m_arm.MoveToPositionAbsolute());
 
 #ifndef TEST_SWERVE_BOT
   RegisterAutos();
@@ -186,13 +185,15 @@ void RobotContainer::ConfigureButtonBindings() {
           .AndThen(m_leds.BlinkingFace())
           .AndThen(m_leds.Idling()));
 
-  m_driverController.A().OnTrue(
-      m_leds.ScoringAmp()
-          .AndThen(
-              ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
-                                     &m_scoring, &m_intake, &m_arm))
-          .AndThen(m_leds.BlinkingFace())
-          .AndThen(m_leds.Idling()));
+  m_driverController.A().OnTrue(m_arm.MoveToPositionAbsolute(40_deg));
+
+  // m_driverController.A().OnTrue(
+  //  m_leds.ScoringAmp()
+  //      .AndThen(
+  //          ScoringCommands::Score([] { return ScoringDirection::AmpSide; },
+  //                                 &m_scoring, &m_intake, &m_arm))
+  //      .AndThen(m_leds.BlinkingFace())
+  //      .AndThen(m_leds.Idling()));
 
   m_driverController.Y().OnTrue(
       m_leds.ScoringSubwoofer()
@@ -473,9 +474,9 @@ void RobotContainer::Periodic() {
     m_arm.SetFF(m_armFFGain);
   }
 
-  std::cout << "P Gain: " << m_armPGain << " I Gain: " << m_armIGain
-            << " D Gain: " << m_armDGain << " FF Gain: " << m_armFFGain
-            << std::endl;
+  // std::cout << "P Gain: " << m_armPGain << " I Gain: " << m_armIGain
+  //           << " D Gain: " << m_armDGain << " FF Gain: " << m_armFFGain
+  //           << std::endl;
 
   auto targets = m_tracker.GetTargets();
   m_tracker.UpdateTrackedTargets(targets);
